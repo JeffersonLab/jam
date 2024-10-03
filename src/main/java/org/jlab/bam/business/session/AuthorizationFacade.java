@@ -235,7 +235,7 @@ public class AuthorizationFacade extends AbstractFacade<Authorization> {
 
     EmailService emailService = new EmailService();
 
-    emailService.sendEmail(sender, sender, toCsv, subject, body, true);
+    emailService.sendEmail(sender, sender, toCsv, null, subject, body, true);
   }
 
   @RolesAllowed("bam-admin")

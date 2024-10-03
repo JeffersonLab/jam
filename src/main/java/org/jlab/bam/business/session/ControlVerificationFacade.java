@@ -398,7 +398,7 @@ public class ControlVerificationFacade extends AbstractFacade<ControlVerificatio
 
     String sender = System.getenv("BAM_EMAIL_SENDER");
 
-    emailService.sendEmail(sender, sender, toCsv, subject, body, true);
+    emailService.sendEmail(sender, sender, toCsv, null, subject, body, true);
   }
 
   @PermitAll
@@ -654,7 +654,7 @@ public class ControlVerificationFacade extends AbstractFacade<ControlVerificatio
 
     String sender = System.getenv("BAM_EMAIL_SENDER");
 
-    emailService.sendEmail(sender, sender, toCsv, subject, body, true);
+    emailService.sendEmail(sender, sender, toCsv, null, subject, body, true);
   }
 
   @PermitAll
@@ -675,7 +675,7 @@ public class ControlVerificationFacade extends AbstractFacade<ControlVerificatio
 
     String sender = System.getenv("BAM_EMAIL_SENDER");
 
-    emailService.sendEmail(sender, sender, toCsv, subject, body, true);
+    emailService.sendEmail(sender, sender, toCsv, null, subject, body, true);
     LOGGER.log(Level.FINEST, "notifyOps, toCsv: {0], body: {1}", new Object[] {toCsv, body});
   }
 
@@ -763,7 +763,7 @@ public class ControlVerificationFacade extends AbstractFacade<ControlVerificatio
 
         // Ensure in test env database records BAM_OWNER.WORKGROUP.LEADER_ROLE_NAME point to bogus
         // group else real people will be notified.
-        emailService.sendEmail(sender, sender, toCsv, subject, body, true);
+        emailService.sendEmail(sender, sender, toCsv, null, subject, body, true);
       }
     }
   }
