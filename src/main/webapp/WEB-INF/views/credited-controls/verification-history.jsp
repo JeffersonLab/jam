@@ -66,7 +66,7 @@
                             </tbody>
                         </table>
                         <form id="filter-form" action="${pageContext.request.contextPath}/credited-controls/verification-history" method="get">
-                            <input type="hidden" name="controlVerificationId" value="${param.controlVerificationId}"/>
+                            <input type="hidden" name="controlVerificationId" value="${fn:escapeXml(param.controlVerificationId)}"/>
                             <input type="hidden" id="offset-input" name="offset" value="0"/>
                         </form>
                         <button id="previous-button" type="button" data-offset="${paginator.previousOffset}" value="Previous"${paginator.previous ? '' : ' disabled="disabled"'}>Previous</button>                        

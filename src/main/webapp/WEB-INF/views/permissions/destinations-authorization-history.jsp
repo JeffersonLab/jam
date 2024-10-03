@@ -31,7 +31,7 @@
                     <t:permissions-page cebafDestinationList="${cebafDestinationList}" lerfDestinationList="${lerfDestinationList}" isEditable="${false}" isHistory="${true}"/>
                 </c:when>
                 <c:otherwise>
-                    <div class="message-box">No Authorization found with ID: ${param.authorizationId}</div>
+                    <div class="message-box">No Authorization found with ID: ${fn:escapeXml(param.authorizationId)}</div>
                 </c:otherwise>
             </c:choose>
         </section>          
