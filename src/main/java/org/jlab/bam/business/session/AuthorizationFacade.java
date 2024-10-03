@@ -10,8 +10,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,7 +27,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import org.jlab.bam.business.util.SecurityUtil;
 import org.jlab.bam.persistence.entity.Authorization;
 import org.jlab.bam.persistence.entity.BeamDestination;
 import org.jlab.bam.persistence.entity.DestinationAuthorization;
@@ -280,20 +277,15 @@ public class AuthorizationFacade extends AbstractFacade<Authorization> {
     File tmpFile = null;
 
     try {
-      SecurityUtil.disableServerCertificateCheck();
-
       tmpFile = grabPermissionsScreenshot();
       entry.addAttachment(tmpFile.getAbsolutePath());
       logId = entry.submitNow();
 
-      SecurityUtil.disableServerCertificateCheck();
     } catch (IOException
         | AttachmentSizeException
         | LogIOException
         | LogRuntimeException
-        | LogCertificateException
-        | KeyManagementException
-        | NoSuchAlgorithmException e) {
+        | LogCertificateException e) {
       throw new UserFriendlyException("Unable to send elog", e);
     } finally {
       if (tmpFile != null) {
