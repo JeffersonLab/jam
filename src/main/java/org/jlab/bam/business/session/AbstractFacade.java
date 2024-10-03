@@ -17,182 +17,180 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
-
 import org.jlab.bam.persistence.entity.Workgroup;
 import org.jlab.smoothness.business.service.UserAuthorizationService;
 import org.jlab.smoothness.persistence.view.User;
 
 /**
- *
  * @author ryans
  */
 @DeclareRoles({"bam-admin"})
 public abstract class AbstractFacade<T> {
-    @Resource
-    private SessionContext context;
-    
-    private final Class<T> entityClass;
+  @Resource private SessionContext context;
 
-    public AbstractFacade(Class<T> entityClass) {
-        this.entityClass = entityClass;
+  private final Class<T> entityClass;
+
+  public AbstractFacade(Class<T> entityClass) {
+    this.entityClass = entityClass;
+  }
+
+  protected abstract EntityManager getEntityManager();
+
+  @PermitAll
+  public void create(T entity) {
+    getEntityManager().persist(entity);
+  }
+
+  @PermitAll
+  public void edit(T entity) {
+    getEntityManager().merge(entity);
+  }
+
+  @PermitAll
+  public void remove(T entity) {
+    getEntityManager().remove(getEntityManager().merge(entity));
+  }
+
+  @PermitAll
+  public T find(Object id) {
+    return getEntityManager().find(entityClass, id);
+  }
+
+  @PermitAll
+  public List<T> findAll() {
+    CriteriaQuery<T> cq = getEntityManager().getCriteriaBuilder().createQuery(entityClass);
+    cq.select(cq.from(entityClass));
+    return getEntityManager().createQuery(cq).getResultList();
+  }
+
+  @PermitAll
+  public List<T> findAll(OrderDirective... directives) {
+    CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
+    CriteriaQuery<T> cq = cb.createQuery(entityClass);
+    Root<T> root = cq.from(entityClass);
+    cq.select(root);
+    List<Order> orders = new ArrayList<Order>();
+    for (OrderDirective ob : directives) {
+      Order o;
+
+      Path p = root.get(ob.field);
+
+      if (ob.asc) {
+        o = cb.asc(p);
+      } else {
+        o = cb.desc(p);
+      }
+
+      orders.add(o);
+    }
+    cq.orderBy(orders);
+    return getEntityManager().createQuery(cq).getResultList();
+  }
+
+  @PermitAll
+  public List<T> findRange(int[] range) {
+    CriteriaQuery<T> cq = getEntityManager().getCriteriaBuilder().createQuery(entityClass);
+    cq.select(cq.from(entityClass));
+    TypedQuery<T> q = getEntityManager().createQuery(cq);
+    q.setMaxResults(range[1] - range[0]);
+    q.setFirstResult(range[0]);
+    return q.getResultList();
+  }
+
+  @PermitAll
+  public long count() {
+    CriteriaQuery<Long> cq = getEntityManager().getCriteriaBuilder().createQuery(Long.class);
+    Root<T> rt = cq.from(entityClass);
+    cq.select(getEntityManager().getCriteriaBuilder().count(rt));
+    TypedQuery<Long> q = getEntityManager().createQuery(cq);
+    return q.getSingleResult();
+  }
+
+  public static class OrderDirective {
+
+    private final String field;
+    private final boolean asc;
+
+    public OrderDirective(String field) {
+      this(field, true);
     }
 
-    protected abstract EntityManager getEntityManager();
-
-    @PermitAll
-    public void create(T entity) {
-        getEntityManager().persist(entity);
+    public OrderDirective(String field, boolean asc) {
+      this.field = field;
+      this.asc = asc;
     }
 
-    @PermitAll
-    public void edit(T entity) {
-        getEntityManager().merge(entity);
+    public String getField() {
+      return field;
     }
 
-    @PermitAll
-    public void remove(T entity) {
-        getEntityManager().remove(getEntityManager().merge(entity));
+    public boolean isAsc() {
+      return asc;
     }
+  }
 
-    @PermitAll
-    public T find(Object id) {
-        return getEntityManager().find(entityClass, id);
+  @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+  protected String checkAuthenticated() {
+    String username = context.getCallerPrincipal().getName();
+    if (username == null || username.isEmpty() || username.equalsIgnoreCase("ANONYMOUS")) {
+      throw new EJBAccessException("You must be authenticated to perform the requested operation");
+    } else {
+      String[] tokens = username.split(":");
+      if (tokens.length > 1) {
+        username = tokens[2];
+      }
     }
+    return username;
+  }
 
-    @PermitAll
-    public List<T> findAll() {
-        CriteriaQuery<T> cq = getEntityManager().getCriteriaBuilder().createQuery(entityClass);
-        cq.select(cq.from(entityClass));
-        return getEntityManager().createQuery(cq).getResultList();
+  @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+  public void checkAdminOrGroupLeader(String username, List<User> leaders) {
+    boolean isAdminOrLeader = isAdminOrGroupLeader(username, leaders);
+
+    if (!isAdminOrLeader) {
+      throw new EJBAccessException(
+          "You must be an admin or group leader to perform the requested operation");
     }
+  }
 
-    @PermitAll
-    public List<T> findAll(OrderDirective... directives) {
-        CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
-        CriteriaQuery<T> cq = cb.createQuery(entityClass);
-        Root<T> root = cq.from(entityClass);
-        cq.select(root);
-        List<Order> orders = new ArrayList<Order>();
-        for (OrderDirective ob : directives) {
-            Order o;
+  protected boolean isAdminOrGroupLeader(String username, List<User> leaders) {
+    boolean isAdminOrLeader = false;
 
-            Path p = root.get(ob.field);
-
-            if (ob.asc) {
-                o = cb.asc(p);
-            } else {
-                o = cb.desc(p);
-            }
-
-            orders.add(o);
+    boolean isAdmin = context.isCallerInRole("bam-admin");
+    if (isAdmin) {
+      isAdminOrLeader = true;
+    } else {
+      boolean isLeader = false;
+      for (User leader : leaders) {
+        if (leader.getUsername().equals(username)) {
+          isLeader = true;
+          break;
         }
-        cq.orderBy(orders);
-        return getEntityManager().createQuery(cq).getResultList();
+      }
+      if (isLeader) {
+        isAdminOrLeader = true;
+      }
     }
 
-    @PermitAll
-    public List<T> findRange(int[] range) {
-        CriteriaQuery<T> cq = getEntityManager().getCriteriaBuilder().createQuery(entityClass);
-        cq.select(cq.from(entityClass));
-        TypedQuery<T> q = getEntityManager().createQuery(cq);
-        q.setMaxResults(range[1] - range[0]);
-        q.setFirstResult(range[0]);
-        return q.getResultList();
+    return isAdminOrLeader;
+  }
+
+  @PermitAll
+  public boolean isAdminOrGroupLeader(String username, BigInteger groupId) {
+    if (username == null || groupId == null) {
+      return false;
     }
 
-    @PermitAll
-    public long count() {
-        CriteriaQuery<Long> cq = getEntityManager().getCriteriaBuilder().createQuery(Long.class);
-        Root<T> rt = cq.from(entityClass);
-        cq.select(getEntityManager().getCriteriaBuilder().count(rt));
-        TypedQuery<Long> q = getEntityManager().createQuery(cq);
-        return q.getSingleResult();
+    Workgroup group = getEntityManager().find(Workgroup.class, groupId);
+
+    if (group == null) {
+      return false;
     }
 
-    public static class OrderDirective {
+    UserAuthorizationService auth = UserAuthorizationService.getInstance();
 
-        private final String field;
-        private final boolean asc;
+    List<User> leaders = auth.getUsersInRole(group.getLeaderRoleName());
 
-        public OrderDirective(String field) {
-            this(field, true);
-        }
-
-        public OrderDirective(String field, boolean asc) {
-            this.field = field;
-            this.asc = asc;
-        }
-
-        public String getField() {
-            return field;
-        }
-
-        public boolean isAsc() {
-            return asc;
-        }
-    }
-    
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    protected String checkAuthenticated() {
-        String username = context.getCallerPrincipal().getName();
-        if (username == null || username.isEmpty() || username.equalsIgnoreCase("ANONYMOUS")) {
-            throw new EJBAccessException("You must be authenticated to perform the requested operation");
-        } else {
-            String[] tokens = username.split(":");
-            if(tokens.length > 1) {
-                username = tokens[2];
-            }
-        }
-        return username;
-    }
-    
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public void checkAdminOrGroupLeader(String username, List<User> leaders) {
-        boolean isAdminOrLeader = isAdminOrGroupLeader(username, leaders);
-
-        if (!isAdminOrLeader) {
-            throw new EJBAccessException("You must be an admin or group leader to perform the requested operation");
-        }
-    }
-
-    protected boolean isAdminOrGroupLeader(String username, List<User> leaders) {
-        boolean isAdminOrLeader = false;
-
-        boolean isAdmin = context.isCallerInRole("bam-admin");
-        if (isAdmin) {
-            isAdminOrLeader = true;
-        } else {
-            boolean isLeader = false;
-            for (User leader : leaders) {
-                if (leader.getUsername().equals(username)) {
-                    isLeader = true;
-                    break;
-                }
-            }
-            if (isLeader) {
-                isAdminOrLeader = true;
-            }
-        }
-
-        return isAdminOrLeader;
-    }
-
-    @PermitAll
-    public boolean isAdminOrGroupLeader(String username, BigInteger groupId) {
-        if (username == null || groupId == null) {
-            return false;
-        }
-
-        Workgroup group = getEntityManager().find(Workgroup.class, groupId);
-
-        if(group == null) {
-            return false;
-        }
-
-        UserAuthorizationService auth = UserAuthorizationService.getInstance();
-
-        List<User> leaders = auth.getUsersInRole(group.getLeaderRoleName());
-        
-        return isAdminOrGroupLeader(username, leaders);
-    }    
+    return isAdminOrGroupLeader(username, leaders);
+  }
 }

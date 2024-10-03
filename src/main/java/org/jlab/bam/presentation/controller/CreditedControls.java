@@ -17,65 +17,64 @@ import org.jlab.bam.persistence.entity.CreditedControl;
 import org.jlab.smoothness.presentation.util.ParamConverter;
 
 /**
- *
  * @author ryans
  */
-@WebServlet(name = "CreditedControls", urlPatterns = {"/credited-controls"})
+@WebServlet(
+    name = "CreditedControls",
+    urlPatterns = {"/credited-controls"})
 public class CreditedControls extends HttpServlet {
 
-    @EJB
-    CreditedControlFacade ccFacade;
-    @EJB
-    ControlVerificationFacade verificationFacade;
-    
-    /**
-     * Handles the HTTP
-     * <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+  @EJB CreditedControlFacade ccFacade;
+  @EJB ControlVerificationFacade verificationFacade;
 
-        BigInteger creditedControlId = ParamConverter.convertBigInteger(request, "creditedControlId");
+  /**
+   * Handles the HTTP <code>GET</code> method.
+   *
+   * @param request servlet request
+   * @param response servlet response
+   * @throws ServletException if a servlet-specific error occurs
+   * @throws IOException if an I/O error occurs
+   */
+  @Override
+  protected void doGet(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
 
-        List<ControlVerification> expiredList = null;
-        List<ControlVerification> expiringList = null;
-        CreditedControl creditedControl = null;
-        boolean adminOrLeader = false;
+    BigInteger creditedControlId = ParamConverter.convertBigInteger(request, "creditedControlId");
 
-        if (creditedControlId != null) {
-            creditedControl = ccFacade.findWithVerificationList(creditedControlId);
+    List<ControlVerification> expiredList = null;
+    List<ControlVerification> expiringList = null;
+    CreditedControl creditedControl = null;
+    boolean adminOrLeader = false;
 
-            if(creditedControl != null) {
-                String username = request.getRemoteUser();
+    if (creditedControlId != null) {
+      creditedControl = ccFacade.findWithVerificationList(creditedControlId);
 
-                if(username != null) {
-                    String[] tokens = username.split(":");
-                    if(tokens.length > 1) {
-                        username = tokens[2];
-                    }
-                }
+      if (creditedControl != null) {
+        String username = request.getRemoteUser();
 
-                adminOrLeader = ccFacade.isAdminOrGroupLeader(username, creditedControl.getGroup().getWorkgroupId());
-            }
-        } else {
-            expiredList = verificationFacade.checkForExpired();
-            expiringList = verificationFacade.checkForUpcomingVerificationExpirations();
+        if (username != null) {
+          String[] tokens = username.split(":");
+          if (tokens.length > 1) {
+            username = tokens[2];
+          }
         }
 
-        List<CreditedControl> ccList = ccFacade.findAll(new OrderDirective("weight"));
-
-        request.setAttribute("adminOrLeader", adminOrLeader);
-        request.setAttribute("creditedControl", creditedControl);
-        request.setAttribute("ccList", ccList);
-        request.setAttribute("expiredList", expiredList);
-        request.setAttribute("expiringList", expiringList);
-
-        request.getRequestDispatcher("WEB-INF/views/credited-controls.jsp").forward(request, response);
+        adminOrLeader =
+            ccFacade.isAdminOrGroupLeader(username, creditedControl.getGroup().getWorkgroupId());
+      }
+    } else {
+      expiredList = verificationFacade.checkForExpired();
+      expiringList = verificationFacade.checkForUpcomingVerificationExpirations();
     }
+
+    List<CreditedControl> ccList = ccFacade.findAll(new OrderDirective("weight"));
+
+    request.setAttribute("adminOrLeader", adminOrLeader);
+    request.setAttribute("creditedControl", creditedControl);
+    request.setAttribute("ccList", ccList);
+    request.setAttribute("expiredList", expiredList);
+    request.setAttribute("expiringList", expiringList);
+
+    request.getRequestDispatcher("WEB-INF/views/credited-controls.jsp").forward(request, response);
+  }
 }

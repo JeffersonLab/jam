@@ -17,47 +17,46 @@ import org.jlab.smoothness.persistence.view.User;
 import org.jlab.smoothness.presentation.util.ParamConverter;
 
 /**
- *
  * @author ryans
  */
-@WebServlet(name = "GroupInformation", urlPatterns = {"/group-information"})
+@WebServlet(
+    name = "GroupInformation",
+    urlPatterns = {"/group-information"})
 public class GroupInformation extends HttpServlet {
 
-    @EJB
-    WorkgroupFacade groupFacade;
+  @EJB WorkgroupFacade groupFacade;
 
-    /**
-     * Handles the HTTP
-     * <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+  /**
+   * Handles the HTTP <code>GET</code> method.
+   *
+   * @param request servlet request
+   * @param response servlet response
+   * @throws ServletException if a servlet-specific error occurs
+   * @throws IOException if an I/O error occurs
+   */
+  @Override
+  protected void doGet(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
 
-        BigInteger groupId = ParamConverter.convertBigInteger(request, "groupId");
+    BigInteger groupId = ParamConverter.convertBigInteger(request, "groupId");
 
-        UserAuthorizationService auth = UserAuthorizationService.getInstance();
+    UserAuthorizationService auth = UserAuthorizationService.getInstance();
 
-        Workgroup group = null;
+    Workgroup group = null;
 
-        List<User> leaderList = new ArrayList<>();
+    List<User> leaderList = new ArrayList<>();
 
-        if (groupId != null) {
-            group = groupFacade.find(groupId);
+    if (groupId != null) {
+      group = groupFacade.find(groupId);
 
-            String role = group.getLeaderRoleName();
+      String role = group.getLeaderRoleName();
 
-            leaderList = auth.getUsersInRole(role);
-        }
-
-        request.setAttribute("group", group);
-        request.setAttribute("leaderList", leaderList);
-
-        request.getRequestDispatcher("WEB-INF/views/group-information.jsp").forward(request, response);
+      leaderList = auth.getUsersInRole(role);
     }
+
+    request.setAttribute("group", group);
+    request.setAttribute("leaderList", leaderList);
+
+    request.getRequestDispatcher("WEB-INF/views/group-information.jsp").forward(request, response);
+  }
 }

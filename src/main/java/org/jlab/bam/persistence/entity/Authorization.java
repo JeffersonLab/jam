@@ -12,8 +12,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -25,133 +23,145 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
- *
  * @author ryans
  */
 @Entity
 @Table(schema = "BAM_OWNER")
 @NamedQueries({
-    @NamedQuery(name = "Authorization.findAll", query = "SELECT a FROM Authorization a")})
+  @NamedQuery(name = "Authorization.findAll", query = "SELECT a FROM Authorization a")
+})
 public class Authorization implements Serializable {
-    private static final long serialVersionUID = 1L;
-    @Id
-    @SequenceGenerator(name="AuthorizationId", sequenceName="AUTHORIZATION_ID", allocationSize=1)
-    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="AuthorizationId")        
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "AUTHORIZATION_ID", nullable = false, precision = 22, scale = 0)
-    private BigInteger authorizationId;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "AUTHORIZATION_DATE", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date authorizationDate;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "MODIFIED_DATE", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date modifiedDate;
-    @NotNull
-    @Column(name = "AUTHORIZED_BY", nullable = false)
-    private String authorizedBy;
-    @NotNull
-    @Column(name = "MODIFIED_BY", nullable = false)
-    private String modifiedBy;
-    @Size(max = 2048)
-    @Column(length = 2048)
-    private String comments;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "authorization", fetch = FetchType.EAGER)
-    private List<DestinationAuthorization> destinationAuthorizationList;
+  private static final long serialVersionUID = 1L;
 
-    public Authorization() {
-    }
+  @Id
+  @SequenceGenerator(
+      name = "AuthorizationId",
+      sequenceName = "AUTHORIZATION_ID",
+      allocationSize = 1)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "AuthorizationId")
+  @Basic(optional = false)
+  @NotNull
+  @Column(name = "AUTHORIZATION_ID", nullable = false, precision = 22, scale = 0)
+  private BigInteger authorizationId;
 
-    public BigInteger getAuthorizationId() {
-        return authorizationId;
-    }
+  @Basic(optional = false)
+  @NotNull
+  @Column(name = "AUTHORIZATION_DATE", nullable = false)
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date authorizationDate;
 
-    public void setAuthorizationId(BigInteger authorizationId) {
-        this.authorizationId = authorizationId;
-    }
+  @Basic(optional = false)
+  @NotNull
+  @Column(name = "MODIFIED_DATE", nullable = false)
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date modifiedDate;
 
-    public Date getAuthorizationDate() {
-        return authorizationDate;
-    }
+  @NotNull
+  @Column(name = "AUTHORIZED_BY", nullable = false)
+  private String authorizedBy;
 
-    public void setAuthorizationDate(Date authorizationDate) {
-        this.authorizationDate = authorizationDate;
-    }
+  @NotNull
+  @Column(name = "MODIFIED_BY", nullable = false)
+  private String modifiedBy;
 
-    public Date getModifiedDate() {
-        return modifiedDate;
-    }
+  @Size(max = 2048)
+  @Column(length = 2048)
+  private String comments;
 
-    public void setModifiedDate(Date modifiedDate) {
-        this.modifiedDate = modifiedDate;
-    }
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "authorization", fetch = FetchType.EAGER)
+  private List<DestinationAuthorization> destinationAuthorizationList;
 
-    public String getAuthorizedBy() {
-        return authorizedBy;
-    }
+  public Authorization() {}
 
-    public void setAuthorizedBy(String authorizedBy) {
-        this.authorizedBy = authorizedBy;
-    }
+  public BigInteger getAuthorizationId() {
+    return authorizationId;
+  }
 
-    public String getModifiedBy() {
-        return modifiedBy;
-    }
+  public void setAuthorizationId(BigInteger authorizationId) {
+    this.authorizationId = authorizationId;
+  }
 
-    public void setModifiedBy(String modifiedBy) {
-        this.modifiedBy = modifiedBy;
-    }
+  public Date getAuthorizationDate() {
+    return authorizationDate;
+  }
 
-    public String getComments() {
-        return comments;
-    }
+  public void setAuthorizationDate(Date authorizationDate) {
+    this.authorizationDate = authorizationDate;
+  }
 
-    public void setComments(String comments) {
-        this.comments = comments;
-    }
+  public Date getModifiedDate() {
+    return modifiedDate;
+  }
 
-    public List<DestinationAuthorization> getDestinationAuthorizationList() {
-        return destinationAuthorizationList;
-    }
+  public void setModifiedDate(Date modifiedDate) {
+    this.modifiedDate = modifiedDate;
+  }
 
-    public void setDestinationAuthorizationList(List<DestinationAuthorization> destinationAuthorizationList) {
-        this.destinationAuthorizationList = destinationAuthorizationList;
-    }
-    
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (authorizationId != null ? authorizationId.hashCode() : 0);
-        return hash;
-    }
+  public String getAuthorizedBy() {
+    return authorizedBy;
+  }
 
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Authorization)) {
-            return false;
-        }
-        Authorization other = (Authorization) object;
-        return (this.authorizationId != null || other.authorizationId == null) && (this.authorizationId == null || this.authorizationId.equals(other.authorizationId));
-    }
+  public void setAuthorizedBy(String authorizedBy) {
+    this.authorizedBy = authorizedBy;
+  }
 
-    @Override
-    public String toString() {
-        return "org.jlab.beamauth.persistence.entity.Authorization[ authorizationId=" + authorizationId + " ]";
-    }
+  public String getModifiedBy() {
+    return modifiedBy;
+  }
 
-    public Authorization createAdminClone() {
-        Authorization other = new Authorization();
-        other.authorizationDate = this.authorizationDate;
-        other.authorizedBy = this.authorizedBy;
-        other.comments = this.comments;
-        other.setModifiedBy("bam-admin");
-        other.setModifiedDate(new Date());
-        return other;
+  public void setModifiedBy(String modifiedBy) {
+    this.modifiedBy = modifiedBy;
+  }
+
+  public String getComments() {
+    return comments;
+  }
+
+  public void setComments(String comments) {
+    this.comments = comments;
+  }
+
+  public List<DestinationAuthorization> getDestinationAuthorizationList() {
+    return destinationAuthorizationList;
+  }
+
+  public void setDestinationAuthorizationList(
+      List<DestinationAuthorization> destinationAuthorizationList) {
+    this.destinationAuthorizationList = destinationAuthorizationList;
+  }
+
+  @Override
+  public int hashCode() {
+    int hash = 0;
+    hash += (authorizationId != null ? authorizationId.hashCode() : 0);
+    return hash;
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    // TODO: Warning - this method won't work in the case the id fields are not set
+    if (!(object instanceof Authorization)) {
+      return false;
     }
-    
+    Authorization other = (Authorization) object;
+    return (this.authorizationId != null || other.authorizationId == null)
+        && (this.authorizationId == null || this.authorizationId.equals(other.authorizationId));
+  }
+
+  @Override
+  public String toString() {
+    return "org.jlab.beamauth.persistence.entity.Authorization[ authorizationId="
+        + authorizationId
+        + " ]";
+  }
+
+  public Authorization createAdminClone() {
+    Authorization other = new Authorization();
+    other.authorizationDate = this.authorizationDate;
+    other.authorizedBy = this.authorizedBy;
+    other.comments = this.comments;
+    other.setModifiedBy("bam-admin");
+    other.setModifiedDate(new Date());
+    return other;
+  }
 }
