@@ -14,45 +14,45 @@ import org.jlab.bam.persistence.entity.BeamDestination;
 import org.jlab.smoothness.presentation.util.ParamConverter;
 
 /**
- *
  * @author ryans
  */
-@WebServlet(name = "Destinations", urlPatterns = {"/destinations"})
+@WebServlet(
+    name = "Destinations",
+    urlPatterns = {"/destinations"})
 public class Destinations extends HttpServlet {
 
-    @EJB
-    BeamDestinationFacade destinationFacade;    
-    
-    /**
-     * Handles the HTTP
-     * <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+  @EJB BeamDestinationFacade destinationFacade;
 
-        BigInteger destinationId = ParamConverter.convertBigInteger(request, "destinationId");
+  /**
+   * Handles the HTTP <code>GET</code> method.
+   *
+   * @param request servlet request
+   * @param response servlet response
+   * @throws ServletException if a servlet-specific error occurs
+   * @throws IOException if an I/O error occurs
+   */
+  @Override
+  protected void doGet(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
 
-        BeamDestination destination = null;
-        boolean adminOrLeader = false;
+    BigInteger destinationId = ParamConverter.convertBigInteger(request, "destinationId");
 
-        if (destinationId != null) {
-            destination = destinationFacade.findWithVerificationList(destinationId);
-            adminOrLeader = request.getRemoteUser() != null;
-            //adminOrLeader = ccFacade.isAdminOrGroupLeader(request.getRemoteUser(), creditedControl.getWorkgroup().getWorkgroupId());
-        }
+    BeamDestination destination = null;
+    boolean adminOrLeader = false;
 
-        List<BeamDestination> destinationList = destinationFacade.findActiveDestinations();
-
-        request.setAttribute("destinationList", destinationList);
-        request.setAttribute("adminOrLeader", adminOrLeader);
-        request.setAttribute("destination", destination);
-
-        request.getRequestDispatcher("WEB-INF/views/destinations.jsp").forward(request, response);
+    if (destinationId != null) {
+      destination = destinationFacade.findWithVerificationList(destinationId);
+      adminOrLeader = request.getRemoteUser() != null;
+      // adminOrLeader = ccFacade.isAdminOrGroupLeader(request.getRemoteUser(),
+      // creditedControl.getWorkgroup().getWorkgroupId());
     }
+
+    List<BeamDestination> destinationList = destinationFacade.findActiveDestinations();
+
+    request.setAttribute("destinationList", destinationList);
+    request.setAttribute("adminOrLeader", adminOrLeader);
+    request.setAttribute("destination", destination);
+
+    request.getRequestDispatcher("WEB-INF/views/destinations.jsp").forward(request, response);
+  }
 }

@@ -3,25 +3,22 @@ package org.jlab.bam.business.session;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
 import org.jlab.bam.persistence.entity.Workgroup;
 
 /**
- *
  * @author ryans
  */
 @Stateless
 public class WorkgroupFacade extends AbstractFacade<Workgroup> {
-    @PersistenceContext(unitName = "beam-authorizationPU")
-    private EntityManager em;
+  @PersistenceContext(unitName = "beam-authorizationPU")
+  private EntityManager em;
 
-    @Override
-    protected EntityManager getEntityManager() {
-        return em;
-    }
+  @Override
+  protected EntityManager getEntityManager() {
+    return em;
+  }
 
-    public WorkgroupFacade() {
-        super(Workgroup.class);
-    }
-    
+  public WorkgroupFacade() {
+    super(Workgroup.class);
+  }
 }
