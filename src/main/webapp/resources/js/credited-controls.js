@@ -148,7 +148,9 @@ $(document).on("click", ".verify-button", function () {
 
     $verificationList.each(function (index, value) {
         if ($(".destination-checkbox", value).is(":checked")) {
-            $selectedList.append('<li data-control-verification-id="' + $(this).attr("data-control-verification-id") + '">' + $("td:nth-child(2)", value).text() + '</li>');
+            var id = $(this).attr("data-control-verification-id"),
+                label = $("td:nth-child(2)", value).text();
+            $selectedList.append('<li data-control-verification-id="' + String(id).encodeXml()  + '">' + String(label).encodeXml() + '</li>');
             statusArray.push($(this).attr("data-status-id"));
             verificationDateArray.push($("td:nth-child(4)", value).text());
             verifiedByArray.push($(this).attr("data-verified-username"));
