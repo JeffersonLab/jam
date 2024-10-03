@@ -62,7 +62,7 @@ public class EditCc extends HttpServlet {
               expirationDate,
               comments);
     } catch (UserFriendlyException e) {
-      errorReason = e.getMessage();
+      errorReason = e.getUserMessage();
       logger.log(Level.FINE, "Unable to edit control verification", e);
     } catch (Exception e) {
       errorReason = "Unable to edit control verification";

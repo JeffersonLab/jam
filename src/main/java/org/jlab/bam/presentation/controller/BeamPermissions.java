@@ -114,7 +114,7 @@ public class BeamPermissions extends HttpServlet {
     try {
       authorizationFacade.saveAuthorization(comments, destinationAuthorizationList);
     } catch (UserFriendlyException e) {
-      errorReason = e.getMessage();
+      errorReason = e.getUserMessage();
       LOGGER.log(Level.INFO, "Unable to save authorization: " + errorReason);
     } catch (Exception e) {
       errorReason = "Unable to save authorization";
