@@ -1,4 +1,4 @@
-# bam [![CI](https://github.com/JeffersonLab/bam/actions/workflows/ci.yml/badge.svg)](https://github.com/JeffersonLab/bam/actions/workflows/ci.yml) [![Docker](https://img.shields.io/docker/v/jeffersonlab/bam?sort=semver&label=DockerHub)](https://hub.docker.com/r/jeffersonlab/bam)
+# bam [![CI](https://github.com/JeffersonLab/bam/actions/workflows/ci.yaml/badge.svg)](https://github.com/JeffersonLab/bam/actions/workflows/ci.yaml) [![Docker](https://img.shields.io/docker/v/jeffersonlab/bam?sort=semver&label=DockerHub)](https://hub.docker.com/r/jeffersonlab/bam)
 A [Java EE 8](https://en.wikipedia.org/wiki/Jakarta_EE) web application for beam authorization at Jefferson Lab built with the [Smoothness](https://github.com/JeffersonLab/smoothness) web template.
 
 ![Screenshot](https://github.com/JeffersonLab/bam/raw/main/Screenshot.png?raw=true "Screenshot")
@@ -110,10 +110,10 @@ The [server](https://github.com/JeffersonLab/wildfly/blob/main/scripts/server-se
 
 ## Release
 1. Bump the version number in the VERSION file and commit and push to GitHub (using [Semantic Versioning](https://semver.org/)).
-2. The [CD](https://github.com/JeffersonLab/bam/blob/main/.github/workflows/cd.yml) GitHub Action should run automatically invoking:
-    - The [Create release](https://github.com/JeffersonLab/java-workflows/blob/main/.github/workflows/gh-release.yml) GitHub Action to tag the source and create release notes summarizing any pull requests.   Edit the release notes to add any missing details.  A war file artifact is attached to the release.
-    - The [Publish docker image](https://github.com/JeffersonLab/container-workflows/blob/main/.github/workflows/docker-publish.yml) GitHub Action to create a new demo Docker image, and bump the [compose.override.yaml](https://github.com/JeffersonLab/bam/blob/main/compose.override.yaml) to use the new image.
-    - The [Deploy to JLab](https://github.com/JeffersonLab/general-workflows/blob/main/.github/workflows/jlab-deploy-app.yml) GitHub Action to deploy to the JLab test environment.
+2. The [CD](https://github.com/JeffersonLab/bam/blob/main/.github/workflows/cd.yaml) GitHub Action should run automatically invoking:
+    - The [Create release](https://github.com/JeffersonLab/java-workflows/blob/main/.github/workflows/gh-release.yaml) GitHub Action to tag the source and create release notes summarizing any pull requests.   Edit the release notes to add any missing details.  A war file artifact is attached to the release.
+    - The [Publish docker image](https://github.com/JeffersonLab/container-workflows/blob/main/.github/workflows/docker-publish.yaml) GitHub Action to create a new demo Docker image.
+    - The [Deploy to JLab](https://github.com/JeffersonLab/general-workflows/blob/main/.github/workflows/jlab-deploy-app.yaml) GitHub Action to deploy to the JLab test environment.
 
 ## Deploy
 The deploy to JLab's acctest is handled automatically via the release workflow.
