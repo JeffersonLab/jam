@@ -35,7 +35,7 @@ public class BeamDestinationFacade extends AbstractFacade<BeamDestination> {
   public List<BeamDestination> findActiveDestinations() {
     Query q =
         em.createNativeQuery(
-            "select * from BAM_OWNER.beam_destination where ACTIVE_YN = 'Y' order by weight",
+            "select * from JAM_OWNER.beam_destination where ACTIVE_YN = 'Y' order by weight",
             BeamDestination.class);
 
     return q.getResultList();
@@ -46,7 +46,7 @@ public class BeamDestinationFacade extends AbstractFacade<BeamDestination> {
   public List<BeamDestination> findCebafDestinations() {
     Query q =
         em.createNativeQuery(
-            "select * from BAM_OWNER.beam_destination where machine = 'CEBAF' and ACTIVE_YN = 'Y' order by weight",
+            "select * from JAM_OWNER.beam_destination where machine = 'CEBAF' and ACTIVE_YN = 'Y' order by weight",
             BeamDestination.class);
 
     return q.getResultList();
@@ -57,7 +57,7 @@ public class BeamDestinationFacade extends AbstractFacade<BeamDestination> {
   public List<BeamDestination> findLerfDestinations() {
     Query q =
         em.createNativeQuery(
-            "select * from BAM_OWNER.beam_destination where machine = 'LERF'  and ACTIVE_YN = 'Y' order by weight",
+            "select * from JAM_OWNER.beam_destination where machine = 'LERF'  and ACTIVE_YN = 'Y' order by weight",
             BeamDestination.class);
 
     return q.getResultList();
@@ -68,7 +68,7 @@ public class BeamDestinationFacade extends AbstractFacade<BeamDestination> {
   public List<BeamDestination> findUitfDestinations() {
     Query q =
         em.createNativeQuery(
-            "select * from BAM_OWNER.beam_destination where machine = 'UITF'  and ACTIVE_YN = 'Y' order by weight",
+            "select * from JAM_OWNER.beam_destination where machine = 'UITF'  and ACTIVE_YN = 'Y' order by weight",
             BeamDestination.class);
 
     return q.getResultList();

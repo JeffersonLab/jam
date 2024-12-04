@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
  * @author ryans
  */
 @Entity
-@Table(name = "WORKGROUP", schema = "BAM_OWNER")
+@Table(name = "WORKGROUP", schema = "JAM_OWNER")
 public class Workgroup implements Serializable {
   private static final long serialVersionUID = 1L;
 

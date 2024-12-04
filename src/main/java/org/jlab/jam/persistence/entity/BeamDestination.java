@@ -9,7 +9,7 @@ import org.jlab.jam.persistence.view.BeamDestinationVerification;
 import org.jlab.smoothness.persistence.util.YnStringToBoolean;
 
 @Entity
-@Table(name = "BEAM_DESTINATION", schema = "BAM_OWNER")
+@Table(name = "BEAM_DESTINATION", schema = "JAM_OWNER")
 public class BeamDestination {
 
   @Id

@@ -761,7 +761,7 @@ public class ControlVerificationFacade extends AbstractFacade<ControlVerificatio
           toCsv = toCsv + "," + toAddresses.get(i);
         }
 
-        // Ensure in test env database records BAM_OWNER.WORKGROUP.LEADER_ROLE_NAME point to bogus
+        // Ensure in test env database records JAM_OWNER.WORKGROUP.LEADER_ROLE_NAME point to bogus
         // group else real people will be notified.
         emailService.sendEmail(sender, sender, toCsv, null, subject, body, true);
       }
