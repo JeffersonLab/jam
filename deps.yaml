@@ -31,7 +31,7 @@ services:
       KEYCLOAK_SECRET: 'yHi6W2raPmLvPXoxqMA7VWbLAA2WN0eB'
       TZ: 'America/New_York'
     volumes:
-      - ./container/keycloak/initd.d:/container-entrypoint-initdb.d
+      - ./container/keycloak/initdb.d:/container-entrypoint-initdb.d
 
   puppet:
     image: slominskir/puppet-show:2.1.1
