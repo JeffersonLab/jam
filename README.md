@@ -1,7 +1,7 @@
 # jam [![CI](https://github.com/JeffersonLab/jam/actions/workflows/ci.yaml/badge.svg)](https://github.com/JeffersonLab/jam/actions/workflows/ci.yaml) [![Docker](https://img.shields.io/docker/v/jeffersonlab/jam?sort=semver&label=DockerHub)](https://hub.docker.com/r/jeffersonlab/jam)
 A [Java EE 8](https://en.wikipedia.org/wiki/Jakarta_EE) web application for both beam and RF operations authorization at Jefferson Lab built with the [Smoothness](https://github.com/JeffersonLab/smoothness) web template.
 
-![Screenshot](https://github.com/JeffersonLab/bam/raw/main/Screenshot.png?raw=true "Screenshot")
+![Screenshot](https://github.com/JeffersonLab/jam/raw/main/Screenshot.png?raw=true "Screenshot")
 
 ---
  - [Overview](https://github.com/JeffersonLab/jam#overview)
@@ -32,7 +32,7 @@ The Authorization application allows the Director of Operations (or a delegate) 
 1. Grab project
 ```
 git clone https://github.com/JeffersonLab/jam
-cd bam
+cd jam
 ```
 2. Launch [Compose](https://github.com/docker/compose)
 ```
@@ -53,7 +53,7 @@ This application requires a Java 11+ JVM and standard library to run, plus a Jav
 1. Install service [dependencies](https://github.com/JeffersonLab/jam/blob/main/deps.yaml)
 2. Download [Wildfly 26.1.3](https://www.wildfly.org/downloads/)
 3. [Configure](https://github.com/JeffersonLab/jam#configure) Wildfly and start it
-4. Download [jam.war](https://github.com/JeffersonLab/bam/releases) and deploy it to Wildfly
+4. Download [jam.war](https://github.com/JeffersonLab/jam/releases) and deploy it to Wildfly
 5. Navigate your web browser to [localhost:8080/jam](http://localhost:8080/jam)
 
 ## Configure
@@ -78,7 +78,7 @@ Uses the [Smoothness Environment Variables](https://github.com/JeffersonLab/smoo
 | JAM_EMAIL_SENDER                  | Sender (and from address) of emails                                                                                                         |
 
 ### Database
-This application requires an Oracle 18+ database with the following [schema](https://github.com/JeffersonLab/bam/tree/main/container/oracle/initdb.d) installed.   The application server hosting this app must also be configured with a JNDI datasource.
+This application requires an Oracle 18+ database with the following [schema](https://github.com/JeffersonLab/jam/tree/main/container/oracle/initdb.d) installed.   The application server hosting this app must also be configured with a JNDI datasource.
 
 ## Build
 This project is built with [Java 17](https://adoptium.net/) (compiled to Java 11 bytecode), and uses the [Gradle 7](https://gradle.org/) build tool to automatically download dependencies and build the project from source:
@@ -118,7 +118,7 @@ The [server](https://github.com/JeffersonLab/wildfly/blob/main/scripts/server-se
 ## Deploy
 The deploy to JLab's acctest is handled automatically via the release workflow.
 
-At JLab this app is found at [ace.jlab.org/jam](https://ace.jlab.org/jam) and internally at [acctest.acc.jlab.org/bam](https://acctest.acc.jlab.org/jam).  However, those servers are proxies for `wildfly5.acc.jlab.org` and `wildflytest5.acc.jlab.org` respectively.   A [deploy script](https://github.com/JeffersonLab/wildfly/blob/main/scripts/deploy.sh) is provided on each server to automate wget and deploy.  Example:
+At JLab this app is found at [ace.jlab.org/jam](https://ace.jlab.org/jam) and internally at [acctest.acc.jlab.org/jam](https://acctest.acc.jlab.org/jam).  However, those servers are proxies for `wildfly5.acc.jlab.org` and `wildflytest5.acc.jlab.org` respectively.   A [deploy script](https://github.com/JeffersonLab/wildfly/blob/main/scripts/deploy.sh) is provided on each server to automate wget and deploy.  Example:
 
 ```
 /root/setup/deploy.sh jam v1.2.3
