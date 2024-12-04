@@ -12,22 +12,22 @@
 
     <function>
         <name>beamModeList</name>
-        <function-class>org.jlab.bam.presentation.util.BeamAuthFunctions</function-class>
+        <function-class>org.jlab.jam.presentation.util.BeamAuthFunctions</function-class>
         <function-signature>java.util.List beamModeList(java.lang.String)</function-signature>
     </function>
     <function>
         <name>laseModeList</name>
-        <function-class>org.jlab.bam.presentation.util.BeamAuthFunctions</function-class>
+        <function-class>org.jlab.jam.presentation.util.BeamAuthFunctions</function-class>
         <function-signature>java.util.List laseModeList()</function-signature>
     </function>
     <function>
         <name>now</name>
-        <function-class>org.jlab.bam.presentation.util.BeamAuthFunctions</function-class>
+        <function-class>org.jlab.jam.presentation.util.BeamAuthFunctions</function-class>
         <function-signature>java.util.Date now()</function-signature>        
     </function>    
     <function>
         <name>twoDaysFromNow</name>
-        <function-class>org.jlab.bam.presentation.util.BeamAuthFunctions</function-class>
+        <function-class>org.jlab.jam.presentation.util.BeamAuthFunctions</function-class>
         <function-signature>java.util.Date twoDaysFromNow()</function-signature>        
     </function>                                        
 </taglib>
