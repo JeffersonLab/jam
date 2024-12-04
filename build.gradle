@@ -2,7 +2,7 @@ plugins {
     id 'war'
     id "com.diffplug.spotless" version "6.25.0"
 }
-description = 'Beam authorization manager app'
+description = 'JLab authorization manager app'
 group 'org.jlab'
 version new File("${projectDir}/VERSION").text.trim()
 ext.releaseDate = new Date().format('MMM dd yyyy')
@@ -36,7 +36,7 @@ dependencies {
 }
 
 war {
-    archiveFileName = 'bam.war'
+    archiveFileName = 'jam.war'
     filesMatching('WEB-INF/web.xml') {
         filter {
             String line -> line.replaceAll("@VERSION@", project.version)

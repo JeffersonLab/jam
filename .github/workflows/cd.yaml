@@ -9,7 +9,7 @@ jobs:
   release:
     uses: jeffersonlab/java-workflows/.github/workflows/gh-release.yaml@v2
     with:
-      files: build/libs/bam.war
+      files: build/libs/jam.war
     secrets: inherit
 
   docker_publish:
@@ -25,7 +25,7 @@ jobs:
       - release
     uses: jeffersonlab/general-workflows/.github/workflows/jlab-deploy-app.yaml@v2
     with:
-      app: bam
+      app: jam
       env: acctest
       ver: ${{ needs.release.outputs.semver }}
     secrets: inherit

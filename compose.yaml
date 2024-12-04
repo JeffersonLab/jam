@@ -19,41 +19,41 @@ services:
       file: deps.yaml
       service: mailhog
 
-  bam:
-    hostname: bam
-    container_name: bam
+  jam:
+    hostname: jam
+    container_name: jam
     ports:
       - "8443:8443"
       - "8080:8080"
       - "9990:9990"
     environment:
-      BAM_FEEDBACK_SENDER_ADDRESS: 'admin@example.com'
-      BAM_FEEDBACK_TO_ADDRESS_CSV: 'user1@example.com,user2@example.com'
-      BAM_CONTENT_CONTACT: 'bob@example.com'
-      BAM_TECHNICAL_CONTACT: 'larry@example.com'
-      BAM_DOC_CSV: 'https://github.com/JeffersonLab/bam|BAM Home,https://jlab.org|JLAB Home'
-      BAM_BOOKS_CSV: TLOG
-      BAM_PERMISSIONS_EMAIL_CSV: permission-recipient1@example.com,permission-recipient2@example.com
-      BAM_UPCOMING_EXPIRATION_EMAIL_CSV: upcoming-recipient@example.com,upcoming-recipient2@example.com
-      BAM_EXPIRED_EMAIL_CSV: expired-recipient1@example.com,expired-recipient2@example.com
-      BAM_DOWNGRADED_EMAIL_CSV: downgrade-recipient1@example.com,downgrade-recipient2@example.com
-      BAM_PERMISSIONS_SUBJECT: '[TESTING] Beam Authorization Updated'
-      BAM_UPCOMING_EXPIRATION_SUBJECT: '[TESTING] Beam Authorization Expired / Expiring Soon'
-      BAM_EXPIRED_SUBJECT: '[TESTING] Beam Authorization Expired'
-      BAM_DOWNGRADED_SUBJECT: '[TESTING] Beam Authorization Downgraded'
-      BAM_EMAIL_SENDER: 'bam@example.com'
+      JAM_FEEDBACK_SENDER_ADDRESS: 'admin@example.com'
+      JAM_FEEDBACK_TO_ADDRESS_CSV: 'user1@example.com,user2@example.com'
+      JAM_CONTENT_CONTACT: 'bob@example.com'
+      JAM_TECHNICAL_CONTACT: 'larry@example.com'
+      JAM_DOC_CSV: 'https://github.com/JeffersonLab/jam|JAM Home,https://jlab.org|JLAB Home'
+      JAM_BOOKS_CSV: TLOG
+      JAM_PERMISSIONS_EMAIL_CSV: permission-recipient1@example.com,permission-recipient2@example.com
+      JAM_UPCOMING_EXPIRATION_EMAIL_CSV: upcoming-recipient@example.com,upcoming-recipient2@example.com
+      JAM_EXPIRED_EMAIL_CSV: expired-recipient1@example.com,expired-recipient2@example.com
+      JAM_DOWNGRADED_EMAIL_CSV: downgrade-recipient1@example.com,downgrade-recipient2@example.com
+      JAM_PERMISSIONS_SUBJECT: '[TESTING] Authorization Updated'
+      JAM_UPCOMING_EXPIRATION_SUBJECT: '[TESTING] Authorization Expired / Expiring Soon'
+      JAM_EXPIRED_SUBJECT: '[TESTING] Authorization Expired'
+      JAM_DOWNGRADED_SUBJECT: '[TESTING] Authorization Downgraded'
+      JAM_EMAIL_SENDER: 'jam@example.com'
       KEYCLOAK_REALM: 'test-realm'
-      KEYCLOAK_RESOURCE: 'bam'
+      KEYCLOAK_RESOURCE: 'jam'
       KEYCLOAK_SECRET: 'yHi6W2raPmLvPXoxqMA7VWbLAA2WN0eB'
       KEYCLOAK_FRONTEND_SERVER_URL: 'http://localhost:8081'
       KEYCLOAK_BACKEND_SERVER_URL: 'http://keycloak:8080'
       LOGBOOK_SERVER_URL: 'https://logbooks.jlab.org'
-      ORACLE_DATASOURCE: 'bam'
+      ORACLE_DATASOURCE: 'jam'
       ORACLE_SERVER: 'oracle:1521'
-      ORACLE_USER: 'BAM_OWNER'
+      ORACLE_USER: 'JAM_OWNER'
       ORACLE_PASS: 'password'
       ORACLE_SERVICE: 'xepdb1'
       PUPPET_SHOW_SERVER_URL: 'http://puppet:3000'
-      BACKEND_SERVER_URL: 'http://bam:8080'
+      BACKEND_SERVER_URL: 'http://jam:8080'
       FRONTEND_SERVER_URL: 'https://localhost:8443'
       TZ: 'America/New_York'

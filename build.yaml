@@ -19,10 +19,10 @@ services:
       file: compose.yaml
       service: mailhog
 
-  bam:
+  jam:
     extends:
       file: compose.yaml
-      service: bam
+      service: jam
     build:
       context: .
       dockerfile: Dockerfile
