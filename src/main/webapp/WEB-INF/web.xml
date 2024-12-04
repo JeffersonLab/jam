@@ -8,15 +8,15 @@
     </welcome-file-list>
     <context-param>
         <param-name>appName</param-name>
-        <param-value>Beam Authorization Manager</param-value>
+        <param-value>JLab Authorization Manager</param-value>
     </context-param>
     <context-param>
         <param-name>appShortName</param-name>
-        <param-value>BAM</param-value>
+        <param-value>JAM</param-value>
     </context-param>
     <context-param>
         <param-name>appSpecificEnvPrefix</param-name>
-        <param-value>BAM</param-value>
+        <param-value>JAM</param-value>
     </context-param>
     <context-param>
         <param-name>releaseNumber</param-name>
@@ -72,7 +72,7 @@
             <url-pattern>/setup/*</url-pattern>
         </web-resource-collection>
         <auth-constraint>
-            <role-name>bam-admin</role-name>
+            <role-name>jam-admin</role-name>
         </auth-constraint>
         <user-data-constraint>
             <transport-guarantee>CONFIDENTIAL</transport-guarantee>
@@ -82,7 +82,7 @@
         <auth-method>OIDC</auth-method>
     </login-config>
     <security-role>
-        <role-name>bam-admin</role-name>
+        <role-name>jam-admin</role-name>
     </security-role>
     <distributable/>
 </web-app>

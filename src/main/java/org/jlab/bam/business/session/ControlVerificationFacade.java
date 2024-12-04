@@ -39,12 +39,12 @@ import org.jlab.smoothness.presentation.util.Functions;
  * @author ryans
  */
 @Stateless
-@DeclareRoles({"bam-admin"})
+@DeclareRoles({"jam-admin"})
 public class ControlVerificationFacade extends AbstractFacade<ControlVerification> {
 
   private static final Logger LOGGER = Logger.getLogger(ControlVerificationFacade.class.getName());
 
-  @PersistenceContext(unitName = "beam-authorizationPU")
+  @PersistenceContext(unitName = "jamPU")
   private EntityManager em;
 
   @EJB CreditedControlFacade controlFacade;
@@ -73,7 +73,7 @@ public class ControlVerificationFacade extends AbstractFacade<ControlVerificatio
     return q.getResultList();
   }
 
-  @RolesAllowed("bam-admin")
+  @RolesAllowed("jam-admin")
   public void toggle(BigInteger controlId, BigInteger destinationId) {
     ControlVerification verification = find(controlId, destinationId);
 
@@ -586,7 +586,7 @@ public class ControlVerificationFacade extends AbstractFacade<ControlVerificatio
   public void insertExpiredHistory(List<ControlVerification> verificationList, Date modifiedDate) {
     for (ControlVerification v : verificationList) {
       VerificationHistory history = new VerificationHistory();
-      history.setModifiedBy("bam-admin");
+      history.setModifiedBy("jam-admin");
       history.setModifiedDate(modifiedDate);
       history.setVerificationId(100);
       history.setVerificationDate(modifiedDate);

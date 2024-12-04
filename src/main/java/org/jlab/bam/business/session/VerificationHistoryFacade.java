@@ -14,7 +14,7 @@ import org.jlab.bam.persistence.entity.VerificationHistory;
  */
 @Stateless
 public class VerificationHistoryFacade extends AbstractFacade<VerificationHistory> {
-  @PersistenceContext(unitName = "beam-authorizationPU")
+  @PersistenceContext(unitName = "jamPU")
   private EntityManager em;
 
   @Override

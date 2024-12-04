@@ -27,7 +27,7 @@ services:
       KEYCLOAK_SERVER_URL: 'http://keycloak:8080'
       KEYCLOAK_HOME: '/opt/keycloak'
       KEYCLOAK_REALM: 'test-realm'
-      KEYCLOAK_RESOURCE: 'bam'
+      KEYCLOAK_RESOURCE: 'jam'
       KEYCLOAK_SECRET: 'yHi6W2raPmLvPXoxqMA7VWbLAA2WN0eB'
       TZ: 'America/New_York'
     volumes:

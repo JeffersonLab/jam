@@ -24,7 +24,7 @@ import org.jlab.smoothness.persistence.view.User;
 /**
  * @author ryans
  */
-@DeclareRoles({"bam-admin"})
+@DeclareRoles({"jam-admin"})
 public abstract class AbstractFacade<T> {
   @Resource private SessionContext context;
 
@@ -156,7 +156,7 @@ public abstract class AbstractFacade<T> {
   protected boolean isAdminOrGroupLeader(String username, List<User> leaders) {
     boolean isAdminOrLeader = false;
 
-    boolean isAdmin = context.isCallerInRole("bam-admin");
+    boolean isAdmin = context.isCallerInRole("jam-admin");
     if (isAdmin) {
       isAdminOrLeader = true;
     } else {

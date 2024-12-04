@@ -46,12 +46,12 @@ import org.jlab.smoothness.business.util.IOUtil;
  * @author ryans
  */
 @Stateless
-@DeclareRoles({"bam-admin"})
+@DeclareRoles({"jam-admin"})
 public class AuthorizationFacade extends AbstractFacade<Authorization> {
 
   private static final Logger LOGGER = Logger.getLogger(AuthorizationFacade.class.getName());
 
-  @PersistenceContext(unitName = "beam-authorizationPU")
+  @PersistenceContext(unitName = "jamPU")
   private EntityManager em;
 
   @EJB BeamDestinationFacade destinationFacade;
@@ -140,7 +140,7 @@ public class AuthorizationFacade extends AbstractFacade<Authorization> {
     return destinationAuthorizationMap;
   }
 
-  @RolesAllowed("bam-admin")
+  @RolesAllowed("jam-admin")
   public void saveAuthorization(
       String comments, List<DestinationAuthorization> destinationAuthorizationList)
       throws UserFriendlyException {
@@ -205,28 +205,28 @@ public class AuthorizationFacade extends AbstractFacade<Authorization> {
     LOGGER.log(Level.FINE, "Director's Authorization saved successfully");
   }
 
-  @RolesAllowed("bam-admin")
+  @RolesAllowed("jam-admin")
   public void sendOpsNewAuthorizationEmail(String linkHostName, String comments)
       throws UserFriendlyException {
 
-    String toCsv = System.getenv("BAM_PERMISSIONS_EMAIL_CSV");
+    String toCsv = System.getenv("JAM_PERMISSIONS_EMAIL_CSV");
 
     if (toCsv == null || toCsv.isEmpty()) {
       LOGGER.log(
-          Level.WARNING, "Environment variable 'BAM_PERMISSIONS_EMAIL_CSV' not found, aborting");
+          Level.WARNING, "Environment variable 'JAM_PERMISSIONS_EMAIL_CSV' not found, aborting");
       return;
     }
 
-    String subject = System.getenv("BAM_PERMISSIONS_SUBJECT");
+    String subject = System.getenv("JAM_PERMISSIONS_SUBJECT");
 
-    String body = "<a href=\"" + linkHostName + "/bam\">" + linkHostName + "/bam</a>";
+    String body = "<a href=\"" + linkHostName + "/jam\">" + linkHostName + "/jam</a>";
 
     body = body + "\n\n<p>Notes: " + comments + "</p>";
 
-    String sender = System.getenv("BAM_EMAIL_SENDER");
+    String sender = System.getenv("JAM_EMAIL_SENDER");
 
     if (sender == null || sender.isEmpty()) {
-      LOGGER.log(Level.WARNING, "Environment variable 'BAM_EMAIL_SENDER' not found, aborting");
+      LOGGER.log(Level.WARNING, "Environment variable 'JAM_EMAIL_SENDER' not found, aborting");
       return;
     }
 
@@ -235,7 +235,7 @@ public class AuthorizationFacade extends AbstractFacade<Authorization> {
     emailService.sendEmail(sender, sender, toCsv, null, subject, body, true);
   }
 
-  @RolesAllowed("bam-admin")
+  @RolesAllowed("jam-admin")
   public long sendELog(String proxyServer, String logbookServer) throws UserFriendlyException {
     String username = checkAuthenticated();
 
@@ -248,14 +248,14 @@ public class AuthorizationFacade extends AbstractFacade<Authorization> {
     // String body = getELogHTMLBody(authorization);
     String body = getAlternateELogHTMLBody(proxyServer);
 
-    String subject = System.getenv("BAM_PERMISSIONS_SUBJECT");
+    String subject = System.getenv("JAM_PERMISSIONS_SUBJECT");
 
-    String logbooks = System.getenv("BAM_BOOKS_CSV");
+    String logbooks = System.getenv("JAM_BOOKS_CSV");
 
     if (logbooks == null || logbooks.isEmpty()) {
       logbooks = "TLOG";
       LOGGER.log(
-          Level.WARNING, "Environment variable 'BAM_BOOKS_CSV' not found, using default TLOG");
+          Level.WARNING, "Environment variable 'JAM_BOOKS_CSV' not found, using default TLOG");
     }
 
     Properties config = Library.getConfiguration();
@@ -320,7 +320,7 @@ public class AuthorizationFacade extends AbstractFacade<Authorization> {
             puppetServer
                 + "/puppet-show/screenshot?url="
                 + internalServer
-                + "%2Fbam%2Fpermissions%3Fprint%3DY&fullPage=true&filename=bam.png&ignoreHTTPSErrors=true");
+                + "%2Fjam%2Fpermissions%3Fprint%3DY&fullPage=true&filename=jam.png&ignoreHTTPSErrors=true");
 
     LOGGER.log(Level.FINEST, "Fetching URL: {0}", url.toString());
 
@@ -332,7 +332,7 @@ public class AuthorizationFacade extends AbstractFacade<Authorization> {
       URLConnection con = url.openConnection();
       in = con.getInputStream();
 
-      tmpFile = File.createTempFile("bam", ".png");
+      tmpFile = File.createTempFile("jam", ".png");
       out = new FileOutputStream(tmpFile);
       IOUtil.copy(in, out);
 
@@ -349,7 +349,7 @@ public class AuthorizationFacade extends AbstractFacade<Authorization> {
         "[figure:1]<div>\n\n<b><span style=\"color: red;\">Always check the Beam Authorization web application for the latest credited controls status:</span></b> ");
     builder.append("<a href=\"");
     builder.append(server);
-    builder.append("/bam/\">Beam Authorization</a></div>\n");
+    builder.append("/jam/\">JLab Authorization Manager</a></div>\n");
 
     return builder.toString();
   }

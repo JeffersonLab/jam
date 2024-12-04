@@ -18,7 +18,7 @@ import org.jlab.bam.persistence.entity.ControlVerification;
  */
 @Stateless
 public class BeamDestinationFacade extends AbstractFacade<BeamDestination> {
-  @PersistenceContext(unitName = "beam-authorizationPU")
+  @PersistenceContext(unitName = "jamPU")
   private EntityManager em;
 
   @Override

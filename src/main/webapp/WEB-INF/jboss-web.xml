@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jboss-web>  
     <resource-ref>  
-        <res-ref-name>jdbc/bam</res-ref-name>
-        <jndi-name>java:/jdbc/bam</jndi-name>
+        <res-ref-name>jdbc/jam</res-ref-name>
+        <jndi-name>java:/jdbc/jam</jndi-name>
     </resource-ref>
     <resource-ref>
         <res-ref-name>mail/jlab</res-ref-name>

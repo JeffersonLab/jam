@@ -55,7 +55,7 @@
                                 <div class="message-box">As Needed</div>
                             </c:otherwise>
                         </c:choose>
-                        <c:if test="${pageContext.request.isUserInRole('bam-admin')}">
+                        <c:if test="${pageContext.request.isUserInRole('jam-admin')}">
                             <h3>Operability Notes <span class="readonly-field"><button id="operability-notes-edit-button" type="button">Edit</button></span></h3>    
                             <div class="notes-field">
                                 <form id="operability-form" method="post" action="ajax/edit-operability-note">

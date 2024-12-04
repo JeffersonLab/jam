@@ -160,7 +160,7 @@ public class Authorization implements Serializable {
     other.authorizationDate = this.authorizationDate;
     other.authorizedBy = this.authorizedBy;
     other.comments = this.comments;
-    other.setModifiedBy("bam-admin");
+    other.setModifiedBy("jam-admin");
     other.setModifiedDate(new Date());
     return other;
   }

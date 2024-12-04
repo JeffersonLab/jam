@@ -19,7 +19,7 @@
         <section>
             <h2><c:out value="${title}"/></h2>
             <div class="participation-scroll-pane">
-                <table class="data-table stripped-table fixed-table control-participation-table ${pageContext.request.isUserInRole('bam-admin') ? 'editable' : ''}">
+                <table class="data-table stripped-table fixed-table control-participation-table ${pageContext.request.isUserInRole('jam-admin') ? 'editable' : ''}">
                     <thead>
                     <tr>
                         <th rowspan="2" class="component-header">Credited Control</th>

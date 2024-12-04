@@ -10,7 +10,7 @@ import org.jlab.bam.persistence.entity.Workgroup;
  */
 @Stateless
 public class WorkgroupFacade extends AbstractFacade<Workgroup> {
-  @PersistenceContext(unitName = "beam-authorizationPU")
+  @PersistenceContext(unitName = "jamPU")
   private EntityManager em;
 
   @Override

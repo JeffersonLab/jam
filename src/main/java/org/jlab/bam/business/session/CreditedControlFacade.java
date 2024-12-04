@@ -18,7 +18,7 @@ import org.jlab.smoothness.persistence.util.JPAUtil;
 @Stateless
 public class CreditedControlFacade extends AbstractFacade<CreditedControl> {
 
-  @PersistenceContext(unitName = "beam-authorizationPU")
+  @PersistenceContext(unitName = "jamPU")
   private EntityManager em;
 
   @Override
@@ -71,7 +71,7 @@ public class CreditedControlFacade extends AbstractFacade<CreditedControl> {
     return ccList;
   }
 
-  @RolesAllowed("bam-admin")
+  @RolesAllowed("jam-admin")
   public void updateComments(BigInteger creditedControlId, String comments) {
     CreditedControl control = find(creditedControlId);
 

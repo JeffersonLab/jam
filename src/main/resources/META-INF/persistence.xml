@@ -2,9 +2,9 @@
 <persistence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xmlns="http://xmlns.jcp.org/xml/ns/persistence" version="2.2"
              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd">
-    <persistence-unit name="beam-authorizationPU" transaction-type="JTA">
+    <persistence-unit name="jamPU" transaction-type="JTA">
     <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-    <jta-data-source>jdbc/bam</jta-data-source>
+    <jta-data-source>jdbc/jam</jta-data-source>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <shared-cache-mode>NONE</shared-cache-mode>
         <properties>
