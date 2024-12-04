@@ -308,7 +308,7 @@ public class ControlVerificationFacade extends AbstractFacade<ControlVerificatio
     builder
         .append("</div><div>\n\n<b>See:</b> <a href=\"")
         .append(proxyServer)
-        .append("/bam/\">Beam Authorization</a></div>\n");
+        .append("/jam/\">JLab Authorization Manager</a></div>\n");
 
     return builder.toString();
   }
@@ -344,7 +344,7 @@ public class ControlVerificationFacade extends AbstractFacade<ControlVerificatio
     builder
         .append("</div><div>\n\n<b>See:</b> <a href=\"")
         .append(proxyServer)
-        .append("/bam/\">Beam Authorization</a></div>\n");
+        .append("/jam/\">JLab Authorization Manager</a></div>\n");
 
     return builder.toString();
   }
