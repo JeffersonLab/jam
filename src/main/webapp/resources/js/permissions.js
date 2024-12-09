@@ -63,7 +63,11 @@ $(document).on("change", ".mode-select", function(){
         $comments = $tr.find(".comment-input"),
         $expiration = $tr.find(".expiration-input");
 
-    if($select.val() === 'None') {
+    if($select.val() === 'RF Only') {
+        $limit.attr('readonly', 'readonly');
+        $comments.removeAttr('readonly');
+        $expiration.removeAttr('readonly');
+    } else if($select.val() === 'None') {
         $limit.val('');
         $comments.val('');
         $expiration.val('');
