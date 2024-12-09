@@ -28,6 +28,7 @@ insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, MACHINE, CURR
 insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, MACHINE, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.destination_id.nextval, 'Destination 7', 'UITF', 'uA', 'Y', 7);
 insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, MACHINE, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.destination_id.nextval, 'Destination 8', 'UITF', 'uA', 'Y', 8);
 insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, MACHINE, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.destination_id.nextval, 'Destination 9', 'UITF', 'uA', 'Y', 9);
+insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, MACHINE, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.destination_id.nextval, 'Injector RF Operations', 'CEBAF', 'uA', 'Y', 9);
 
 -- Populate Initial Control Verification
 insert into JAM_OWNER.control_verification (CONTROL_VERIFICATION_ID, CREDITED_CONTROL_ID, BEAM_DESTINATION_ID, VERIFICATION_ID, VERIFICATION_DATE, VERIFIED_BY, EXPIRATION_DATE, COMMENTS, MODIFIED_BY, MODIFIED_DATE) values(JAM_OWNER.control_verification_id.nextval, 1, 1, 100, sysdate, 'admin', null, null, 'admin', sysdate);

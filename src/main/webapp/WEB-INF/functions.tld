@@ -13,7 +13,7 @@
     <function>
         <name>beamModeList</name>
         <function-class>org.jlab.jam.presentation.util.BeamAuthFunctions</function-class>
-        <function-signature>java.util.List beamModeList(java.lang.String)</function-signature>
+        <function-signature>java.util.List beamModeList(java.lang.String, java.lang.String)</function-signature>
     </function>
     <function>
         <name>laseModeList</name>
