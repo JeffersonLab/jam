@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
    http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd">
     <welcome-file-list>
-        <welcome-file>permissions</welcome-file>
+        <welcome-file>permissions/cebaf</welcome-file>
     </welcome-file-list>
     <context-param>
         <param-name>appName</param-name>

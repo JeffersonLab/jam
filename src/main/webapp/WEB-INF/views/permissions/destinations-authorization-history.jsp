@@ -28,7 +28,7 @@
         <section>
             <c:choose>
                 <c:when test="${authorization ne null}">
-                    <t:permissions-page cebafDestinationList="${cebafDestinationList}" lerfDestinationList="${lerfDestinationList}" isEditable="${false}" isHistory="${true}"/>
+                    <t:facility-page cebafDestinationList="${cebafDestinationList}" lerfDestinationList="${lerfDestinationList}" isEditable="${false}" isHistory="${true}"/>
                 </c:when>
                 <c:otherwise>
                     <div class="message-box">No Authorization found with ID: ${fn:escapeXml(param.authorizationId)}</div>

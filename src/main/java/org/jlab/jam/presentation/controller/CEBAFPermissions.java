@@ -36,11 +36,11 @@ import org.jlab.smoothness.presentation.util.ParamConverter;
  * @author ryans
  */
 @WebServlet(
-    name = "BeamPermissions",
-    urlPatterns = {"/permissions"})
-public class BeamPermissions extends HttpServlet {
+    name = "CEBAFPermissions",
+    urlPatterns = {"/permissions/cebaf"})
+public class CEBAFPermissions extends HttpServlet {
 
-  private static final Logger LOGGER = Logger.getLogger(BeamPermissions.class.getName());
+  private static final Logger LOGGER = Logger.getLogger(CEBAFPermissions.class.getName());
   @EJB AuthorizationFacade authorizationFacade;
   @EJB BeamDestinationFacade beamDestinationFacade;
   @EJB ControlVerificationFacade verificationFacade;
@@ -75,7 +75,7 @@ public class BeamPermissions extends HttpServlet {
     request.setAttribute("uitfDestinationList", uitfDestinationList);
     request.setAttribute("destinationAuthorizationMap", destinationAuthorizationMap);
 
-    request.getRequestDispatcher("WEB-INF/views/permissions.jsp").forward(request, response);
+    request.getRequestDispatcher("/WEB-INF/views/permissions/cebaf.jsp").forward(request, response);
   }
 
   /**
