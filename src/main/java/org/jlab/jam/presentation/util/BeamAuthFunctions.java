@@ -28,7 +28,7 @@ public final class BeamAuthFunctions {
   public static List<String> beamModeList(String facility, String destination) {
     List<String> modes = null;
 
-    if(destination.contains("RF Operations")) {
+    if (destination.contains("RF Operations")) {
       modes = RF_LIST;
     } else {
       switch (facility) {
