@@ -18,7 +18,6 @@
                             <li${fn:startsWith(currentPath, '/permissions/uitf') ? ' class="current-secondary"' : ''}><a href="${pageContext.request.contextPath}/permissions/uitf">UITF</a></li>
                             <li${fn:startsWith(currentPath, '/permissions/cmtf') ? ' class="current-secondary"' : ''}><a href="${pageContext.request.contextPath}/permissions/cmtf">CMTF</a></li>
                             <li${fn:startsWith(currentPath, '/permissions/vta') ? ' class="current-secondary"' : ''}><a href="${pageContext.request.contextPath}/permissions/vta">VTA</a></li>
-                            <li${fn:startsWith(currentPath, '/permissions/gts') ? ' class="current-secondary"' : ''}><a href="${pageContext.request.contextPath}/permissions/gts">GTS</a></li>
                         </ul>
     </jsp:attribute>
     <jsp:body>
