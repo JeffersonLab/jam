@@ -16,6 +16,18 @@
         <script type="text/javascript" src="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/js/jam.js"></script>
         <jsp:invoke fragment="scripts"/>
     </jsp:attribute>
+    <jsp:attribute name="headerExtra">
+        <div id="namespace-nav">
+            <ul>
+                <li class="current-namespace" ${fn:startsWith(currentPath, '/cebaf') ? ' class="current-namespace"' : ''}><a href="${pageContext.request.contextPath}/cebaf/permissions">CEBAF</a></li>
+                <li${fn:startsWith(currentPath, '/lerf') ? ' class="current-namesapce"' : ''}><a href="${pageContext.request.contextPath}/lerf/permissions">LERF</a></li>
+                <li${fn:startsWith(currentPath, '/uitf') ? ' class="current-namespace"' : ''}><a href="${pageContext.request.contextPath}/lerf/permissions">UITF</a></li>
+                <li${fn:startsWith(currentPath, '/cmtf') ? ' class="current-namespace"' : ''}><a href="${pageContext.request.contextPath}/lerf/permissions">CMTF</a></li>
+                <li${fn:startsWith(currentPath, '/vta') ? ' class="current-namespace"' : ''}><a href="${pageContext.request.contextPath}/vta/permissions">VTA</a></li>
+                <li${fn:startsWith(currentPath, '/gts') ? ' class="current-namespace"' : ''}><a href="${pageContext.request.contextPath}/gts/permissions">GTS</a></li>
+            </ul>
+        </div>
+    </jsp:attribute>
     <jsp:attribute name="primaryNavigation">
                     <ul>
                         <li${fn:startsWith(currentPath, '/permissions') ? ' class="current-primary"' : ''}><a href="${pageContext.request.contextPath}/permissions">Permissions</a></li>

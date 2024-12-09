@@ -72,3 +72,18 @@ dd ul {
 .expiring-soon {
     color: red;
 }
+#namespace-nav ul {
+    list-style-type: none;
+    margin: 0;
+
+}
+#namespace-nav li {
+    display: inline-block;
+    border: 1px solid black;
+    padding: 0.5em;
+    background-color: lightgray;
+}
+
+#namespace-nav li.current-namespace {
+    background-color: white;
+}
