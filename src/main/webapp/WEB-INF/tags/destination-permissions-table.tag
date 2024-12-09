@@ -50,7 +50,7 @@
                     <div class="readonly-field"><c:out value="${selectedBeamMode}"/></div>
                     <div class="editable-field">
                         <select name="mode[]" class="mode-select">
-                            <c:forEach items="${beamauth:beamModeList(facility)}" var="beamMode">
+                            <c:forEach items="${beamauth:beamModeList(facility, destination.name)}" var="beamMode">
                                 <option${beamMode eq selectedBeamMode ? ' selected="selected"' : ''}><c:out value="${beamMode}"/></option>
                             </c:forEach>
                         </select>
@@ -61,6 +61,9 @@
                     <c:set var="selectedLimit" value="${destinationAuthorization.cwLimit eq null ? '' : destinationAuthorization.cwLimit}"/>
                     <span class="readonly-field">
                         <c:choose>
+                            <c:when test="${fn:contains(destination.name, 'RF Operations')}">
+                                N/A
+                            </c:when>
                             <c:when test="${selectedLimit ne ''}">
                                 <fmt:formatNumber value="${selectedLimit}"/>
                                 <c:out value="${units}"/>
@@ -73,7 +76,7 @@
                         </c:choose>
                     </span>
                     <span class="editable-field">
-                        <input name="limit[]" class="limit-input" type="text" value="${selectedBeamMode eq 'None' ? '' : fn:escapeXml(selectedLimit)}"${selectedBeamMode eq 'None' ? ' readonly="readonly"' : ''}/>
+                        <input name="limit[]" class="limit-input" type="text" value="${selectedBeamMode eq 'None' ? '' : fn:escapeXml(selectedLimit)}"${selectedBeamMode eq 'None' || selectedBeamMode eq 'RF Only' ? ' readonly="readonly"' : ''}/>
                         <c:out value="${units}"/>
                     </span>
                     <input type="hidden" name="beamDestinationId[]" value="${destination.beamDestinationId}"/>

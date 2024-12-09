@@ -13,6 +13,7 @@ public final class BeamAuthFunctions {
 
   private static final Logger LOGGER = Logger.getLogger(BeamAuthFunctions.class.getName());
 
+  private static final List<String> RF_LIST = Arrays.asList("None", "RF Only");
   private static final List<String> CEBAF_LIST = Arrays.asList("None", "Tune", "CW");
   private static final List<String> LERF_LIST =
       Arrays.asList(
@@ -24,20 +25,25 @@ public final class BeamAuthFunctions {
     // cannot instantiate publicly
   }
 
-  public static List<String> beamModeList(String facility) {
+  public static List<String> beamModeList(String facility, String destination) {
     List<String> modes = null;
 
-    switch (facility) {
-      case "cebaf":
-        modes = CEBAF_LIST;
-        break;
-      case "lerf":
-        modes = LERF_LIST;
-        break;
-      case "uitf":
-        modes = UITF_LIST;
-        break;
+    if(destination.contains("RF Operations")) {
+      modes = RF_LIST;
+    } else {
+      switch (facility) {
+        case "cebaf":
+          modes = CEBAF_LIST;
+          break;
+        case "lerf":
+          modes = LERF_LIST;
+          break;
+        case "uitf":
+          modes = UITF_LIST;
+          break;
+      }
     }
+
     return modes;
   }
 
