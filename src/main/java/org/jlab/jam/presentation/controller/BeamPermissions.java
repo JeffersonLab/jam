@@ -108,10 +108,10 @@ public class BeamPermissions extends HttpServlet {
       LOGGER.log(Level.WARNING, "Unable to parse notifications parameter");
     }
 
-    List<DestinationAuthorization> destinationAuthorizationList =
-        convertDestinationAuthorizationList(request);
-
     try {
+      List<DestinationAuthorization> destinationAuthorizationList =
+          convertDestinationAuthorizationList(request);
+
       authorizationFacade.saveAuthorization(comments, destinationAuthorizationList);
     } catch (UserFriendlyException e) {
       errorReason = e.getUserMessage();
@@ -171,7 +171,7 @@ public class BeamPermissions extends HttpServlet {
   }
 
   private List<DestinationAuthorization> convertDestinationAuthorizationList(
-      HttpServletRequest request) {
+      HttpServletRequest request) throws UserFriendlyException {
     List<DestinationAuthorization> destinationAuthorizationList = new ArrayList<>();
     String[] modeArray = request.getParameterValues("mode[]");
     String[] limitStrArray = request.getParameterValues("limit[]");
@@ -204,8 +204,13 @@ public class BeamPermissions extends HttpServlet {
           da.setCwLimit(null);
         } else if (limitStr != null && !limitStr.equals("") && !limitStr.equals("N/A")) {
           limitStr = limitStr.replaceAll(",", ""); // Remove commas
-          BigDecimal limit = new BigDecimal(limitStr);
-          da.setCwLimit(limit);
+
+          try {
+            BigDecimal limit = new BigDecimal(limitStr);
+            da.setCwLimit(limit);
+          } catch (NumberFormatException e) {
+            throw new UserFriendlyException("limit must be a number", e);
+          }
         }
 
         String comments = commentsArray[i];
