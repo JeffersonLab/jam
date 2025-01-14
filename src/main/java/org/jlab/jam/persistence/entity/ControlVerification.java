@@ -4,22 +4,7 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -85,6 +70,13 @@ public class ControlVerification implements Serializable, Comparable<ControlVeri
   @JoinColumn(name = "CREDITED_CONTROL_ID", referencedColumnName = "CREDITED_CONTROL_ID")
   @ManyToOne(fetch = FetchType.LAZY)
   private CreditedControl creditedControl;
+
+  @ManyToMany(fetch = FetchType.EAGER)
+  @JoinTable(
+      name = "VERIFICATION_COMPONENT",
+      joinColumns = @JoinColumn(name = "CONTROL_VERIFICATION_ID"),
+      inverseJoinColumns = @JoinColumn(name = "COMPONENT_ID"))
+  private List<Component> componentList;
 
   public ControlVerification() {}
 
@@ -174,6 +166,14 @@ public class ControlVerification implements Serializable, Comparable<ControlVeri
 
   public void setCreditedControl(CreditedControl creditedControl) {
     this.creditedControl = creditedControl;
+  }
+
+  public List<Component> getComponentList() {
+    return componentList;
+  }
+
+  public void setComponentList(List<Component> componentList) {
+    this.componentList = componentList;
   }
 
   @Override

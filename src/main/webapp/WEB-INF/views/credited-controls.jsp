@@ -85,7 +85,10 @@
                             </c:when>
                             <c:otherwise>
                                 <c:if test="${adminOrLeader && param.notEditable eq null}">
-                                    <button id="edit-selected-button" type="button" class="verify-button selected-row-action" disabled="disabled">Edit Selected</button>
+                                    <button id="edit-selected-button" type="button" class="verify-button selected-row-action" disabled="disabled">Edit Verification</button>
+                                </c:if>
+                                <c:if test="${pageContext.request.isUserInRole('jam-admin') && param.notEditable eq null}">
+                                    <button id="component-edit-button" type="button" class="single-select-row-action" disabled="disabled">Edit Components</button>
                                 </c:if>
                                 <table id="verification-table" class="data-table stripped-table${(adminOrLeader && param.notEditable eq null) ? ' multicheck-table editable-row-table' : ''}">
                                     <thead>
@@ -102,8 +105,7 @@
                                             </c:if>
                                             <th>Beam Destination</th>
                                             <th>Verified</th>
-                                            <th>Verified Date</th>
-                                            <th>Verified By</th>
+                                            <th>Components</th>
                                             <th>Comments</th>
                                             <th>Expiration Date</th>
                                             <th class="audit-header">Audit</th>
@@ -118,9 +120,16 @@
                                                     </td>
                                                 </c:if>
                                                 <td><c:out value="${verification.beamDestination.name}"/></td>
-                                                <td class="icon-cell"><span title="${verification.verificationId eq 1 ? 'Verified' : (verification.verificationId eq 50 ? 'Provisionally Verified' : 'Not Verified')}" class="small-icon baseline-small-icon ${verification.verificationId eq 1 ? 'verified-icon' : (verification.verificationId eq 50 ? 'provisional-icon' : 'not-verified-icon')}"></span></td>
-                                                <td><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}" value="${verification.verificationDate}"/></td>
-                                                <td><c:out value="${s:formatUsername(verification.verifiedBy)}"/></td>
+                                                <td class="verified-cell">
+                                                  <div title="${verification.verificationId eq 1 ? 'Verified' : (verification.verificationId eq 50 ? 'Provisionally Verified' : 'Not Verified')}" class="small-icon baseline-small-icon ${verification.verificationId eq 1 ? 'verified-icon' : (verification.verificationId eq 50 ? 'provisional-icon' : 'not-verified-icon')}"></div>
+                                                  <div class="verified-date"><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}" value="${verification.verificationDate}"/></div>
+                                                  <div class="verified-by"><c:out value="${s:formatUsername(verification.verifiedBy)}"/></div>
+                                                </td>
+                                                <td>
+                                                    <c:forEach items="${verification.componentList}" var="component">
+                                                        <div><span class="small-icon baseline-small-icon verified-icon"></span> <a href="${env['SRM_COMPONENT_URL']}${fn:escapeXml(component.name)}"><c:out value="${component.name}"/></a></div>
+                                                    </c:forEach>
+                                                </td>
                                                 <td><c:out value="${verification.comments}"/></td>
                                                 <td><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}" value="${verification.expirationDate}"/></td>
                                                 <td><a data-dialog-title="Verification History" href="credited-controls/verification-history?controlVerificationId=${verification.controlVerificationId}" title="Click for verification history">History</a></td>
@@ -282,6 +291,9 @@
                     <div>No controls expiring within seven days</div>
                 </c:otherwise>
             </c:choose>            
-        </div>        
+        </div>
+        <div id="component-edit-dialog" class="dialog" title="Components">
+
+        </div>
     </jsp:body>         
 </t:page>

@@ -152,7 +152,7 @@ $(document).on("click", ".verify-button", function () {
                 label = $("td:nth-child(2)", value).text();
             $selectedList.append('<li data-control-verification-id="' + String(id).encodeXml()  + '">' + String(label).encodeXml() + '</li>');
             statusArray.push($(this).attr("data-status-id"));
-            verificationDateArray.push($("td:nth-child(4)", value).text());
+            verificationDateArray.push($(".verified-date", value).text());
             verifiedByArray.push($(this).attr("data-verified-username"));
             expirationDateArray.push($("td:nth-child(7)", value).text());
             commentsArray.push($("td:nth-child(6)", value).text());
@@ -222,12 +222,20 @@ $(document).on("change", "#check-select", function () {
             $(this).prop("checked", true);
         });
         $("#edit-selected-button").prop("disabled", false);
+
+        var numSelected = jlab.editableRowTable.updateSelectionCount();
+        if(numSelected === 1) {
+            $("#component-edit-button").prop("disabled", false);
+        } else {
+            $("#component-edit-button").prop("disabled", true);
+        }
     } else if ($("#check-select").val() === 'none') {
         $(".editable-row-table tbody tr").removeClass("selected-row");
         $(".destination-checkbox").each(function (index, value) {
             $(this).prop("checked", false);
         });
         $("#edit-selected-button").prop("disabled", true);
+        $("#component-edit-button").prop("disabled", true);
     }
     $("#check-select").val('');
 });
@@ -247,6 +255,10 @@ $(document).on("change", "#check-select", function () {
         $("#edit-selected-button").prop("disabled", true);
     }
 });*/
+$(document).on("click", "#component-edit-button", function() {
+    $("#component-edit-dialog").dialog("open");
+    return false;
+});
 $(document).on("click", ".multicheck-table tbody tr", function (e) {
     var checkClicked = e.target.classList.contains('destination-checkbox');
 
@@ -293,6 +305,12 @@ $(document).on("click", ".multicheck-table tbody tr", function (e) {
     } else {
         $(".no-selection-row-action").prop("disabled", false);
         $(".selected-row-action").prop("disabled", true);
+    }
+
+    if(numSelected === 1) {
+        $(".single-select-row-action").prop("disabled", false);
+    } else {
+        $(".single-select-row-action").prop("disabled", true);
     }
 });
 jlab.editableRowTable.updateSelectionCount = function () {
