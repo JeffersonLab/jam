@@ -256,6 +256,26 @@ $(document).on("change", "#check-select", function () {
     }
 });*/
 $(document).on("click", "#component-edit-button", function() {
+
+    var $componentList = $("#selected-component-list");
+
+    $componentList.empty();
+
+    var $rowList = $("#verification-table tbody tr.selected-row");
+
+    if($rowList.length !== 1) {
+        alert("select only one row");
+        return;
+    } else {
+        $rowList.find(".component-status").each(function (index, value) {
+            var label = $(this).find("a").text(),
+                id = $(this).attr("data-id");
+            $componentList.append('<li data-id="' + String(id).encodeXml() + '">' + String(label).encodeXml() + '</li>');
+        });
+    }
+
+    console.log($componentList);
+
     $("#component-edit-dialog").dialog("open");
     return false;
 });

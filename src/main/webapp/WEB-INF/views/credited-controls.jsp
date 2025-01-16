@@ -127,7 +127,7 @@
                                                 </td>
                                                 <td>
                                                     <c:forEach items="${verification.componentList}" var="component">
-                                                        <div>
+                                                        <div class="component-status" data-id="${component.componentId}">
                                                             <c:choose>
                                                                 <c:when test="${component.statusId eq 1}">
                                                                     <span class="small-icon baseline-small-icon verified-icon"></span>
@@ -321,7 +321,6 @@
                 </div>
                 <div class="column">
                     <ul id="selected-component-list">
-                        <li>Component 1</li>
                     </ul>
                 </div>
             </div>
