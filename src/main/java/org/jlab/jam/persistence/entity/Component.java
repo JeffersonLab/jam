@@ -27,9 +27,9 @@ public class Component implements Serializable {
   @Column(nullable = false, length = 128)
   private String name;
 
-  @JoinColumn(name = "SYSTEM_ID", referencedColumnName = "SYSTEM_ID", nullable = false)
-  @ManyToOne(optional = false)
-  private SystemEntity system;
+  @NotNull
+  @Column(name = "STATUS_ID", nullable = false, precision = 22, scale = 0)
+  private BigInteger statusId;
 
   public Component() {}
 
@@ -58,12 +58,12 @@ public class Component implements Serializable {
     this.name = name;
   }
 
-  public SystemEntity getSystem() {
-    return system;
+  public BigInteger getStatusId() {
+    return statusId;
   }
 
-  public void setSystem(SystemEntity system) {
-    this.system = system;
+  public void setStatusId(BigInteger statusId) {
+    this.statusId = statusId;
   }
 
   @Override

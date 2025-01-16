@@ -151,56 +151,18 @@ SELECT a.beam_destination_id,
        (SELECT MIN(EXPIRATION_DATE) FROM JAM_OWNER.CONTROL_VERIFICATION b WHERE a.beam_destination_id = b.beam_destination_id) as EXPIRATION_DATE
 FROM JAM_OWNER.BEAM_DESTINATION a;
 
-CREATE TABLE JAM_OWNER.CATEGORY
-(
-    CATEGORY_ID NUMBER NOT NULL CONSTRAINT CATEGORY_PK PRIMARY KEY,
-    NAME        VARCHAR2(128 CHAR) NOT NULL CONSTRAINT CATEGORY_AK1 UNIQUE,
-    PARENT_ID   NUMBER CONSTRAINT CATEGORY_FK1 REFERENCES JAM_OWNER.CATEGORY ON DELETE SET NULL,
-    WEIGHT      NUMBER
-);
-
-/*grant select on srm_owner.category to jam_owner;
-create or replace view jam_owner.category as
-(
-select distinct category_id, name, parent_id, weight
-from srm_owner.category z
-start with z.category_id in
-           (select category_id
-            from srm_owner.system a
-            where system_id in
-                  (select system_id from srm_owner.system_application where application_id = 2))
-connect by prior z.parent_id = z.category_id
-);*/
-
-CREATE TABLE JAM_OWNER.SYSTEM
-(
-    SYSTEM_ID   NUMBER NOT NULL CONSTRAINT SYSTEM_PK PRIMARY KEY,
-    NAME        VARCHAR2(128 CHAR) NOT NULL CONSTRAINT SYSTEM_AK1 UNIQUE,
-    CATEGORY_ID NUMBER NOT NULL CONSTRAINT SYSTEM_FK1 REFERENCES JAM_OWNER.CATEGORY ON DELETE SET NULL,
-    WEIGHT      NUMBER
-);
-
-/*grant select on srm_owner.system to jam_owner;
-grant select on srm_owner.system_application to dtm_owner;
-create or replace view jam_owner.system as
-(
-select SYSTEM_ID, NAME, CATEGORY_ID, WEIGHT
-from srm_owner.system where system_id in (select system_id from srm_owner.system_application where application_id = 2)
-);*/
-
 CREATE TABLE JAM_OWNER.COMPONENT
 (
     COMPONENT_ID         NUMBER NOT NULL CONSTRAINT COMPONENT_PK PRIMARY KEY,
     NAME                 VARCHAR2(128 char) NOT NULL CONSTRAINT COMPONENT_CK4 CHECK (INSTR(NAME, '*') = 0),
-    SYSTEM_ID            NUMBER NOT NULL CONSTRAINT COMPONENT_FK2 REFERENCES JAM_OWNER.SYSTEM ON DELETE SET NULL,
-    CONSTRAINT COMPONENT_AK1 UNIQUE (NAME, SYSTEM_ID),
-    CONSTRAINT COMPONENT_AK2 UNIQUE (SYSTEM_ID, COMPONENT_ID)
+    STATUS_ID            INTEGER NOT NULL,
+    CONSTRAINT COMPONENT_AK1 UNIQUE (NAME)
 );
 
 /*grant select on srm_owner.component to jam_owner;
 create or replace view jam_owner.component as
 (
-select component_id, name, system_id, region_id from srm_owner.component where system_id in (select system_id from srm_owner.system_application where application_id = 2)
+select component_id, name, status_id from srm_owner.component join srm_owner.component_status_2 using (component_id) where system_id in (select system_id from srm_owner.system_application where application_id = 2)
 );*/
 
 CREATE TABLE JAM_OWNER.VERIFICATION_COMPONENT

@@ -127,7 +127,17 @@
                                                 </td>
                                                 <td>
                                                     <c:forEach items="${verification.componentList}" var="component">
-                                                        <div><span class="small-icon baseline-small-icon verified-icon"></span> <a href="${env['SRM_COMPONENT_URL']}${fn:escapeXml(component.name)}"><c:out value="${component.name}"/></a></div>
+                                                        <div>
+                                                            <c:choose>
+                                                                <c:when test="${component.statusId eq 1}">
+                                                                    <span class="small-icon baseline-small-icon verified-icon"></span>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <span class="small-icon baseline-small-icon not-verified-icon"></span>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                            <a href="${env['SRM_COMPONENT_URL']}${fn:escapeXml(component.name)}"><c:out value="${component.name}"/></a>
+                                                        </div>
                                                     </c:forEach>
                                                 </td>
                                                 <td><c:out value="${verification.comments}"/></td>

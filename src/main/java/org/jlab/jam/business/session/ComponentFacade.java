@@ -3,14 +3,12 @@ package org.jlab.jam.business.session;
 import java.math.BigInteger;
 import java.util.*;
 import javax.annotation.security.PermitAll;
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import org.jlab.jam.persistence.entity.Component;
-import org.jlab.jam.persistence.entity.SystemEntity;
 import org.jlab.smoothness.business.util.IOUtil;
 
 /**
@@ -20,8 +18,6 @@ import org.jlab.smoothness.business.util.IOUtil;
 public class ComponentFacade extends AbstractFacade<Component> {
   @PersistenceContext(unitName = "jamPU")
   private EntityManager em;
-
-  @EJB SystemFacade systemFacade;
 
   @Override
   protected EntityManager getEntityManager() {
@@ -58,27 +54,6 @@ public class ComponentFacade extends AbstractFacade<Component> {
 
       List<Predicate> filters = new ArrayList<>();
 
-      if (categoryIdArray != null && categoryIdArray.length > 0) {
-        Set<BigInteger> systemSet = new LinkedHashSet<>();
-        for (BigInteger categoryId : categoryIdArray) {
-          List<SystemEntity> systemList = systemFacade.fetchHierarchy(categoryId);
-          for (SystemEntity entity : systemList) {
-            systemSet.add(entity.getSystemId());
-          }
-        }
-
-        if (!systemSet.isEmpty()) {
-          if (systemIdArray != null) {
-            systemSet.addAll(Arrays.asList(systemIdArray));
-          }
-
-          systemIdArray = systemSet.toArray(new BigInteger[] {});
-        }
-      }
-
-      if (systemIdArray != null && systemIdArray.length > 0) {
-        filters.add(root.get("system").in((Object[]) systemIdArray));
-      }
       if (q != null && !q.isEmpty()) {
         String searchString = q.toUpperCase();
 
@@ -128,27 +103,6 @@ public class ComponentFacade extends AbstractFacade<Component> {
 
       List<Predicate> filters = new ArrayList<>();
 
-      if (categoryIdArray != null && categoryIdArray.length > 0) {
-        Set<BigInteger> systemSet = new LinkedHashSet<>();
-        for (BigInteger categoryId : categoryIdArray) {
-          List<SystemEntity> systemList = systemFacade.fetchHierarchy(categoryId);
-          for (SystemEntity entity : systemList) {
-            systemSet.add(entity.getSystemId());
-          }
-        }
-
-        if (!systemSet.isEmpty()) {
-          if (systemIdArray != null) {
-            systemSet.addAll(Arrays.asList(systemIdArray));
-          }
-
-          systemIdArray = systemSet.toArray(new BigInteger[] {});
-        }
-      }
-
-      if (systemIdArray != null && systemIdArray.length > 0) {
-        filters.add(root.get("system").in((Object[]) systemIdArray));
-      }
       if (q != null && !q.isEmpty()) {
         String searchString = q.toUpperCase();
 
