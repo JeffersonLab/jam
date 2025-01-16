@@ -47,6 +47,7 @@ public class UserSearch extends HttpServlet {
 
     ParamBuilder builder = new ParamBuilder();
     builder.add("term", q);
+    builder.add("max", "10");
 
     String queryString = ServletUtil.buildQueryString(builder.getParams(), "UTF-8");
 

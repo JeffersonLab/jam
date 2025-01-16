@@ -48,6 +48,7 @@ public class ComponentSearch extends HttpServlet {
     ParamBuilder builder = new ParamBuilder();
     builder.add("q", q);
     builder.add("application_id", "1");
+    builder.add("max", "10");
 
     String queryString = ServletUtil.buildQueryString(builder.getParams(), "UTF-8");
 

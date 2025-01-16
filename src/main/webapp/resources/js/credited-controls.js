@@ -388,15 +388,20 @@ $(function () {
                 data: {
                     q: request.term
                 },
+                dataType: 'json',
                 url: jlab.contextPath + '/data/users',
-                success: function (data) {
-                    response($.map(data.records, function (item) {
+                success: function (json) {
+                    response($.map(json.records, function (item) {
                         return {
                             id: item.id,
                             label: item.label,
                             value: item.value
                         }
                     }));
+
+                    if (json.total_records > 10) {
+                        $(".ui-autocomplete").append($("<li class=\"plus-more\">Plus " + jlab.integerWithCommas(json.total_records - 10) + " more...</li>"));
+                    }
                 }
             });
         },
@@ -411,17 +416,15 @@ $(function () {
     $("#component").autocomplete({
         minLength: 2,
         source: function (request, response) {
-            var params = {};
-
-            params = {
-                q: request.term,
-                application_id: 1
+            var params = {
+                q: request.term
             };
 
             //jQuery.ajaxSettings.traditional = true; /*array bracket serialization*/
 
             $.ajax({
                 data: params,
+                dataType: 'json',
                 url: jlab.contextPath + '/data/components',
                 success: function (json) {
                     response($.map(json.data, function (item) {
@@ -431,6 +434,10 @@ $(function () {
                             id: item.id
                         };
                     }));
+
+                    if (json.total_records > 10) {
+                        $(".ui-autocomplete").append($("<li class=\"plus-more\">Plus " + jlab.integerWithCommas(json.total_records - 10) + " more...</li>"));
+                    }
                 }
             });
         },
