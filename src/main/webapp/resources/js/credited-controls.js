@@ -375,15 +375,20 @@ $(function () {
         resizable: false
     });
 
+    $("#component-edit-dialog").dialog({
+        width: 800,
+        height: 600,
+        resizable: false
+    });
 
     $(".username-autocomplete").autocomplete({
         minLength: 2,
         source: function (request, response) {
             $.ajax({
                 data: {
-                    term: request.term
+                    q: request.term
                 },
-                url: '/hco/ajax/search-user',
+                url: jlab.contextPath + '/data/users',
                 success: function (data) {
                     response($.map(data.records, function (item) {
                         return {
@@ -402,6 +407,39 @@ $(function () {
 
     /*Now Button Support 2 of 2*/
     $('<span> </span><button class="now-button" type="button">Now</button>').insertAfter(".nowable-field");
+
+    $("#component").autocomplete({
+        minLength: 2,
+        source: function (request, response) {
+            var params = {};
+
+            params = {
+                q: request.term,
+                application_id: 1
+            };
+
+            //jQuery.ajaxSettings.traditional = true; /*array bracket serialization*/
+
+            $.ajax({
+                data: params,
+                url: jlab.contextPath + '/data/components',
+                success: function (json) {
+                    response($.map(json.data, function (item) {
+                        return {
+                            label: item.name,
+                            value: item.name,
+                            id: item.id
+                        };
+                    }));
+                }
+            });
+        },
+        select: function (event, ui) {
+            console.log(event, ui);
+            $("#component").attr("data-component-id", ui.item.id);
+        }
+    });
+
 });
 /*Now Button Support 1 of 2*/
 $(document).on("click", ".now-button", function () {
