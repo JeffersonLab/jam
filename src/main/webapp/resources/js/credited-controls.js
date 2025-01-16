@@ -274,8 +274,6 @@ $(document).on("click", "#component-edit-button", function() {
         });
     }
 
-    console.log($componentList);
-
     $("#component-edit-dialog").dialog("open");
     return false;
 });
