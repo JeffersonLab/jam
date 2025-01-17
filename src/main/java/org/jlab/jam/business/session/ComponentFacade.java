@@ -2,14 +2,15 @@ package org.jlab.jam.business.session;
 
 import java.math.BigInteger;
 import java.util.*;
-import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import org.jlab.jam.persistence.entity.Component;
-import org.jlab.smoothness.business.util.IOUtil;
+import org.jlab.jam.persistence.entity.ControlVerification;
+import org.jlab.smoothness.business.exception.UserFriendlyException;
 
 /**
  * @author ryans
@@ -24,120 +25,40 @@ public class ComponentFacade extends AbstractFacade<Component> {
     return em;
   }
 
+  @EJB ControlVerificationFacade controlVerificationFacade;
+
   public ComponentFacade() {
     super(Component.class);
   }
 
-  @PermitAll
-  public Long countMustFilter(
-      BigInteger[] categoryIdArray,
-      BigInteger[] systemIdArray,
-      String q,
-      BigInteger componentId,
-      Integer max) {
-    Long count;
-
-    categoryIdArray = IOUtil.removeNullValues(categoryIdArray, BigInteger.class);
-    systemIdArray = IOUtil.removeNullValues(systemIdArray, BigInteger.class);
-
-    if (max == null
-        && categoryIdArray == null
-        && systemIdArray == null
-        && (q == null || q.isEmpty())
-        && componentId == null) {
-      count = 0L; // Return zero if no filter provided
-    } else {
-
-      CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
-      CriteriaQuery<Long> cq = cb.createQuery(Long.class);
-      Root<Component> root = cq.from(Component.class);
-
-      List<Predicate> filters = new ArrayList<>();
-
-      if (q != null && !q.isEmpty()) {
-        String searchString = q.toUpperCase();
-
-        // auto wild
-        searchString = "%" + searchString + "%";
-
-        filters.add(cb.like(cb.upper(root.get("name")), searchString));
-      }
-      if (componentId != null) {
-        filters.add(cb.equal(root.get("componentId"), componentId));
-      }
-      if (!filters.isEmpty()) {
-        cq.where(cb.and(filters.toArray(new Predicate[] {})));
-      }
-
-      cq.select(cb.count(root));
-      TypedQuery<Long> query = getEntityManager().createQuery(cq);
-      count = query.getSingleResult();
-    }
-    return count;
-  }
-
-  @PermitAll
-  public List<Component> findMustFilter(
-      BigInteger[] categoryIdArray,
-      BigInteger[] systemIdArray,
-      String q,
-      BigInteger componentId,
-      Integer max,
-      Integer offset) {
-    List<Component> componentList;
-
-    categoryIdArray = IOUtil.removeNullValues(categoryIdArray, BigInteger.class);
-    systemIdArray = IOUtil.removeNullValues(systemIdArray, BigInteger.class);
-
-    if (max == null
-        && categoryIdArray == null
-        && systemIdArray == null
-        && (q == null || q.isEmpty())
-        && componentId == null) {
-      componentList = new ArrayList<>(); // Return empty list if no filter provided
-    } else {
-      CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
-      CriteriaQuery<Component> cq = cb.createQuery(Component.class);
-      Root<Component> root = cq.from(Component.class);
-      cq.select(root);
-
-      List<Predicate> filters = new ArrayList<>();
-
-      if (q != null && !q.isEmpty()) {
-        String searchString = q.toUpperCase();
-
-        // auto wild
-        searchString = "%" + searchString + "%";
-
-        Predicate p1 = cb.like(cb.upper(root.get("name")), searchString);
-
-        filters.add(p1);
-      }
-      if (componentId != null) {
-        filters.add(cb.equal(root.get("componentId"), componentId));
-      }
-      if (!filters.isEmpty()) {
-        cq.where(cb.and(filters.toArray(new Predicate[] {})));
-      }
-      List<Order> orders = new ArrayList<>();
-      Path p1 = root.get("name");
-      Order o1 = cb.asc(p1);
-      orders.add(o1);
-      cq.orderBy(orders);
-
-      TypedQuery<Component> query = getEntityManager().createQuery(cq);
-
-      if (max != null) {
-        query.setMaxResults(max);
-      }
-
-      if (offset != null) {
-        query.setFirstResult(offset);
-      }
-
-      componentList = query.getResultList();
+  @RolesAllowed("jam-admin")
+  public void removeComponent(BigInteger verificationId, BigInteger componentId)
+      throws UserFriendlyException {
+    if (verificationId == null) {
+      throw new UserFriendlyException("verificationId is required");
     }
 
-    return componentList;
+    if (componentId == null) {
+      throw new UserFriendlyException("componentId is required");
+    }
+
+    ControlVerification verification = controlVerificationFacade.find(verificationId);
+
+    if (verification == null) {
+      throw new UserFriendlyException("verification with ID " + verificationId + " not found");
+    }
+
+    List<Component> componentList = verification.getComponentList();
+
+    if (componentList != null) {
+      List<Component> newList = new ArrayList<>();
+      for (Component component : componentList) {
+        if (!componentId.equals(component.getComponentId())) {
+          newList.add(component);
+        }
+      }
+      verification.setComponentList(newList);
+      controlVerificationFacade.edit(verification);
+    }
   }
 }

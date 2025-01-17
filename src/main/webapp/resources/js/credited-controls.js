@@ -10,6 +10,30 @@ jlab.dateTimeToJLabString = function (x) {
 
     return jlab.pad(day, 2) + '-' + jlab.triCharMonthNames[month] + '-' + year + ' ' + jlab.pad(hour, 2) + ':' + jlab.pad(minute, 2);
 };
+jlab.removeComponent = function () {
+    var verificationId = $("#verification-table tbody tr.selected-row").attr("data-control-verification-id"),
+        componentId = $("#selected-component-list").val(),
+        $dialog = $("#component-edit-dialog"),
+        url = jlab.contextPath + "/ajax/remove-component",
+        $actionButton = $("#remove-component-button"),
+        data = {
+        verificationId: verificationId,
+        componentId: componentId
+    };
+
+    $actionButton
+        .attr("disabled", "disabled")
+        .height($actionButton.height())
+        .width($actionButton.width())
+        .empty().append('<div class="button-indicator"></div>');
+
+    var promise = jlab.doAjaxJsonPostRequest(url, data, $dialog, true);
+
+    promise.fail(function () {
+        $actionButton.text("Remove");
+        $actionButton.removeAttr("disabled");
+    });
+};
 jlab.verify = function () {
     if (jlab.isRequest()) {
         window.console && console.log("Ajax already in progress");
@@ -272,7 +296,7 @@ $(document).on("click", "#component-edit-button", function() {
         var label = $(this).find("a").text(),
             id = $(this).attr("data-id");
 
-        $componentList.append('<option data-id="' + String(id).encodeXml() + '">' + String(label).encodeXml() + '</option>');
+        $componentList.append('<option value="' + String(id).encodeXml() + '">' + String(label).encodeXml() + '</option>');
     });
 
     var destination = $rowList.find("td:nth-child(2)").text();
@@ -498,5 +522,5 @@ $(document).on("click", "#add-component-button", function () {
     alert('todo: add');
 });
 $(document).on("click", "#remove-component-button", function () {
-    alert('todo: remove');
+    jlab.removeComponent();
 });
