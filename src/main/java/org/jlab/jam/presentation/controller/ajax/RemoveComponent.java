@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 import org.jlab.jam.business.session.ComponentFacade;
+import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jlab.smoothness.business.util.ExceptionUtil;
 import org.jlab.smoothness.presentation.util.ParamConverter;
 
@@ -50,6 +51,8 @@ public class RemoveComponent extends HttpServlet {
       BigInteger componentId = ParamConverter.convertBigInteger(request, "componentId");
 
       componentFacade.removeComponent(verificationId, componentId);
+    } catch (UserFriendlyException e) {
+      errorReason = e.getUserMessage();
     } catch (EJBException e) {
       Throwable root = ExceptionUtil.getRootCause(e);
       if (e instanceof EJBAccessException || root instanceof EJBAccessException) {

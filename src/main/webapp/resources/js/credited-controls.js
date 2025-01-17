@@ -197,7 +197,14 @@ $(document).on("click", ".verify-button", function () {
     $verificationList.each(function (index, value) {
         if ($(".destination-checkbox", value).is(":checked")) {
             var id = $(this).attr("data-control-verification-id"),
-                label = $("td:nth-child(2)", value).text();
+                label = $("td:nth-child(2)", value).text(),
+                $notReadyComponents = $("td:nth-child(4) .not-verified-icon", value);
+
+            if($notReadyComponents.length > 0) {
+                alert("You cannot verify " + label + " because there are associated Components Not Ready");
+                return;
+            }
+
             $selectedList.append('<li data-control-verification-id="' + String(id).encodeXml()  + '">' + String(label).encodeXml() + '</li>');
             statusArray.push($(this).attr("data-status-id"));
             verificationDateArray.push($(".verified-date", value).text());
