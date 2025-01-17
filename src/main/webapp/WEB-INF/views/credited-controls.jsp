@@ -136,7 +136,7 @@
                                                                     <span class="small-icon baseline-small-icon not-verified-icon"></span>
                                                                 </c:otherwise>
                                                             </c:choose>
-                                                            <a href="${env['SRM_COMPONENT_URL']}${fn:escapeXml(component.name)}"><c:out value="${component.name}"/></a>
+                                                            <a href="${env['JAM_COMPONENT_DETAIL_URL']}${fn:escapeXml(component.name)}"><c:out value="${component.name}"/></a>
                                                         </div>
                                                     </c:forEach>
                                                 </td>
@@ -307,7 +307,7 @@
                 <div class="column">
                     <fieldset>
                         <legend>Add</legend>
-                        <input type="text" id="component" name="component" placeholder="search for name"/>
+                        <input type="text" id="component" name="component" placeholder="search for name" autocomplete="off"/>
                         <button id="add-component-button" type="button">Add</button>
                     </fieldset>
                 </div>

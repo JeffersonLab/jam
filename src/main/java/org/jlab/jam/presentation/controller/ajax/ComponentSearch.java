@@ -43,7 +43,12 @@ public class ComponentSearch extends HttpServlet {
 
     String q = request.getParameter("q");
 
-    String COMPONENT_QUERY_URL = "https://ace.jlab.org/srm/data/components";
+    // https://ace.jlab.org/srm/data/components
+    String COMPONENT_QUERY_URL = System.getenv("JAM_COMPONENT_QUERY_URL");
+
+    if(COMPONENT_QUERY_URL == null) {
+      throw new ServletException("JAM_COMPONENT_QUERY_URL not set");
+    }
 
     ParamBuilder builder = new ParamBuilder();
     builder.add("q", q);
