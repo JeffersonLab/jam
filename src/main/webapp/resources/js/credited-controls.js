@@ -266,13 +266,18 @@ $(document).on("click", "#component-edit-button", function() {
     if($rowList.length !== 1) {
         alert("select only one row");
         return;
-    } else {
-        $rowList.find(".component-status").each(function (index, value) {
-            var label = $(this).find("a").text(),
-                id = $(this).attr("data-id");
-            $componentList.append('<li data-id="' + String(id).encodeXml() + '">' + String(label).encodeXml() + '</li>');
-        });
     }
+
+    $rowList.find(".component-status").each(function (index, value) {
+        var label = $(this).find("a").text(),
+            id = $(this).attr("data-id");
+
+        $componentList.append('<option data-id="' + String(id).encodeXml() + '">' + String(label).encodeXml() + '</option>');
+    });
+
+    var destination = $rowList.find("td:nth-child(2)").text();
+
+    $("#component-edit-dialog").dialog({"title": destination + " Components"});
 
     $("#component-edit-dialog").dialog("open");
     return false;
@@ -395,7 +400,7 @@ $(function () {
 
     $("#component-edit-dialog").dialog({
         width: 800,
-        height: 600,
+        height: 300,
         resizable: false
     });
 
@@ -488,4 +493,10 @@ $(document).on("click", "#cancel-button", function () {
 });
 $(document).on("click", "#save-button", function () {
     jlab.save();
+});
+$(document).on("click", "#add-component-button", function () {
+    alert('todo: add');
+});
+$(document).on("click", "#remove-component-button", function () {
+    alert('todo: remove');
 });

@@ -306,22 +306,18 @@
             <div class="row">
                 <div class="column">
                     <fieldset>
-                        <legend>Choose</legend>
-                        <ul class="key-value-list">
-                            <li>
-                                <div class="li-key">
-                                    <label class="required-field" for="component">Component</label>
-                                </div>
-                                <div class="li-value">
-                                    <input type="text" id="component" name="component" placeholder="search for name"/>
-                                </div>
-                            </li>
-                        </ul>
+                        <legend>Add</legend>
+                        <input type="text" id="component" name="component" placeholder="search for name"/>
+                        <button id="add-component-button" type="button">Add</button>
                     </fieldset>
                 </div>
                 <div class="column">
-                    <ul id="selected-component-list">
-                    </ul>
+                    <fieldset>
+                        <legend>Remove</legend>
+                        <select id="selected-component-list">
+                        </select>
+                        <button id="remove-component-button" type="button">Remove</button>
+                    </fieldset>
                 </div>
             </div>
             <div class="dialog-button-panel">
