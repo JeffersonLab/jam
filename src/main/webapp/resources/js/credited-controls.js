@@ -10,6 +10,30 @@ jlab.dateTimeToJLabString = function (x) {
 
     return jlab.pad(day, 2) + '-' + jlab.triCharMonthNames[month] + '-' + year + ' ' + jlab.pad(hour, 2) + ':' + jlab.pad(minute, 2);
 };
+jlab.addComponent = function () {
+    var verificationId = $("#verification-table tbody tr.selected-row").attr("data-control-verification-id"),
+        componentId = $("#component").attr("data-component-id"),
+        $dialog = $("#component-edit-dialog"),
+        url = jlab.contextPath + "/ajax/add-component",
+        $actionButton = $("#add-component-button"),
+        data = {
+            verificationId: verificationId,
+            componentId: componentId
+        };
+
+    $actionButton
+        .attr("disabled", "disabled")
+        .height($actionButton.height())
+        .width($actionButton.width())
+        .empty().append('<div class="button-indicator"></div>');
+
+    var promise = jlab.doAjaxJsonPostRequest(url, data, $dialog, true);
+
+    promise.fail(function () {
+        $actionButton.text("Add");
+        $actionButton.removeAttr("disabled");
+    });
+};
 jlab.removeComponent = function () {
     var verificationId = $("#verification-table tbody tr.selected-row").attr("data-control-verification-id"),
         componentId = $("#selected-component-list").val(),
@@ -489,7 +513,6 @@ $(function () {
             });
         },
         select: function (event, ui) {
-            console.log(event, ui);
             $("#component").attr("data-component-id", ui.item.id);
         }
     });
@@ -519,7 +542,7 @@ $(document).on("click", "#save-button", function () {
     jlab.save();
 });
 $(document).on("click", "#add-component-button", function () {
-    alert('todo: add');
+    jlab.addComponent();
 });
 $(document).on("click", "#remove-component-button", function () {
     jlab.removeComponent();

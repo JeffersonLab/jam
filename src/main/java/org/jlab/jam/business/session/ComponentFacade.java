@@ -61,4 +61,38 @@ public class ComponentFacade extends AbstractFacade<Component> {
       controlVerificationFacade.edit(verification);
     }
   }
+
+  @RolesAllowed("jam-admin")
+  public void addComponent(BigInteger verificationId, BigInteger componentId)
+      throws UserFriendlyException {
+    if (verificationId == null) {
+      throw new UserFriendlyException("verificationId is required");
+    }
+
+    if (componentId == null) {
+      throw new UserFriendlyException("componentId is required");
+    }
+
+    ControlVerification verification = controlVerificationFacade.find(verificationId);
+
+    if (verification == null) {
+      throw new UserFriendlyException("verification with ID " + verificationId + " not found");
+    }
+
+    Component component = find(componentId);
+
+    if (component == null) {
+      throw new UserFriendlyException("component with ID " + componentId + " not found");
+    }
+
+    List<Component> componentList = verification.getComponentList();
+
+    if (componentList == null) {
+      componentList = new ArrayList<>();
+    }
+
+    componentList.add(component);
+
+    controlVerificationFacade.edit(verification);
+  }
 }
