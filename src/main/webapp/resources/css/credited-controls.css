@@ -54,3 +54,18 @@ body .now-button, body .me-button {
     float: left;
     color: red;
 }
+.row {
+    display: flex;
+}
+
+.column {
+    flex: 50%;
+}
+
+.ui-autocomplete-loading {
+    background: white url("../img/indicator16x16.gif") right center no-repeat;
+}
+
+ul.ui-autocomplete {
+    z-index: 9000;
+}

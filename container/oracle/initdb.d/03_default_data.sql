@@ -62,3 +62,14 @@ insert into JAM_OWNER.authorization (AUTHORIZATION_ID, MODIFIED_BY, MODIFIED_DAT
 insert into JAM_OWNER.destination_authorization (BEAM_DESTINATION_ID, AUTHORIZATION_ID, BEAM_MODE, CW_LIMIT, COMMENTS, EXPIRATION_DATE) values(1, 1, 'None', null, 'test 1', null);
 insert into JAM_OWNER.destination_authorization (BEAM_DESTINATION_ID, AUTHORIZATION_ID, BEAM_MODE, CW_LIMIT, COMMENTS, EXPIRATION_DATE) values(2, 1, 'Tune', null, 'test 2', null);
 insert into JAM_OWNER.destination_authorization (BEAM_DESTINATION_ID, AUTHORIZATION_ID, BEAM_MODE, CW_LIMIT, COMMENTS, EXPIRATION_DATE) values(3, 1, 'CW', 10, 'test 3', null);
+
+-- Populate Component
+insert into JAM_OWNER.COMPONENT (COMPONENT_ID, NAME, STATUS_ID) values (2763, '0L03', 1);
+insert into JAM_OWNER.COMPONENT (COMPONENT_ID, NAME, STATUS_ID) values (2764, '0L04', 50);
+insert into JAM_OWNER.COMPONENT (COMPONENT_ID, NAME, STATUS_ID) values (2765, '1L02', 1);
+insert into JAM_OWNER.COMPONENT (COMPONENT_ID, NAME, STATUS_ID) values (2766, '1L03', 1);
+insert into JAM_OWNER.COMPONENT (COMPONENT_ID, NAME, STATUS_ID) values (2767, '1L04', 1);
+
+-- Populate Component Verification
+insert into JAM_OWNER.VERIFICATION_COMPONENT (CONTROL_VERIFICATION_ID, COMPONENT_ID) values (1, 2763);
+insert into JAM_OWNER.VERIFICATION_COMPONENT (CONTROL_VERIFICATION_ID, COMPONENT_ID) values (1, 2764);

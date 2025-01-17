@@ -85,7 +85,10 @@
                             </c:when>
                             <c:otherwise>
                                 <c:if test="${adminOrLeader && param.notEditable eq null}">
-                                    <button id="edit-selected-button" type="button" class="verify-button selected-row-action" disabled="disabled">Edit Selected</button>
+                                    <button id="edit-selected-button" type="button" class="verify-button selected-row-action" disabled="disabled">Edit Verification</button>
+                                </c:if>
+                                <c:if test="${pageContext.request.isUserInRole('jam-admin') && param.notEditable eq null}">
+                                    <button id="component-edit-button" type="button" class="single-select-row-action" disabled="disabled">Edit Components</button>
                                 </c:if>
                                 <table id="verification-table" class="data-table stripped-table${(adminOrLeader && param.notEditable eq null) ? ' multicheck-table editable-row-table' : ''}">
                                     <thead>
@@ -102,8 +105,7 @@
                                             </c:if>
                                             <th>Beam Destination</th>
                                             <th>Verified</th>
-                                            <th>Verified Date</th>
-                                            <th>Verified By</th>
+                                            <th>Components</th>
                                             <th>Comments</th>
                                             <th>Expiration Date</th>
                                             <th class="audit-header">Audit</th>
@@ -118,9 +120,26 @@
                                                     </td>
                                                 </c:if>
                                                 <td><c:out value="${verification.beamDestination.name}"/></td>
-                                                <td class="icon-cell"><span title="${verification.verificationId eq 1 ? 'Verified' : (verification.verificationId eq 50 ? 'Provisionally Verified' : 'Not Verified')}" class="small-icon baseline-small-icon ${verification.verificationId eq 1 ? 'verified-icon' : (verification.verificationId eq 50 ? 'provisional-icon' : 'not-verified-icon')}"></span></td>
-                                                <td><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}" value="${verification.verificationDate}"/></td>
-                                                <td><c:out value="${s:formatUsername(verification.verifiedBy)}"/></td>
+                                                <td class="verified-cell">
+                                                  <div title="${verification.verificationId eq 1 ? 'Verified' : (verification.verificationId eq 50 ? 'Provisionally Verified' : 'Not Verified')}" class="small-icon baseline-small-icon ${verification.verificationId eq 1 ? 'verified-icon' : (verification.verificationId eq 50 ? 'provisional-icon' : 'not-verified-icon')}"></div>
+                                                  <div class="verified-date"><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}" value="${verification.verificationDate}"/></div>
+                                                  <div class="verified-by"><c:out value="${s:formatUsername(verification.verifiedBy)}"/></div>
+                                                </td>
+                                                <td>
+                                                    <c:forEach items="${verification.componentList}" var="component">
+                                                        <div class="component-status" data-id="${component.componentId}">
+                                                            <c:choose>
+                                                                <c:when test="${component.statusId eq 1}">
+                                                                    <span class="small-icon baseline-small-icon verified-icon"></span>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <span class="small-icon baseline-small-icon not-verified-icon"></span>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                            <a href="${env['JAM_COMPONENT_DETAIL_URL']}${fn:escapeXml(component.name)}"><c:out value="${component.name}"/></a>
+                                                        </div>
+                                                    </c:forEach>
+                                                </td>
                                                 <td><c:out value="${verification.comments}"/></td>
                                                 <td><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}" value="${verification.expirationDate}"/></td>
                                                 <td><a data-dialog-title="Verification History" href="credited-controls/verification-history?controlVerificationId=${verification.controlVerificationId}" title="Click for verification history">History</a></td>
@@ -165,64 +184,64 @@
                     </table> 
                 </c:otherwise>
             </c:choose>
-            <div id="verify-dialog" class="dialog" title="Edit Credited Control Verification">
-                <form>
-                    <ul class="key-value-list">
-                        <li>
-                            <div class="li-key"><span id="edit-dialog-verification-label">Beam Destinations</span>:</div>
-                            <div class="li-value">
-                                <ul id="selected-verification-list">
-
-                                </ul>
-                                <span id="edit-dialog-verification-count"></span>
-                            </div>
-                        </li>                    
-                        <li>
-                            <div class="li-key">Status:</div>
-                            <div class="li-value">
-                                <select id="verificationId" name="verificationId">
-                                    <option value="&nbsp;"> </option>
-                                    <option value="100">Not Verified</option>
-                                    <option value="50">Provisionally Verified</option>
-                                    <option value="1">Verified</option>
-                                </select>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="li-key">Verification Date:</div>
-                            <div class="li-value">
-                                <input id="verificationDate" name="verificationDate" type="text" class="date-time-field nowable-field" placeholder="${s:getFriendlyDateTimePlaceholder()}"/>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="li-key">Verified By:</div>
-                            <div class="li-value">
-                                <input id="verifiedBy" name="verifiedBy" type="text" placeholder="username" class="username-autocomplete" maxlength="64"/>
-                                <button class="me-button" type="button">Me</button>
-                            </div>
-                        </li>                        
-                        <li>
-                            <div class="li-key">Expiration Date:</div>
-                            <div class="li-value">
-                                <input id="expirationDate" name="expirationDate" type="text" class="date-time-field" placeholder="${s:getFriendlyDateTimePlaceholder()}"/>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="li-key">Comments:</div>
-                            <div class="li-value">
-                                <textarea id="comments" name="comments"></textarea>
-                            </div>
-                        </li>                    
-                    </ul>
-                    <input type="hidden" id="creditedControlId" name="creditedControlId"/>
-                    <div class="dialog-button-panel">
-                        <span id="rows-differ-message">Note: One or more selected rows existing values differ</span>
-                        <button id="verifySaveButton" class="dialog-submit ajax-button" type="button">Save</button>
-                        <button class="dialog-close-button" type="button">Cancel</button>
-                    </div>
-                </form>
-            </div>
         </section>
+        <div id="verify-dialog" class="dialog" title="Edit Credited Control Verification">
+            <form>
+                <ul class="key-value-list">
+                    <li>
+                        <div class="li-key"><span id="edit-dialog-verification-label">Beam Destinations</span>:</div>
+                        <div class="li-value">
+                            <ul id="selected-verification-list">
+
+                            </ul>
+                            <span id="edit-dialog-verification-count"></span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="li-key">Status:</div>
+                        <div class="li-value">
+                            <select id="verificationId" name="verificationId">
+                                <option value="&nbsp;"> </option>
+                                <option value="100">Not Verified</option>
+                                <option value="50">Provisionally Verified</option>
+                                <option value="1">Verified</option>
+                            </select>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="li-key">Verification Date:</div>
+                        <div class="li-value">
+                            <input id="verificationDate" name="verificationDate" type="text" class="date-time-field nowable-field" placeholder="${s:getFriendlyDateTimePlaceholder()}"/>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="li-key">Verified By:</div>
+                        <div class="li-value">
+                            <input id="verifiedBy" name="verifiedBy" type="text" placeholder="username" class="username-autocomplete" maxlength="64"/>
+                            <button class="me-button" type="button">Me</button>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="li-key">Expiration Date:</div>
+                        <div class="li-value">
+                            <input id="expirationDate" name="expirationDate" type="text" class="date-time-field" placeholder="${s:getFriendlyDateTimePlaceholder()}"/>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="li-key">Comments:</div>
+                        <div class="li-value">
+                            <textarea id="comments" name="comments"></textarea>
+                        </div>
+                    </li>
+                </ul>
+                <input type="hidden" id="creditedControlId" name="creditedControlId"/>
+                <div class="dialog-button-panel">
+                    <span id="rows-differ-message">Note: One or more selected rows existing values differ</span>
+                    <button id="verifySaveButton" class="dialog-submit ajax-button" type="button">Save</button>
+                    <button class="dialog-close-button" type="button">Cancel</button>
+                </div>
+            </form>
+        </div>
         <div id="success-dialog" class="dialog" title="Verification Saved Successfully">
             <span class="logentry-success">Verification contained downgrade so a new log entry was created: <a id="new-entry-url" href="#"></a></span>
             <div class="dialog-button-panel">
@@ -282,6 +301,28 @@
                     <div>No controls expiring within seven days</div>
                 </c:otherwise>
             </c:choose>            
-        </div>        
+        </div>
+        <div id="component-edit-dialog" class="dialog" title="Components">
+            <div class="row">
+                <div class="column">
+                    <fieldset>
+                        <legend>Add</legend>
+                        <input type="text" id="component" name="component" placeholder="search for name" autocomplete="off"/>
+                        <button id="add-component-button" type="button">Add</button>
+                    </fieldset>
+                </div>
+                <div class="column">
+                    <fieldset>
+                        <legend>Remove</legend>
+                        <select id="selected-component-list">
+                        </select>
+                        <button id="remove-component-button" type="button">Remove</button>
+                    </fieldset>
+                </div>
+            </div>
+            <div class="dialog-button-panel">
+                <button class="dialog-close-button" type="button">OK</button>
+            </div>
+        </div>
     </jsp:body>         
 </t:page>

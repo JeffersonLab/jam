@@ -76,6 +76,9 @@ Uses the [Smoothness Environment Variables](https://github.com/JeffersonLab/smoo
 | JAM_EXPIRED_SUBJECT               | Subject of emails indicating expiration of permissions and control verifications (ops semi-synchrounous notification of expiration)         |
 | JAM_DOWNGRADED_SUBJECT            | Subject of emails indicating downgrade of control verifications                                                                             |
 | JAM_EMAIL_SENDER                  | Sender (and from address) of emails                                                                                                         |
+| JAM_COMPONENT_DETAIL_URL          | URL for Component detail linking. Example: https://ace.jlab.org/srm/reports/component?name=                                                 |
+| JAM_COMPONENT_QUERY_URL           | URL for Component search. Proxied. Example: https://ace.jlab.org/srm/data/components                                                        |
+| JAM_USER_QUERY_URL                | URL for User search.  Proxied. Example: https://ace.jlab.org/srm/ajax/search-user                                                           |
 
 ### Database
 This application requires an Oracle 18+ database with the following [schema](https://github.com/JeffersonLab/jam/tree/main/container/oracle/initdb.d) installed.   The application server hosting this app must also be configured with a JNDI datasource.

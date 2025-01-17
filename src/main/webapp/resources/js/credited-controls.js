@@ -10,6 +10,54 @@ jlab.dateTimeToJLabString = function (x) {
 
     return jlab.pad(day, 2) + '-' + jlab.triCharMonthNames[month] + '-' + year + ' ' + jlab.pad(hour, 2) + ':' + jlab.pad(minute, 2);
 };
+jlab.addComponent = function () {
+    var verificationId = $("#verification-table tbody tr.selected-row").attr("data-control-verification-id"),
+        componentId = $("#component").attr("data-component-id"),
+        $dialog = $("#component-edit-dialog"),
+        url = jlab.contextPath + "/ajax/add-component",
+        $actionButton = $("#add-component-button"),
+        data = {
+            verificationId: verificationId,
+            componentId: componentId
+        };
+
+    $actionButton
+        .attr("disabled", "disabled")
+        .height($actionButton.height())
+        .width($actionButton.width())
+        .empty().append('<div class="button-indicator"></div>');
+
+    var promise = jlab.doAjaxJsonPostRequest(url, data, $dialog, true);
+
+    promise.fail(function () {
+        $actionButton.text("Add");
+        $actionButton.removeAttr("disabled");
+    });
+};
+jlab.removeComponent = function () {
+    var verificationId = $("#verification-table tbody tr.selected-row").attr("data-control-verification-id"),
+        componentId = $("#selected-component-list").val(),
+        $dialog = $("#component-edit-dialog"),
+        url = jlab.contextPath + "/ajax/remove-component",
+        $actionButton = $("#remove-component-button"),
+        data = {
+        verificationId: verificationId,
+        componentId: componentId
+    };
+
+    $actionButton
+        .attr("disabled", "disabled")
+        .height($actionButton.height())
+        .width($actionButton.width())
+        .empty().append('<div class="button-indicator"></div>');
+
+    var promise = jlab.doAjaxJsonPostRequest(url, data, $dialog, true);
+
+    promise.fail(function () {
+        $actionButton.text("Remove");
+        $actionButton.removeAttr("disabled");
+    });
+};
 jlab.verify = function () {
     if (jlab.isRequest()) {
         window.console && console.log("Ajax already in progress");
@@ -149,10 +197,17 @@ $(document).on("click", ".verify-button", function () {
     $verificationList.each(function (index, value) {
         if ($(".destination-checkbox", value).is(":checked")) {
             var id = $(this).attr("data-control-verification-id"),
-                label = $("td:nth-child(2)", value).text();
+                label = $("td:nth-child(2)", value).text(),
+                $notReadyComponents = $("td:nth-child(4) .not-verified-icon", value);
+
+            if($notReadyComponents.length > 0) {
+                alert("You cannot verify " + label + " because there are associated Components Not Ready");
+                return;
+            }
+
             $selectedList.append('<li data-control-verification-id="' + String(id).encodeXml()  + '">' + String(label).encodeXml() + '</li>');
             statusArray.push($(this).attr("data-status-id"));
-            verificationDateArray.push($("td:nth-child(4)", value).text());
+            verificationDateArray.push($(".verified-date", value).text());
             verifiedByArray.push($(this).attr("data-verified-username"));
             expirationDateArray.push($("td:nth-child(7)", value).text());
             commentsArray.push($("td:nth-child(6)", value).text());
@@ -222,12 +277,20 @@ $(document).on("change", "#check-select", function () {
             $(this).prop("checked", true);
         });
         $("#edit-selected-button").prop("disabled", false);
+
+        var numSelected = jlab.editableRowTable.updateSelectionCount();
+        if(numSelected === 1) {
+            $("#component-edit-button").prop("disabled", false);
+        } else {
+            $("#component-edit-button").prop("disabled", true);
+        }
     } else if ($("#check-select").val() === 'none') {
         $(".editable-row-table tbody tr").removeClass("selected-row");
         $(".destination-checkbox").each(function (index, value) {
             $(this).prop("checked", false);
         });
         $("#edit-selected-button").prop("disabled", true);
+        $("#component-edit-button").prop("disabled", true);
     }
     $("#check-select").val('');
 });
@@ -247,6 +310,33 @@ $(document).on("change", "#check-select", function () {
         $("#edit-selected-button").prop("disabled", true);
     }
 });*/
+$(document).on("click", "#component-edit-button", function() {
+
+    var $componentList = $("#selected-component-list");
+
+    $componentList.empty();
+
+    var $rowList = $("#verification-table tbody tr.selected-row");
+
+    if($rowList.length !== 1) {
+        alert("select only one row");
+        return;
+    }
+
+    $rowList.find(".component-status").each(function (index, value) {
+        var label = $(this).find("a").text(),
+            id = $(this).attr("data-id");
+
+        $componentList.append('<option value="' + String(id).encodeXml() + '">' + String(label).encodeXml() + '</option>');
+    });
+
+    var destination = $rowList.find("td:nth-child(2)").text();
+
+    $("#component-edit-dialog").dialog({"title": destination + " Components"});
+
+    $("#component-edit-dialog").dialog("open");
+    return false;
+});
 $(document).on("click", ".multicheck-table tbody tr", function (e) {
     var checkClicked = e.target.classList.contains('destination-checkbox');
 
@@ -293,6 +383,12 @@ $(document).on("click", ".multicheck-table tbody tr", function (e) {
     } else {
         $(".no-selection-row-action").prop("disabled", false);
         $(".selected-row-action").prop("disabled", true);
+    }
+
+    if(numSelected === 1) {
+        $(".single-select-row-action").prop("disabled", false);
+    } else {
+        $(".single-select-row-action").prop("disabled", true);
     }
 });
 jlab.editableRowTable.updateSelectionCount = function () {
@@ -357,23 +453,33 @@ $(function () {
         resizable: false
     });
 
+    $("#component-edit-dialog").dialog({
+        width: 800,
+        height: 300,
+        resizable: false
+    });
 
     $(".username-autocomplete").autocomplete({
         minLength: 2,
         source: function (request, response) {
             $.ajax({
                 data: {
-                    term: request.term
+                    q: request.term
                 },
-                url: '/hco/ajax/search-user',
-                success: function (data) {
-                    response($.map(data.records, function (item) {
+                dataType: 'json',
+                url: jlab.contextPath + '/data/users',
+                success: function (json) {
+                    response($.map(json.records, function (item) {
                         return {
                             id: item.id,
                             label: item.label,
                             value: item.value
                         }
                     }));
+
+                    if (json.total_records > 10) {
+                        $(".ui-autocomplete").append($("<li class=\"plus-more\">Plus " + jlab.integerWithCommas(json.total_records - 10) + " more...</li>"));
+                    }
                 }
             });
         },
@@ -384,6 +490,40 @@ $(function () {
 
     /*Now Button Support 2 of 2*/
     $('<span> </span><button class="now-button" type="button">Now</button>').insertAfter(".nowable-field");
+
+    $("#component").autocomplete({
+        minLength: 2,
+        source: function (request, response) {
+            var params = {
+                q: request.term
+            };
+
+            //jQuery.ajaxSettings.traditional = true; /*array bracket serialization*/
+
+            $.ajax({
+                data: params,
+                dataType: 'json',
+                url: jlab.contextPath + '/data/components',
+                success: function (json) {
+                    response($.map(json.data, function (item) {
+                        return {
+                            label: item.name,
+                            value: item.name,
+                            id: item.id
+                        };
+                    }));
+
+                    if (json.total_records > 10) {
+                        $(".ui-autocomplete").append($("<li class=\"plus-more\">Plus " + jlab.integerWithCommas(json.total_records - 10) + " more...</li>"));
+                    }
+                }
+            });
+        },
+        select: function (event, ui) {
+            $("#component").attr("data-component-id", ui.item.id);
+        }
+    });
+
 });
 /*Now Button Support 1 of 2*/
 $(document).on("click", ".now-button", function () {
@@ -407,4 +547,10 @@ $(document).on("click", "#cancel-button", function () {
 });
 $(document).on("click", "#save-button", function () {
     jlab.save();
+});
+$(document).on("click", "#add-component-button", function () {
+    jlab.addComponent();
+});
+$(document).on("click", "#remove-component-button", function () {
+    jlab.removeComponent();
 });
