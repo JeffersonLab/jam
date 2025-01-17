@@ -46,7 +46,7 @@ public class ComponentSearch extends HttpServlet {
     // https://ace.jlab.org/srm/data/components
     String COMPONENT_QUERY_URL = System.getenv("JAM_COMPONENT_QUERY_URL");
 
-    if(COMPONENT_QUERY_URL == null) {
+    if (COMPONENT_QUERY_URL == null) {
       throw new ServletException("JAM_COMPONENT_QUERY_URL not set");
     }
 

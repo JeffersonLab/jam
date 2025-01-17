@@ -13,9 +13,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.registry.infomodel.User;
-
-import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jlab.smoothness.presentation.util.ParamBuilder;
 import org.jlab.smoothness.presentation.util.ServletUtil;
 
@@ -49,7 +46,7 @@ public class UserSearch extends HttpServlet {
     // https://ace.jlab.org/srm/ajax/search-user
     String USER_QUERY_URL = System.getenv("JAM_USER_QUERY_URL");
 
-    if(USER_QUERY_URL == null) {
+    if (USER_QUERY_URL == null) {
       throw new ServletException("JAM_USER_QUERY_URL not set");
     }
 
