@@ -160,16 +160,18 @@ CREATE TABLE JAM_OWNER.COMPONENT
 );
 
 /*grant select on srm_owner.component to jam_owner;
-create or replace view jam_owner.component as
+  grant select on srm_owner.component_status_2 to jam_owner;
+  grant select on system_application to jam_owner;
+  create or replace view jam_owner.component as
 (
-select component_id, name, status_id from srm_owner.component join srm_owner.component_status_2 using (component_id) where system_id in (select system_id from srm_owner.system_application where application_id = 2)
+select component_id, name, status_id from srm_owner.component join srm_owner.component_status_2 using (component_id) where system_id in (select system_id from srm_owner.system_application where application_id = 1)
 );*/
 
 CREATE TABLE JAM_OWNER.VERIFICATION_COMPONENT
 (
     CONTROL_VERIFICATION_ID INTEGER NOT NULL ,
-    COMPONENT_ID            INTEGER NULL ,
+    COMPONENT_ID            INTEGER NOT NULL ,
     CONSTRAINT VERIFICATION_COMPONENT_PK PRIMARY KEY (CONTROL_VERIFICATION_ID, COMPONENT_ID),
-    CONSTRAINT VERIFICATION_COMPONENT_FK1 FOREIGN KEY (CONTROL_VERIFICATION_ID) REFERENCES JAM_OWNER.CONTROL_VERIFICATION (CONTROL_VERIFICATION_ID) ON DELETE CASCADE,
-    CONSTRAINT VERIFICATION_COMPONENT_FK2 FOREIGN KEY (COMPONENT_ID) REFERENCES JAM_OWNER.COMPONENT (COMPONENT_ID) ON DELETE CASCADE
+    CONSTRAINT VERIFICATION_COMPONENT_FK1 FOREIGN KEY (CONTROL_VERIFICATION_ID) REFERENCES JAM_OWNER.CONTROL_VERIFICATION (CONTROL_VERIFICATION_ID) ON DELETE CASCADE
+    --CONSTRAINT VERIFICATION_COMPONENT_FK2 FOREIGN KEY (COMPONENT_ID) REFERENCES JAM_OWNER.COMPONENT (COMPONENT_ID) ON DELETE CASCADE
 );
