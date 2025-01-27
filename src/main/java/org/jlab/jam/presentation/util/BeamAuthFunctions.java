@@ -47,6 +47,13 @@ public final class BeamAuthFunctions {
     return modes;
   }
 
+  public static List<String> rfModeList(String facility, String segment) {
+    List<String> modes = Arrays.asList("None", "RF On");
+    ;
+
+    return modes;
+  }
+
   public static List<String> laseModeList() {
     return Arrays.asList("None", "UV", "IR");
   }

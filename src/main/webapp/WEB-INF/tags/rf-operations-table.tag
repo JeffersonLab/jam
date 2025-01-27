@@ -14,12 +14,13 @@
                 <c:if test="${not isHistory}">
                 <th rowspan="2" class="approval-header">Approval</th>
                 </c:if>
-            <th colspan="2">Director's Status</th>
+            <th colspan="3">Director's Status</th>
                 <c:if test="${not isHistory}">
                 <th rowspan="2" class="cc-status-header">Credited Controls Status</th>
                 </c:if>
         </tr>
         <tr>
+            <th>RF Mode</th>
             <th>Comment</th>
             <th class="expiration-header">Expiration</th>
         </tr>
@@ -41,6 +42,18 @@
                         </c:choose>                                         
                     </td>
                 </c:if>
+                <td>
+                    <c:set var="selectedRFMode" value="${rfSegmentAuthorization.getRFMode() eq null ? 'None' : rfSegmentAuthorization.getRFMode()}"/>
+                    <div class="readonly-field"><c:out value="${selectedRFMode}"/></div>
+                    <div class="editable-field">
+                        <select name="mode[]" class="mode-select">
+                            <c:forEach items="${beamauth:rfModeList(facility.name, segment.name)}" var="mode">
+                                <option${mode eq selectedRFMode ? ' selected="selected"' : ''}><c:out value="${mode}"/></option>
+                            </c:forEach>
+                        </select>
+                        <c:out value="${mode}"/>
+                    </div>
+                </td>
                 <td class="${(not isHistory) && (not (selectedBeamMode eq 'None')) && (segment.verification.verificationStatusId eq 50) ? 'provisional-comments' : ''}">
                     <c:set var="selectedComment" value="${rfSegmentAuthorization.comments eq null ? '' : rfSegmentAuthorization.comments}"/>
                     <span class="readonly-field">
