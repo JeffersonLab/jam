@@ -78,21 +78,21 @@ public class RFAuthorizationFacade extends AbstractFacade<RFAuthorization> {
 
   @SuppressWarnings("unchecked")
   @PermitAll
-  public BeamAuthorization findCurrent() {
+  public RFAuthorization findCurrent() {
     Query q =
         em.createNativeQuery(
-            "select * from (select * from authorization order by modified_date desc) where rownum <= 1",
-            BeamAuthorization.class);
+            "select * from (select * from rf_authorization order by modified_date desc) where rownum <= 1",
+            RFAuthorization.class);
 
-    List<BeamAuthorization> beamAuthorizationList = q.getResultList();
+    List<RFAuthorization> rfAuthorizationList = q.getResultList();
 
-    BeamAuthorization beamAuthorization = null;
+    RFAuthorization rfAuthorization = null;
 
-    if (beamAuthorizationList != null && !beamAuthorizationList.isEmpty()) {
-      beamAuthorization = beamAuthorizationList.get(0);
+    if (rfAuthorizationList != null && !rfAuthorizationList.isEmpty()) {
+      rfAuthorization = rfAuthorizationList.get(0);
     }
 
-    return beamAuthorization;
+    return rfAuthorization;
   }
 
   @SuppressWarnings("unchecked")
@@ -114,20 +114,20 @@ public class RFAuthorizationFacade extends AbstractFacade<RFAuthorization> {
   }
 
   @PermitAll
-  public Map<BigInteger, BeamDestinationAuthorization> createDestinationAuthorizationMap(
-      BeamAuthorization beamAuthorization) {
-    Map<BigInteger, BeamDestinationAuthorization> destinationAuthorizationMap = new HashMap<>();
+  public Map<BigInteger, RFSegmentAuthorization> createSegmentAuthorizationMap(
+      RFAuthorization rfAuthorization) {
+    Map<BigInteger, RFSegmentAuthorization> segmentAuthorizationMap = new HashMap<>();
 
-    if (beamAuthorization != null && beamAuthorization.getDestinationAuthorizationList() != null) {
-      for (BeamDestinationAuthorization beamDestinationAuthorization :
-          beamAuthorization.getDestinationAuthorizationList()) {
-        destinationAuthorizationMap.put(
-            beamDestinationAuthorization.getDestinationAuthorizationPK().getBeamDestinationId(),
-            beamDestinationAuthorization);
+    if (rfAuthorization != null && rfAuthorization.getRFSegmentAuthorizationList() != null) {
+      for (RFSegmentAuthorization rfSegmentAuthorization :
+          rfAuthorization.getRFSegmentAuthorizationList()) {
+        segmentAuthorizationMap.put(
+            rfSegmentAuthorization.getSegmentAuthorizationPK().getRFSegmentId(),
+            rfSegmentAuthorization);
       }
     }
 
-    return destinationAuthorizationMap;
+    return segmentAuthorizationMap;
   }
 
   @RolesAllowed("jam-admin")
@@ -228,9 +228,9 @@ public class RFAuthorizationFacade extends AbstractFacade<RFAuthorization> {
   public long sendELog(String proxyServer, String logbookServer) throws UserFriendlyException {
     String username = checkAuthenticated();
 
-    BeamAuthorization beamAuthorization = findCurrent();
+    RFAuthorization rfAuthorization = findCurrent();
 
-    if (beamAuthorization == null) {
+    if (rfAuthorization == null) {
       throw new UserFriendlyException("No authorizations found");
     }
 

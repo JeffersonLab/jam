@@ -26,14 +26,13 @@
     </thead>
     <tbody>
         <c:forEach items="${rfList}" var="segment">
-            <c:set var="beamDestinationAuthorization" value="${destinationAuthorizationMap[segment.beamDestinationId]}"/>
-            <c:set var="units" value="${unitsMap[segment.beamDestinationId] ne null ? unitsMap[segment.beamDestinationId] : 'uA'}"/>
+            <c:set var="rfSegmentAuthorization" value="${rfAuthorizationMap[segment.getRFSegmentId()]}"/>
             <tr>
-                <td><a data-dialog-title="${segment.name} Information" class="dialog-ready" href="${pageContext.request.contextPath}/beam-destination-information?beamDestinationId=${segment.beamDestinationId}"><c:out value="${segment.name}"/></a></td>
+                <td><c:out value="${segment.name}"/></td>
                     <c:if test="${not isHistory}">
                     <td class="icon-cell">
                         <c:choose>
-                            <c:when test="${(segment.verification.verificationStatusId eq 1 or segment.verification.verificationStatusId eq 50) and beamDestinationAuthorization.beamMode ne null and beamDestinationAuthorization.beamMode ne 'None'}">
+                            <c:when test="${(segment.verification.verificationStatusId eq 1 or segment.verification.verificationStatusId eq 50) and rfSegmentAuthorization.getRFMode() ne null and rfSegmentAuthorization.getRFMode() ne 'None'}">
                                 <span title="Approved" class="small-icon verified-icon"></span>
                             </c:when>
                             <c:otherwise>
@@ -43,16 +42,16 @@
                     </td>
                 </c:if>
                 <td class="${(not isHistory) && (not (selectedBeamMode eq 'None')) && (segment.verification.verificationStatusId eq 50) ? 'provisional-comments' : ''}">
-                    <c:set var="selectedComment" value="${beamDestinationAuthorization.comments eq null ? '' : beamDestinationAuthorization.comments}"/>
+                    <c:set var="selectedComment" value="${rfSegmentAuthorization.comments eq null ? '' : rfSegmentAuthorization.comments}"/>
                     <span class="readonly-field">
                         <c:out value="${selectedComment}"/>
                     </span>
                     <span class="editable-field">
-                        <textarea name="comment[]" class="comment-input" type="text"${selectedBeamMode eq 'None' ? ' readonly="readonly"' : ''}><c:out value="${selectedBeamMode eq 'None' ? '' : selectedComment}"/></textarea>
+                        <textarea name="comment[]" class="comment-input" type="text"${selectedRfMode eq 'None' ? ' readonly="readonly"' : ''}><c:out value="${selectedBeamMode eq 'None' ? '' : selectedComment}"/></textarea>
                     </span>
                 </td>
                 <td>
-                    <fmt:formatDate var="selectedExpiration" value="${beamDestinationAuthorization.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
+                    <fmt:formatDate var="selectedExpiration" value="${rfSegmentAuthorization.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
                     <span class="readonly-field">
                         <c:out value="${selectedExpiration}"/>
                         <span class="expiring-soon" style="<c:out value="${beamDestinationAuthorization.expirationDate ne null and beamDestinationAuthorization.expirationDate.time > beamauth:now().time and beamDestinationAuthorization.expirationDate.time < beamauth:twoDaysFromNow().time ? 'display: block;' : 'display: none;'}"/>">(Expiring Soon)</span>
@@ -63,7 +62,6 @@
                 </td>
                 <c:if test="${not isHistory}">
                     <td class="icon-cell">
-                        <a data-dialog-title="${segment.name} Information" class="dialog-ready" href="beam-destination-information?beamDestinationId=${segment.beamDestinationId}">
                             <c:choose>
                                 <c:when test="${segment.verification.verificationStatusId eq 1}">
                                     <span title="Verified" class="small-icon verified-icon"></span>
@@ -76,7 +74,6 @@
                                 </c:otherwise>
                             </c:choose>
                             <span class="expiring-soon" style="<c:out value="${segment.verification.expirationDate ne null and segment.verification.expirationDate.time > beamauth:now().time and segment.verification.expirationDate.time < beamauth:twoDaysFromNow().time ? 'display: block;' : 'display: none;'}"/>">(Expiring Soon)</span>
-                        </a>
                     </td>
                 </c:if>
             </tr>

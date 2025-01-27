@@ -36,6 +36,7 @@ import org.jlab.smoothness.presentation.util.ParamConverter;
 public class FacilityAuthorization extends HttpServlet {
 
   private static final Logger LOGGER = Logger.getLogger(FacilityAuthorization.class.getName());
+  @EJB RFAuthorizationFacade rfAuthorizationFacade;
   @EJB BeamAuthorizationFacade beamAuthorizationFacade;
   @EJB BeamDestinationFacade beamDestinationFacade;
   @EJB BeamControlVerificationFacade verificationFacade;
@@ -56,8 +57,6 @@ public class FacilityAuthorization extends HttpServlet {
 
     String pathInfo = request.getPathInfo();
 
-    System.err.println("PathInfo: " + pathInfo);
-
     Facility facility = facilityFacade.findByPath(pathInfo);
 
     if (facility == null) {
@@ -69,6 +68,7 @@ public class FacilityAuthorization extends HttpServlet {
 
     verificationFacade.performExpirationCheck(false);
 
+    RFAuthorization rfAuthorization = rfAuthorizationFacade.findCurrent();
     BeamAuthorization beamAuthorization = beamAuthorizationFacade.findCurrent();
 
     List<RFSegment> rfList = rfSegmentFacade.findByFacility(facility);
@@ -76,6 +76,9 @@ public class FacilityAuthorization extends HttpServlet {
 
     Map<BigInteger, BeamDestinationAuthorization> destinationAuthorizationMap =
         beamAuthorizationFacade.createDestinationAuthorizationMap(beamAuthorization);
+
+    Map<BigInteger, RFSegmentAuthorization> segmentAuthorizationMap =
+        rfAuthorizationFacade.createSegmentAuthorizationMap(rfAuthorization);
 
     request.setAttribute("facility", facility);
     request.setAttribute("facilityList", facilityList);

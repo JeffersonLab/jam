@@ -46,7 +46,7 @@ public class RFSegmentFacade extends AbstractFacade<RFSegment> {
 
     List<Order> orders = new ArrayList<>();
     Path p0 = root.get("weight");
-    Order o0 = cb.desc(p0);
+    Order o0 = cb.asc(p0);
     orders.add(o0);
     cq.orderBy(orders);
 

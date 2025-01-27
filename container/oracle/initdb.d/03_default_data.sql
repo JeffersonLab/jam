@@ -35,6 +35,15 @@ insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,WOR
 insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,WORKGROUP_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'Control 5','Control 5 Description',1,5,'1 Year');
 insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,WORKGROUP_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'Control 6','Control 6 Description',1,6,'1 Year');
 
+-- Populate RF Segments
+insert into JAM_OWNER.rf_segment (RF_SEGMENT_ID, NAME, FACILITY_ID, ACTIVE_YN, WEIGHT) values(JAM_OWNER.rf_segment_id.nextval, 'Injector', 1, 'Y', 1);
+insert into JAM_OWNER.rf_segment (RF_SEGMENT_ID, NAME, FACILITY_ID, ACTIVE_YN, WEIGHT) values(JAM_OWNER.rf_segment_id.nextval, 'North Linac', 1, 'Y', 2);
+insert into JAM_OWNER.rf_segment (RF_SEGMENT_ID, NAME, FACILITY_ID, ACTIVE_YN, WEIGHT) values(JAM_OWNER.rf_segment_id.nextval, 'South Linac', 1, 'Y', 3);
+insert into JAM_OWNER.rf_segment (RF_SEGMENT_ID, NAME, FACILITY_ID, ACTIVE_YN, WEIGHT) values(JAM_OWNER.rf_segment_id.nextval, 'Entire Facility', 2, 'Y', 1);
+insert into JAM_OWNER.rf_segment (RF_SEGMENT_ID, NAME, FACILITY_ID, ACTIVE_YN, WEIGHT) values(JAM_OWNER.rf_segment_id.nextval, 'Entire Facility', 3, 'Y', 1);
+insert into JAM_OWNER.rf_segment (RF_SEGMENT_ID, NAME, FACILITY_ID, ACTIVE_YN, WEIGHT) values(JAM_OWNER.rf_segment_id.nextval, 'Entire Facility', 4, 'Y', 1);
+insert into JAM_OWNER.rf_segment (RF_SEGMENT_ID, NAME, FACILITY_ID, ACTIVE_YN, WEIGHT) values(JAM_OWNER.rf_segment_id.nextval, 'Entire Facility', 5, 'Y', 1);
+
 -- Populate Beam Destinations
 insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, 'Destination 1', 1, 'uA', 'Y', 1);
 insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, 'Destination 2', 1, 'uA', 'Y', 2);
@@ -45,9 +54,8 @@ insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, 
 insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, 'Destination 7', 3, 'uA', 'Y', 7);
 insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, 'Destination 8', 3, 'uA', 'Y', 8);
 insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, 'Destination 9', 3, 'uA', 'Y', 9);
-insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, 'Injector RF Operations', 1, 'uA', 'Y', 9);
 
--- Populate Initial Control Verification
+-- Populate Initial Beam Control Verification
 insert into JAM_OWNER.beam_control_verification (BEAM_CONTROL_VERIFICATION_ID, CREDITED_CONTROL_ID, BEAM_DESTINATION_ID, VERIFICATION_STATUS_ID, VERIFICATION_DATE, VERIFIED_BY, EXPIRATION_DATE, COMMENTS, MODIFIED_BY, MODIFIED_DATE) values(JAM_OWNER.beam_control_verification_id.nextval, 1, 1, 100, sysdate, 'admin', null, null, 'admin', sysdate);
 insert into JAM_OWNER.beam_control_verification (BEAM_CONTROL_VERIFICATION_ID, CREDITED_CONTROL_ID, BEAM_DESTINATION_ID, VERIFICATION_STATUS_ID, VERIFICATION_DATE, VERIFIED_BY, EXPIRATION_DATE, COMMENTS, MODIFIED_BY, MODIFIED_DATE) values(JAM_OWNER.beam_control_verification_id.nextval, 2, 2, 100, sysdate, 'admin', null, null, 'admin', sysdate);
 insert into JAM_OWNER.beam_control_verification (BEAM_CONTROL_VERIFICATION_ID, CREDITED_CONTROL_ID, BEAM_DESTINATION_ID, VERIFICATION_STATUS_ID, VERIFICATION_DATE, VERIFIED_BY, EXPIRATION_DATE, COMMENTS, MODIFIED_BY, MODIFIED_DATE) values(JAM_OWNER.beam_control_verification_id.nextval, 3, 3, 100, sysdate, 'admin', null, null, 'admin', sysdate);
