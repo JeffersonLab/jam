@@ -5,9 +5,8 @@
 <%@taglib prefix="s" uri="http://jlab.org/jsp/smoothness" %>
 <%@taglib prefix="beamauth" uri="http://jlab.org/beamauth/functions"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
-<%@attribute name="destinationList" required="true" type="java.util.List"%>
+<%@attribute name="beamList" required="true" type="java.util.List"%>
 <%@attribute name="isHistory" required="true" type="java.lang.Boolean"%>
-<%@attribute name="facility" required="true" type="java.lang.String"%>
 <table class="destinations-table data-table stripped-table">
     <thead>
         <tr>
@@ -28,7 +27,7 @@
         </tr>
     </thead>
     <tbody>
-        <c:forEach items="${destinationList}" var="destination">
+        <c:forEach items="${beamList}" var="destination">
             <c:set var="destinationAuthorization" value="${destinationAuthorizationMap[destination.beamDestinationId]}"/>
             <c:set var="units" value="${unitsMap[destination.beamDestinationId] ne null ? unitsMap[destination.beamDestinationId] : 'uA'}"/>
             <tr>
@@ -50,7 +49,7 @@
                     <div class="readonly-field"><c:out value="${selectedBeamMode}"/></div>
                     <div class="editable-field">
                         <select name="mode[]" class="mode-select">
-                            <c:forEach items="${beamauth:beamModeList(facility, destination.name)}" var="beamMode">
+                            <c:forEach items="${beamauth:beamModeList(facility.name, destination.name)}" var="beamMode">
                                 <option${beamMode eq selectedBeamMode ? ' selected="selected"' : ''}><c:out value="${beamMode}"/></option>
                             </c:forEach>
                         </select>

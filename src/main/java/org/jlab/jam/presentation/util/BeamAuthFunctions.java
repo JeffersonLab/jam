@@ -32,13 +32,13 @@ public final class BeamAuthFunctions {
       modes = RF_LIST;
     } else {
       switch (facility) {
-        case "cebaf":
+        case "CEBAF":
           modes = CEBAF_LIST;
           break;
-        case "lerf":
+        case "LERF":
           modes = LERF_LIST;
           break;
-        case "uitf":
+        case "UITF":
           modes = UITF_LIST;
           break;
       }

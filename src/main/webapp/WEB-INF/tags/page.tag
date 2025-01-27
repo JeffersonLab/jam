@@ -18,7 +18,7 @@
     </jsp:attribute>
     <jsp:attribute name="primaryNavigation">
                     <ul>
-                        <li${fn:startsWith(currentPath, '/permissions') ? ' class="current-primary"' : ''}><a href="${pageContext.request.contextPath}/permissions">Permissions</a></li>
+                        <li${fn:startsWith(currentPath, '/authorizations') ? ' class="current-primary"' : ''}><a href="${pageContext.request.contextPath}/authorizations/cebaf">Authorizations</a></li>
                         <li${fn:startsWith(currentPath, '/credited-controls') ? ' class="current-primary"' : ''}><a href="${pageContext.request.contextPath}/credited-controls">Credited Controls</a></li>
                         <li${'/destinations' eq currentPath ? ' class="current-primary"' : ''}><a href="${pageContext.request.contextPath}/destinations">Beam Destinations</a></li>
                         <li${'/control-participation' eq currentPath ? ' class="current-primary"' : ''}><a href="${pageContext.request.contextPath}/control-participation">Control Participation</a></li>

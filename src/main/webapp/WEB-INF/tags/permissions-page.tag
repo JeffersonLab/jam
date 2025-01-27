@@ -1,28 +1,30 @@
-<%@tag description="Destination Table Tag" pageEncoding="UTF-8"%>
+<%@tag description="Permissions Table Tag" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@taglib prefix="s" uri="http://jlab.org/jsp/smoothness" %>
 <%@taglib prefix="beamauth" uri="http://jlab.org/beamauth/functions"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
-<%@attribute name="cebafDestinationList" required="true" type="java.util.List"%>
-<%@attribute name="lerfDestinationList" required="true" type="java.util.List"%>
+<%@attribute name="rfList" required="true" type="java.util.List"%>
+<%@attribute name="beamList" required="true" type="java.util.List"%>
 <%@attribute name="isEditable" required="true" type="java.lang.Boolean"%>
 <%@attribute name="isHistory" required="true" type="java.lang.Boolean"%>
 <form id="authorization-form" method="post" action="permissions">
     <div class="chart-wrap-backdrop">
-        <h2>Permissions
+        <h2><c:out value="${facility.name}"/>
             <c:if test="${isEditable}">
                 <span class="readonly-field"><button id="edit-button" type="button">Edit</button></span>
             </c:if>            
         </h2>
+        <h3>RF Operations</h3>
+        <table class="data-table">
+            <tbody>
+
+            </tbody>
+        </table>
         <div class="editable-field power-limited-note">Note: Blank/Empty Current Limit results in "Dump Power Limited"</div>
-        <h3>CEBAF</h3>
-        <t:destination-permissions-table destinationList="${cebafDestinationList}" isHistory="${isHistory}" facility="cebaf"/>
-        <h3>LERF</h3>
-        <t:destination-permissions-table destinationList="${lerfDestinationList}" isHistory="${isHistory}" facility="lerf"/>
-        <h3>UITF</h3>
-        <t:destination-permissions-table destinationList="${uitfDestinationList}" isHistory="${isHistory}" facility="uitf"/>
+        <h3>Beam Operations</h3>
+        <t:destination-permissions-table beamList="${beamList}" isHistory="${isHistory}"/>
         <h3>Notes</h3>
         <div class="notes-field">
             <span class="readonly-field">

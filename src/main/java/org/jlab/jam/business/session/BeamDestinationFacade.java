@@ -1,6 +1,7 @@
 package org.jlab.jam.business.session;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -10,8 +11,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.*;
 import org.jlab.jam.persistence.entity.BeamDestination;
 import org.jlab.jam.persistence.entity.ControlVerification;
+import org.jlab.jam.persistence.entity.Facility;
 
 /**
  * @author ryans
@@ -46,7 +49,7 @@ public class BeamDestinationFacade extends AbstractFacade<BeamDestination> {
   public List<BeamDestination> findCebafDestinations() {
     Query q =
         em.createNativeQuery(
-            "select * from JAM_OWNER.beam_destination where machine = 'CEBAF' and ACTIVE_YN = 'Y' order by weight",
+            "select * from JAM_OWNER.beam_destination where FACILITY_ID = 1 and ACTIVE_YN = 'Y' order by weight",
             BeamDestination.class);
 
     return q.getResultList();
@@ -57,7 +60,7 @@ public class BeamDestinationFacade extends AbstractFacade<BeamDestination> {
   public List<BeamDestination> findLerfDestinations() {
     Query q =
         em.createNativeQuery(
-            "select * from JAM_OWNER.beam_destination where machine = 'LERF'  and ACTIVE_YN = 'Y' order by weight",
+            "select * from JAM_OWNER.beam_destination where facility_id = 2 and ACTIVE_YN = 'Y' order by weight",
             BeamDestination.class);
 
     return q.getResultList();
@@ -68,7 +71,7 @@ public class BeamDestinationFacade extends AbstractFacade<BeamDestination> {
   public List<BeamDestination> findUitfDestinations() {
     Query q =
         em.createNativeQuery(
-            "select * from JAM_OWNER.beam_destination where machine = 'UITF'  and ACTIVE_YN = 'Y' order by weight",
+            "select * from JAM_OWNER.beam_destination where facility_id = 3 and ACTIVE_YN = 'Y' order by weight",
             BeamDestination.class);
 
     return q.getResultList();
@@ -106,5 +109,33 @@ public class BeamDestinationFacade extends AbstractFacade<BeamDestination> {
     }
 
     return destination;
+  }
+
+  @PermitAll
+  public List<BeamDestination> findByFacility(Facility facility) {
+    CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
+    CriteriaQuery<BeamDestination> cq = cb.createQuery(BeamDestination.class);
+    Root<BeamDestination> root = cq.from(BeamDestination.class);
+
+    List<Predicate> filters = new ArrayList<>();
+
+    filters.add(cb.equal(root.get("facility"), facility));
+
+    filters.add(cb.equal(root.get("active"), true));
+
+    if (!filters.isEmpty()) {
+      cq.where(cb.and(filters.toArray(new Predicate[] {})));
+    }
+
+    List<Order> orders = new ArrayList<>();
+    Path p0 = root.get("weight");
+    Order o0 = cb.desc(p0);
+    orders.add(o0);
+    cq.orderBy(orders);
+
+    cq.select(root);
+    TypedQuery<BeamDestination> q = getEntityManager().createQuery(cq);
+
+    return q.getResultList();
   }
 }

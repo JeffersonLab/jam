@@ -21,13 +21,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.jlab.jam.business.session.AuthorizationFacade;
-import org.jlab.jam.business.session.BeamDestinationFacade;
-import org.jlab.jam.business.session.ControlVerificationFacade;
-import org.jlab.jam.persistence.entity.Authorization;
-import org.jlab.jam.persistence.entity.BeamDestination;
-import org.jlab.jam.persistence.entity.DestinationAuthorization;
-import org.jlab.jam.persistence.entity.DestinationAuthorizationPK;
+import org.jlab.jam.business.session.*;
+import org.jlab.jam.persistence.entity.*;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jlab.smoothness.business.util.TimeUtil;
 import org.jlab.smoothness.presentation.util.ParamConverter;
@@ -36,14 +31,15 @@ import org.jlab.smoothness.presentation.util.ParamConverter;
  * @author ryans
  */
 @WebServlet(
-    name = "BeamPermissions",
-    urlPatterns = {"/permissions"})
-public class BeamPermissions extends HttpServlet {
+    name = "FacilityAuthorization",
+    urlPatterns = {"/authorizations/*"})
+public class FacilityAuthorization extends HttpServlet {
 
-  private static final Logger LOGGER = Logger.getLogger(BeamPermissions.class.getName());
+  private static final Logger LOGGER = Logger.getLogger(FacilityAuthorization.class.getName());
   @EJB AuthorizationFacade authorizationFacade;
   @EJB BeamDestinationFacade beamDestinationFacade;
   @EJB ControlVerificationFacade verificationFacade;
+  @EJB FacilityFacade facilityFacade;
 
   /**
    * Handles the HTTP <code>GET</code> method.
@@ -57,25 +53,38 @@ public class BeamPermissions extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
+    String pathInfo = request.getPathInfo();
+
+    System.err.println("PathInfo: " + pathInfo);
+
+    Facility facility = facilityFacade.findByPath(pathInfo);
+
+    if (facility == null) {
+      throw new ServletException("Facility not found");
+    }
+
+    List<Facility> facilityList =
+        facilityFacade.findAll(new AbstractFacade.OrderDirective("weight"));
+
     verificationFacade.performExpirationCheck(false);
 
     Authorization authorization = authorizationFacade.findCurrent();
 
-    List<BeamDestination> cebafDestinationList = beamDestinationFacade.findCebafDestinations();
-    List<BeamDestination> lerfDestinationList = beamDestinationFacade.findLerfDestinations();
-    List<BeamDestination> uitfDestinationList = beamDestinationFacade.findUitfDestinations();
+    List<BeamDestination> beamList = beamDestinationFacade.findByFacility(facility);
 
     Map<BigInteger, DestinationAuthorization> destinationAuthorizationMap =
         authorizationFacade.createDestinationAuthorizationMap(authorization);
 
+    request.setAttribute("facility", facility);
+    request.setAttribute("facilityList", facilityList);
     request.setAttribute("unitsMap", authorizationFacade.getUnitsMap());
     request.setAttribute("authorization", authorization);
-    request.setAttribute("cebafDestinationList", cebafDestinationList);
-    request.setAttribute("lerfDestinationList", lerfDestinationList);
-    request.setAttribute("uitfDestinationList", uitfDestinationList);
+    request.setAttribute("beamList", beamList);
     request.setAttribute("destinationAuthorizationMap", destinationAuthorizationMap);
 
-    request.getRequestDispatcher("WEB-INF/views/permissions.jsp").forward(request, response);
+    request
+        .getRequestDispatcher("/WEB-INF/views/facility-authorization.jsp")
+        .forward(request, response);
   }
 
   /**

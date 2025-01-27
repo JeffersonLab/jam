@@ -6,9 +6,26 @@ insert into JAM_OWNER.VERIFICATION (VERIFICATION_ID, NAME) values (50, 'Provisio
 insert into JAM_OWNER.VERIFICATION (VERIFICATION_ID, NAME) values (100, 'Not Verified');
 
 -- Populate Workgroup
-insert into JAM_OWNER.WORKGROUP (WORKGROUP_ID, NAME, LEADER_ROLE_NAME) values (JAM_OWNER.WORKGROUP_ID.nextval, 'Group 1', 'group1Leaders');
-insert into JAM_OWNER.WORKGROUP (WORKGROUP_ID, NAME, LEADER_ROLE_NAME) values (JAM_OWNER.WORKGROUP_ID.nextval, 'Group 2', 'group2Leaders');
-insert into JAM_OWNER.WORKGROUP (WORKGROUP_ID, NAME, LEADER_ROLE_NAME) values (JAM_OWNER.WORKGROUP_ID.nextval, 'Group 3', 'group3Leaders');
+insert into JAM_OWNER.WORKGROUP (WORKGROUP_ID, NAME, LEADER_ROLE_NAME) values (1, 'Group 1', 'group1Leaders');
+insert into JAM_OWNER.WORKGROUP (WORKGROUP_ID, NAME, LEADER_ROLE_NAME) values (2, 'Group 2', 'group2Leaders');
+insert into JAM_OWNER.WORKGROUP (WORKGROUP_ID, NAME, LEADER_ROLE_NAME) values (3, 'Group 3', 'group3Leaders');
+insert into JAM_OWNER.WORKGROUP (WORKGROUP_ID, NAME, LEADER_ROLE_NAME) values (4, 'Group 4', 'group4Leaders');
+insert into JAM_OWNER.WORKGROUP (WORKGROUP_ID, NAME, LEADER_ROLE_NAME) values (5, 'Group 5', 'group5Leaders');
+insert into JAM_OWNER.WORKGROUP (WORKGROUP_ID, NAME, LEADER_ROLE_NAME) values (6, 'Group 6', 'group6Leaders');
+insert into JAM_OWNER.WORKGROUP (WORKGROUP_ID, NAME, LEADER_ROLE_NAME) values (7, 'Group 7', 'group7Leaders');
+insert into JAM_OWNER.WORKGROUP (WORKGROUP_ID, NAME, LEADER_ROLE_NAME) values (8, 'Group 8', 'group8Leaders');
+insert into JAM_OWNER.WORKGROUP (WORKGROUP_ID, NAME, LEADER_ROLE_NAME) values (9, 'Group 9', 'group9Leaders');
+insert into JAM_OWNER.WORKGROUP (WORKGROUP_ID, NAME, LEADER_ROLE_NAME) values (10, 'Group 10', 'group10Leaders');
+insert into JAM_OWNER.WORKGROUP (WORKGROUP_ID, NAME, LEADER_ROLE_NAME) values (11, 'Group 11', 'group11Leaders');
+insert into JAM_OWNER.WORKGROUP (WORKGROUP_ID, NAME, LEADER_ROLE_NAME) values (12, 'Group 12', 'group12Leaders');
+insert into JAM_OWNER.WORKGROUP (WORKGROUP_ID, NAME, LEADER_ROLE_NAME) values (13, 'Group 13', 'group13Leaders');
+
+-- Populate Facilities
+insert into JAM_OWNER.FACILITY (FACILITY_ID, NAME, PATH, RF_WORKGROUP_ID, BEAM_WORKGROUP_ID, WEIGHT) values (1, 'CEBAF', '/cebaf', 4, 5, 1);
+insert into JAM_OWNER.FACILITY (FACILITY_ID, NAME, PATH, RF_WORKGROUP_ID, BEAM_WORKGROUP_ID, WEIGHT) values (2, 'LERF', '/lerf', 6, 7, 2);
+insert into JAM_OWNER.FACILITY (FACILITY_ID, NAME, PATH, RF_WORKGROUP_ID, BEAM_WORKGROUP_ID, WEIGHT) values (3, 'UITF', '/uitf', 8, 9, 3);
+insert into JAM_OWNER.FACILITY (FACILITY_ID, NAME, PATH, RF_WORKGROUP_ID, BEAM_WORKGROUP_ID, WEIGHT) values (4, 'CMTF', '/cmtf', 10, 11, 4);
+insert into JAM_OWNER.FACILITY (FACILITY_ID, NAME, PATH, RF_WORKGROUP_ID, BEAM_WORKGROUP_ID, WEIGHT) values (5, 'VTA', '/vta', 12, 13, 5);
 
 -- Populate Credited Controls
 insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,WORKGROUP_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'Control 1','Control 1 Description',1,1,'1 Year');
@@ -19,16 +36,16 @@ insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,WOR
 insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,WORKGROUP_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'Control 6','Control 6 Description',1,6,'1 Year');
 
 -- Populate Beam Destinations
-insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, MACHINE, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.destination_id.nextval, 'Destination 1', 'CEBAF', 'uA', 'Y', 1);
-insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, MACHINE, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.destination_id.nextval, 'Destination 2', 'CEBAF', 'uA', 'Y', 2);
-insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, MACHINE, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.destination_id.nextval, 'Destination 3', 'CEBAF', 'uA', 'Y', 3);
-insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, MACHINE, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.destination_id.nextval, 'Destination 4', 'LERF', 'uA', 'Y', 4);
-insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, MACHINE, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.destination_id.nextval, 'Destination 5', 'LERF', 'uA', 'Y', 5);
-insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, MACHINE, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.destination_id.nextval, 'Destination 6', 'LERF', 'uA', 'Y', 6);
-insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, MACHINE, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.destination_id.nextval, 'Destination 7', 'UITF', 'uA', 'Y', 7);
-insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, MACHINE, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.destination_id.nextval, 'Destination 8', 'UITF', 'uA', 'Y', 8);
-insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, MACHINE, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.destination_id.nextval, 'Destination 9', 'UITF', 'uA', 'Y', 9);
-insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, MACHINE, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.destination_id.nextval, 'Injector RF Operations', 'CEBAF', 'uA', 'Y', 9);
+insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.destination_id.nextval, 'Destination 1', 1, 'uA', 'Y', 1);
+insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.destination_id.nextval, 'Destination 2', 1, 'uA', 'Y', 2);
+insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.destination_id.nextval, 'Destination 3', 1, 'uA', 'Y', 3);
+insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.destination_id.nextval, 'Destination 4', 2, 'uA', 'Y', 4);
+insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.destination_id.nextval, 'Destination 5', 2, 'uA', 'Y', 5);
+insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.destination_id.nextval, 'Destination 6', 2, 'uA', 'Y', 6);
+insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.destination_id.nextval, 'Destination 7', 3, 'uA', 'Y', 7);
+insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.destination_id.nextval, 'Destination 8', 3, 'uA', 'Y', 8);
+insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.destination_id.nextval, 'Destination 9', 3, 'uA', 'Y', 9);
+insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.destination_id.nextval, 'Injector RF Operations', 1, 'uA', 'Y', 9);
 
 -- Populate Initial Control Verification
 insert into JAM_OWNER.control_verification (CONTROL_VERIFICATION_ID, CREDITED_CONTROL_ID, BEAM_DESTINATION_ID, VERIFICATION_ID, VERIFICATION_DATE, VERIFIED_BY, EXPIRATION_DATE, COMMENTS, MODIFIED_BY, MODIFIED_DATE) values(JAM_OWNER.control_verification_id.nextval, 1, 1, 100, sysdate, 'admin', null, null, 'admin', sysdate);
