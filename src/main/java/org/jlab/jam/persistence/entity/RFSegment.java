@@ -6,16 +6,15 @@ import java.util.Objects;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.jlab.jam.persistence.view.BeamDestinationVerification;
 import org.jlab.smoothness.persistence.util.YnStringToBoolean;
 
 @Entity
-@Table(name = "BEAM_DESTINATION", schema = "JAM_OWNER")
-public class BeamDestination {
+@Table(name = "RF_SEGMENT", schema = "JAM_OWNER")
+public class RFSegment {
 
   @Id
-  @Column(name = "BEAM_DESTINATION_ID", nullable = false, precision = 0)
-  private BigInteger beamDestinationId;
+  @Column(name = "RF_SEGMENT_ID", nullable = false, precision = 0)
+  private BigInteger rfSegmentId;
 
   @NotNull
   @ManyToOne
@@ -23,29 +22,25 @@ public class BeamDestination {
   private Facility facility;
 
   @Basic
-  @Column(name = "CURRENT_LIMIT_UNITS", nullable = false, length = 3)
-  private String currentLimitUnits;
-
-  @Basic
   @Column(name = "ACTIVE_YN", nullable = false, length = 1)
   @Convert(converter = YnStringToBoolean.class)
   private boolean active;
 
   @OneToOne(fetch = FetchType.EAGER)
-  @JoinColumn(name = "BEAM_DESTINATION_ID")
-  private BeamDestinationVerification verification;
+  @JoinColumn(name = "RF_SEGMENT_ID")
+  private RFControlVerification verification;
 
   @Size(max = 128)
   @Column(length = 128)
   private String name;
 
-  @OneToMany(mappedBy = "beamDestination", fetch = FetchType.LAZY)
-  private List<BeamControlVerification> beamControlVerificationList;
+  @OneToMany(mappedBy = "rfSegment", fetch = FetchType.LAZY)
+  private List<RFControlVerification> rfControlVerificationList;
 
   private BigInteger weight;
 
-  public List<BeamControlVerification> getBeamControlVerificationList() {
-    return beamControlVerificationList;
+  public List<RFControlVerification> getRFControlVerificationList() {
+    return rfControlVerificationList;
   }
 
   public String getName() {
@@ -64,16 +59,16 @@ public class BeamDestination {
     this.weight = weight;
   }
 
-  public BeamDestinationVerification getVerification() {
+  public RFControlVerification getVerification() {
     return verification;
   }
 
-  public BigInteger getBeamDestinationId() {
-    return beamDestinationId;
+  public BigInteger getRFSegmentId() {
+    return rfSegmentId;
   }
 
-  public void setBeamDestinationId(BigInteger beamDestinationId) {
-    this.beamDestinationId = beamDestinationId;
+  public void setRFSegmentId(BigInteger rfSegmentId) {
+    this.rfSegmentId = rfSegmentId;
   }
 
   public Facility getFacility() {
@@ -82,14 +77,6 @@ public class BeamDestination {
 
   public void setFacility(Facility facility) {
     this.facility = facility;
-  }
-
-  public String getCurrentLimitUnits() {
-    return currentLimitUnits;
-  }
-
-  public void setCurrentLimitUnits(String currentLimitUnits) {
-    this.currentLimitUnits = currentLimitUnits;
   }
 
   public boolean isActive() {
@@ -104,29 +91,24 @@ public class BeamDestination {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    BeamDestination that = (BeamDestination) o;
-    return Objects.equals(beamDestinationId, that.beamDestinationId)
+    RFSegment that = (RFSegment) o;
+    return Objects.equals(rfSegmentId, that.rfSegmentId)
         && Objects.equals(facility, that.facility)
-        && Objects.equals(currentLimitUnits, that.currentLimitUnits)
         && Objects.equals(name, that.name);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(beamDestinationId, facility, currentLimitUnits, name);
+    return Objects.hash(rfSegmentId, facility, name);
   }
 
   @Override
   public String toString() {
     return "BeamDestination{"
-        + "beamDestinationId="
-        + beamDestinationId
+        + "rfSegmentId="
+        + rfSegmentId
         + ", facility='"
         + facility
-        + '\''
-        + ", currentLimitUnits='"
-        + currentLimitUnits
-        + '\''
         + ", active="
         + active
         + ", verification="

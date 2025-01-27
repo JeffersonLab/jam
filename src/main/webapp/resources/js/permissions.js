@@ -139,4 +139,10 @@ $(function () {
         hour: 8,
         beforeShow: function(i) { if ($(i).attr('readonly')) { return false; } }
     }).mask("99-aaa-9999 99:99", {placeholder: " "});
+
+    $( ".accordion" ).accordion({
+        collapsible: true,
+        heightStyle: "content",
+        active: 0
+    });
 });

@@ -3,43 +3,31 @@ package org.jlab.jam.persistence.entity;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 /**
  * @author ryans
  */
 @Entity
-@Table(name = "VERIFICATION_HISTORY", schema = "JAM_OWNER")
-public class VerificationHistory implements Serializable {
+@Table(name = "RF_CONTROL_VERIFICATION_HISTORY", schema = "JAM_OWNER")
+public class RFControlVerificationHistory implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @Id
   @SequenceGenerator(
-      name = "VerificationHistoryId",
-      sequenceName = "VERIFICATION_HISTORY_ID",
+      name = "RFControlVerificationHistoryId",
+      sequenceName = "RF_CONTROL_VERIFICATION_HISTORY_ID",
       allocationSize = 1)
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "VerificationHistoryId")
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RFControlVerificationHistoryId")
   @Basic(optional = false)
   @NotNull
-  @Column(name = "VERIFICATION_HISTORY_ID", nullable = false, precision = 22, scale = 0)
-  private BigInteger verificationHistoryId;
+  @Column(name = "RF_CONTROL_VERIFICATION_HISTORY_ID", nullable = false, precision = 22, scale = 0)
+  private BigInteger rfControlVerificationHistoryId;
 
-  @Column(name = "VERIFICATION_ID")
+  @Column(name = "VERIFICATION_STATUS_ID")
   @NotNull
-  private Integer verificationId;
+  private Integer verificationStatusId;
 
   @Column(name = "MODIFIED_BY", nullable = false)
   private String modifiedBy;
@@ -68,26 +56,28 @@ public class VerificationHistory implements Serializable {
   @Column(name = "COMMENTS", nullable = true)
   private String comments;
 
-  @JoinColumn(name = "CONTROL_VERIFICATION_ID", referencedColumnName = "CONTROL_VERIFICATION_ID")
+  @JoinColumn(
+      name = "RF_CONTROL_VERIFICATION_ID",
+      referencedColumnName = "RF_CONTROL_VERIFICATION_ID")
   @ManyToOne(optional = false, fetch = FetchType.LAZY)
-  private ControlVerification controlVerification;
+  private RFControlVerification rfControlVerification;
 
-  public VerificationHistory() {}
+  public RFControlVerificationHistory() {}
 
-  public BigInteger getVerificationHistoryId() {
-    return verificationHistoryId;
+  public BigInteger getRFControlVerificationHistoryId() {
+    return rfControlVerificationHistoryId;
   }
 
-  public void setVerificationHistoryId(BigInteger verificationHistoryId) {
-    this.verificationHistoryId = verificationHistoryId;
+  public void setRFControlVerificationHistoryId(BigInteger rfControlVerificationHistoryId) {
+    this.rfControlVerificationHistoryId = rfControlVerificationHistoryId;
   }
 
-  public Integer getVerificationId() {
-    return verificationId;
+  public Integer getVerificationStatusId() {
+    return verificationStatusId;
   }
 
-  public void setVerificationId(Integer verificationId) {
-    this.verificationId = verificationId;
+  public void setVerificationStatusId(Integer verificationStatusId) {
+    this.verificationStatusId = verificationStatusId;
   }
 
   public String getModifiedBy() {
@@ -138,37 +128,39 @@ public class VerificationHistory implements Serializable {
     this.comments = comments;
   }
 
-  public ControlVerification getControlVerification() {
-    return controlVerification;
+  public RFControlVerification getRFControlVerification() {
+    return rfControlVerification;
   }
 
-  public void setControlVerification(ControlVerification controlVerificationId) {
-    this.controlVerification = controlVerificationId;
+  public void setRFControlVerification(RFControlVerification rfControlVerificationId) {
+    this.rfControlVerification = rfControlVerificationId;
   }
 
   @Override
   public int hashCode() {
     int hash = 0;
-    hash += (verificationHistoryId != null ? verificationHistoryId.hashCode() : 0);
+    hash +=
+        (rfControlVerificationHistoryId != null ? rfControlVerificationHistoryId.hashCode() : 0);
     return hash;
   }
 
   @Override
   public boolean equals(Object object) {
     // TODO: Warning - this method won't work in the case the id fields are not set
-    if (!(object instanceof VerificationHistory)) {
+    if (!(object instanceof RFControlVerificationHistory)) {
       return false;
     }
-    VerificationHistory other = (VerificationHistory) object;
-    return (this.verificationHistoryId != null || other.verificationHistoryId == null)
-        && (this.verificationHistoryId == null
-            || this.verificationHistoryId.equals(other.verificationHistoryId));
+    RFControlVerificationHistory other = (RFControlVerificationHistory) object;
+    return (this.rfControlVerificationHistoryId != null
+            || other.rfControlVerificationHistoryId == null)
+        && (this.rfControlVerificationHistoryId == null
+            || this.rfControlVerificationHistoryId.equals(other.rfControlVerificationHistoryId));
   }
 
   @Override
   public String toString() {
-    return "org.jlab.beamauth.persistence.entity.VerificationHistory[ verificationHistoryId="
-        + verificationHistoryId
+    return "org.jlab.jam.persistence.entity.RFControlVerificationHistory[ rfControlVerificationHistoryId="
+        + rfControlVerificationHistoryId
         + " ]";
   }
 }

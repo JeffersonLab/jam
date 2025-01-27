@@ -1,21 +1,12 @@
 package org.jlab.jam.business.session;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.security.DeclareRoles;
@@ -27,9 +18,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import org.jlab.jam.persistence.entity.Authorization;
-import org.jlab.jam.persistence.entity.BeamDestination;
-import org.jlab.jam.persistence.entity.DestinationAuthorization;
+import org.jlab.jam.persistence.entity.*;
 import org.jlab.jlog.Body;
 import org.jlab.jlog.Library;
 import org.jlab.jlog.LogEntry;
@@ -47,22 +36,22 @@ import org.jlab.smoothness.business.util.IOUtil;
  */
 @Stateless
 @DeclareRoles({"jam-admin"})
-public class AuthorizationFacade extends AbstractFacade<Authorization> {
+public class RFAuthorizationFacade extends AbstractFacade<RFAuthorization> {
 
-  private static final Logger LOGGER = Logger.getLogger(AuthorizationFacade.class.getName());
+  private static final Logger LOGGER = Logger.getLogger(RFAuthorizationFacade.class.getName());
 
   @PersistenceContext(unitName = "jamPU")
   private EntityManager em;
 
-  @EJB BeamDestinationFacade destinationFacade;
+  @EJB RFSegmentFacade segmentFacade;
 
   @Override
   protected EntityManager getEntityManager() {
     return em;
   }
 
-  public AuthorizationFacade() {
-    super(Authorization.class);
+  public RFAuthorizationFacade() {
+    super(RFAuthorization.class);
   }
 
   @SuppressWarnings("unchecked")
@@ -89,51 +78,52 @@ public class AuthorizationFacade extends AbstractFacade<Authorization> {
 
   @SuppressWarnings("unchecked")
   @PermitAll
-  public Authorization findCurrent() {
+  public BeamAuthorization findCurrent() {
     Query q =
         em.createNativeQuery(
             "select * from (select * from authorization order by modified_date desc) where rownum <= 1",
-            Authorization.class);
+            BeamAuthorization.class);
 
-    List<Authorization> authorizationList = q.getResultList();
+    List<BeamAuthorization> beamAuthorizationList = q.getResultList();
 
-    Authorization authorization = null;
+    BeamAuthorization beamAuthorization = null;
 
-    if (authorizationList != null && !authorizationList.isEmpty()) {
-      authorization = authorizationList.get(0);
+    if (beamAuthorizationList != null && !beamAuthorizationList.isEmpty()) {
+      beamAuthorization = beamAuthorizationList.get(0);
     }
 
-    return authorization;
+    return beamAuthorization;
   }
 
   @SuppressWarnings("unchecked")
   @PermitAll
-  public List<Authorization> findHistory(int offset, int maxPerPage) {
+  public List<BeamAuthorization> findHistory(int offset, int maxPerPage) {
     Query q =
         em.createNativeQuery(
-            "select * from authorization order by authorization_date desc", Authorization.class);
+            "select * from authorization order by authorization_date desc",
+            BeamAuthorization.class);
 
     return q.setFirstResult(offset).setMaxResults(maxPerPage).getResultList();
   }
 
   @PermitAll
   public Long countHistory() {
-    TypedQuery<Long> q = em.createQuery("select count(a) from Authorization a", Long.class);
+    TypedQuery<Long> q = em.createQuery("select count(a) from BeamAuthorization a", Long.class);
 
     return q.getSingleResult();
   }
 
   @PermitAll
-  public Map<BigInteger, DestinationAuthorization> createDestinationAuthorizationMap(
-      Authorization authorization) {
-    Map<BigInteger, DestinationAuthorization> destinationAuthorizationMap = new HashMap<>();
+  public Map<BigInteger, BeamDestinationAuthorization> createDestinationAuthorizationMap(
+      BeamAuthorization beamAuthorization) {
+    Map<BigInteger, BeamDestinationAuthorization> destinationAuthorizationMap = new HashMap<>();
 
-    if (authorization != null && authorization.getDestinationAuthorizationList() != null) {
-      for (DestinationAuthorization destinationAuthorization :
-          authorization.getDestinationAuthorizationList()) {
+    if (beamAuthorization != null && beamAuthorization.getDestinationAuthorizationList() != null) {
+      for (BeamDestinationAuthorization beamDestinationAuthorization :
+          beamAuthorization.getDestinationAuthorizationList()) {
         destinationAuthorizationMap.put(
-            destinationAuthorization.getDestinationAuthorizationPK().getBeamDestinationId(),
-            destinationAuthorization);
+            beamDestinationAuthorization.getDestinationAuthorizationPK().getBeamDestinationId(),
+            beamDestinationAuthorization);
       }
     }
 
@@ -142,11 +132,11 @@ public class AuthorizationFacade extends AbstractFacade<Authorization> {
 
   @RolesAllowed("jam-admin")
   public void saveAuthorization(
-      String comments, List<DestinationAuthorization> destinationAuthorizationList)
+      String comments, List<RFSegmentAuthorization> segmentAuthorizationList)
       throws UserFriendlyException {
     String username = checkAuthenticated();
 
-    Authorization authorization = new Authorization();
+    RFAuthorization authorization = new RFAuthorization();
     authorization.setComments(comments);
     authorization.setAuthorizationDate(new Date());
     authorization.setAuthorizedBy(username);
@@ -155,35 +145,34 @@ public class AuthorizationFacade extends AbstractFacade<Authorization> {
 
     create(authorization);
 
-    for (DestinationAuthorization da : destinationAuthorizationList) {
+    for (RFSegmentAuthorization da : segmentAuthorizationList) {
 
-      BeamDestination destination =
-          destinationFacade.find(da.getDestinationAuthorizationPK().getBeamDestinationId());
-      if (!"None".equals(da.getBeamMode())) { // CW or Tune
+      RFSegment segment = segmentFacade.find(da.getSegmentAuthorizationPK().getRFSegmentId());
+      if (!"None".equals(da.getRFMode())) {
 
         // Check if credited control agrees
-        if (!(destination.getVerification().getVerificationId() <= 50)) {
+        if (!(segment.getVerification().getVerificationStatusId() <= 50)) {
           throw new UserFriendlyException(
-              "Beam Destination \""
-                  + destination.getName()
-                  + "\" cannot have beam when credited controls are not verified");
+              "Segment \""
+                  + segment.getName()
+                  + "\" cannot authorize RF when credited controls are not verified");
         }
 
         // If provisional then there better be a comment
-        if (destination.getVerification().getVerificationId() == 50
+        if (segment.getVerification().getVerificationStatusId() == 50
             && (da.getComments() == null || da.getComments().trim().isEmpty())) {
           throw new UserFriendlyException(
-              "Beam Destination \""
-                  + destination.getName()
-                  + "\" must have a comment to explain why beam is permitted with provisional credited control status");
+              "Segment \""
+                  + segment.getName()
+                  + "\" must have a comment to explain why RF is permitted with provisional credited control status");
         }
 
-        // Must provide an expiration date since CW or Tune
+        // Must provide an expiration date since ON
         if (da.getExpirationDate() == null) {
           throw new UserFriendlyException(
-              "Beam Destination \""
-                  + destination.getName()
-                  + "\" must have an expiration date since beam is allowed");
+              "Segment \""
+                  + segment.getName()
+                  + "\" must have an expiration date since RF is allowed");
         }
 
         // Expiration must be in the future
@@ -191,14 +180,14 @@ public class AuthorizationFacade extends AbstractFacade<Authorization> {
         cal.add(Calendar.HOUR_OF_DAY, 1);
         if (da.getExpirationDate().before(cal.getTime())) {
           throw new UserFriendlyException(
-              "Beam Destination \""
-                  + destination.getName()
+              "Segment \""
+                  + segment.getName()
                   + "\" must have a future expiration date and minimum expiration is 1 hour from now");
         }
       }
 
-      da.setAuthorization(authorization);
-      da.getDestinationAuthorizationPK().setAuthorizationId(authorization.getAuthorizationId());
+      da.setRFAuthorization(authorization);
+      da.getSegmentAuthorizationPK().setRFAuthorizationId(authorization.getRfAuthorizationId());
       em.persist(da);
     }
 
@@ -239,9 +228,9 @@ public class AuthorizationFacade extends AbstractFacade<Authorization> {
   public long sendELog(String proxyServer, String logbookServer) throws UserFriendlyException {
     String username = checkAuthenticated();
 
-    Authorization authorization = findCurrent();
+    BeamAuthorization beamAuthorization = findCurrent();
 
-    if (authorization == null) {
+    if (beamAuthorization == null) {
       throw new UserFriendlyException("No authorizations found");
     }
 

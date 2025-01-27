@@ -58,7 +58,7 @@
                                         <td><c:out value="${s:formatUsername(history.modifiedBy)}"/></td>
                                         <td><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}" value="${history.verificationDate}"/></td>
                                         <td><c:out value="${s:formatUsername(history.verifiedBy)}"/></td>
-                                        <td class="icon-cell"><span title="${history.verificationId eq 1 ? 'Verified' : (history.verificationId eq 50 ? 'Provisionally Verified' : 'Not Verified')}" class="small-icon baseline-small-icon ${history.verificationId eq 1 ? 'verified-icon' : (history.verificationId eq 50 ? 'provisional-icon' : 'not-verified-icon')}"></span></td>
+                                        <td class="icon-cell"><span title="${history.verificationStatusId eq 1 ? 'Verified' : (history.verificationStatusId eq 50 ? 'Provisionally Verified' : 'Not Verified')}" class="small-icon baseline-small-icon ${history.verificationStatusId eq 1 ? 'verified-icon' : (history.verificationStatusId eq 50 ? 'provisional-icon' : 'not-verified-icon')}"></span></td>
                                         <td><c:out value="${history.comments}"/></td>
                                         <td><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}" value="${history.expirationDate}"/></td>
                                     </tr>
@@ -66,7 +66,7 @@
                             </tbody>
                         </table>
                         <form id="filter-form" action="${pageContext.request.contextPath}/credited-controls/verification-history" method="get">
-                            <input type="hidden" name="controlVerificationId" value="${fn:escapeXml(param.controlVerificationId)}"/>
+                            <input type="hidden" name="beamControlVerificationId" value="${fn:escapeXml(param.beamControlVerificationId)}"/>
                             <input type="hidden" id="offset-input" name="offset" value="0"/>
                         </form>
                         <button id="previous-button" type="button" data-offset="${paginator.previousOffset}" value="Previous"${paginator.previous ? '' : ' disabled="disabled"'}>Previous</button>                        

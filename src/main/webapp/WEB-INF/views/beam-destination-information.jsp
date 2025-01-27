@@ -18,10 +18,10 @@
             <div class="dialog-content">
                 <h3>
                     <c:choose>
-                        <c:when test="${beamDestination.verification.verificationId eq 1}">
+                        <c:when test="${beamDestination.verification.verificationStatusId eq 1}">
                             <span title="Verified" class="small-icon baseline-small-icon verified-icon"></span>
                         </c:when>
-                        <c:when test="${beamDestination.verification.verificationId eq 50}">
+                        <c:when test="${beamDestination.verification.verificationStatusId eq 50}">
                             <span title="Verified" class="small-icon baseline-small-icon provisional-icon"></span>
                         </c:when>
                         <c:otherwise>
@@ -46,10 +46,10 @@
                                         <td><a href="${pageContext.request.contextPath}/credited-controls?creditedControlId=${verification.creditedControl.creditedControlId}"><c:out value="${verification.creditedControl.name}"/></a></td>
                                         <td class="icon-cell">
                                             <c:choose>
-                                                <c:when test="${verification.verificationId eq 1}">
+                                                <c:when test="${verification.verificationStatusId eq 1}">
                                                     <span title="Verified" class="small-icon verified-icon"></span>
                                                 </c:when>
-                                                <c:when test="${verification.verificationId eq 50}">
+                                                <c:when test="${verification.verificationStatusId eq 50}">
                                                     <span title="Provisionally Verified" class="small-icon provisional-icon"></span>
                                                 </c:when>
                                                 <c:otherwise>

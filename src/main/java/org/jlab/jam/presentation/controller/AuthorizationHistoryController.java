@@ -9,8 +9,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.jlab.jam.business.session.AuthorizationFacade;
-import org.jlab.jam.persistence.entity.Authorization;
+import org.jlab.jam.business.session.BeamAuthorizationFacade;
+import org.jlab.jam.persistence.entity.BeamAuthorization;
 import org.jlab.smoothness.presentation.util.Paginator;
 import org.jlab.smoothness.presentation.util.ParamUtil;
 
@@ -22,7 +22,7 @@ import org.jlab.smoothness.presentation.util.ParamUtil;
     urlPatterns = {"/permissions/authorization-history"})
 public class AuthorizationHistoryController extends HttpServlet {
 
-  @EJB AuthorizationFacade historyFacade;
+  @EJB BeamAuthorizationFacade historyFacade;
 
   /**
    * Handles the HTTP <code>GET</code> method.
@@ -39,7 +39,7 @@ public class AuthorizationHistoryController extends HttpServlet {
     int offset = ParamUtil.convertAndValidateNonNegativeInt(request, "offset", 0);
     int maxPerPage = 10;
 
-    List<Authorization> historyList = historyFacade.findHistory(offset, maxPerPage);
+    List<BeamAuthorization> historyList = historyFacade.findHistory(offset, maxPerPage);
     Long totalRecords = historyFacade.countHistory();
 
     Paginator paginator = new Paginator(totalRecords.intValue(), offset, maxPerPage);

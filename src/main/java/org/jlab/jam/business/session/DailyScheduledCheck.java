@@ -21,7 +21,7 @@ public class DailyScheduledCheck {
 
   private Timer timer;
   @Resource private TimerService timerService;
-  @EJB ControlVerificationFacade verificationFacade;
+  @EJB BeamControlVerificationFacade verificationFacade;
 
   @PostConstruct
   private void init() {

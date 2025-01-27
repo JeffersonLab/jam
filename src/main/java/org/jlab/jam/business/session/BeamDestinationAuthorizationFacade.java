@@ -3,13 +3,14 @@ package org.jlab.jam.business.session;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import org.jlab.jam.persistence.entity.DestinationAuthorization;
+import org.jlab.jam.persistence.entity.BeamDestinationAuthorization;
 
 /**
  * @author ryans
  */
 @Stateless
-public class DestinationAuthorizationFacade extends AbstractFacade<DestinationAuthorization> {
+public class BeamDestinationAuthorizationFacade
+    extends AbstractFacade<BeamDestinationAuthorization> {
   @PersistenceContext(unitName = "jamPU")
   private EntityManager em;
 
@@ -18,7 +19,7 @@ public class DestinationAuthorizationFacade extends AbstractFacade<DestinationAu
     return em;
   }
 
-  public DestinationAuthorizationFacade() {
-    super(DestinationAuthorization.class);
+  public BeamDestinationAuthorizationFacade() {
+    super(BeamDestinationAuthorization.class);
   }
 }

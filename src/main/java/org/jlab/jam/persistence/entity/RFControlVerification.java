@@ -12,33 +12,35 @@ import javax.validation.constraints.Size;
  * @author ryans
  */
 @Entity
-@Table(name = "CONTROL_VERIFICATION", schema = "JAM_OWNER")
+@Table(name = "RF_CONTROL_VERIFICATION", schema = "JAM_OWNER")
 @NamedQueries({
-  @NamedQuery(name = "ControlVerification.findAll", query = "SELECT c FROM ControlVerification c")
+  @NamedQuery(
+      name = "RFControlVerification.findAll",
+      query = "SELECT c FROM RFControlVerification c")
 })
-public class ControlVerification implements Serializable, Comparable<ControlVerification> {
+public class RFControlVerification implements Serializable, Comparable<RFControlVerification> {
   private static final long serialVersionUID = 1L;
 
   @Id
   @SequenceGenerator(
-      name = "ControlVerificationId",
-      sequenceName = "CONTROL_VERIFICATION_ID",
+      name = "RFControlVerificationId",
+      sequenceName = "RF_CONTROL_VERIFICATION_ID",
       allocationSize = 1)
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ControlVerificationId")
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RFControlVerificationId")
   @Basic(optional = false)
   @NotNull
-  @Column(name = "CONTROL_VERIFICATION_ID", nullable = false, precision = 22, scale = 0)
-  private BigInteger controlVerificationId;
+  @Column(name = "RF_CONTROL_VERIFICATION_ID", nullable = false, precision = 22, scale = 0)
+  private BigInteger rfControlVerificationId;
 
   @NotNull
-  @JoinColumn(name = "BEAM_DESTINATION_ID", referencedColumnName = "BEAM_DESTINATION_ID")
+  @JoinColumn(name = "RF_SEGMENT_ID", referencedColumnName = "RF_SEGMENT_ID")
   @ManyToOne(fetch = FetchType.EAGER)
-  private BeamDestination beamDestination;
+  private RFSegment rfSegment;
 
   @Basic(optional = false)
-  @Column(name = "VERIFICATION_ID")
+  @Column(name = "VERIFICATION_STATUS_ID")
   @NotNull
-  private Integer verificationId;
+  private Integer verificationStatusId;
 
   @Column(name = "MODIFIED_BY", nullable = false)
   private String modifiedBy;
@@ -64,8 +66,8 @@ public class ControlVerification implements Serializable, Comparable<ControlVeri
   @Column(length = 2048)
   private String comments;
 
-  @OneToMany(mappedBy = "controlVerification", fetch = FetchType.LAZY)
-  private List<VerificationHistory> verificationHistoryList;
+  @OneToMany(mappedBy = "rfControlVerification", fetch = FetchType.LAZY)
+  private List<RFControlVerificationHistory> rfControlVerificationHistoryList;
 
   @JoinColumn(name = "CREDITED_CONTROL_ID", referencedColumnName = "CREDITED_CONTROL_ID")
   @ManyToOne(fetch = FetchType.LAZY)
@@ -73,19 +75,19 @@ public class ControlVerification implements Serializable, Comparable<ControlVeri
 
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
-      name = "VERIFICATION_COMPONENT",
-      joinColumns = @JoinColumn(name = "CONTROL_VERIFICATION_ID"),
+      name = "RF_CONTROL_VERIFICATION_COMPONENT",
+      joinColumns = @JoinColumn(name = "RF_CONTROL_VERIFICATION_ID"),
       inverseJoinColumns = @JoinColumn(name = "COMPONENT_ID"))
   private List<Component> componentList;
 
-  public ControlVerification() {}
+  public RFControlVerification() {}
 
-  public BigInteger getControlVerificationId() {
-    return controlVerificationId;
+  public BigInteger getRFControlVerificationId() {
+    return rfControlVerificationId;
   }
 
-  public void setControlVerificationId(BigInteger controlVerificationId) {
-    this.controlVerificationId = controlVerificationId;
+  public void setRFControlVerificationId(BigInteger rfControlVerificationId) {
+    this.rfControlVerificationId = rfControlVerificationId;
   }
 
   public String getModifiedBy() {
@@ -104,20 +106,20 @@ public class ControlVerification implements Serializable, Comparable<ControlVeri
     this.modifiedDate = modifiedDate;
   }
 
-  public BeamDestination getBeamDestination() {
-    return beamDestination;
+  public RFSegment getRFSegment() {
+    return rfSegment;
   }
 
-  public void setBeamDestination(BeamDestination beamDestination) {
-    this.beamDestination = beamDestination;
+  public void setRFSegment(RFSegment rfSegment) {
+    this.rfSegment = rfSegment;
   }
 
-  public Integer getVerificationId() {
-    return verificationId;
+  public Integer getVerificationStatusId() {
+    return verificationStatusId;
   }
 
-  public void setVerificationId(Integer verificationId) {
-    this.verificationId = verificationId;
+  public void setVerificationStatusId(Integer verificationStatusId) {
+    this.verificationStatusId = verificationStatusId;
   }
 
   public Date getVerificationDate() {
@@ -152,12 +154,13 @@ public class ControlVerification implements Serializable, Comparable<ControlVeri
     this.comments = comments;
   }
 
-  public List<VerificationHistory> getVerificationHistoryList() {
-    return verificationHistoryList;
+  public List<RFControlVerificationHistory> getRFControlVerificationHistoryList() {
+    return rfControlVerificationHistoryList;
   }
 
-  public void setVerificationHistoryList(List<VerificationHistory> verificationHistoryList) {
-    this.verificationHistoryList = verificationHistoryList;
+  public void setRFControlVerificationHistoryList(
+      List<RFControlVerificationHistory> rfControlVerificationHistoryList) {
+    this.rfControlVerificationHistoryList = rfControlVerificationHistoryList;
   }
 
   public CreditedControl getCreditedControl() {
@@ -179,31 +182,31 @@ public class ControlVerification implements Serializable, Comparable<ControlVeri
   @Override
   public int hashCode() {
     int hash = 0;
-    hash += (controlVerificationId != null ? controlVerificationId.hashCode() : 0);
+    hash += (rfControlVerificationId != null ? rfControlVerificationId.hashCode() : 0);
     return hash;
   }
 
   @Override
   public boolean equals(Object object) {
     // TODO: Warning - this method won't work in the case the id fields are not set
-    if (!(object instanceof ControlVerification)) {
+    if (!(object instanceof RFControlVerification)) {
       return false;
     }
-    ControlVerification other = (ControlVerification) object;
-    return (this.controlVerificationId != null || other.controlVerificationId == null)
-        && (this.controlVerificationId == null
-            || this.controlVerificationId.equals(other.controlVerificationId));
+    RFControlVerification other = (RFControlVerification) object;
+    return (this.rfControlVerificationId != null || other.rfControlVerificationId == null)
+        && (this.rfControlVerificationId == null
+            || this.rfControlVerificationId.equals(other.rfControlVerificationId));
   }
 
   @Override
   public String toString() {
-    return "org.jlab.beamauth.persistence.entity.ControlVerification[ controlVerificationId="
-        + controlVerificationId
+    return "org.jlab.jam.persistence.entity.RFControlVerification[ rfControlVerificationId="
+        + rfControlVerificationId
         + " ]";
   }
 
   @Override
-  public int compareTo(ControlVerification o) {
-    return this.beamDestination.getWeight().compareTo(o.beamDestination.getWeight());
+  public int compareTo(RFControlVerification o) {
+    return this.rfSegment.getWeight().compareTo(o.rfSegment.getWeight());
   }
 }

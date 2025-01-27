@@ -34,7 +34,7 @@ public class CreditedControlFacade extends AbstractFacade<CreditedControl> {
   public CreditedControl findWithVerificationList(BigInteger creditedControlId) {
     TypedQuery<CreditedControl> q =
         em.createQuery(
-            "select a from CreditedControl a JOIN FETCH a.controlVerificationList as b where b.beamDestination.active = true and a.creditedControlId = :creditedControlId",
+            "select a from CreditedControl a JOIN FETCH a.beamControlVerificationList as b where b.beamDestination.active = true and a.creditedControlId = :creditedControlId",
             CreditedControl.class);
 
     q.setParameter("creditedControlId", creditedControlId);
@@ -47,7 +47,7 @@ public class CreditedControlFacade extends AbstractFacade<CreditedControl> {
       cc = ccList.get(0);
 
       // JPAUtil.initialize(cc.getControlVerificationList());
-      Collections.sort(cc.getControlVerificationList());
+      Collections.sort(cc.getBeamControlVerificationList());
     }
 
     return cc;
@@ -63,7 +63,7 @@ public class CreditedControlFacade extends AbstractFacade<CreditedControl> {
 
     if (ccList != null) {
       for (CreditedControl cc : ccList) {
-        JPAUtil.initialize(cc.getControlVerificationList());
+        JPAUtil.initialize(cc.getBeamControlVerificationList());
         // Collections.sort(cc.getControlVerificationList());
       }
     }

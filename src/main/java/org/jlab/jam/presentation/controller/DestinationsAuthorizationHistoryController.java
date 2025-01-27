@@ -10,11 +10,11 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.jlab.jam.business.session.AuthorizationFacade;
+import org.jlab.jam.business.session.BeamAuthorizationFacade;
 import org.jlab.jam.business.session.BeamDestinationFacade;
-import org.jlab.jam.persistence.entity.Authorization;
+import org.jlab.jam.persistence.entity.BeamAuthorization;
 import org.jlab.jam.persistence.entity.BeamDestination;
-import org.jlab.jam.persistence.entity.DestinationAuthorization;
+import org.jlab.jam.persistence.entity.BeamDestinationAuthorization;
 import org.jlab.smoothness.presentation.util.ParamConverter;
 
 /**
@@ -25,7 +25,7 @@ import org.jlab.smoothness.presentation.util.ParamConverter;
     urlPatterns = {"/permissions/destinations-authorization-history"})
 public class DestinationsAuthorizationHistoryController extends HttpServlet {
 
-  @EJB AuthorizationFacade authorizationFacade;
+  @EJB BeamAuthorizationFacade beamAuthorizationFacade;
   @EJB BeamDestinationFacade beamDestinationFacade;
 
   /**
@@ -42,21 +42,21 @@ public class DestinationsAuthorizationHistoryController extends HttpServlet {
 
     BigInteger authorizationId = ParamConverter.convertBigInteger(request, "authorizationId");
 
-    Authorization authorization = null;
+    BeamAuthorization beamAuthorization = null;
 
     if (authorizationId != null) {
-      authorization = authorizationFacade.find(authorizationId);
+      beamAuthorization = beamAuthorizationFacade.find(authorizationId);
     }
 
     List<BeamDestination> cebafDestinationList = beamDestinationFacade.findCebafDestinations();
     List<BeamDestination> lerfDestinationList = beamDestinationFacade.findLerfDestinations();
     List<BeamDestination> uitfDestinationList = beamDestinationFacade.findUitfDestinations();
 
-    Map<BigInteger, DestinationAuthorization> destinationAuthorizationMap =
-        authorizationFacade.createDestinationAuthorizationMap(authorization);
+    Map<BigInteger, BeamDestinationAuthorization> destinationAuthorizationMap =
+        beamAuthorizationFacade.createDestinationAuthorizationMap(beamAuthorization);
 
-    request.setAttribute("unitsMap", authorizationFacade.getUnitsMap());
-    request.setAttribute("authorization", authorization);
+    request.setAttribute("unitsMap", beamAuthorizationFacade.getUnitsMap());
+    request.setAttribute("authorization", beamAuthorization);
     request.setAttribute("cebafDestinationList", cebafDestinationList);
     request.setAttribute("lerfDestinationList", lerfDestinationList);
     request.setAttribute("uitfDestinationList", uitfDestinationList);

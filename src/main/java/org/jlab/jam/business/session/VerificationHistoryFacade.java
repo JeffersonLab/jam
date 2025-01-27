@@ -7,13 +7,13 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import org.jlab.jam.persistence.entity.VerificationHistory;
+import org.jlab.jam.persistence.entity.BeamControlVerificationHistory;
 
 /**
  * @author ryans
  */
 @Stateless
-public class VerificationHistoryFacade extends AbstractFacade<VerificationHistory> {
+public class VerificationHistoryFacade extends AbstractFacade<BeamControlVerificationHistory> {
   @PersistenceContext(unitName = "jamPU")
   private EntityManager em;
 
@@ -23,18 +23,18 @@ public class VerificationHistoryFacade extends AbstractFacade<VerificationHistor
   }
 
   public VerificationHistoryFacade() {
-    super(VerificationHistory.class);
+    super(BeamControlVerificationHistory.class);
   }
 
   @PermitAll
-  public List<VerificationHistory> findHistory(
+  public List<BeamControlVerificationHistory> findHistory(
       BigInteger controlVerificationId,
       int offset,
       int maxPerPage) { // join fetch a.controlVerification b join fetch b.creditedControl
-    TypedQuery<VerificationHistory> q =
+    TypedQuery<BeamControlVerificationHistory> q =
         em.createQuery(
-            "select a from VerificationHistory a where a.controlVerification.controlVerificationId = :id order by a.verificationHistoryId desc",
-            VerificationHistory.class);
+            "select a from BeamControlVerificationHistory a where a.beamControlVerification.beamControlVerificationId = :id order by a.beamControlVerificationHistoryId desc",
+            BeamControlVerificationHistory.class);
 
     q.setParameter("id", controlVerificationId);
 
@@ -45,7 +45,7 @@ public class VerificationHistoryFacade extends AbstractFacade<VerificationHistor
   public Long countHistory(BigInteger controlVerificationId) {
     TypedQuery<Long> q =
         em.createQuery(
-            "select count(a) from VerificationHistory a where a.controlVerification.controlVerificationId = :id",
+            "select count(a) from BeamControlVerificationHistory a where a.beamControlVerification.beamControlVerificationId = :id",
             Long.class);
 
     q.setParameter("id", controlVerificationId);

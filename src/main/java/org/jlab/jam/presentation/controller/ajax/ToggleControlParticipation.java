@@ -12,7 +12,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.jlab.jam.business.session.ControlVerificationFacade;
+import org.jlab.jam.business.session.BeamControlVerificationFacade;
 import org.jlab.smoothness.presentation.util.ParamConverter;
 
 /**
@@ -25,7 +25,7 @@ public class ToggleControlParticipation extends HttpServlet {
 
   private static final Logger logger = Logger.getLogger(ToggleControlParticipation.class.getName());
 
-  @EJB ControlVerificationFacade verificationFacade;
+  @EJB BeamControlVerificationFacade verificationFacade;
 
   /**
    * Handles the HTTP <code>POST</code> method.

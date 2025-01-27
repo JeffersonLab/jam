@@ -12,8 +12,8 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
+import org.jlab.jam.persistence.entity.BeamControlVerification;
 import org.jlab.jam.persistence.entity.BeamDestination;
-import org.jlab.jam.persistence.entity.ControlVerification;
 import org.jlab.jam.persistence.entity.Facility;
 
 /**
@@ -94,15 +94,15 @@ public class BeamDestinationFacade extends AbstractFacade<BeamDestination> {
       destination = destinationList.get(0);
 
       // JPAUtil.initialize(destination.getControlVerificationList());
-      for (ControlVerification verification : destination.getControlVerificationList()) {
+      for (BeamControlVerification verification : destination.getBeamControlVerificationList()) {
         verification.getCreditedControl().getName();
       }
 
       Collections.sort(
-          destination.getControlVerificationList(),
-          new Comparator<ControlVerification>() {
+          destination.getBeamControlVerificationList(),
+          new Comparator<BeamControlVerification>() {
             @Override
-            public int compare(ControlVerification o1, ControlVerification o2) {
+            public int compare(BeamControlVerification o1, BeamControlVerification o2) {
               return o1.getCreditedControl().compareTo(o2.getCreditedControl());
             }
           });

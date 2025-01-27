@@ -10,9 +10,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jlab.jam.business.session.AbstractFacade.OrderDirective;
-import org.jlab.jam.business.session.ControlVerificationFacade;
+import org.jlab.jam.business.session.BeamControlVerificationFacade;
 import org.jlab.jam.business.session.CreditedControlFacade;
-import org.jlab.jam.persistence.entity.ControlVerification;
+import org.jlab.jam.persistence.entity.BeamControlVerification;
 import org.jlab.jam.persistence.entity.CreditedControl;
 import org.jlab.smoothness.presentation.util.ParamConverter;
 
@@ -25,7 +25,7 @@ import org.jlab.smoothness.presentation.util.ParamConverter;
 public class CreditedControls extends HttpServlet {
 
   @EJB CreditedControlFacade ccFacade;
-  @EJB ControlVerificationFacade verificationFacade;
+  @EJB BeamControlVerificationFacade verificationFacade;
 
   /**
    * Handles the HTTP <code>GET</code> method.
@@ -41,8 +41,8 @@ public class CreditedControls extends HttpServlet {
 
     BigInteger creditedControlId = ParamConverter.convertBigInteger(request, "creditedControlId");
 
-    List<ControlVerification> expiredList = null;
-    List<ControlVerification> expiringList = null;
+    List<BeamControlVerification> expiredList = null;
+    List<BeamControlVerification> expiringList = null;
     CreditedControl creditedControl = null;
     boolean adminOrLeader = false;
 

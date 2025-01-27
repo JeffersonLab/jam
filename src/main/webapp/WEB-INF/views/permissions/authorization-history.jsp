@@ -35,7 +35,7 @@
                     </c:when>
                     <c:otherwise>
                         <div class="message-box"><c:out value="${selectionMessage}"/></div>
-                        <table id="authorization-table" class="data-table stripped-table">
+                        <table id="beamAuthorization-table" class="data-table stripped-table">
                             <thead>
                                 <tr>
                                     <th>Modified Date</th>
@@ -54,12 +54,12 @@
                                         <td><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}" value="${history.authorizationDate}"/></td>
                                         <td><c:out value="${s:formatUsername(history.authorizedBy)}"/></td>
                                         <td><c:out value="${history.comments}"/></td>
-                                        <td><a href="destinations-authorization-history?authorizationId=${history.authorizationId}">Destination Details</a></td>
+                                        <td><a href="destinations-beamAuthorization-history?authorizationId=${history.authorizationId}">Destination Details</a></td>
                                     </tr>
                                 </c:forEach>
                             </tbody>
                         </table>
-                        <form id="filter-form" action="authorization-history" method="get">
+                        <form id="filter-form" action="beamAuthorization-history" method="get">
                             <input type="hidden" id="offset-input" name="offset" value="0"/>
                         </form>
                         <button id="previous-button" type="button" data-offset="${paginator.previousOffset}" value="Previous"${paginator.previous ? '' : ' disabled="disabled"'}>Previous</button>                        

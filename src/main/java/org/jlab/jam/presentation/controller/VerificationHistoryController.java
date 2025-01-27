@@ -10,11 +10,11 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.jlab.jam.business.session.ControlVerificationFacade;
+import org.jlab.jam.business.session.BeamControlVerificationFacade;
 import org.jlab.jam.business.session.CreditedControlFacade;
 import org.jlab.jam.business.session.VerificationHistoryFacade;
-import org.jlab.jam.persistence.entity.ControlVerification;
-import org.jlab.jam.persistence.entity.VerificationHistory;
+import org.jlab.jam.persistence.entity.BeamControlVerification;
+import org.jlab.jam.persistence.entity.BeamControlVerificationHistory;
 import org.jlab.smoothness.presentation.util.Paginator;
 import org.jlab.smoothness.presentation.util.ParamConverter;
 import org.jlab.smoothness.presentation.util.ParamUtil;
@@ -28,7 +28,7 @@ import org.jlab.smoothness.presentation.util.ParamUtil;
 public class VerificationHistoryController extends HttpServlet {
 
   @EJB VerificationHistoryFacade historyFacade;
-  @EJB ControlVerificationFacade verificationFacade;
+  @EJB BeamControlVerificationFacade verificationFacade;
   @EJB CreditedControlFacade creditedControlFacade;
 
   /**
@@ -48,10 +48,10 @@ public class VerificationHistoryController extends HttpServlet {
     int offset = ParamUtil.convertAndValidateNonNegativeInt(request, "offset", 0);
     int maxPerPage = 10;
 
-    ControlVerification verification =
+    BeamControlVerification verification =
         verificationFacade.findWithCreditedControl(controlVerificationId);
 
-    List<VerificationHistory> historyList =
+    List<BeamControlVerificationHistory> historyList =
         historyFacade.findHistory(controlVerificationId, offset, maxPerPage);
     Long totalRecords = historyFacade.countHistory(controlVerificationId);
 

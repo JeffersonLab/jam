@@ -18,16 +18,16 @@
                     <a href="${pageContext.request.contextPath}/permissions">Director's Authorization</a>
                 </li>
                 <li>
-                    <a href="${pageContext.request.contextPath}/permissions/authorization-history">Historic Authorizations</a>
+                    <a href="${pageContext.request.contextPath}/permissions/beamAuthorization-history">Historic Authorizations</a>
                 </li>
                 <li>
-                    <span><fmt:formatDate value="${authorization.modifiedDate}" pattern="${s:getFriendlyDateTimePattern()}"/> History</span>
+                    <span><fmt:formatDate value="${beamAuthorization.modifiedDate}" pattern="${s:getFriendlyDateTimePattern()}"/> History</span>
                 </li>
             </ul>
         </div>        
         <section>
             <c:choose>
-                <c:when test="${authorization ne null}">
+                <c:when test="${beamAuthorization ne null}">
                     <t:permissions-page cebafDestinationList="${cebafDestinationList}" lerfDestinationList="${lerfDestinationList}" isEditable="${false}" isHistory="${true}"/>
                 </c:when>
                 <c:otherwise>

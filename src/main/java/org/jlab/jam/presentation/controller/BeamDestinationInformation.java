@@ -9,10 +9,10 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.jlab.jam.business.session.BeamControlVerificationFacade;
 import org.jlab.jam.business.session.BeamDestinationFacade;
-import org.jlab.jam.business.session.ControlVerificationFacade;
+import org.jlab.jam.persistence.entity.BeamControlVerification;
 import org.jlab.jam.persistence.entity.BeamDestination;
-import org.jlab.jam.persistence.entity.ControlVerification;
 import org.jlab.smoothness.presentation.util.ParamConverter;
 
 /**
@@ -24,7 +24,7 @@ import org.jlab.smoothness.presentation.util.ParamConverter;
 public class BeamDestinationInformation extends HttpServlet {
 
   @EJB BeamDestinationFacade beamDestinationFacade;
-  @EJB ControlVerificationFacade verificationFacade;
+  @EJB BeamControlVerificationFacade verificationFacade;
 
   /**
    * Handles the HTTP <code>GET</code> method.
@@ -41,7 +41,7 @@ public class BeamDestinationInformation extends HttpServlet {
     BigInteger beamDestinationId = ParamConverter.convertBigInteger(request, "beamDestinationId");
 
     BeamDestination beamDestination = null;
-    List<ControlVerification> verificationList = null;
+    List<BeamControlVerification> verificationList = null;
 
     if (beamDestinationId != null) {
       beamDestination = beamDestinationFacade.find(beamDestinationId);

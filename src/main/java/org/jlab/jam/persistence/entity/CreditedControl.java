@@ -61,7 +61,7 @@ public class CreditedControl implements Serializable, Comparable<CreditedControl
   private String comments;
 
   @OneToMany(mappedBy = "creditedControl", fetch = FetchType.LAZY)
-  private List<ControlVerification> controlVerificationList;
+  private List<BeamControlVerification> beamControlVerificationList;
 
   public CreditedControl() {}
 
@@ -125,18 +125,19 @@ public class CreditedControl implements Serializable, Comparable<CreditedControl
     this.verificationFrequency = verificationFrequency;
   }
 
-  public List<ControlVerification> getControlVerificationList() {
-    return controlVerificationList;
+  public List<BeamControlVerification> getBeamControlVerificationList() {
+    return beamControlVerificationList;
   }
 
-  public void setControlVerificationList(List<ControlVerification> controlVerificationList) {
-    this.controlVerificationList = controlVerificationList;
+  public void setBeamControlVerificationList(
+      List<BeamControlVerification> beamControlVerificationList) {
+    this.beamControlVerificationList = beamControlVerificationList;
   }
 
   public boolean hasBeamDestination(BeamDestination destination) {
     boolean hasDestination = false;
-    if (controlVerificationList != null) {
-      for (ControlVerification verification : controlVerificationList) {
+    if (beamControlVerificationList != null) {
+      for (BeamControlVerification verification : beamControlVerificationList) {
         if (verification.getBeamDestination().equals(destination)) {
           hasDestination = true;
           break;

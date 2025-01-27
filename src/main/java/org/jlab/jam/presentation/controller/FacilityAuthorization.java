@@ -36,10 +36,11 @@ import org.jlab.smoothness.presentation.util.ParamConverter;
 public class FacilityAuthorization extends HttpServlet {
 
   private static final Logger LOGGER = Logger.getLogger(FacilityAuthorization.class.getName());
-  @EJB AuthorizationFacade authorizationFacade;
+  @EJB BeamAuthorizationFacade beamAuthorizationFacade;
   @EJB BeamDestinationFacade beamDestinationFacade;
-  @EJB ControlVerificationFacade verificationFacade;
+  @EJB BeamControlVerificationFacade verificationFacade;
   @EJB FacilityFacade facilityFacade;
+  @EJB RFSegmentFacade rfSegmentFacade;
 
   /**
    * Handles the HTTP <code>GET</code> method.
@@ -68,17 +69,19 @@ public class FacilityAuthorization extends HttpServlet {
 
     verificationFacade.performExpirationCheck(false);
 
-    Authorization authorization = authorizationFacade.findCurrent();
+    BeamAuthorization beamAuthorization = beamAuthorizationFacade.findCurrent();
 
+    List<RFSegment> rfList = rfSegmentFacade.findByFacility(facility);
     List<BeamDestination> beamList = beamDestinationFacade.findByFacility(facility);
 
-    Map<BigInteger, DestinationAuthorization> destinationAuthorizationMap =
-        authorizationFacade.createDestinationAuthorizationMap(authorization);
+    Map<BigInteger, BeamDestinationAuthorization> destinationAuthorizationMap =
+        beamAuthorizationFacade.createDestinationAuthorizationMap(beamAuthorization);
 
     request.setAttribute("facility", facility);
     request.setAttribute("facilityList", facilityList);
-    request.setAttribute("unitsMap", authorizationFacade.getUnitsMap());
-    request.setAttribute("authorization", authorization);
+    request.setAttribute("unitsMap", beamAuthorizationFacade.getUnitsMap());
+    request.setAttribute("authorization", beamAuthorization);
+    request.setAttribute("rfList", rfList);
     request.setAttribute("beamList", beamList);
     request.setAttribute("destinationAuthorizationMap", destinationAuthorizationMap);
 
@@ -118,10 +121,10 @@ public class FacilityAuthorization extends HttpServlet {
     }
 
     try {
-      List<DestinationAuthorization> destinationAuthorizationList =
+      List<BeamDestinationAuthorization> beamDestinationAuthorizationList =
           convertDestinationAuthorizationList(request);
 
-      authorizationFacade.saveAuthorization(comments, destinationAuthorizationList);
+      beamAuthorizationFacade.saveAuthorization(comments, beamDestinationAuthorizationList);
     } catch (UserFriendlyException e) {
       errorReason = e.getUserMessage();
       LOGGER.log(Level.INFO, "Unable to save authorization: " + errorReason);
@@ -134,7 +137,7 @@ public class FacilityAuthorization extends HttpServlet {
       String proxyServer = System.getenv("FRONTEND_SERVER_URL");
 
       try {
-        authorizationFacade.sendOpsNewAuthorizationEmail(proxyServer, comments);
+        beamAuthorizationFacade.sendOpsNewAuthorizationEmail(proxyServer, comments);
       } catch (UserFriendlyException e) {
         errorReason = "Authorization was saved, but we were unable to send to ops an email.  ";
         LOGGER.log(Level.SEVERE, errorReason, e);
@@ -143,7 +146,7 @@ public class FacilityAuthorization extends HttpServlet {
       try {
         String logbookServer = System.getenv("LOGBOOK_SERVER_URL");
 
-        logId = authorizationFacade.sendELog(proxyServer, logbookServer);
+        logId = beamAuthorizationFacade.sendELog(proxyServer, logbookServer);
       } catch (Exception e) {
         errorReason = "Authorization was saved, but we were unable to send to eLog";
         LOGGER.log(Level.SEVERE, errorReason, e);
@@ -179,9 +182,9 @@ public class FacilityAuthorization extends HttpServlet {
     }
   }
 
-  private List<DestinationAuthorization> convertDestinationAuthorizationList(
+  private List<BeamDestinationAuthorization> convertDestinationAuthorizationList(
       HttpServletRequest request) throws UserFriendlyException {
-    List<DestinationAuthorization> destinationAuthorizationList = new ArrayList<>();
+    List<BeamDestinationAuthorization> beamDestinationAuthorizationList = new ArrayList<>();
     String[] modeArray = request.getParameterValues("mode[]");
     String[] limitStrArray = request.getParameterValues("limit[]");
     String[] commentsArray = request.getParameterValues("comment[]");
@@ -203,7 +206,7 @@ public class FacilityAuthorization extends HttpServlet {
       for (int i = 0; i < modeArray.length; i++) {
         String mode = modeArray[i];
 
-        DestinationAuthorization da = new DestinationAuthorization();
+        BeamDestinationAuthorization da = new BeamDestinationAuthorization();
 
         da.setBeamMode(mode);
 
@@ -247,10 +250,10 @@ public class FacilityAuthorization extends HttpServlet {
         pk.setBeamDestinationId(beamDestinationId);
         da.setDestinationAuthorizationPK(pk);
 
-        destinationAuthorizationList.add(da);
+        beamDestinationAuthorizationList.add(da);
       }
     }
 
-    return destinationAuthorizationList;
+    return beamDestinationAuthorizationList;
   }
 }

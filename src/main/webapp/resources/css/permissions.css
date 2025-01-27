@@ -66,3 +66,10 @@ textarea[readonly] {
 #cancel-button {
     vertical-align: bottom;
 }
+
+.accordion .ui-widget-content a {
+    color: blue;
+}
+.accordion .ui-widget-content a:hover {
+    color: red;
+}

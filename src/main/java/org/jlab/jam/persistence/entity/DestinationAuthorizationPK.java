@@ -19,14 +19,14 @@ public class DestinationAuthorizationPK implements Serializable {
 
   @Basic(optional = false)
   @NotNull
-  @Column(name = "AUTHORIZATION_ID", nullable = false)
-  private BigInteger authorizationId;
+  @Column(name = "BEAM_AUTHORIZATION_ID", nullable = false)
+  private BigInteger beamAuthorizationId;
 
   public DestinationAuthorizationPK() {}
 
-  public DestinationAuthorizationPK(BigInteger beamDestinationId, BigInteger authorizationId) {
+  public DestinationAuthorizationPK(BigInteger beamDestinationId, BigInteger beamAuthorizationId) {
     this.beamDestinationId = beamDestinationId;
-    this.authorizationId = authorizationId;
+    this.beamAuthorizationId = beamAuthorizationId;
   }
 
   public BigInteger getBeamDestinationId() {
@@ -37,19 +37,19 @@ public class DestinationAuthorizationPK implements Serializable {
     this.beamDestinationId = beamDestinationId;
   }
 
-  public BigInteger getAuthorizationId() {
-    return authorizationId;
+  public BigInteger getBeamAuthorizationId() {
+    return beamAuthorizationId;
   }
 
-  public void setAuthorizationId(BigInteger authorizationId) {
-    this.authorizationId = authorizationId;
+  public void setAuthorizationId(BigInteger beamAuthorizationId) {
+    this.beamAuthorizationId = beamAuthorizationId;
   }
 
   @Override
   public int hashCode() {
     int hash = 0;
     hash += (beamDestinationId != null ? beamDestinationId.hashCode() : 0);
-    hash += (authorizationId != null ? authorizationId.hashCode() : 0);
+    hash += (beamAuthorizationId != null ? beamAuthorizationId.hashCode() : 0);
     return hash;
   }
 
@@ -65,16 +65,17 @@ public class DestinationAuthorizationPK implements Serializable {
             && !this.beamDestinationId.equals(other.beamDestinationId))) {
       return false;
     }
-    return (this.authorizationId != null || other.authorizationId == null)
-        && (this.authorizationId == null || this.authorizationId.equals(other.authorizationId));
+    return (this.beamAuthorizationId != null || other.beamAuthorizationId == null)
+        && (this.beamAuthorizationId == null
+            || this.beamAuthorizationId.equals(other.beamAuthorizationId));
   }
 
   @Override
   public String toString() {
-    return "org.jlab.beamauth.persistence.entity.DestinationAuthorizationPK[ beamDestinationId="
+    return "org.jlab.jam.persistence.entity.DestinationAuthorizationPK[ beamDestinationId="
         + beamDestinationId
-        + ", authorizationId="
-        + authorizationId
+        + ", beamAuthorizationId="
+        + beamAuthorizationId
         + " ]";
   }
 }

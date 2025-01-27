@@ -23,13 +23,13 @@ import javax.validation.constraints.Size;
  * @author ryans
  */
 @Entity
-@Table(name = "DESTINATION_AUTHORIZATION", schema = "JAM_OWNER")
+@Table(name = "BEAM_DESTINATION_AUTHORIZATION", schema = "JAM_OWNER")
 @NamedQueries({
   @NamedQuery(
-      name = "DestinationAuthorization.findAll",
-      query = "SELECT d FROM DestinationAuthorization d")
+      name = "BeamDestinationAuthorization.findAll",
+      query = "SELECT d FROM BeamDestinationAuthorization d")
 })
-public class DestinationAuthorization implements Serializable {
+public class BeamDestinationAuthorization implements Serializable {
 
   private static final long serialVersionUID = 1L;
   @EmbeddedId protected DestinationAuthorizationPK destinationAuthorizationPK;
@@ -62,27 +62,27 @@ public class DestinationAuthorization implements Serializable {
   private BeamDestination destination;
 
   @JoinColumn(
-      name = "AUTHORIZATION_ID",
-      referencedColumnName = "AUTHORIZATION_ID",
+      name = "BEAM_AUTHORIZATION_ID",
+      referencedColumnName = "BEAM_AUTHORIZATION_ID",
       nullable = false,
       insertable = false,
       updatable = false)
   @ManyToOne(optional = false, fetch = FetchType.LAZY)
-  private Authorization authorization;
+  private BeamAuthorization beamAuthorization;
 
-  public DestinationAuthorization() {}
+  public BeamDestinationAuthorization() {}
 
-  public DestinationAuthorization(DestinationAuthorizationPK destinationAuthorizationPK) {
+  public BeamDestinationAuthorization(DestinationAuthorizationPK destinationAuthorizationPK) {
     this.destinationAuthorizationPK = destinationAuthorizationPK;
   }
 
-  public DestinationAuthorization(
+  public BeamDestinationAuthorization(
       DestinationAuthorizationPK destinationAuthorizationPK, String beamMode) {
     this.destinationAuthorizationPK = destinationAuthorizationPK;
     this.beamMode = beamMode;
   }
 
-  public DestinationAuthorization(BigInteger beamDestinationId, BigInteger authorizationId) {
+  public BeamDestinationAuthorization(BigInteger beamDestinationId, BigInteger authorizationId) {
     this.destinationAuthorizationPK =
         new DestinationAuthorizationPK(beamDestinationId, authorizationId);
   }
@@ -131,12 +131,12 @@ public class DestinationAuthorization implements Serializable {
     this.expirationDate = expirationDate;
   }
 
-  public Authorization getAuthorization() {
-    return authorization;
+  public BeamAuthorization getAuthorization() {
+    return beamAuthorization;
   }
 
-  public void setAuthorization(Authorization authorization) {
-    this.authorization = authorization;
+  public void setAuthorization(BeamAuthorization beamAuthorization) {
+    this.beamAuthorization = beamAuthorization;
   }
 
   @Override
@@ -149,10 +149,10 @@ public class DestinationAuthorization implements Serializable {
   @Override
   public boolean equals(Object object) {
     // TODO: Warning - this method won't work in the case the id fields are not set
-    if (!(object instanceof DestinationAuthorization)) {
+    if (!(object instanceof BeamDestinationAuthorization)) {
       return false;
     }
-    DestinationAuthorization other = (DestinationAuthorization) object;
+    BeamDestinationAuthorization other = (BeamDestinationAuthorization) object;
     return (this.destinationAuthorizationPK != null || other.destinationAuthorizationPK == null)
         && (this.destinationAuthorizationPK == null
             || this.destinationAuthorizationPK.equals(other.destinationAuthorizationPK));
@@ -160,14 +160,14 @@ public class DestinationAuthorization implements Serializable {
 
   @Override
   public String toString() {
-    return "org.jlab.beamauth.persistence.entity.DestinationAuthorization[ destinationAuthorizationPK="
+    return "org.jlab.jam.persistence.entity.BeamDestinationAuthorization[destinationAuthorizationPK="
         + destinationAuthorizationPK
         + " ]";
   }
 
-  public DestinationAuthorization createAdminClone(Authorization authClone) {
-    DestinationAuthorization other = new DestinationAuthorization();
-    other.authorization = authClone;
+  public BeamDestinationAuthorization createAdminClone(BeamAuthorization authClone) {
+    BeamDestinationAuthorization other = new BeamDestinationAuthorization();
+    other.beamAuthorization = authClone;
     other.beamMode = this.beamMode;
     other.comments = this.comments;
     other.cwLimit = this.cwLimit;

@@ -28,14 +28,14 @@
     </thead>
     <tbody>
         <c:forEach items="${beamList}" var="destination">
-            <c:set var="destinationAuthorization" value="${destinationAuthorizationMap[destination.beamDestinationId]}"/>
+            <c:set var="beamDestinationAuthorization" value="${destinationAuthorizationMap[destination.beamDestinationId]}"/>
             <c:set var="units" value="${unitsMap[destination.beamDestinationId] ne null ? unitsMap[destination.beamDestinationId] : 'uA'}"/>
             <tr>
                 <td><a data-dialog-title="${destination.name} Information" class="dialog-ready" href="${pageContext.request.contextPath}/beam-destination-information?beamDestinationId=${destination.beamDestinationId}"><c:out value="${destination.name}"/></a></td>
                     <c:if test="${not isHistory}">
                     <td class="icon-cell">
                         <c:choose>
-                            <c:when test="${(destination.verification.verificationId eq 1 or destination.verification.verificationId eq 50) and destinationAuthorization.beamMode ne null and destinationAuthorization.beamMode ne 'None'}">
+                            <c:when test="${(destination.verification.verificationStatusId eq 1 or destination.verification.verificationStatusId eq 50) and beamDestinationAuthorization.beamMode ne null and beamDestinationAuthorization.beamMode ne 'None'}">
                                 <span title="Approved" class="small-icon verified-icon"></span>
                             </c:when>
                             <c:otherwise>
@@ -45,7 +45,7 @@
                     </td>
                 </c:if>
                 <td>
-                    <c:set var="selectedBeamMode" value="${destinationAuthorization.beamMode eq null ? 'None' : destinationAuthorization.beamMode}"/>
+                    <c:set var="selectedBeamMode" value="${beamDestinationAuthorization.beamMode eq null ? 'None' : beamDestinationAuthorization.beamMode}"/>
                     <div class="readonly-field"><c:out value="${selectedBeamMode}"/></div>
                     <div class="editable-field">
                         <select name="mode[]" class="mode-select">
@@ -57,7 +57,7 @@
                     </div>
                 </td>
                 <td>
-                    <c:set var="selectedLimit" value="${destinationAuthorization.cwLimit eq null ? '' : destinationAuthorization.cwLimit}"/>
+                    <c:set var="selectedLimit" value="${beamDestinationAuthorization.cwLimit eq null ? '' : beamDestinationAuthorization.cwLimit}"/>
                     <span class="readonly-field">
                         <c:choose>
                             <c:when test="${fn:contains(destination.name, 'RF Operations')}">
@@ -80,8 +80,8 @@
                     </span>
                     <input type="hidden" name="beamDestinationId[]" value="${destination.beamDestinationId}"/>
                 </td>
-                <td class="${(not isHistory) && (not (selectedBeamMode eq 'None')) && (destination.verification.verificationId eq 50) ? 'provisional-comments' : ''}">
-                    <c:set var="selectedComment" value="${destinationAuthorization.comments eq null ? '' : destinationAuthorization.comments}"/>
+                <td class="${(not isHistory) && (not (selectedBeamMode eq 'None')) && (destination.verification.verificationStatusId eq 50) ? 'provisional-comments' : ''}">
+                    <c:set var="selectedComment" value="${beamDestinationAuthorization.comments eq null ? '' : beamDestinationAuthorization.comments}"/>
                     <span class="readonly-field">
                         <c:out value="${selectedComment}"/>
                     </span>
@@ -90,10 +90,10 @@
                     </span>
                 </td>
                 <td>
-                    <fmt:formatDate var="selectedExpiration" value="${destinationAuthorization.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
+                    <fmt:formatDate var="selectedExpiration" value="${beamDestinationAuthorization.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
                     <span class="readonly-field">
                         <c:out value="${selectedExpiration}"/>
-                        <span class="expiring-soon" style="<c:out value="${destinationAuthorization.expirationDate ne null and destinationAuthorization.expirationDate.time > beamauth:now().time and destinationAuthorization.expirationDate.time < beamauth:twoDaysFromNow().time ? 'display: block;' : 'display: none;'}"/>">(Expiring Soon)</span>
+                        <span class="expiring-soon" style="<c:out value="${beamDestinationAuthorization.expirationDate ne null and beamDestinationAuthorization.expirationDate.time > beamauth:now().time and beamDestinationAuthorization.expirationDate.time < beamauth:twoDaysFromNow().time ? 'display: block;' : 'display: none;'}"/>">(Expiring Soon)</span>
                     </span>
                     <span class="editable-field">
                         <input name="expiration[]" type="text" class="expiration-input date-time-field" autocomplete="off" placeholder="${s:getFriendlyDateTimePlaceholder()}" value="${selectedBeamMode eq 'None' ? '' : selectedExpiration}"${selectedBeamMode eq 'None' ? ' readonly="readonly"' : ''}/>
@@ -103,10 +103,10 @@
                     <td class="icon-cell">
                         <a data-dialog-title="${destination.name} Information" class="dialog-ready" href="beam-destination-information?beamDestinationId=${destination.beamDestinationId}">
                             <c:choose>
-                                <c:when test="${destination.verification.verificationId eq 1}">
+                                <c:when test="${destination.verification.verificationStatusId eq 1}">
                                     <span title="Verified" class="small-icon verified-icon"></span>
                                 </c:when>
-                                <c:when test="${destination.verification.verificationId eq 50}">
+                                <c:when test="${destination.verification.verificationStatusId eq 50}">
                                     <span title="Provisonally Verified" class="small-icon provisional-icon"></span>
                                 </c:when>
                                 <c:otherwise>

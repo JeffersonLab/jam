@@ -9,63 +9,67 @@
 <%@attribute name="beamList" required="true" type="java.util.List"%>
 <%@attribute name="isEditable" required="true" type="java.lang.Boolean"%>
 <%@attribute name="isHistory" required="true" type="java.lang.Boolean"%>
-<form id="authorization-form" method="post" action="permissions">
+<form id="beamAuthorization-form" method="post" action="permissions">
     <div class="chart-wrap-backdrop">
         <h2><c:out value="${facility.name}"/>
             <c:if test="${isEditable}">
                 <span class="readonly-field"><button id="edit-button" type="button">Edit</button></span>
             </c:if>            
         </h2>
-        <h3>RF Operations</h3>
-        <table class="data-table">
-            <tbody>
-
-            </tbody>
-        </table>
-        <div class="editable-field power-limited-note">Note: Blank/Empty Current Limit results in "Dump Power Limited"</div>
-        <h3>Beam Operations</h3>
-        <t:destination-permissions-table beamList="${beamList}" isHistory="${isHistory}"/>
-        <h3>Notes</h3>
-        <div class="notes-field">
-            <span class="readonly-field">
-                <c:out value="${fn:length(authorization.comments) == 0 ? 'None' : authorization.comments}"/>
-            </span>
-            <span class="editable-field">
-                <textarea id="comments" name="comments"><c:out value="${authorization.comments}"/></textarea>
-            </span>
+        <div class="accordion">
+            <h3>RF Operations</h3>
+            <div class="content">
+                <t:rf-operations-table rfList="${rfList}" isHistory="${isHistory}"/>
+            </div>
         </div>
-        <h3>Digital Signature</h3>
-        <div class="footer">
-            <div class="footer-row">
-                <div class="signature-field">
-                    <c:choose>
-                        <c:when test="${authorization ne null}">
-                            <div class="readonly-field">Authorized by ${s:formatUsername(authorization.authorizedBy)} on <fmt:formatDate value="${authorization.authorizationDate}" pattern="${s:getFriendlyDateTimePattern()}"/></div>
-                        </c:when>
-                        <c:otherwise>
-                            <div class="readonly-field">None</div>
-                        </c:otherwise>
-                    </c:choose>
-                    <div class="editable-field notification-option-panel">
-                        <p>
-                            <label for="generate-elog-checkbox">Generate elog and email:</label>
-                            <input id="generate-elog-checkbox" type="checkbox" name="notification" value="Y" checked="checked"/>
-                        </p>
-                    </div>     
-                    <div class="editable-field">Click the Save button to sign:
-                        <span>
+        <div class="accordion">
+            <h3>Beam Operations</h3>
+            <div class="content">
+                <div class="editable-field power-limited-note">Note: Blank/Empty Current Limit results in "Dump Power Limited"</div>
+                <t:destination-permissions-table beamList="${beamList}" isHistory="${isHistory}"/>
+                <h3>Notes</h3>
+                <div class="notes-field">
+            <span class="readonly-field">
+                <c:out value="${fn:length(beamAuthorization.comments) == 0 ? 'None' : beamAuthorization.comments}"/>
+            </span>
+                    <span class="editable-field">
+                <textarea id="comments" name="comments"><c:out value="${beamAuthorization.comments}"/></textarea>
+            </span>
+                </div>
+                <h3>Digital Signature</h3>
+                <div class="footer">
+                    <div class="footer-row">
+                        <div class="signature-field">
+                            <c:choose>
+                                <c:when test="${beamAuthorization ne null}">
+                                    <div class="readonly-field">Authorized by ${s:formatUsername(beamAuthorization.authorizedBy)} on <fmt:formatDate value="${beamAuthorization.authorizationDate}" pattern="${s:getFriendlyDateTimePattern()}"/></div>
+                                </c:when>
+                                <c:otherwise>
+                                    <div class="readonly-field">None</div>
+                                </c:otherwise>
+                            </c:choose>
+                            <div class="editable-field notification-option-panel">
+                                <p>
+                                    <label for="generate-elog-checkbox">Generate elog and email:</label>
+                                    <input id="generate-elog-checkbox" type="checkbox" name="notification" value="Y" checked="checked"/>
+                                </p>
+                            </div>
+                            <div class="editable-field">Click the Save button to sign:
+                                <span>
                             <button id="save-button" class="ajax-button inline-button" type="button">Save</button>
                             <span class="cancel-text">
-                                or 
+                                or
                                 <a id="cancel-button" href="#">Cancel</a>
                             </span>
                         </span>
+                            </div>
+                        </div>
+                        <div class="history-panel">
+                            <c:if test="${not isHistory}">
+                                <a data-dialog-title="Authorization History" href="permissions/beamAuthorization-history" title="Click for beamAuthorization history">History</a>
+                            </c:if>
+                        </div>
                     </div>
-                </div>
-                <div class="history-panel">
-                    <c:if test="${not isHistory}">
-                        <a data-dialog-title="Authorization History" href="permissions/authorization-history" title="Click for authorization history">History</a>
-                    </c:if>
                 </div>
             </div>
         </div>

@@ -28,21 +28,21 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(schema = "JAM_OWNER")
 @NamedQueries({
-  @NamedQuery(name = "Authorization.findAll", query = "SELECT a FROM Authorization a")
+  @NamedQuery(name = "RFAuthorization.findAll", query = "SELECT a FROM RFAuthorization a")
 })
-public class Authorization implements Serializable {
+public class RFAuthorization implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @Id
   @SequenceGenerator(
-      name = "AuthorizationId",
-      sequenceName = "AUTHORIZATION_ID",
+      name = "RFAuthorizationId",
+      sequenceName = "RF_AUTHORIZATION_ID",
       allocationSize = 1)
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "AuthorizationId")
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RFAuthorizationId")
   @Basic(optional = false)
   @NotNull
-  @Column(name = "AUTHORIZATION_ID", nullable = false, precision = 22, scale = 0)
-  private BigInteger authorizationId;
+  @Column(name = "RF_AUTHORIZATION_ID", nullable = false, precision = 22, scale = 0)
+  private BigInteger rfAuthorizationId;
 
   @Basic(optional = false)
   @NotNull
@@ -68,17 +68,17 @@ public class Authorization implements Serializable {
   @Column(length = 2048)
   private String comments;
 
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "authorization", fetch = FetchType.EAGER)
-  private List<DestinationAuthorization> destinationAuthorizationList;
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "rfAuthorization", fetch = FetchType.EAGER)
+  private List<RFSegmentAuthorization> rfSegmentAuthorizationList;
 
-  public Authorization() {}
+  public RFAuthorization() {}
 
-  public BigInteger getAuthorizationId() {
-    return authorizationId;
+  public BigInteger getRfAuthorizationId() {
+    return rfAuthorizationId;
   }
 
-  public void setAuthorizationId(BigInteger authorizationId) {
-    this.authorizationId = authorizationId;
+  public void setRfAuthorizationId(BigInteger rfAuthorizationId) {
+    this.rfAuthorizationId = rfAuthorizationId;
   }
 
   public Date getAuthorizationDate() {
@@ -121,42 +121,43 @@ public class Authorization implements Serializable {
     this.comments = comments;
   }
 
-  public List<DestinationAuthorization> getDestinationAuthorizationList() {
-    return destinationAuthorizationList;
+  public List<RFSegmentAuthorization> getRFSegmentAuthorizationList() {
+    return rfSegmentAuthorizationList;
   }
 
-  public void setDestinationAuthorizationList(
-      List<DestinationAuthorization> destinationAuthorizationList) {
-    this.destinationAuthorizationList = destinationAuthorizationList;
+  public void setRFSegmentAuthorizationList(
+      List<RFSegmentAuthorization> rfSegmentAuthorizationList) {
+    this.rfSegmentAuthorizationList = rfSegmentAuthorizationList;
   }
 
   @Override
   public int hashCode() {
     int hash = 0;
-    hash += (authorizationId != null ? authorizationId.hashCode() : 0);
+    hash += (rfAuthorizationId != null ? rfAuthorizationId.hashCode() : 0);
     return hash;
   }
 
   @Override
   public boolean equals(Object object) {
     // TODO: Warning - this method won't work in the case the id fields are not set
-    if (!(object instanceof Authorization)) {
+    if (!(object instanceof RFAuthorization)) {
       return false;
     }
-    Authorization other = (Authorization) object;
-    return (this.authorizationId != null || other.authorizationId == null)
-        && (this.authorizationId == null || this.authorizationId.equals(other.authorizationId));
+    RFAuthorization other = (RFAuthorization) object;
+    return (this.rfAuthorizationId != null || other.rfAuthorizationId == null)
+        && (this.rfAuthorizationId == null
+            || this.rfAuthorizationId.equals(other.rfAuthorizationId));
   }
 
   @Override
   public String toString() {
-    return "org.jlab.beamauth.persistence.entity.Authorization[ authorizationId="
-        + authorizationId
+    return "org.jlab.jam.persistence.entity.RFAuthorization[rfAuthorizationId="
+        + rfAuthorizationId
         + " ]";
   }
 
-  public Authorization createAdminClone() {
-    Authorization other = new Authorization();
+  public RFAuthorization createAdminClone() {
+    RFAuthorization other = new RFAuthorization();
     other.authorizationDate = this.authorizationDate;
     other.authorizedBy = this.authorizedBy;
     other.comments = this.comments;

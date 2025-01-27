@@ -80,7 +80,7 @@
                         </c:if>
                         <h3>Verifications</h3>
                         <c:choose>
-                            <c:when test="${fn:length(creditedControl.controlVerificationList) < 1}">
+                            <c:when test="${fn:length(creditedControl.beamControlVerificationList) < 1}">
                                 <div class="message-box">None</div>
                             </c:when>
                             <c:otherwise>
@@ -112,16 +112,16 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <c:forEach items="${creditedControl.controlVerificationList}" var="verification">
-                                            <tr data-control-verification-id="${verification.controlVerificationId}" data-verified-username="${verification.verifiedBy}" data-status-id="${verification.verificationId}">
+                                        <c:forEach items="${creditedControl.beamControlVerificationList}" var="verification">
+                                            <tr data-control-verification-id="${verification.beamControlVerificationId}" data-verified-username="${verification.verifiedBy}" data-status-id="${verification.verificationStatusId}">
                                                 <c:if test="${adminOrLeader && param.notEditable eq null}">
                                                     <td>
-                                                        <input class="destination-checkbox" type="checkbox" name="destination-checkbox" value="${verification.controlVerificationId}"/>
+                                                        <input class="destination-checkbox" type="checkbox" name="destination-checkbox" value="${verification.beamControlVerificationId}"/>
                                                     </td>
                                                 </c:if>
                                                 <td><c:out value="${verification.beamDestination.name}"/></td>
                                                 <td class="verified-cell">
-                                                  <div title="${verification.verificationId eq 1 ? 'Verified' : (verification.verificationId eq 50 ? 'Provisionally Verified' : 'Not Verified')}" class="small-icon baseline-small-icon ${verification.verificationId eq 1 ? 'verified-icon' : (verification.verificationId eq 50 ? 'provisional-icon' : 'not-verified-icon')}"></div>
+                                                  <div title="${verification.verificationStatusId eq 1 ? 'Verified' : (verification.verificationStatusId eq 50 ? 'Provisionally Verified' : 'Not Verified')}" class="small-icon baseline-small-icon ${verification.verificationStatusId eq 1 ? 'verified-icon' : (verification.verificationStatusId eq 50 ? 'provisional-icon' : 'not-verified-icon')}"></div>
                                                   <div class="verified-date"><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}" value="${verification.verificationDate}"/></div>
                                                   <div class="verified-by"><c:out value="${s:formatUsername(verification.verifiedBy)}"/></div>
                                                 </td>
@@ -142,7 +142,7 @@
                                                 </td>
                                                 <td><c:out value="${verification.comments}"/></td>
                                                 <td><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}" value="${verification.expirationDate}"/></td>
-                                                <td><a data-dialog-title="Verification History" href="credited-controls/verification-history?controlVerificationId=${verification.controlVerificationId}" title="Click for verification history">History</a></td>
+                                                <td><a data-dialog-title="Verification History" href="credited-controls/verification-history?beamControlVerificationId=${verification.beamControlVerificationId}" title="Click for verification history">History</a></td>
                                             </tr>
                                         </c:forEach>
                                     </tbody>
