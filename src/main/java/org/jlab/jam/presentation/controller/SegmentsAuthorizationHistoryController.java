@@ -10,19 +10,19 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.jlab.jam.business.session.BeamAuthorizationFacade;
-import org.jlab.jam.business.session.BeamDestinationFacade;
+import org.jlab.jam.business.session.RFAuthorizationFacade;
+import org.jlab.jam.business.session.RFSegmentFacade;
 import org.jlab.jam.persistence.entity.*;
 import org.jlab.smoothness.presentation.util.ParamConverter;
 
 /**
  * @author ryans
  */
-@WebServlet(name = "DestinationsAuthorizationHistoryController")
-public class DestinationsAuthorizationHistoryController extends HttpServlet {
+@WebServlet(name = "SegmentsAuthorizationHistoryController")
+public class SegmentsAuthorizationHistoryController extends HttpServlet {
 
-  @EJB BeamAuthorizationFacade beamAuthorizationFacade;
-  @EJB BeamDestinationFacade beamDestinationFacade;
+  @EJB RFAuthorizationFacade rfAuthorizationFacade;
+  @EJB RFSegmentFacade rfSegmentFacade;
 
   /**
    * Handles the HTTP <code>GET</code> method.
@@ -36,13 +36,12 @@ public class DestinationsAuthorizationHistoryController extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    BigInteger beamAuthorizationId =
-        ParamConverter.convertBigInteger(request, "beamAuthorizationId");
+    BigInteger rfAuthorizationId = ParamConverter.convertBigInteger(request, "rfAuthorizationId");
 
-    BeamAuthorization beamAuthorization = null;
+    RFAuthorization rfAuthorization = null;
 
-    if (beamAuthorizationId != null) {
-      beamAuthorization = beamAuthorizationFacade.find(beamAuthorizationId);
+    if (rfAuthorizationId != null) {
+      rfAuthorization = rfAuthorizationFacade.find(rfAuthorizationId);
     }
 
     Facility facility = (Facility) request.getAttribute("facility");
@@ -51,18 +50,17 @@ public class DestinationsAuthorizationHistoryController extends HttpServlet {
     // authorization,
     // it would be better to grab list of destinations and segments that existed at time of
     // authorization.
-    List<BeamDestination> beamList = beamDestinationFacade.findByFacility(facility);
+    List<RFSegment> rfList = rfSegmentFacade.findByFacility(facility);
 
-    Map<BigInteger, BeamDestinationAuthorization> destinationAuthorizationMap =
-        beamAuthorizationFacade.createDestinationAuthorizationMap(beamAuthorization);
+    Map<BigInteger, RFSegmentAuthorization> segmentAuthorizationMap =
+        rfAuthorizationFacade.createSegmentAuthorizationMap(rfAuthorization);
 
-    request.setAttribute("unitsMap", beamAuthorizationFacade.getUnitsMap());
-    request.setAttribute("beamAuthorization", beamAuthorization);
-    request.setAttribute("beamList", beamList);
-    request.setAttribute("destinationAuthorizationMap", destinationAuthorizationMap);
+    request.setAttribute("rfAuthorization", rfAuthorization);
+    request.setAttribute("rfList", rfList);
+    request.setAttribute("segmentAuthorizationMap", segmentAuthorizationMap);
 
     request
-        .getRequestDispatcher("/WEB-INF/views/history/destinations-history.jsp")
+        .getRequestDispatcher("/WEB-INF/views/history/segments-history.jsp")
         .forward(request, response);
   }
 }

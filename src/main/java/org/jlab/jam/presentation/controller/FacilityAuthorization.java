@@ -104,7 +104,9 @@ public class FacilityAuthorization extends HttpServlet {
               .getNamedDispatcher("DestinationsAuthorizationHistoryController")
               .forward(request, response);
         } else if ("segments".equals(thirdName)) {
-          throw new ServletException("segment-history not implemented yet!");
+          getServletContext()
+              .getNamedDispatcher("SegmentsAuthorizationHistoryController")
+              .forward(request, response);
         } else {
           // TODO: This should probably be 404
           throw new ServletException("Unknown authorizations path: " + pathInfo);
@@ -133,9 +135,11 @@ public class FacilityAuthorization extends HttpServlet {
         rfAuthorizationFacade.createSegmentAuthorizationMap(rfAuthorization);
 
     request.setAttribute("unitsMap", beamAuthorizationFacade.getUnitsMap());
-    request.setAttribute("authorization", beamAuthorization);
+    request.setAttribute("rfAuthorization", rfAuthorization);
+    request.setAttribute("beamAuthorization", beamAuthorization);
     request.setAttribute("rfList", rfList);
     request.setAttribute("beamList", beamList);
+    request.setAttribute("segmentAuthorizationMap", segmentAuthorizationMap);
     request.setAttribute("destinationAuthorizationMap", destinationAuthorizationMap);
 
     request
