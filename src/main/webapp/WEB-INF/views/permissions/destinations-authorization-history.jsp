@@ -15,10 +15,10 @@
         <div class="banner-breadbox">
             <ul>
                 <li>
-                    <a href="${pageContext.request.contextPath}/permissions">Director's Authorization</a>
+                    <a href="${pageContext.request.contextPath}/authorizations${facility.path}">Director's Authorization</a>
                 </li>
                 <li>
-                    <a href="${pageContext.request.contextPath}/permissions/beamAuthorization-history">Historic Authorizations</a>
+                    <a href="${pageContext.request.contextPath}/authorizations${facility.path}/beam-history">Historic Authorizations</a>
                 </li>
                 <li>
                     <span><fmt:formatDate value="${beamAuthorization.modifiedDate}" pattern="${s:getFriendlyDateTimePattern()}"/> History</span>
@@ -28,10 +28,10 @@
         <section>
             <c:choose>
                 <c:when test="${beamAuthorization ne null}">
-                    <t:permissions-page cebafDestinationList="${cebafDestinationList}" lerfDestinationList="${lerfDestinationList}" isEditable="${false}" isHistory="${true}"/>
+                    <t:permissions-page rfList="${rfList}" beamList="${beamList}" isEditable="${false}" isHistory="${true}"/>
                 </c:when>
                 <c:otherwise>
-                    <div class="message-box">No Authorization found with ID: ${fn:escapeXml(param.authorizationId)}</div>
+                    <div class="message-box">No Authorization found with ID: ${fn:escapeXml(param.beamAuthorizationId)}</div>
                 </c:otherwise>
             </c:choose>
         </section>          

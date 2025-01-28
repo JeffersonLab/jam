@@ -20,7 +20,7 @@
         <div class="banner-breadbox">
             <ul>
                 <li>
-                    <a href="${pageContext.request.contextPath}/permissions">Director's Authorization</a>
+                    <a href="${pageContext.request.contextPath}/authorizations${facility.path}">Director's Authorization</a>
                 </li>
                 <li>
                     <span>Historic Authorizations</span>
@@ -54,7 +54,7 @@
                                         <td><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}" value="${history.authorizationDate}"/></td>
                                         <td><c:out value="${s:formatUsername(history.authorizedBy)}"/></td>
                                         <td><c:out value="${history.comments}"/></td>
-                                        <td><a href="destinations-beamAuthorization-history?authorizationId=${history.authorizationId}">Destination Details</a></td>
+                                        <td><a href="${pageContext.request.contextPath}/authorizations${facility.path}/beam-history/destinations?beamAuthorizationId=${history.beamAuthorizationId}">Destination Details</a></td>
                                     </tr>
                                 </c:forEach>
                             </tbody>

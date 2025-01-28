@@ -17,10 +17,8 @@ import org.jlab.smoothness.presentation.util.ParamUtil;
 /**
  * @author ryans
  */
-@WebServlet(
-    name = "AuthorizationHistoryController",
-    urlPatterns = {"/permissions/authorization-history"})
-public class AuthorizationHistoryController extends HttpServlet {
+@WebServlet(name = "BeamAuthorizationHistoryController")
+public class BeamAuthorizationHistoryController extends HttpServlet {
 
   @EJB BeamAuthorizationFacade historyFacade;
 
@@ -35,6 +33,8 @@ public class AuthorizationHistoryController extends HttpServlet {
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
+
+    System.out.println("BeamAuthorizationHistoryController says hello");
 
     int offset = ParamUtil.convertAndValidateNonNegativeInt(request, "offset", 0);
     int maxPerPage = 10;

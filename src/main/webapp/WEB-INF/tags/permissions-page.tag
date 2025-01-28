@@ -75,7 +75,7 @@
                                 </div>
                                 <div class="history-panel">
                                     <c:if test="${not isHistory}">
-                                        <a data-dialog-title="Authorization History" href="${pageContext.request.contextPath}/permissions/authorization-history" title="Click for authorization history">History</a>
+                                        <a data-dialog-title="Authorization History" href="${pageContext.request.contextPath}/authorizations${facility.path}/beam-history" title="Click for authorization history">History</a>
                                     </c:if>
                                 </div>
                             </div>

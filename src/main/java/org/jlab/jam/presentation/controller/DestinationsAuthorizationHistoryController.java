@@ -12,17 +12,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jlab.jam.business.session.BeamAuthorizationFacade;
 import org.jlab.jam.business.session.BeamDestinationFacade;
-import org.jlab.jam.persistence.entity.BeamAuthorization;
-import org.jlab.jam.persistence.entity.BeamDestination;
-import org.jlab.jam.persistence.entity.BeamDestinationAuthorization;
+import org.jlab.jam.persistence.entity.*;
 import org.jlab.smoothness.presentation.util.ParamConverter;
 
 /**
  * @author ryans
  */
-@WebServlet(
-    name = "DestinationsAuthorizationHistoryController",
-    urlPatterns = {"/permissions/destinations-authorization-history"})
+@WebServlet(name = "DestinationsAuthorizationHistoryController")
 public class DestinationsAuthorizationHistoryController extends HttpServlet {
 
   @EJB BeamAuthorizationFacade beamAuthorizationFacade;
@@ -40,26 +36,31 @@ public class DestinationsAuthorizationHistoryController extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    BigInteger authorizationId = ParamConverter.convertBigInteger(request, "authorizationId");
+    BigInteger beamAuthorizationId =
+        ParamConverter.convertBigInteger(request, "beamAuthorizationId");
 
     BeamAuthorization beamAuthorization = null;
 
-    if (authorizationId != null) {
-      beamAuthorization = beamAuthorizationFacade.find(authorizationId);
+    if (beamAuthorizationId != null) {
+      beamAuthorization = beamAuthorizationFacade.find(beamAuthorizationId);
     }
 
-    List<BeamDestination> cebafDestinationList = beamDestinationFacade.findCebafDestinations();
-    List<BeamDestination> lerfDestinationList = beamDestinationFacade.findLerfDestinations();
-    List<BeamDestination> uitfDestinationList = beamDestinationFacade.findUitfDestinations();
+    Facility facility = (Facility) request.getAttribute("facility");
+
+    // TODO: Instead of querying for current list of destinations / segments then mapping to
+    // authorization,
+    // it would be better to grab list of destinations and segments that existed at time of
+    // authorization.
+    List<RFSegment> rfList = null;
+    List<BeamDestination> beamList = beamDestinationFacade.findByFacility(facility);
 
     Map<BigInteger, BeamDestinationAuthorization> destinationAuthorizationMap =
         beamAuthorizationFacade.createDestinationAuthorizationMap(beamAuthorization);
 
     request.setAttribute("unitsMap", beamAuthorizationFacade.getUnitsMap());
-    request.setAttribute("authorization", beamAuthorization);
-    request.setAttribute("cebafDestinationList", cebafDestinationList);
-    request.setAttribute("lerfDestinationList", lerfDestinationList);
-    request.setAttribute("uitfDestinationList", uitfDestinationList);
+    request.setAttribute("beamAuthorization", beamAuthorization);
+    request.setAttribute("rfList", rfList);
+    request.setAttribute("beamList", beamList);
     request.setAttribute("destinationAuthorizationMap", destinationAuthorizationMap);
 
     request

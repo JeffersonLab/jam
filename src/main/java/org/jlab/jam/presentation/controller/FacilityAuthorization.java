@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -57,7 +59,21 @@ public class FacilityAuthorization extends HttpServlet {
 
     String pathInfo = request.getPathInfo();
 
-    Facility facility = facilityFacade.findByPath(pathInfo);
+    if (pathInfo == null || pathInfo.isEmpty()) {
+      throw new ServletException("Path is empty");
+    }
+
+    Path path = Paths.get(pathInfo);
+
+    if (path.getNameCount() == 0) {
+      throw new ServletException("Path is root only");
+    }
+
+    String facilityPath = "/" + path.getName(0);
+
+    System.err.println("facilityPath: " + facilityPath);
+
+    Facility facility = facilityFacade.findByPath(facilityPath);
 
     if (facility == null) {
       throw new ServletException("Facility not found");
@@ -66,6 +82,34 @@ public class FacilityAuthorization extends HttpServlet {
     List<Facility> facilityList =
         facilityFacade.findAll(new AbstractFacade.OrderDirective("weight"));
 
+    request.setAttribute("facility", facility);
+    request.setAttribute("facilityList", facilityList);
+
+    switch (path.getNameCount()) {
+      case 1:
+        System.err.println("1: facility");
+        handleFacility(request, response, facility);
+        break;
+      case 2:
+        System.err.println("2: auth history");
+        getServletContext()
+            .getNamedDispatcher("BeamAuthorizationHistoryController")
+            .forward(request, response);
+        break;
+      case 3:
+        System.err.println("3: destination history");
+        getServletContext()
+            .getNamedDispatcher("DestinationsAuthorizationHistoryController")
+            .forward(request, response);
+        break;
+      default:
+        throw new ServletException("Path has too many segments");
+    }
+  }
+
+  private void handleFacility(
+      HttpServletRequest request, HttpServletResponse response, Facility facility)
+      throws ServletException, IOException {
     verificationFacade.performExpirationCheck(false);
 
     RFAuthorization rfAuthorization = rfAuthorizationFacade.findCurrent();
@@ -80,8 +124,6 @@ public class FacilityAuthorization extends HttpServlet {
     Map<BigInteger, RFSegmentAuthorization> segmentAuthorizationMap =
         rfAuthorizationFacade.createSegmentAuthorizationMap(rfAuthorization);
 
-    request.setAttribute("facility", facility);
-    request.setAttribute("facilityList", facilityList);
     request.setAttribute("unitsMap", beamAuthorizationFacade.getUnitsMap());
     request.setAttribute("authorization", beamAuthorization);
     request.setAttribute("rfList", rfList);
