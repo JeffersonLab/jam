@@ -35,7 +35,7 @@
                 <c:choose>
                     <c:when test="${not empty beamList}">
                         <div class="editable-field power-limited-note">Note: Blank/Empty Current Limit results in "Dump Power Limited"</div>
-                        <t:destination-permissions-table beamList="${beamList}" isHistory="${isHistory}"/>
+                        <t:beam-operations-table beamList="${beamList}" isHistory="${isHistory}"/>
                         <h3>Notes</h3>
                         <div class="notes-field">
             <span class="readonly-field">

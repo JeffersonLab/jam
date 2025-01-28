@@ -64,7 +64,7 @@ public class DestinationsAuthorizationHistoryController extends HttpServlet {
     request.setAttribute("destinationAuthorizationMap", destinationAuthorizationMap);
 
     request
-        .getRequestDispatcher("/WEB-INF/views/permissions/destinations-authorization-history.jsp")
+        .getRequestDispatcher("/WEB-INF/views/history/destinations-history.jsp")
         .forward(request, response);
   }
 }
