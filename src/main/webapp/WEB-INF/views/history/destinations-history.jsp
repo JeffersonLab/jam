@@ -28,7 +28,7 @@
         <section>
             <c:choose>
                 <c:when test="${beamAuthorization ne null}">
-                    <t:authorizations-panel rfList="${rfList}" beamList="${beamList}" isEditable="${false}" isHistory="${true}"/>
+                    <t:beam-operations-panel beamList="${beamList}" isHistory="${true}"/>
                 </c:when>
                 <c:otherwise>
                     <div class="message-box">No Authorization found with ID: ${fn:escapeXml(param.beamAuthorizationId)}</div>

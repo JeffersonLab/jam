@@ -10,7 +10,7 @@
 <table class="destinations-table data-table stripped-table">
     <thead>
         <tr>
-            <th rowspan="2" class="destination-header">Segment</th>
+            <th rowspan="2" class="destination-header">RF Segment</th>
                 <c:if test="${not isHistory}">
                 <th rowspan="2" class="approval-header">Auth</th>
                 </c:if>
@@ -93,3 +93,47 @@
         </c:forEach> 
     </tbody>
 </table>
+<h3>Notes</h3>
+<div class="notes-field">
+            <span class="readonly-field">
+                <c:out value="${fn:length(rfAuthorization.comments) == 0 ? 'None' : rfAuthorization.comments}"/>
+            </span>
+    <span class="editable-field">
+                <textarea id="rf-comments" name="comments"><c:out value="${rfAuthorization.comments}"/></textarea>
+            </span>
+</div>
+<h3>Digital Signature</h3>
+<div class="footer">
+    <div class="footer-row">
+        <div class="signature-field">
+            <c:choose>
+                <c:when test="${rfAuthorization ne null}">
+                    <div class="readonly-field">Authorized by ${s:formatUsername(rfAuthorization.authorizedBy)} on <fmt:formatDate value="${rfAuthorization.authorizationDate}" pattern="${s:getFriendlyDateTimePattern()}"/></div>
+                </c:when>
+                <c:otherwise>
+                    <div class="readonly-field">None</div>
+                </c:otherwise>
+            </c:choose>
+            <div class="editable-field notification-option-panel">
+                <p>
+                    <label for="rf-generate-elog-checkbox">Generate elog and email:</label>
+                    <input id="rf-generate-elog-checkbox" type="checkbox" name="notification" value="Y" checked="checked"/>
+                </p>
+            </div>
+            <div class="editable-field">Click the Save button to sign:
+                <span>
+                            <button id="rf-save-button" class="ajax-button inline-button" type="button">Save</button>
+                            <span class="cancel-text">
+                                or
+                                <a id="rf-cancel-button" href="#">Cancel</a>
+                            </span>
+                        </span>
+            </div>
+        </div>
+        <div class="history-panel">
+            <c:if test="${not isHistory}">
+                <a data-dialog-title="Authorization History" href="${pageContext.request.contextPath}/authorizations${facility.path}/rf-history" title="Click for authorization history">History</a>
+            </c:if>
+        </div>
+    </div>
+</div>

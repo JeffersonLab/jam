@@ -97,18 +97,18 @@ public class RFAuthorizationFacade extends AbstractFacade<RFAuthorization> {
 
   @SuppressWarnings("unchecked")
   @PermitAll
-  public List<BeamAuthorization> findHistory(int offset, int maxPerPage) {
+  public List<RFSegment> findHistory(int offset, int maxPerPage) {
     Query q =
         em.createNativeQuery(
-            "select * from authorization order by authorization_date desc",
-            BeamAuthorization.class);
+            "select * from rf_authorization order by authorization_date desc",
+            RFAuthorization.class);
 
     return q.setFirstResult(offset).setMaxResults(maxPerPage).getResultList();
   }
 
   @PermitAll
   public Long countHistory() {
-    TypedQuery<Long> q = em.createQuery("select count(a) from BeamAuthorization a", Long.class);
+    TypedQuery<Long> q = em.createQuery("select count(a) from RFAuthorization a", Long.class);
 
     return q.getSingleResult();
   }

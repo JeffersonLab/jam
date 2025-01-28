@@ -5,7 +5,7 @@
 <%@taglib prefix="s" uri="http://jlab.org/jsp/smoothness" %>
 <%@taglib prefix="beamauth" uri="http://jlab.org/beamauth/functions"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%> 
-<t:facility-authorizations-page title="Beam Authorization History">
+<t:facility-authorizations-page title="RF Authorization History">
     <jsp:attribute name="stylesheets">
     </jsp:attribute>
     <jsp:attribute name="scripts">
@@ -23,7 +23,7 @@
                     <a href="${pageContext.request.contextPath}/authorizations${facility.path}"><c:out value="${facility.name}"/> Authorization</a>
                 </li>
                 <li>
-                    <span>Beam History</span>
+                    <span>RF History</span>
                 </li>
             </ul>
         </div>        
@@ -35,7 +35,7 @@
                     </c:when>
                     <c:otherwise>
                         <div class="message-box"><c:out value="${selectionMessage}"/></div>
-                        <table id="beamAuthorization-table" class="data-table stripped-table">
+                        <table id="rfAuthorization-table" class="data-table stripped-table">
                             <thead>
                                 <tr>
                                     <th>Modified Date</th>
@@ -43,7 +43,7 @@
                                     <th>Authorization Date</th>
                                     <th>Authorized By</th>
                                     <th>Notes</th>
-                                    <th>Destination Authorizations</th>
+                                    <th>Segment Authorizations</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -54,7 +54,7 @@
                                         <td><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}" value="${history.authorizationDate}"/></td>
                                         <td><c:out value="${s:formatUsername(history.authorizedBy)}"/></td>
                                         <td><c:out value="${history.comments}"/></td>
-                                        <td><a href="${pageContext.request.contextPath}/authorizations${facility.path}/beam-history/destinations?beamAuthorizationId=${history.beamAuthorizationId}">Destination Details</a></td>
+                                        <td><a href="${pageContext.request.contextPath}/authorizations${facility.path}/rf-history/segments?rfAuthorizationId=${history.rfAuthorizationId}">Segment Details</a></td>
                                     </tr>
                                 </c:forEach>
                             </tbody>

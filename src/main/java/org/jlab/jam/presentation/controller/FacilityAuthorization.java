@@ -101,7 +101,9 @@ public class FacilityAuthorization extends HttpServlet {
               .getNamedDispatcher("BeamAuthorizationHistoryController")
               .forward(request, response);
         } else if ("rf-history".equals(secondName)) {
-          throw new ServletException("rf-history not implemented yet!");
+          getServletContext()
+              .getNamedDispatcher("RFAuthorizationHistoryController")
+              .forward(request, response);
         } else {
           // TODO: This should probably be 404
           throw new ServletException("Unknown authorizations path: " + pathInfo);
