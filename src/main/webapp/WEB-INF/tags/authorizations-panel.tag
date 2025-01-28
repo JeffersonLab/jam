@@ -14,17 +14,20 @@
         <div class="accordion">
             <h3>RF Operations</h3>
             <div class="content">
-                <c:choose>
-                    <c:when test="${not empty rfList}">
-                        <c:if test="${isEditable}">
-                            <span class="readonly-field"><button id="rf-edit-button" type="button">Edit RF Operations</button></span>
-                        </c:if>
-                        <t:rf-operations-panel rfList="${rfList}" isHistory="${isHistory}"/>
-                    </c:when>
-                    <c:otherwise>
-                        None
-                    </c:otherwise>
-                </c:choose>
+                <form id="rf-authorization-form" method="post" action="${pageContext.request.contextPath}/ajax/edit-rf-auth">
+                    <input type="hidden" name="facilityId" value="${facility.facilityId}">
+                    <c:choose>
+                        <c:when test="${not empty rfList}">
+                            <c:if test="${isEditable}">
+                                <span class="readonly-field"><button id="rf-edit-button" type="button">Edit RF Operations</button></span>
+                            </c:if>
+                            <t:rf-operations-panel rfList="${rfList}" isHistory="${isHistory}"/>
+                        </c:when>
+                        <c:otherwise>
+                            None
+                        </c:otherwise>
+                    </c:choose>
+                </form>
             </div>
         </div>
         <div class="accordion">

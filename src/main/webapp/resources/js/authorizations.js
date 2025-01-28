@@ -1,4 +1,66 @@
 var jlab = jlab || {};
+jlab.rfSave = function () {
+
+    var $actionButton = $("#rf-save-button"),
+        success = false,
+        newLogId = null,
+        url = jlab.contextPath + "/ajax/edit-rf-auth",
+        data = $("#rf-authorization-form").serialize();
+
+    $actionButton
+        .attr("disabled", "disabled")
+        .height($actionButton.height())
+        .width($actionButton.width())
+        .empty().append('<div class="button-indicator"></div>');
+
+    var request = jQuery.ajax({
+        url: url,
+        type: "POST",
+        data: data,
+        dataType: "json"
+    });
+
+    request.fail(function (jqXHR, textStatus, errorThrown) {
+        console.log("fail jqXR:", jqXHR);
+        console.log("fail textStatus:", textStatus);
+        console.log("fail errorThrown:", errorThrown);
+        console.log('fail Response JSON:', jqXHR.responseJSON);
+
+        var error = textStatus;
+
+        if(jqXHR.responseJSON) {
+            error = jqXHR.responseJSON.error
+        }
+
+        alert("Unable to save: " + error);
+    })
+
+    request.done(function (data) {
+        if (data.error) {
+            alert('Unable to save: ' + data.error);
+        } else {
+            /* Success */
+            success = true;
+            newLogId = data.logId;
+        }
+
+    });
+
+    request.always(function () {
+        $actionButton.html("Save");
+        $actionButton.removeAttr("disabled");
+
+        if (success) {
+            if (newLogId !== null && typeof(newLogId) !== 'undefined') {
+                $("#new-entry-url").attr("href", jlab.logbookServerUrl + "/entry/" + newLogId);
+                $("#new-entry-url").text(newLogId);
+                $("#success-dialog").dialog("open");
+            } else {
+                document.location.reload();
+            }
+        }
+    });
+};
 jlab.beamSave = function () {
 
     var $actionButton = $("#beam-save-button"),
@@ -26,7 +88,13 @@ jlab.beamSave = function () {
         console.log("fail errorThrown:", errorThrown);
         console.log('fail Response JSON:', jqXHR.responseJSON);
 
-        alert("Unable to save: " + jqXHR.responseJSON.error);
+        var error = textStatus;
+
+        if(jqXHR.responseJSON) {
+            error = jqXHR.responseJSON.error
+        }
+
+        alert("Unable to save: " + error);
     })
 
     request.done(function (data) {
@@ -91,6 +159,18 @@ $(document).on("click", "#beam-cancel-button", function () {
 });
 $(document).on("click", "#beam-save-button", function () {
     jlab.beamSave();
+});
+$(document).on("click", "#rf-edit-button", function () {
+    $("#rf-authorization-form .readonly-field").hide();
+    $("#rf-authorization-form .editable-field").show();
+});
+$(document).on("click", "#rf-cancel-button", function () {
+    $("#rf-authorization-form .editable-field").hide();
+    $("#rf-authorization-form .readonly-field").show();
+    return false;
+});
+$(document).on("click", "#rf-save-button", function () {
+    jlab.rfSave();
 });
 $("#success-dialog").on("dialogclose", function () {
     document.location.reload(true);

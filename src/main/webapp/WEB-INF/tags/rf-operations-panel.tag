@@ -29,7 +29,10 @@
         <c:forEach items="${rfList}" var="segment">
             <c:set var="rfSegmentAuthorization" value="${rfAuthorizationMap[segment.getRFSegmentId()]}"/>
             <tr>
-                <td><c:out value="${segment.name}"/></td>
+                <td>
+                    <c:out value="${segment.name}"/>
+                    <input type="hidden" name="rfSegmentId[]" value="${segment.getRFSegmentId()}"/>
+                </td>
                     <c:if test="${not isHistory}">
                     <td class="icon-cell">
                         <c:choose>
@@ -67,7 +70,7 @@
                     <fmt:formatDate var="selectedExpiration" value="${rfSegmentAuthorization.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
                     <span class="readonly-field">
                         <c:out value="${selectedExpiration}"/>
-                        <span class="expiring-soon" style="<c:out value="${beamDestinationAuthorization.expirationDate ne null and beamDestinationAuthorization.expirationDate.time > beamauth:now().time and beamDestinationAuthorization.expirationDate.time < beamauth:twoDaysFromNow().time ? 'display: block;' : 'display: none;'}"/>">(Expiring Soon)</span>
+                        <span class="expiring-soon" style="<c:out value="${rfSegmentAuthorization.expirationDate ne null and rfSegmentAuthorization.expirationDate.time > beamauth:now().time and rfSegmentAuthorization.expirationDate.time < beamauth:twoDaysFromNow().time ? 'display: block;' : 'display: none;'}"/>">(Expiring Soon)</span>
                     </span>
                     <span class="editable-field">
                         <input name="expiration[]" type="text" class="expiration-input date-time-field" autocomplete="off" placeholder="${s:getFriendlyDateTimePlaceholder()}" value="${selectedBeamMode eq 'None' ? '' : selectedExpiration}"${selectedBeamMode eq 'None' ? ' readonly="readonly"' : ''}/>

@@ -132,11 +132,12 @@ public class RFAuthorizationFacade extends AbstractFacade<RFAuthorization> {
 
   @RolesAllowed("jam-admin")
   public void saveAuthorization(
-      String comments, List<RFSegmentAuthorization> segmentAuthorizationList)
+      Facility facility, String comments, List<RFSegmentAuthorization> segmentAuthorizationList)
       throws UserFriendlyException {
     String username = checkAuthenticated();
 
     RFAuthorization authorization = new RFAuthorization();
+    authorization.setFacility(facility);
     authorization.setComments(comments);
     authorization.setAuthorizationDate(new Date());
     authorization.setAuthorizedBy(username);

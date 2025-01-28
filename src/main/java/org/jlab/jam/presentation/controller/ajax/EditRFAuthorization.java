@@ -2,7 +2,6 @@ package org.jlab.jam.presentation.controller.ajax;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -19,12 +18,10 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.jlab.jam.business.session.BeamAuthorizationFacade;
 import org.jlab.jam.business.session.FacilityFacade;
 import org.jlab.jam.business.session.LogbookFacade;
-import org.jlab.jam.persistence.entity.BeamDestinationAuthorization;
-import org.jlab.jam.persistence.entity.DestinationAuthorizationPK;
-import org.jlab.jam.persistence.entity.Facility;
+import org.jlab.jam.business.session.RFAuthorizationFacade;
+import org.jlab.jam.persistence.entity.*;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jlab.smoothness.business.util.TimeUtil;
 import org.jlab.smoothness.presentation.util.ParamConverter;
@@ -33,13 +30,13 @@ import org.jlab.smoothness.presentation.util.ParamConverter;
  * @author ryans
  */
 @WebServlet(
-    name = "EditBeamAuthorization",
-    urlPatterns = {"/ajax/edit-beam-auth"})
-public class EditBeamAuthorization extends HttpServlet {
+    name = "EditRFAuthorization",
+    urlPatterns = {"/ajax/edit-rf-auth"})
+public class EditRFAuthorization extends HttpServlet {
 
-  private static final Logger LOGGER = Logger.getLogger(EditBeamAuthorization.class.getName());
+  private static final Logger LOGGER = Logger.getLogger(EditRFAuthorization.class.getName());
 
-  @EJB BeamAuthorizationFacade beamAuthorizationFacade;
+  @EJB RFAuthorizationFacade rfAuthorizationFacade;
   @EJB FacilityFacade facilityFacade;
   @EJB LogbookFacade logbookFacade;
 
@@ -85,11 +82,10 @@ public class EditBeamAuthorization extends HttpServlet {
         throw new UserFriendlyException("Unable to parse notifications parameter");
       }
 
-      List<BeamDestinationAuthorization> beamDestinationAuthorizationList =
-          convertDestinationAuthorizationList(facility, request);
+      List<RFSegmentAuthorization> rfSegmentAuthorizationList =
+          convertSegmentAuthorizationList(facility, request);
 
-      beamAuthorizationFacade.saveAuthorization(
-          facility, comments, beamDestinationAuthorizationList);
+      rfAuthorizationFacade.saveAuthorization(facility, comments, rfSegmentAuthorizationList);
     } catch (UserFriendlyException e) {
       errorReason = e.getUserMessage();
       LOGGER.log(Level.INFO, "Unable to save authorization: " + errorReason);
@@ -136,23 +132,17 @@ public class EditBeamAuthorization extends HttpServlet {
     }
   }
 
-  private List<BeamDestinationAuthorization> convertDestinationAuthorizationList(
+  private List<RFSegmentAuthorization> convertSegmentAuthorizationList(
       Facility facility, HttpServletRequest request) throws UserFriendlyException {
-    List<BeamDestinationAuthorization> beamDestinationAuthorizationList = new ArrayList<>();
+    List<RFSegmentAuthorization> rfSegmentAuthorizationList = new ArrayList<>();
     String[] modeArray = request.getParameterValues("mode[]");
-    String[] limitStrArray = request.getParameterValues("limit[]");
     String[] commentsArray = request.getParameterValues("comment[]");
     String[] expirationArray = request.getParameterValues("expiration[]");
-    String[] beamDestinationIdStrArray = request.getParameterValues("beamDestinationId[]");
+    String[] rfSegmentIdStrArray = request.getParameterValues("rfSegmentId[]");
     if (modeArray != null) {
-      if (limitStrArray == null || limitStrArray.length != modeArray.length) {
-        throw new IllegalArgumentException("mode array and limit array are of different length");
-      }
-
-      if (beamDestinationIdStrArray == null
-          || beamDestinationIdStrArray.length != modeArray.length) {
+      if (rfSegmentIdStrArray == null || rfSegmentIdStrArray.length != modeArray.length) {
         throw new IllegalArgumentException(
-            "mode array and beam destination ID array are of different length");
+            "mode array and RF Segment ID array are of different length");
       }
 
       SimpleDateFormat dateFormatter = new SimpleDateFormat(TimeUtil.getFriendlyDateTimePattern());
@@ -160,24 +150,9 @@ public class EditBeamAuthorization extends HttpServlet {
       for (int i = 0; i < modeArray.length; i++) {
         String mode = modeArray[i];
 
-        BeamDestinationAuthorization da = new BeamDestinationAuthorization();
+        RFSegmentAuthorization da = new RFSegmentAuthorization();
 
-        da.setBeamMode(mode);
-
-        String limitStr = limitStrArray[i];
-
-        if ("None".equals(mode)) {
-          da.setCwLimit(null);
-        } else if (limitStr != null && !limitStr.equals("") && !limitStr.equals("N/A")) {
-          limitStr = limitStr.replaceAll(",", ""); // Remove commas
-
-          try {
-            BigDecimal limit = new BigDecimal(limitStr);
-            da.setCwLimit(limit);
-          } catch (NumberFormatException e) {
-            throw new UserFriendlyException("limit must be a number", e);
-          }
-        }
+        da.setRFMode(mode);
 
         String comments = commentsArray[i];
         da.setComments(comments);
@@ -192,28 +167,28 @@ public class EditBeamAuthorization extends HttpServlet {
           }
         }
 
-        String beamDestinationIdStr = beamDestinationIdStrArray[i];
+        String rfSegmentIdStr = rfSegmentIdStrArray[i];
 
-        if (beamDestinationIdStr == null) {
-          throw new IllegalArgumentException("Beam Destination ID must not be null");
+        if (rfSegmentIdStr == null) {
+          throw new IllegalArgumentException("RF Segment ID must not be null");
         }
 
-        BigInteger beamDestinationId = new BigInteger(beamDestinationIdStr);
+        BigInteger rfSegmentId = new BigInteger(rfSegmentIdStr);
 
-        // We don't Check if Beam Destination exists with given ID and verify matches
-        // DestinationAuthorization Facility
+        // We don't Check if RF Segment exists with given ID and verify matches
+        // SegmentAuthorization Facility
         // At the moment we have database constraints that will check this for us, but error may be
         // hard to parse
         da.setFacility(facility);
 
-        DestinationAuthorizationPK pk = new DestinationAuthorizationPK();
-        pk.setBeamDestinationId(beamDestinationId);
-        da.setDestinationAuthorizationPK(pk);
+        SegmentAuthorizationPK pk = new SegmentAuthorizationPK();
+        pk.setRFSegmentId(rfSegmentId);
+        da.setSegmentAuthorizationPK(pk);
 
-        beamDestinationAuthorizationList.add(da);
+        rfSegmentAuthorizationList.add(da);
       }
     }
 
-    return beamDestinationAuthorizationList;
+    return rfSegmentAuthorizationList;
   }
 }

@@ -33,6 +33,11 @@ public class RFSegmentAuthorization implements Serializable {
   private static final long serialVersionUID = 1L;
   @EmbeddedId protected SegmentAuthorizationPK segmentAuthorizationPK;
 
+  @NotNull
+  @ManyToOne
+  @JoinColumn(name = "FACILITY_ID", referencedColumnName = "FACILITY_ID", nullable = false)
+  private Facility facility;
+
   @Basic(optional = false)
   @NotNull
   @Size(min = 1, max = 16)
@@ -86,6 +91,14 @@ public class RFSegmentAuthorization implements Serializable {
 
   public RFSegment getSegment() {
     return segment;
+  }
+
+  public Facility getFacility() {
+    return facility;
+  }
+
+  public void setFacility(Facility facility) {
+    this.facility = facility;
   }
 
   public String getRFMode() {
