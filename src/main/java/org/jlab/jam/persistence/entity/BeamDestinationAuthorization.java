@@ -34,6 +34,11 @@ public class BeamDestinationAuthorization implements Serializable {
   private static final long serialVersionUID = 1L;
   @EmbeddedId protected DestinationAuthorizationPK destinationAuthorizationPK;
 
+  @NotNull
+  @ManyToOne
+  @JoinColumn(name = "FACILITY_ID", referencedColumnName = "FACILITY_ID", nullable = false)
+  private Facility facility;
+
   @Basic(optional = false)
   @NotNull
   @Size(min = 1, max = 16)
@@ -93,6 +98,14 @@ public class BeamDestinationAuthorization implements Serializable {
 
   public void setDestinationAuthorizationPK(DestinationAuthorizationPK destinationAuthorizationPK) {
     this.destinationAuthorizationPK = destinationAuthorizationPK;
+  }
+
+  public Facility getFacility() {
+    return facility;
+  }
+
+  public void setFacility(Facility facility) {
+    this.facility = facility;
   }
 
   public BeamDestination getDestination() {

@@ -144,11 +144,14 @@ public class BeamAuthorizationFacade extends AbstractFacade<BeamAuthorization> {
 
   @RolesAllowed("jam-admin")
   public void saveAuthorization(
-      String comments, List<BeamDestinationAuthorization> beamDestinationAuthorizationList)
+      Facility facility,
+      String comments,
+      List<BeamDestinationAuthorization> beamDestinationAuthorizationList)
       throws UserFriendlyException {
     String username = checkAuthenticated();
 
     BeamAuthorization beamAuthorization = new BeamAuthorization();
+    beamAuthorization.setFacility(facility);
     beamAuthorization.setComments(comments);
     beamAuthorization.setAuthorizationDate(new Date());
     beamAuthorization.setAuthorizedBy(username);

@@ -86,7 +86,8 @@ public class EditBeamAuthorization extends HttpServlet {
       List<BeamDestinationAuthorization> beamDestinationAuthorizationList =
           convertDestinationAuthorizationList(facility, request);
 
-      beamAuthorizationFacade.saveAuthorization(comments, beamDestinationAuthorizationList);
+      beamAuthorizationFacade.saveAuthorization(
+          facility, comments, beamDestinationAuthorizationList);
     } catch (UserFriendlyException e) {
       errorReason = e.getUserMessage();
       LOGGER.log(Level.INFO, "Unable to save authorization: " + errorReason);
@@ -197,7 +198,11 @@ public class EditBeamAuthorization extends HttpServlet {
 
         BigInteger beamDestinationId = new BigInteger(beamDestinationIdStr);
 
-        // TODO: Check if Beam Destination exists with given ID and verify it matches Facility
+        // We don't Check if Beam Destination exists with given ID and verify matches
+        // DestinationAuthorization Facility
+        // At the moment we have database constraints that will check this for us, but error may be
+        // hard to parse
+        da.setFacility(facility);
 
         DestinationAuthorizationPK pk = new DestinationAuthorizationPK();
         pk.setBeamDestinationId(beamDestinationId);

@@ -1,6 +1,6 @@
 alter session set container = XEPDB1;
 
--- Populate Verification
+-- Populate Verification Status
 insert into JAM_OWNER.VERIFICATION_STATUS (VERIFICATION_STATUS_ID, NAME) values (1, 'Verified');
 insert into JAM_OWNER.VERIFICATION_STATUS (VERIFICATION_STATUS_ID, NAME) values (50, 'Provisionally Verified');
 insert into JAM_OWNER.VERIFICATION_STATUS (VERIFICATION_STATUS_ID, NAME) values (100, 'Not Verified');
@@ -80,13 +80,13 @@ insert into JAM_OWNER.beam_control_verification (BEAM_CONTROL_VERIFICATION_ID, C
 -- Populate Initial Verification History (Control 1, Destination 1)
 insert into JAM_OWNER.beam_control_verification_history (BEAM_CONTROL_VERIFICATION_HISTORY_ID, BEAM_CONTROL_VERIFICATION_ID, VERIFICATION_STATUS_ID, VERIFICATION_DATE, VERIFIED_BY, EXPIRATION_DATE, COMMENTS, MODIFIED_BY, MODIFIED_DATE) values(JAM_OWNER.beam_control_verification_history_id.nextval, 1, 100, sysdate, 'tbrown', null, null, 'tbrown', sysdate);
 
--- Populate Initial Authorization
-insert into JAM_OWNER.BEAM_AUTHORIZATION (BEAM_AUTHORIZATION_ID, MODIFIED_BY, MODIFIED_DATE, AUTHORIZATION_DATE, AUTHORIZED_BY, COMMENTS) values(JAM_OWNER.beam_authorization_id.nextval, 'tbrown', sysdate, sysdate, 'tbrown', 'testing');
+-- Populate Initial Beam Authorization
+insert into JAM_OWNER.BEAM_AUTHORIZATION (BEAM_AUTHORIZATION_ID, FACILITY_ID, MODIFIED_BY, MODIFIED_DATE, AUTHORIZATION_DATE, AUTHORIZED_BY, COMMENTS) values(JAM_OWNER.beam_authorization_id.nextval, 1, 'tbrown', sysdate, sysdate, 'tbrown', 'testing');
 
 -- Populate Initial Destination Authorization
-insert into JAM_OWNER.beam_destination_authorization (BEAM_DESTINATION_ID, BEAM_AUTHORIZATION_ID, BEAM_MODE, CW_LIMIT, COMMENTS, EXPIRATION_DATE) values(1, 1, 'None', null, 'test 1', null);
-insert into JAM_OWNER.beam_destination_authorization (BEAM_DESTINATION_ID, BEAM_AUTHORIZATION_ID, BEAM_MODE, CW_LIMIT, COMMENTS, EXPIRATION_DATE) values(2, 1, 'Tune', null, 'test 2', null);
-insert into JAM_OWNER.beam_destination_authorization (BEAM_DESTINATION_ID, BEAM_AUTHORIZATION_ID, BEAM_MODE, CW_LIMIT, COMMENTS, EXPIRATION_DATE) values(3, 1, 'CW', 10, 'test 3', null);
+insert into JAM_OWNER.beam_destination_authorization (BEAM_DESTINATION_ID, BEAM_AUTHORIZATION_ID, FACILITY_ID, BEAM_MODE, CW_LIMIT, COMMENTS, EXPIRATION_DATE) values(1, 1, 1, 'None', null, 'test 1', null);
+insert into JAM_OWNER.beam_destination_authorization (BEAM_DESTINATION_ID, BEAM_AUTHORIZATION_ID, FACILITY_ID, BEAM_MODE, CW_LIMIT, COMMENTS, EXPIRATION_DATE) values(2, 1, 1, 'Tune', null, 'test 2', null);
+insert into JAM_OWNER.beam_destination_authorization (BEAM_DESTINATION_ID, BEAM_AUTHORIZATION_ID, FACILITY_ID, BEAM_MODE, CW_LIMIT, COMMENTS, EXPIRATION_DATE) values(3, 1, 1, 'CW', 10, 'test 3', null);
 
 -- Populate Component
 insert into JAM_OWNER.COMPONENT (COMPONENT_ID, NAME, STATUS_ID) values (2763, '0L03', 1);
