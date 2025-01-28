@@ -31,6 +31,7 @@
             <h3>Beam Operations</h3>
             <div class="content">
                 <form id="beam-authorization-form" method="post" action="${pageContext.request.contextPath}/ajax/edit-beam-auth">
+                    <input type="hidden" name="facilityId" value="${facility.facilityId}">
                 <c:choose>
                     <c:when test="${not empty beamList}">
                         <c:if test="${isEditable}">

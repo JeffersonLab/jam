@@ -30,6 +30,7 @@ import javax.persistence.TypedQuery;
 import org.jlab.jam.persistence.entity.BeamAuthorization;
 import org.jlab.jam.persistence.entity.BeamDestination;
 import org.jlab.jam.persistence.entity.BeamDestinationAuthorization;
+import org.jlab.jam.persistence.entity.Facility;
 import org.jlab.jlog.Body;
 import org.jlab.jlog.Library;
 import org.jlab.jlog.LogEntry;
@@ -238,7 +239,8 @@ public class BeamAuthorizationFacade extends AbstractFacade<BeamAuthorization> {
   }
 
   @RolesAllowed("jam-admin")
-  public long sendELog(String proxyServer, String logbookServer) throws UserFriendlyException {
+  public long sendELog(Facility facility, String proxyServer, String logbookServer)
+      throws UserFriendlyException {
     String username = checkAuthenticated();
 
     BeamAuthorization beamAuthorization = findCurrent();
@@ -279,7 +281,7 @@ public class BeamAuthorizationFacade extends AbstractFacade<BeamAuthorization> {
     File tmpFile = null;
 
     try {
-      tmpFile = grabPermissionsScreenshot();
+      tmpFile = grabPermissionsScreenshot(facility);
       entry.addAttachment(tmpFile.getAbsolutePath());
       logId = entry.submitNow();
 
@@ -302,7 +304,7 @@ public class BeamAuthorizationFacade extends AbstractFacade<BeamAuthorization> {
     return logId;
   }
 
-  private File grabPermissionsScreenshot() throws IOException {
+  private File grabPermissionsScreenshot(Facility facility) throws IOException {
 
     String puppetServer = System.getenv("PUPPET_SHOW_SERVER_URL");
     String internalServer = System.getenv("BACKEND_SERVER_URL");
@@ -322,7 +324,9 @@ public class BeamAuthorizationFacade extends AbstractFacade<BeamAuthorization> {
             puppetServer
                 + "/puppet-show/screenshot?url="
                 + internalServer
-                + "%2Fjam%2Fpermissions%3Fprint%3DY&fullPage=true&filename=jam.png&ignoreHTTPSErrors=true");
+                + "%2Fjam%2Fauthorizations%2F"
+                + facility.getPath().substring(1) // trim leading slash
+                + "%3Fprint%3DY&fullPage=true&filename=jam.png&ignoreHTTPSErrors=true");
 
     LOGGER.log(Level.FINEST, "Fetching URL: {0}", url.toString());
 

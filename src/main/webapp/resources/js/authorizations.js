@@ -1,26 +1,33 @@
 var jlab = jlab || {};
 jlab.beamSave = function () {
-    if (jlab.isRequest()) {
-        window.console && console.log("Ajax already in progress");
-        return;
-    }
 
-    jlab.requestStart();
+    var $actionButton = $("#beam-save-button"),
+        success = false,
+        newLogId = null,
+        url = jlab.contextPath + "/ajax/edit-beam-auth",
+        data = $("#beam-authorization-form").serialize();
 
-    var leaveSpinning = false,
-            $actionButton = $("#beam-save-button"),
-            success = false,
-            newLogId = null;
-
-    $actionButton.html("<span class=\"button-indicator\"></span>");
-    $actionButton.attr("disabled", "disabled");
+    $actionButton
+        .attr("disabled", "disabled")
+        .height($actionButton.height())
+        .width($actionButton.width())
+        .empty().append('<div class="button-indicator"></div>');
 
     var request = jQuery.ajax({
-        url: jlab.contextPath + "/ajax/edit-beam-auth",
+        url: url,
         type: "POST",
-        data: $("#beam-authorization-form").serialize(),
+        data: data,
         dataType: "json"
     });
+
+    request.fail(function (jqXHR, textStatus, errorThrown) {
+        console.log("fail jqXR:", jqXHR);
+        console.log("fail textStatus:", textStatus);
+        console.log("fail errorThrown:", errorThrown);
+        console.log('fail Response JSON:', jqXHR.responseJSON);
+
+        alert("Unable to save: " + jqXHR.responseJSON.error);
+    })
 
     request.done(function (data) {
         if (data.error) {
@@ -33,17 +40,9 @@ jlab.beamSave = function () {
 
     });
 
-    request.fail(function (xhr, textStatus) {
-        window.console && console.log('Unable to save: Text Status: ' + textStatus + ', Ready State: ' + xhr.readyState + ', HTTP Status Code: ' + xhr.status);
-        alert('Unable to verify; server did not handle request');
-    });
-
     request.always(function () {
-        jlab.requestEnd();
-        if (!leaveSpinning) {
-            $actionButton.html("Save");
-            $actionButton.removeAttr("disabled");
-        }
+        $actionButton.html("Save");
+        $actionButton.removeAttr("disabled");
 
         if (success) {
             if (newLogId !== null && typeof(newLogId) !== 'undefined') {
