@@ -15,13 +15,13 @@
         <div class="banner-breadbox">
             <ul>
                 <li>
-                    <a href="${pageContext.request.contextPath}/authorizations${facility.path}">Director's Authorization</a>
+                    <a href="${pageContext.request.contextPath}/authorizations${facility.path}">Current Authorization</a>
                 </li>
                 <li>
-                    <a href="${pageContext.request.contextPath}/authorizations${facility.path}/beam-history">Historic Authorizations</a>
+                    <a href="${pageContext.request.contextPath}/authorizations${facility.path}/beam-history">Beam History</a>
                 </li>
                 <li>
-                    <span><fmt:formatDate value="${beamAuthorization.modifiedDate}" pattern="${s:getFriendlyDateTimePattern()}"/> History</span>
+                    <span><fmt:formatDate value="${beamAuthorization.modifiedDate}" pattern="${s:getFriendlyDateTimePattern()}"/></span>
                 </li>
             </ul>
         </div>        

@@ -12,9 +12,9 @@
         <tr>
             <th rowspan="2" class="destination-header">Beam Destination</th>
                 <c:if test="${not isHistory}">
-                <th rowspan="2" class="approval-header">Approval</th>
+                <th rowspan="2" class="approval-header">Auth</th>
                 </c:if>
-            <th colspan="4">Director's Status</th>
+            <th colspan="4">Director's Permission</th>
                 <c:if test="${not isHistory}">
                 <th rowspan="2" class="cc-status-header">Credited Controls Status</th>
                 </c:if>

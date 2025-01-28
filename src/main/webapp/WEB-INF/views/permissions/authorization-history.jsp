@@ -20,10 +20,10 @@
         <div class="banner-breadbox">
             <ul>
                 <li>
-                    <a href="${pageContext.request.contextPath}/authorizations${facility.path}">Director's Authorization</a>
+                    <a href="${pageContext.request.contextPath}/authorizations${facility.path}">Current Authorization</a>
                 </li>
                 <li>
-                    <span>Historic Authorizations</span>
+                    <span>Beam History</span>
                 </li>
             </ul>
         </div>        

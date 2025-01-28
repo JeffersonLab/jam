@@ -12,9 +12,9 @@
         <tr>
             <th rowspan="2" class="destination-header">Segment</th>
                 <c:if test="${not isHistory}">
-                <th rowspan="2" class="approval-header">Approval</th>
+                <th rowspan="2" class="approval-header">Auth</th>
                 </c:if>
-            <th colspan="3">Director's Status</th>
+            <th colspan="3">Director's Permission</th>
                 <c:if test="${not isHistory}">
                 <th rowspan="2" class="cc-status-header">Credited Controls Status</th>
                 </c:if>
