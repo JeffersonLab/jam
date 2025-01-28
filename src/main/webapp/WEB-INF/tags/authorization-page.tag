@@ -21,7 +21,7 @@
                     <nav id="secondary-nav">
                         <ul>
                         <c:forEach items="${facilityList}" var="facility">
-                            <li${facility.path eq currentPathInfo ? ' class="current-secondary"' : ''}><a
+                            <li${fn:startsWith(currentPathInfo, facility.path) ? ' class="current-secondary"' : ''}><a
                                     href="${pageContext.request.contextPath}/authorizations${facility.path}">${facility.name}</a>
                             </li>
                         </c:forEach>

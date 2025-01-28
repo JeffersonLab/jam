@@ -69,6 +69,12 @@ public class FacilityAuthorization extends HttpServlet {
       throw new ServletException("Path is root only");
     }
 
+    // WARNING: String.endWith("/") and Path.endWith("/") return DIFFERENT results!
+    if (pathInfo.endsWith("/")) {
+      // TODO: probably redirect?
+      throw new ServletException("Path ends with /");
+    }
+
     String facilityPath = "/" + path.getName(0);
 
     System.err.println("facilityPath: " + facilityPath);
@@ -87,20 +93,36 @@ public class FacilityAuthorization extends HttpServlet {
 
     switch (path.getNameCount()) {
       case 1:
-        System.err.println("1: facility");
         handleFacility(request, response, facility);
         break;
       case 2:
-        System.err.println("2: auth history");
-        getServletContext()
-            .getNamedDispatcher("BeamAuthorizationHistoryController")
-            .forward(request, response);
+        String secondName = path.getName(1).toString();
+
+        if ("beam-history".equals(secondName)) {
+          getServletContext()
+              .getNamedDispatcher("BeamAuthorizationHistoryController")
+              .forward(request, response);
+        } else if ("rf-history".equals(secondName)) {
+          throw new ServletException("rf-history not implemented yet!");
+        } else {
+          // TODO: This should probably be 404
+          throw new ServletException("Unknown authorizations path: " + pathInfo);
+        }
         break;
       case 3:
         System.err.println("3: destination history");
-        getServletContext()
-            .getNamedDispatcher("DestinationsAuthorizationHistoryController")
-            .forward(request, response);
+        String thirdName = path.getName(2).toString();
+
+        if ("destinations".equals(thirdName)) {
+          getServletContext()
+              .getNamedDispatcher("DestinationsAuthorizationHistoryController")
+              .forward(request, response);
+        } else if ("segments".equals(thirdName)) {
+          throw new ServletException("segment-history not implemented yet!");
+        } else {
+          // TODO: This should probably be 404
+          throw new ServletException("Unknown authorizations path: " + pathInfo);
+        }
         break;
       default:
         throw new ServletException("Path has too many segments");
