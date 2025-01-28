@@ -80,7 +80,7 @@
                                     <span title="Verified" class="small-icon verified-icon"></span>
                                 </c:when>
                                 <c:when test="${segment.verification.verificationStatusId eq 50}">
-                                    <span title="Provisonally Verified" class="small-icon provisional-icon"></span>
+                                    <span title="Provisionally Verified" class="small-icon provisional-icon"></span>
                                 </c:when>
                                 <c:otherwise>
                                     <span title="Not Verified" class="small-icon not-verified-icon"></span>
