@@ -1,5 +1,5 @@
 var jlab = jlab || {};
-jlab.save = function () {
+jlab.beamSave = function () {
     if (jlab.isRequest()) {
         window.console && console.log("Ajax already in progress");
         return;
@@ -8,7 +8,7 @@ jlab.save = function () {
     jlab.requestStart();
 
     var leaveSpinning = false,
-            $actionButton = $("#save-button"),
+            $actionButton = $("#beam-save-button"),
             success = false,
             newLogId = null;
 
@@ -16,9 +16,9 @@ jlab.save = function () {
     $actionButton.attr("disabled", "disabled");
 
     var request = jQuery.ajax({
-        url: jlab.contextPath + "/permissions",
+        url: jlab.contextPath + "/ajax/edit-beam-auth",
         type: "POST",
-        data: $("#authorization-form").serialize(),
+        data: $("#beam-authorization-form").serialize(),
         dataType: "json"
     });
 
@@ -81,17 +81,17 @@ $(document).on("change", ".mode-select", function(){
     }
 });
 
-$(document).on("click", "#edit-button", function () {
-    $(".readonly-field").hide();
-    $(".editable-field").show();
+$(document).on("click", "#beam-edit-button", function () {
+    $("#beam-authorization-form .readonly-field").hide();
+    $("#beam-authorization-form .editable-field").show();
 });
-$(document).on("click", "#cancel-button", function () {
-    $(".editable-field").hide();
-    $(".readonly-field").show();
+$(document).on("click", "#beam-cancel-button", function () {
+    $("#beam-authorization-form .editable-field").hide();
+    $("#beam-authorization-form .readonly-field").show();
     return false;
 });
-$(document).on("click", "#save-button", function () {
-    jlab.save();
+$(document).on("click", "#beam-save-button", function () {
+    jlab.beamSave();
 });
 $("#success-dialog").on("dialogclose", function () {
     document.location.reload(true);

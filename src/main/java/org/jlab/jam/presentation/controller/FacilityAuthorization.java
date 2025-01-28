@@ -77,8 +77,6 @@ public class FacilityAuthorization extends HttpServlet {
 
     String facilityPath = "/" + path.getName(0);
 
-    System.err.println("facilityPath: " + facilityPath);
-
     Facility facility = facilityFacade.findByPath(facilityPath);
 
     if (facility == null) {
@@ -110,7 +108,6 @@ public class FacilityAuthorization extends HttpServlet {
         }
         break;
       case 3:
-        System.err.println("3: destination history");
         String thirdName = path.getName(2).toString();
 
         if ("destinations".equals(thirdName)) {

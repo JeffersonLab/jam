@@ -5,7 +5,7 @@
 <%@taglib prefix="s" uri="http://jlab.org/jsp/smoothness" %>
 <%@taglib prefix="beamauth" uri="http://jlab.org/beamauth/functions"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%> 
-<t:page title="Destination Authorization History"> 
+<t:facility-authorizations-page title="Destination Authorization History">
     <jsp:attribute name="stylesheets">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/css/permissions.css"/>
     </jsp:attribute>
@@ -15,7 +15,7 @@
         <div class="banner-breadbox">
             <ul>
                 <li>
-                    <a href="${pageContext.request.contextPath}/authorizations${facility.path}">Current Authorization</a>
+                    <a href="${pageContext.request.contextPath}/authorizations${facility.path}"><c:out value="${facility.name}"/> Authorization</a>
                 </li>
                 <li>
                     <a href="${pageContext.request.contextPath}/authorizations${facility.path}/beam-history">Beam History</a>
@@ -36,4 +36,4 @@
             </c:choose>
         </section>          
     </jsp:body>         
-</t:page>
+</t:facility-authorizations-page>
