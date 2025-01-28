@@ -64,7 +64,7 @@ public class CreditedControlFacade extends AbstractFacade<CreditedControl> {
     if (ccList != null) {
       for (CreditedControl cc : ccList) {
         JPAUtil.initialize(cc.getBeamControlVerificationList());
-        // Collections.sort(cc.getControlVerificationList());
+        JPAUtil.initialize(cc.getRFControlVerificationList());
       }
     }
 

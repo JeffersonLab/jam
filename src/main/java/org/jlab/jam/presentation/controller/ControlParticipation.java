@@ -1,6 +1,7 @@
 package org.jlab.jam.presentation.controller;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
@@ -10,8 +11,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jlab.jam.business.session.BeamDestinationFacade;
 import org.jlab.jam.business.session.CreditedControlFacade;
+import org.jlab.jam.business.session.FacilityFacade;
+import org.jlab.jam.business.session.RFSegmentFacade;
 import org.jlab.jam.persistence.entity.BeamDestination;
 import org.jlab.jam.persistence.entity.CreditedControl;
+import org.jlab.jam.persistence.entity.Facility;
+import org.jlab.jam.persistence.entity.RFSegment;
+import org.jlab.smoothness.presentation.util.ParamConverter;
 
 /**
  * @author ryans
@@ -21,7 +27,9 @@ import org.jlab.jam.persistence.entity.CreditedControl;
     urlPatterns = {"/control-participation"})
 public class ControlParticipation extends HttpServlet {
 
+  @EJB FacilityFacade facilityFacade;
   @EJB CreditedControlFacade ccFacade;
+  @EJB RFSegmentFacade segmentFacade;
   @EJB BeamDestinationFacade destinationFacade;
 
   /**
@@ -36,11 +44,30 @@ public class ControlParticipation extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    List<BeamDestination> destinationList = destinationFacade.findActiveDestinations();
-    List<CreditedControl> ccList = ccFacade.findAllWithVerificationList();
+    String error = null;
 
-    request.setAttribute("destinationList", destinationList);
-    request.setAttribute("ccList", ccList);
+    BigInteger facilityId = ParamConverter.convertBigInteger(request, "facilityId");
+
+    if (facilityId == null) {
+      error = "Select a Facility to continue";
+    } else {
+      Facility facility = facilityFacade.find(facilityId);
+
+      if (facility == null) {
+        throw new ServletException("Facility not found");
+      }
+
+      List<RFSegment> segmentList = segmentFacade.findByFacility(facility);
+      List<BeamDestination> destinationList = destinationFacade.findByFacility(facility);
+      List<CreditedControl> ccList = ccFacade.findAllWithVerificationList();
+
+      request.setAttribute("facility", facility);
+      request.setAttribute("segmentList", segmentList);
+      request.setAttribute("destinationList", destinationList);
+      request.setAttribute("ccList", ccList);
+    }
+
+    request.setAttribute("error", error);
 
     request
         .getRequestDispatcher("WEB-INF/views/control-participation.jsp")

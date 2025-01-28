@@ -63,6 +63,9 @@ public class CreditedControl implements Serializable, Comparable<CreditedControl
   @OneToMany(mappedBy = "creditedControl", fetch = FetchType.LAZY)
   private List<BeamControlVerification> beamControlVerificationList;
 
+  @OneToMany(mappedBy = "creditedControl", fetch = FetchType.LAZY)
+  private List<RFControlVerification> rfControlVerificationList;
+
   public CreditedControl() {}
 
   public CreditedControl(BigInteger creditedControlId) {
@@ -125,6 +128,14 @@ public class CreditedControl implements Serializable, Comparable<CreditedControl
     this.verificationFrequency = verificationFrequency;
   }
 
+  public List<RFControlVerification> getRFControlVerificationList() {
+    return rfControlVerificationList;
+  }
+
+  public void setRFControlVerificationList(List<RFControlVerification> rfControlVerificationList) {
+    this.rfControlVerificationList = rfControlVerificationList;
+  }
+
   public List<BeamControlVerification> getBeamControlVerificationList() {
     return beamControlVerificationList;
   }
@@ -132,6 +143,20 @@ public class CreditedControl implements Serializable, Comparable<CreditedControl
   public void setBeamControlVerificationList(
       List<BeamControlVerification> beamControlVerificationList) {
     this.beamControlVerificationList = beamControlVerificationList;
+  }
+
+  public boolean hasRFSegment(RFSegment segment) {
+    boolean hasSegment = false;
+    if (beamControlVerificationList != null) {
+      for (RFControlVerification verification : rfControlVerificationList) {
+        if (verification.getRFSegment().equals(segment)) {
+          hasSegment = true;
+          break;
+        }
+      }
+    }
+
+    return hasSegment;
   }
 
   public boolean hasBeamDestination(BeamDestination destination) {
