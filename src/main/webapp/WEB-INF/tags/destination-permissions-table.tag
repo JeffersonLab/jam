@@ -101,13 +101,13 @@
                 </td>
                 <c:if test="${not isHistory}">
                     <td class="icon-cell">
-                        <a data-dialog-title="${destination.name} Information" class="dialog-ready" href="beam-destination-information?beamDestinationId=${destination.beamDestinationId}">
+                        <a data-dialog-title="${destination.name} Information" class="dialog-ready" href="${pageContext.request.contextPath}/beam-destination-information?beamDestinationId=${destination.beamDestinationId}">
                             <c:choose>
                                 <c:when test="${destination.verification.verificationStatusId eq 1}">
                                     <span title="Verified" class="small-icon verified-icon"></span>
                                 </c:when>
                                 <c:when test="${destination.verification.verificationStatusId eq 50}">
-                                    <span title="Provisonally Verified" class="small-icon provisional-icon"></span>
+                                    <span title="Provisionally Verified" class="small-icon provisional-icon"></span>
                                 </c:when>
                                 <c:otherwise>
                                     <span title="Not Verified" class="small-icon not-verified-icon"></span>
