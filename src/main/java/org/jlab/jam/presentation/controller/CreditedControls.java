@@ -2,6 +2,7 @@ package org.jlab.jam.presentation.controller;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
@@ -14,6 +15,7 @@ import org.jlab.jam.business.session.BeamControlVerificationFacade;
 import org.jlab.jam.business.session.CreditedControlFacade;
 import org.jlab.jam.persistence.entity.BeamControlVerification;
 import org.jlab.jam.persistence.entity.CreditedControl;
+import org.jlab.jam.persistence.entity.RFControlVerification;
 import org.jlab.smoothness.presentation.util.ParamConverter;
 
 /**
@@ -50,6 +52,8 @@ public class CreditedControls extends HttpServlet {
       creditedControl = ccFacade.findWithVerificationList(creditedControlId);
 
       if (creditedControl != null) {
+        removeInactiveVerifications(creditedControl);
+
         String username = request.getRemoteUser();
 
         if (username != null) {
@@ -76,5 +80,27 @@ public class CreditedControls extends HttpServlet {
     request.setAttribute("expiringList", expiringList);
 
     request.getRequestDispatcher("WEB-INF/views/credited-controls.jsp").forward(request, response);
+  }
+
+  private void removeInactiveVerifications(CreditedControl control) {
+    if (control.getBeamControlVerificationList() != null) {
+      List<BeamControlVerification> beamVerificationList = new ArrayList<>();
+      for (BeamControlVerification bc : control.getBeamControlVerificationList()) {
+        if (bc.getBeamDestination().isActive()) {
+          beamVerificationList.add(bc);
+        }
+      }
+      control.setBeamControlVerificationList(beamVerificationList);
+    }
+
+    if (control.getRFControlVerificationList() != null) {
+      List<RFControlVerification> rfVerificationList = new ArrayList<>();
+      for (RFControlVerification bc : control.getRFControlVerificationList()) {
+        if (bc.getRFSegment().isActive()) {
+          rfVerificationList.add(bc);
+        }
+      }
+      control.setRFControlVerificationList(rfVerificationList);
+    }
   }
 }

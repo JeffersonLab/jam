@@ -79,9 +79,25 @@
                             </div>
                         </c:if>
                         <h3>Verifications</h3>
+                        <div class="accordion">
+                            <h3>RF Operations</h3>
+                            <div class="content beam-content">
+                                <c:choose>
+                                    <c:when test="${fn:length(creditedControl.getRFControlVerificationList()) < 1}">
+                                        None
+                                    </c:when>
+                                    <c:otherwise>
+                                        Stuff exists
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
+                        </div>
+                        <div class="accordion">
+                            <h3>Beam Operations</h3>
+                            <div class="content beam-content">
                         <c:choose>
                             <c:when test="${fn:length(creditedControl.beamControlVerificationList) < 1}">
-                                <div class="message-box">None</div>
+                                None
                             </c:when>
                             <c:otherwise>
                                 <c:if test="${adminOrLeader && param.notEditable eq null}">
@@ -152,6 +168,8 @@
                                 </c:if>
                             </c:otherwise>
                         </c:choose>
+                            </div>
+                        </div>
                     </div>
                 </c:when>
                 <c:otherwise>

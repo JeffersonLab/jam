@@ -524,6 +524,12 @@ $(function () {
         }
     });
 
+    $( ".accordion" ).accordion({
+        collapsible: true,
+        heightStyle: "content",
+        active: 0
+    });
+
 });
 /*Now Button Support 1 of 2*/
 $(document).on("click", ".now-button", function () {

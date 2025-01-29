@@ -69,3 +69,9 @@ body .now-button, body .me-button {
 ul.ui-autocomplete {
     z-index: 9000;
 }
+.accordion .ui-widget-content a {
+    color: blue;
+}
+.accordion .ui-widget-content a:hover {
+    color: red;
+}
