@@ -16,9 +16,6 @@
 .control-participation-table {
     font-size: 0.7em;
 }
-.credited-control-header {
-    width: 20%;
-}
 .destination-header {
     width: 8%; /*This will break if the # of beam destinations changes!*/
 }

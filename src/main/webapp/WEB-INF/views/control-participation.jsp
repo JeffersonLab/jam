@@ -41,14 +41,14 @@
                 <c:otherwise>
                     <div class="accordion">
                         <h3>RF Operations</h3>
-                        <div class="content">
+                        <div class="content rf-content">
                             <c:choose>
                                 <c:when test="${not empty segmentList}">
                                     <div class="participation-scroll-pane">
                                         <table class="data-table stripped-table fixed-table control-participation-table ${pageContext.request.isUserInRole('jam-admin') ? 'editable' : ''}">
                                             <thead>
                                             <tr>
-                                                <th rowspan="2" class="component-header">Credited Control</th>
+                                                <th rowspan="2" class="control-header">Credited Control</th>
                                                 <th colspan="${fn:length(segmentList)}">RF Segment</th>
                                             </tr>
                                             <tr>
@@ -87,14 +87,14 @@
                     </div>
                     <div class="accordion">
                         <h3>Beam Operations</h3>
-                        <div class="content">
+                        <div class="content beam-content">
                             <c:choose>
                                 <c:when test="${not empty destinationList}">
                                     <div class="participation-scroll-pane">
                                         <table class="data-table stripped-table fixed-table control-participation-table ${pageContext.request.isUserInRole('jam-admin') ? 'editable' : ''}">
                                             <thead>
                                             <tr>
-                                                <th rowspan="2" class="component-header">Credited Control</th>
+                                                <th rowspan="2" class="control-header">Credited Control</th>
                                                 <th colspan="${fn:length(destinationList)}">Beam Destination</th>
                                             </tr>
                                             <tr>

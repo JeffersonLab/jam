@@ -28,12 +28,18 @@ insert into JAM_OWNER.FACILITY (FACILITY_ID, NAME, PATH, RF_WORKGROUP_ID, BEAM_W
 insert into JAM_OWNER.FACILITY (FACILITY_ID, NAME, PATH, RF_WORKGROUP_ID, BEAM_WORKGROUP_ID, WEIGHT) values (5, 'VTA', '/vta', 12, 13, 5);
 
 -- Populate Credited Controls
-insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,WORKGROUP_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'Control 1','Control 1 Description',1,1,'1 Year');
-insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,WORKGROUP_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'Control 2','Control 2 Description',1,2,'1 Year');
-insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,WORKGROUP_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'Control 3','Control 3 Description',1,3,'1 Year');
-insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,WORKGROUP_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'Control 4','Control 4 Description',1,4,'1 Year');
-insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,WORKGROUP_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'Control 5','Control 5 Description',1,5,'1 Year');
-insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,WORKGROUP_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'Control 6','Control 6 Description',1,6,'1 Year');
+insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,WORKGROUP_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'Earth Berms/Overburden','Non-structural fill, cover, or berms',1,1,'1 Year');
+insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,WORKGROUP_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'Structural Shielding','Beam enclosure concrete structure',1,2,'1 Year');
+insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,WORKGROUP_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'Movable Shielding','Includes penetrations',1,3,'1 Year');
+insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,WORKGROUP_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'Beam Dump Cooling Building Design','Structural integrity of the buildings and their sump pits',1,4,'1 Year');
+insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,WORKGROUP_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'Nitrogen Gas Supply Orifices','1/8" orifice plates to restrict the amount of nitrogen that could be introduced into the tunnel enclosures',1,5,'1 Year');
+insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,WORKGROUP_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'ODH vents, lintels and facility configuration','Passive ceiling vents, door configuration, and lintels for slowing helium migration into stairwells',1,6,'1 Year');
+insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,WORKGROUP_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'PSS Access Controls','CEBAF and LERF controls for keeping people out of segments. Includes tunnel door maglock, keyswitches, sweep procedures, klaxons, beacons',1,7,'1 Year');
+insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,WORKGROUP_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'CEBAF PSS Beam Containment Controls','CEBAF controls for keeping beam inside segments (protect adjacent segments). Critical devices including beam stops, beam segment steering elecromagnets, and interlocks such as magnet power supply/RF waveguide pressure interfaces',1,8,'1 Year');
+insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,WORKGROUP_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'ODH System Controls','Oxygen sensors and alarms',1,9,'1 Year');
+insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,WORKGROUP_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'Doors, Gates, Fences, and other Barriers','Non-interlocked administrative controls for personnel safety',1,10,'1 Year');
+insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,WORKGROUP_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'UITF Nitrogen Gas Supply Orifices','1/8" orifice plates to restrict the amount of nitrogen that could be introduced into the UITF enclosure',1,11,'1 Year');
+
 
 -- Populate RF Segments
 insert into JAM_OWNER.rf_segment (RF_SEGMENT_ID, NAME, FACILITY_ID, ACTIVE_YN, WEIGHT) values(JAM_OWNER.rf_segment_id.nextval, 'Injector', 1, 'Y', 1);
@@ -45,15 +51,21 @@ insert into JAM_OWNER.rf_segment (RF_SEGMENT_ID, NAME, FACILITY_ID, ACTIVE_YN, W
 insert into JAM_OWNER.rf_segment (RF_SEGMENT_ID, NAME, FACILITY_ID, ACTIVE_YN, WEIGHT) values(JAM_OWNER.rf_segment_id.nextval, 'Entire Facility', 5, 'Y', 1);
 
 -- Populate Beam Destinations
-insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, 'Destination 1', 1, 'uA', 'Y', 1);
-insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, 'Destination 2', 1, 'uA', 'Y', 2);
-insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, 'Destination 3', 1, 'uA', 'Y', 3);
-insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, 'Destination 4', 2, 'uA', 'Y', 4);
-insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, 'Destination 5', 2, 'uA', 'Y', 5);
-insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, 'Destination 6', 2, 'uA', 'Y', 6);
-insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, 'Destination 7', 3, 'uA', 'Y', 7);
-insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, 'Destination 8', 3, 'uA', 'Y', 8);
-insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, 'Destination 9', 3, 'uA', 'Y', 9);
+insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, '1D Spectrometer (IDL1D00)', 1, 'uA', 'Y', 1);
+insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, 'Faraday Cup #2 (IFY0L03', 1, 'uA', 'Y', 2);
+insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, 'Inline Dump (SDL0R08', 1, 'uA', 'Y', 3);
+insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, 'BSY', 1, 'uA', 'Y', 4);
+insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, 'Hall A', 1, 'uA', 'Y', 5);
+insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, 'Hall B', 1, 'uA', 'Y', 6);
+insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, 'Hall C', 1, 'uA', 'Y', 7);
+insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, 'Hall D Tagger Dump (IBDAD00)', 1, 'uA', 'Y', 8);
+insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, '0G Tune/Moeller Dump', 2, 'uA', 'Y', 9);
+insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, '2G 100MeV SA Dump (IDC2G00)', 2, 'uA', 'Y', 10);
+insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, '1G Dump (IDC1G03)', 2, 'uA', 'Y', 11);
+insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, '1X Dump', 2, 'uA', 'Y', 12);
+insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, 'KeV Dumps', 3, 'uA', 'Y', 13);
+insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, 'MeV Dumps', 3, 'uA', 'Y', 14);
+
 
 -- Populate Initial Beam Control Verification
 insert into JAM_OWNER.beam_control_verification (BEAM_CONTROL_VERIFICATION_ID, CREDITED_CONTROL_ID, BEAM_DESTINATION_ID, VERIFICATION_STATUS_ID, VERIFICATION_DATE, VERIFIED_BY, EXPIRATION_DATE, COMMENTS, MODIFIED_BY, MODIFIED_DATE) values(JAM_OWNER.beam_control_verification_id.nextval, 1, 1, 100, sysdate, 'admin', null, null, 'admin', sysdate);

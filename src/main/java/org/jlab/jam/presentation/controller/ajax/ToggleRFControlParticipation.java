@@ -12,20 +12,21 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.jlab.jam.business.session.BeamControlVerificationFacade;
+import org.jlab.jam.business.session.RFControlVerificationFacade;
 import org.jlab.smoothness.presentation.util.ParamConverter;
 
 /**
  * @author ryans
  */
 @WebServlet(
-    name = "ToggleControlParticipation",
-    urlPatterns = {"/ajax/toggle-control-participation"})
-public class ToggleControlParticipation extends HttpServlet {
+    name = "ToggleRFControlParticipation",
+    urlPatterns = {"/ajax/toggle-rf-control-participation"})
+public class ToggleRFControlParticipation extends HttpServlet {
 
-  private static final Logger logger = Logger.getLogger(ToggleControlParticipation.class.getName());
+  private static final Logger logger =
+      Logger.getLogger(ToggleRFControlParticipation.class.getName());
 
-  @EJB BeamControlVerificationFacade verificationFacade;
+  @EJB RFControlVerificationFacade verificationFacade;
 
   /**
    * Handles the HTTP <code>POST</code> method.
@@ -42,9 +43,9 @@ public class ToggleControlParticipation extends HttpServlet {
 
     try {
       BigInteger controlId = ParamConverter.convertBigInteger(request, "creditedControlId");
-      BigInteger destinationId = ParamConverter.convertBigInteger(request, "destinationId");
+      BigInteger segmentId = ParamConverter.convertBigInteger(request, "segmentId");
 
-      verificationFacade.toggle(controlId, destinationId);
+      verificationFacade.toggle(controlId, segmentId);
     } catch (EJBAccessException e) {
       logger.log(Level.WARNING, "Not authorized", e);
       errorReason = "Not authorized";

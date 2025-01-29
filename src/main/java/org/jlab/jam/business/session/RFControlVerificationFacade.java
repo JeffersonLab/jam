@@ -16,7 +16,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import org.jlab.jam.persistence.entity.*;
-import org.jlab.jam.persistence.entity.BeamAuthorization;
 import org.jlab.jlog.Body;
 import org.jlab.jlog.Library;
 import org.jlab.jlog.LogEntry;
@@ -34,53 +33,53 @@ import org.jlab.smoothness.presentation.util.Functions;
  */
 @Stateless
 @DeclareRoles({"jam-admin"})
-public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVerification> {
+public class RFControlVerificationFacade extends AbstractFacade<RFControlVerification> {
 
   private static final Logger LOGGER =
-      Logger.getLogger(BeamControlVerificationFacade.class.getName());
+      Logger.getLogger(RFControlVerificationFacade.class.getName());
 
   @PersistenceContext(unitName = "jamPU")
   private EntityManager em;
 
   @EJB CreditedControlFacade controlFacade;
-  @EJB BeamDestinationFacade destinationFacade;
-  @EJB BeamAuthorizationFacade beamAuthorizationFacade;
+  @EJB RFSegmentFacade segmentFacade;
+  @EJB RFAuthorizationFacade rfAuthorizationFacade;
 
   @Override
   protected EntityManager getEntityManager() {
     return em;
   }
 
-  public BeamControlVerificationFacade() {
-    super(BeamControlVerification.class);
+  public RFControlVerificationFacade() {
+    super(RFControlVerification.class);
   }
 
   @PermitAll
-  public List<BeamControlVerification> findByBeamDestination(BigInteger beamDestinationId) {
-    TypedQuery<BeamControlVerification> q =
+  public List<RFControlVerification> findByRFSegment(BigInteger rfSegmentId) {
+    TypedQuery<RFControlVerification> q =
         em.createQuery(
-            "select a from BeamControlVerification a join fetch a.creditedControl where a.beamDestination.beamDestinationId = :beamDestinationId order by a.creditedControl.weight asc",
-            BeamControlVerification.class);
+            "select a from RFControlVerification a join fetch a.creditedControl where a.rfSegment.rfSegmentId = :rfSegmentId order by a.creditedControl.weight asc",
+            RFControlVerification.class);
 
-    q.setParameter("beamDestinationId", beamDestinationId);
+    q.setParameter("rfSegmentId", rfSegmentId);
 
     return q.getResultList();
   }
 
   @RolesAllowed("jam-admin")
-  public void toggle(BigInteger controlId, BigInteger destinationId) {
-    BeamControlVerification verification = find(controlId, destinationId);
+  public void toggle(BigInteger controlId, BigInteger segmentId) {
+    RFControlVerification verification = find(controlId, segmentId);
 
     String username = checkAuthenticated();
 
     if (verification == null) {
-      verification = new BeamControlVerification();
+      verification = new RFControlVerification();
       verification.setModifiedBy(username);
       verification.setModifiedDate(new Date());
       CreditedControl control = controlFacade.find(controlId);
       verification.setCreditedControl(control);
-      BeamDestination destination = destinationFacade.find(destinationId);
-      verification.setBeamDestination(destination);
+      RFSegment segment = segmentFacade.find(segmentId);
+      verification.setRFSegment(segment);
       verification.setVerificationStatusId(100);
       create(verification);
     } else {
@@ -89,18 +88,18 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
   }
 
   @PermitAll
-  public BeamControlVerification find(BigInteger controlId, BigInteger destinationId) {
-    TypedQuery<BeamControlVerification> q =
+  public RFControlVerification find(BigInteger controlId, BigInteger segmentId) {
+    TypedQuery<RFControlVerification> q =
         em.createQuery(
-            "select a from BeamControlVerification a where a.creditedControl.creditedControlId = :creditedControlId and a.beamDestination.beamDestinationId = :beamDestinationId",
-            BeamControlVerification.class);
+            "select a from RFControlVerification a where a.creditedControl.creditedControlId = :creditedControlId and a.rfSegment.rfSegmentId = :rfSegmentId",
+            RFControlVerification.class);
 
     q.setParameter("creditedControlId", controlId);
-    q.setParameter("beamDestinationId", destinationId);
+    q.setParameter("rfSegmentId", segmentId);
 
-    List<BeamControlVerification> verificationList = q.getResultList();
+    List<RFControlVerification> verificationList = q.getResultList();
 
-    BeamControlVerification verification = null;
+    RFControlVerification verification = null;
 
     if (verificationList != null && !verificationList.isEmpty()) {
       verification = verificationList.get(0);
@@ -110,7 +109,7 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
   }
 
   @PermitAll
-  public List<BeamControlVerification> edit(
+  public List<RFControlVerification> edit(
       BigInteger[] controlVerificationIdArray,
       Integer verificationId,
       Date verificationDate,
@@ -146,7 +145,7 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
       throw new UserFriendlyException("expiration date cannot be in the past");
     }
 
-    List<BeamControlVerification> downgradeList = new ArrayList<>();
+    List<RFControlVerification> downgradeList = new ArrayList<>();
 
     UserAuthorizationService auth = UserAuthorizationService.getInstance();
 
@@ -155,7 +154,7 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
         throw new UserFriendlyException("control verification ID must not be null");
       }
 
-      BeamControlVerification verification = find(controlVerificationId);
+      RFControlVerification verification = find(controlVerificationId);
 
       if (verification == null) {
         throw new UserFriendlyException(
@@ -188,7 +187,7 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
         downgradeList.add(verification);
       }
 
-      BeamControlVerificationHistory history = new BeamControlVerificationHistory();
+      RFControlVerificationHistory history = new RFControlVerificationHistory();
       history.setVerificationStatusId(verificationId);
       history.setModifiedBy(username);
       history.setModifiedDate(modifiedDate);
@@ -196,7 +195,7 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
       history.setVerifiedBy(verifiedUsername);
       history.setExpirationDate(expirationDate);
       history.setComments(comments);
-      history.setBeamControlVerification(verification);
+      history.setRFControlVerification(verification);
       em.persist(history);
     }
 
@@ -210,19 +209,19 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
   @PermitAll
   public String getExpiredMessageBody(
       String proxyServer,
-      List<BeamDestinationAuthorization> expiredAuthorizationList,
-      List<BeamControlVerification> expiredVerificationList,
-      List<BeamDestinationAuthorization> upcomingAuthorizationExpirationList,
-      List<BeamControlVerification> upcomingVerificationExpirationList) {
+      List<RFSegmentAuthorization> expiredAuthorizationList,
+      List<RFControlVerification> expiredVerificationList,
+      List<RFSegmentAuthorization> upcomingAuthorizationExpirationList,
+      List<RFControlVerification> upcomingVerificationExpirationList) {
     StringBuilder builder = new StringBuilder();
 
     SimpleDateFormat formatter = new SimpleDateFormat(TimeUtil.getFriendlyDateTimePattern());
 
     if (expiredAuthorizationList != null && !expiredAuthorizationList.isEmpty()) {
       builder.append("<h1>--- Expired Director's Authorizations ---</h1>\n");
-      for (BeamDestinationAuthorization authorization : expiredAuthorizationList) {
-        builder.append("</div>\n<div><b>Beam Destination:</b> ");
-        builder.append(authorization.getDestination().getName());
+      for (RFSegmentAuthorization authorization : expiredAuthorizationList) {
+        builder.append("</div>\n<div><b>RF Segment:</b> ");
+        builder.append(authorization.getSegment().getName());
         builder.append("</div>\n<div><b>Expired On:</b> ");
         builder.append(formatter.format(authorization.getExpirationDate()));
         builder.append("</div>\n<div><b>Comments:</b> ");
@@ -236,12 +235,12 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
     if (expiredVerificationList != null && !expiredVerificationList.isEmpty()) {
       builder.append("<h1>--- Expired Credited Control Verifications ---</h1>\n");
 
-      for (BeamControlVerification v : expiredVerificationList) {
+      for (RFControlVerification v : expiredVerificationList) {
 
         builder.append("<div><b>Credited Control:</b> ");
         builder.append(v.getCreditedControl().getName());
-        builder.append("</div>\n<div><b>Beam Destination:</b> ");
-        builder.append(v.getBeamDestination().getName());
+        builder.append("</div>\n<div><b>RF Segment:</b> ");
+        builder.append(v.getRFSegment().getName());
         builder.append("</div>\n<div><b>Verified On:</b> ");
         builder.append(formatter.format(v.getVerificationDate()));
         builder.append("</div>\n<div><b>Verified By:</b> ");
@@ -260,10 +259,10 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
         && !upcomingAuthorizationExpirationList.isEmpty()) {
       builder.append("<h1>--- Director's Authorizations Expiring Soon ---</h1>\n");
 
-      for (BeamDestinationAuthorization authorization : upcomingAuthorizationExpirationList) {
+      for (RFSegmentAuthorization authorization : upcomingAuthorizationExpirationList) {
 
-        builder.append("<div><b>Beam Destination:</b> ");
-        builder.append(authorization.getDestination().getName());
+        builder.append("<div><b>RF Segment:</b> ");
+        builder.append(authorization.getSegment().getName());
         builder.append("</div>\n<div><b>Expires On:</b> ");
         builder.append(formatter.format(authorization.getExpirationDate()));
         builder.append("</div>\n<div><b>Comments:</b> ");
@@ -280,12 +279,12 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
         && !upcomingVerificationExpirationList.isEmpty()) {
       builder.append("<h1>--- Credited Control Verifications Expiring Soon ---</h1>\n");
 
-      for (BeamControlVerification v : upcomingVerificationExpirationList) {
+      for (RFControlVerification v : upcomingVerificationExpirationList) {
 
         builder.append("<div><b>Credited Control:</b> ");
         builder.append(v.getCreditedControl().getName());
-        builder.append("</div>\n<div><b>Beam Destination:</b> ");
-        builder.append(v.getBeamDestination().getName());
+        builder.append("</div>\n<div><b>RF Segment:</b> ");
+        builder.append(v.getRFSegment().getName());
         builder.append("</div>\n<div><b>Verified On:</b> ");
         builder.append(formatter.format(v.getVerificationDate()));
         builder.append("</div>\n<div><b>Verified By:</b> ");
@@ -398,14 +397,13 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
   }
 
   @PermitAll
-  public List<BeamDestinationAuthorization> checkForAuthorizedButExpired(
-      BeamAuthorization mostRecent) {
-    TypedQuery<BeamDestinationAuthorization> q =
+  public List<RFSegmentAuthorization> checkForAuthorizedButExpired(RFAuthorization mostRecent) {
+    TypedQuery<RFSegmentAuthorization> q =
         em.createQuery(
-            "select a from BeamDestinationAuthorization a where a.beamAuthorization.beamAuthorizationId = :authId and a.expirationDate < sysdate and a.beamMode != 'None' and a.destination.active = true order by a.destinationAuthorizationPK.beamDestinationId asc",
-            BeamDestinationAuthorization.class);
+            "select a from RFSegmentAuthorization a where a.rfAuthorization.rfAuthorizationId = :authId and a.expirationDate < sysdate and a.beamMode != 'None' and a.segment.active = true order by a.segmentAuthorizationPK.rfSegmentId asc",
+            RFSegmentAuthorization.class);
 
-    BigInteger authId = mostRecent.getBeamAuthorizationId();
+    BigInteger authId = mostRecent.getRfAuthorizationId();
 
     q.setParameter("authId", authId);
 
@@ -413,44 +411,44 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
   }
 
   @PermitAll
-  public List<BeamControlVerification> checkForExpired() {
-    TypedQuery<BeamControlVerification> q =
+  public List<RFControlVerification> checkForExpired() {
+    TypedQuery<RFControlVerification> q =
         em.createQuery(
-            "select a from BeamControlVerification a join fetch a.creditedControl where a.expirationDate < sysdate and a.beamDestination.active = true order by a.creditedControl.weight asc",
-            BeamControlVerification.class);
+            "select a from RFControlVerification a join fetch a.creditedControl where a.expirationDate < sysdate and a.rfSegment.active = true order by a.creditedControl.weight asc",
+            RFControlVerification.class);
 
     return q.getResultList();
   }
 
   @PermitAll
-  public List<BeamControlVerification> checkForVerifiedButExpired() {
-    TypedQuery<BeamControlVerification> q =
+  public List<RFControlVerification> checkForVerifiedButExpired() {
+    TypedQuery<RFControlVerification> q =
         em.createQuery(
-            "select a from BeamControlVerification a join fetch a.creditedControl where a.expirationDate < sysdate and a.beamDestination.active = true and a.verificationStatusId in (1, 50) order by a.creditedControl.weight asc",
-            BeamControlVerification.class);
+            "select a from RFControlVerification a join fetch a.creditedControl where a.expirationDate < sysdate and a.rfSegment.active = true and a.verificationStatusId in (1, 50) order by a.creditedControl.weight asc",
+            RFControlVerification.class);
 
     return q.getResultList();
   }
 
   @PermitAll
-  public void revokeExpiredAuthorizations(List<BeamDestinationAuthorization> authorizationList) {
+  public void revokeExpiredAuthorizations(List<RFSegmentAuthorization> authorizationList) {
     LOGGER.log(Level.FINEST, "I think I've got something authorization-wise to downgrade");
-    this.clearDirectorPermissionByDestinationAuthorization(authorizationList);
+    this.clearDirectorPermissionBySegmentAuthorization(authorizationList);
   }
 
   @PermitAll
-  public void revokeExpiredVerifications(List<BeamControlVerification> expiredList) {
+  public void revokeExpiredVerifications(List<RFControlVerification> expiredList) {
     Query q =
         em.createQuery(
-            "update BeamControlVerification a set a.verificationId = 100, a.comments = 'Expired', a.verifiedBy = null, a.verificationDate = :vDate, a.modifiedDate = :vDate, a.modifiedBy = 'authadm' where a.controlVerificationId in :list");
+            "update RFControlVerification a set a.verificationId = 100, a.comments = 'Expired', a.verifiedBy = null, a.verificationDate = :vDate, a.modifiedDate = :vDate, a.modifiedBy = 'authadm' where a.controlVerificationId in :list");
 
     List<BigInteger> expiredIdList = new ArrayList<>();
 
     Date modifiedDate = new Date();
 
     if (expiredList != null) {
-      for (BeamControlVerification v : expiredList) {
-        expiredIdList.add(v.getBeamControlVerificationId());
+      for (RFControlVerification v : expiredList) {
+        expiredIdList.add(v.getRFControlVerificationId());
       }
     }
 
@@ -467,28 +465,28 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
   }
 
   @PermitAll
-  public void clearDirectorPermissionForExpired(List<BeamControlVerification> verificationList) {
+  public void clearDirectorPermissionForExpired(List<RFControlVerification> verificationList) {
     clearDirectorPermissionByCreditedControl(verificationList, true);
   }
 
   @PermitAll
-  public void clearDirectorPermissionForDowngrade(List<BeamControlVerification> verificationList) {
+  public void clearDirectorPermissionForDowngrade(List<RFControlVerification> verificationList) {
     clearDirectorPermissionByCreditedControl(verificationList, false);
   }
 
   private void clearDirectorPermissionByCreditedControl(
-      List<BeamControlVerification> verificationList, Boolean expiration) {
+      List<RFControlVerification> verificationList, Boolean expiration) {
     String reason = "expiration";
 
     if (!expiration) {
       reason = "downgrade";
     }
 
-    BeamAuthorization beamAuthorization = beamAuthorizationFacade.findCurrent();
+    RFAuthorization rfAuthorization = rfAuthorizationFacade.findCurrent();
 
-    BeamAuthorization authClone = beamAuthorization.createAdminClone();
+    RFAuthorization authClone = rfAuthorization.createAdminClone();
     // authClone.setDestinationAuthorizationList(new ArrayList<>());
-    List<BeamDestinationAuthorization> newList = new ArrayList<>();
+    List<RFSegmentAuthorization> newList = new ArrayList<>();
 
     boolean atLeastOne = false;
 
@@ -496,21 +494,19 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
     // are two ways in which a clear can happen and they can race to see who clears permissions
     // first:
     // (1) director's expiration vs (2) credited control expiration
-    if (beamAuthorization.getDestinationAuthorizationList() != null) {
-      for (BeamDestinationAuthorization auth :
-          beamAuthorization.getDestinationAuthorizationList()) {
-        BeamDestinationAuthorization destClone = auth.createAdminClone(authClone);
+    if (rfAuthorization.getRFSegmentAuthorizationList() != null) {
+      for (RFSegmentAuthorization auth : rfAuthorization.getRFSegmentAuthorizationList()) {
+        RFSegmentAuthorization destClone = auth.createAdminClone(authClone);
         // authClone.getDestinationAuthorizationList().add(destClone);
         newList.add(destClone);
 
-        if ("None".equals(auth.getBeamMode())) {
+        if ("None".equals(auth.getRFMode())) {
           continue; // Already None so no need to revoke; move on to next
         }
-        BigInteger destinationId = auth.getDestinationAuthorizationPK().getBeamDestinationId();
-        for (BeamControlVerification verification : verificationList) {
-          if (destinationId.equals(verification.getBeamDestination().getBeamDestinationId())) {
-            destClone.setBeamMode("None");
-            destClone.setCwLimit(null);
+        BigInteger destinationId = auth.getSegmentAuthorizationPK().getRFSegmentId();
+        for (RFControlVerification verification : verificationList) {
+          if (destinationId.equals(verification.getRFSegment().getRFSegmentId())) {
+            destClone.setRFMode("None");
             destClone.setComments(
                 "Permission automatically revoked due to group credited control verification "
                     + reason);
@@ -524,23 +520,23 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
 
     if (atLeastOne) {
       em.persist(authClone);
-      for (BeamDestinationAuthorization da : newList) {
-        DestinationAuthorizationPK pk = new DestinationAuthorizationPK();
-        pk.setBeamDestinationId(da.getDestination().getBeamDestinationId());
-        pk.setAuthorizationId(authClone.getBeamAuthorizationId());
-        da.setDestinationAuthorizationPK(pk);
+      for (RFSegmentAuthorization da : newList) {
+        SegmentAuthorizationPK pk = new SegmentAuthorizationPK();
+        pk.setRFSegmentId(da.getSegment().getRFSegmentId());
+        pk.setRFAuthorizationId(authClone.getRfAuthorizationId());
+        da.setSegmentAuthorizationPK(pk);
         em.persist(da);
       }
     }
   }
 
-  private void clearDirectorPermissionByDestinationAuthorization(
-      List<BeamDestinationAuthorization> destinationList) {
-    BeamAuthorization beamAuthorization = beamAuthorizationFacade.findCurrent();
+  private void clearDirectorPermissionBySegmentAuthorization(
+      List<RFSegmentAuthorization> segmentList) {
+    RFAuthorization rfAuthorization = rfAuthorizationFacade.findCurrent();
 
-    BeamAuthorization authClone = beamAuthorization.createAdminClone();
+    RFAuthorization authClone = rfAuthorization.createAdminClone();
     // authClone.setDestinationAuthorizationList(new ArrayList<>());
-    List<BeamDestinationAuthorization> newList = new ArrayList<>();
+    List<RFSegmentAuthorization> newList = new ArrayList<>();
 
     boolean atLeastOne = false;
 
@@ -548,19 +544,17 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
     // are two ways in which a clear can happen and they can race to see who clears permissions
     // first:
     // (1) director's expiration vs (2) credited control expiration
-    if (beamAuthorization.getDestinationAuthorizationList() != null) {
-      for (BeamDestinationAuthorization auth :
-          beamAuthorization.getDestinationAuthorizationList()) {
-        BeamDestinationAuthorization destClone = auth.createAdminClone(authClone);
+    if (rfAuthorization.getRFSegmentAuthorizationList() != null) {
+      for (RFSegmentAuthorization auth : rfAuthorization.getRFSegmentAuthorizationList()) {
+        RFSegmentAuthorization destClone = auth.createAdminClone(authClone);
         // authClone.getDestinationAuthorizationList().add(destClone);
         newList.add(destClone);
 
-        if ("None".equals(auth.getBeamMode())) {
+        if ("None".equals(auth.getRFMode())) {
           continue; // Already None so no need to revoke; move on to next
         }
-        if (destinationList.contains(auth)) {
-          destClone.setBeamMode("None");
-          destClone.setCwLimit(null);
+        if (segmentList.contains(auth)) {
+          destClone.setRFMode("None");
           destClone.setComments(
               "Permission automatically revoked due to director's authorization expiration");
           LOGGER.log(Level.FINEST, "Found something to downgrade");
@@ -571,11 +565,11 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
 
     if (atLeastOne) {
       em.persist(authClone);
-      for (BeamDestinationAuthorization da : newList) {
-        DestinationAuthorizationPK pk = new DestinationAuthorizationPK();
-        pk.setBeamDestinationId(da.getDestination().getBeamDestinationId());
-        pk.setAuthorizationId(authClone.getBeamAuthorizationId());
-        da.setDestinationAuthorizationPK(pk);
+      for (RFSegmentAuthorization da : newList) {
+        SegmentAuthorizationPK pk = new SegmentAuthorizationPK();
+        pk.setRFSegmentId(da.getSegment().getRFSegmentId());
+        pk.setRFAuthorizationId(authClone.getRfAuthorizationId());
+        da.setSegmentAuthorizationPK(pk);
         em.persist(da);
       }
     }
@@ -583,9 +577,9 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
 
   @PermitAll
   public void insertExpiredHistory(
-      List<BeamControlVerification> verificationList, Date modifiedDate) {
-    for (BeamControlVerification v : verificationList) {
-      BeamControlVerificationHistory history = new BeamControlVerificationHistory();
+      List<RFControlVerification> verificationList, Date modifiedDate) {
+    for (RFControlVerification v : verificationList) {
+      RFControlVerificationHistory history = new RFControlVerificationHistory();
       history.setModifiedBy("jam-admin");
       history.setModifiedDate(modifiedDate);
       history.setVerificationStatusId(100);
@@ -593,33 +587,33 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
       history.setVerifiedBy(null);
       history.setExpirationDate(v.getExpirationDate());
       history.setComments("Expired");
-      history.setBeamControlVerification(v);
+      history.setRFControlVerification(v);
       em.persist(history);
     }
   }
 
   @PermitAll
-  public List<BeamControlVerification> checkForUpcomingVerificationExpirations() {
-    TypedQuery<BeamControlVerification> q =
+  public List<RFControlVerification> checkForUpcomingVerificationExpirations() {
+    TypedQuery<RFControlVerification> q =
         em.createQuery(
-            "select a from BeamControlVerification a join fetch a.creditedControl where a.expirationDate >= sysdate and (a.expirationDate - 7) <= sysdate and a.verificationStatusId in (1, 50) and a.beamDestination.active = true order by a.creditedControl.weight asc",
-            BeamControlVerification.class);
+            "select a from RFControlVerification a join fetch a.creditedControl where a.expirationDate >= sysdate and (a.expirationDate - 7) <= sysdate and a.verificationStatusId in (1, 50) and a.rfSegment.active = true order by a.creditedControl.weight asc",
+            RFControlVerification.class);
 
     return q.getResultList();
   }
 
-  private List<BeamDestinationAuthorization> checkForUpcomingAuthorizationExpirations(
-      BeamAuthorization auth) {
-    List<BeamDestinationAuthorization> upcomingExpirations = new ArrayList<>();
+  private List<RFSegmentAuthorization> checkForUpcomingAuthorizationExpirations(
+      RFAuthorization auth) {
+    List<RFSegmentAuthorization> upcomingExpirations = new ArrayList<>();
 
     Date now = new Date();
     Calendar cal = Calendar.getInstance();
     cal.add(Calendar.DATE, 3);
     Date threeDaysFromNow = cal.getTime();
 
-    if (auth.getDestinationAuthorizationList() != null) {
-      for (BeamDestinationAuthorization dest : auth.getDestinationAuthorizationList()) {
-        if (!"None".equals(dest.getBeamMode())
+    if (auth.getRFSegmentAuthorizationList() != null) {
+      for (RFSegmentAuthorization dest : auth.getRFSegmentAuthorizationList()) {
+        if (!"None".equals(dest.getRFMode())
             && dest.getExpirationDate().after(now)
             && dest.getExpirationDate().before(threeDaysFromNow)) {
           upcomingExpirations.add(dest);
@@ -632,10 +626,10 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
 
   @PermitAll
   public void notifyAdmins(
-      List<BeamDestinationAuthorization> expiredAuthorizationList,
-      List<BeamControlVerification> expiredVerificationList,
-      List<BeamDestinationAuthorization> upcomingAuthorizationExpirationList,
-      List<BeamControlVerification> upcomingVerificationExpirationList,
+      List<RFSegmentAuthorization> expiredAuthorizationList,
+      List<RFControlVerification> expiredVerificationList,
+      List<RFSegmentAuthorization> upcomingAuthorizationExpirationList,
+      List<RFControlVerification> upcomingVerificationExpirationList,
       String proxyServer)
       throws MessagingException, UserFriendlyException {
     String toCsv = System.getenv("BAM_UPCOMING_EXPIRATION_EMAIL_CSV");
@@ -659,8 +653,8 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
 
   @PermitAll
   public void notifyOps(
-      List<BeamDestinationAuthorization> expiredAuthorizationList,
-      List<BeamControlVerification> expiredVerificationList,
+      List<RFSegmentAuthorization> expiredAuthorizationList,
+      List<RFControlVerification> expiredVerificationList,
       String proxyServer)
       throws MessagingException, UserFriendlyException {
     String toCsv = System.getenv("BAM_EXPIRED_EMAIL_CSV");
@@ -681,21 +675,21 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
 
   @PermitAll
   public void notifyGroups(
-      List<BeamControlVerification> expiredList,
-      List<BeamControlVerification> upcomingExpirationsList,
+      List<RFControlVerification> expiredList,
+      List<RFControlVerification> upcomingExpirationsList,
       String proxyServer)
       throws MessagingException, UserFriendlyException {
-    Map<Workgroup, List<BeamControlVerification>> expiredGroupMap = new HashMap<>();
-    Map<Workgroup, List<BeamControlVerification>> upcomingExpirationGroupMap = new HashMap<>();
+    Map<Workgroup, List<RFControlVerification>> expiredGroupMap = new HashMap<>();
+    Map<Workgroup, List<RFControlVerification>> upcomingExpirationGroupMap = new HashMap<>();
 
     String subject = System.getenv("BAM_UPCOMING_EXPIRATION_SUBJECT");
 
     LOGGER.log(Level.FINEST, "Expirations:");
     if (expiredList != null) {
-      for (BeamControlVerification c : expiredList) {
+      for (RFControlVerification c : expiredList) {
         LOGGER.log(Level.FINEST, c.toString());
         Workgroup workgroup = c.getCreditedControl().getGroup();
-        List<BeamControlVerification> groupList = expiredGroupMap.get(workgroup);
+        List<RFControlVerification> groupList = expiredGroupMap.get(workgroup);
         if (groupList == null) {
           groupList = new ArrayList<>();
           expiredGroupMap.put(workgroup, groupList);
@@ -708,10 +702,10 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
 
     LOGGER.log(Level.FINEST, "Upcoming Expirations:");
     if (upcomingExpirationsList != null) {
-      for (BeamControlVerification c : upcomingExpirationsList) {
+      for (RFControlVerification c : upcomingExpirationsList) {
         LOGGER.log(Level.FINEST, c.toString());
         Workgroup workgroup = c.getCreditedControl().getGroup();
-        List<BeamControlVerification> groupList = upcomingExpirationGroupMap.get(workgroup);
+        List<RFControlVerification> groupList = upcomingExpirationGroupMap.get(workgroup);
         if (groupList == null) {
           groupList = new ArrayList<>();
           upcomingExpirationGroupMap.put(workgroup, groupList);
@@ -743,9 +737,8 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
         }
       }
 
-      List<BeamControlVerification> groupExpiredList = expiredGroupMap.get(w);
-      List<BeamControlVerification> groupUpcomingExpirationsList =
-          upcomingExpirationGroupMap.get(w);
+      List<RFControlVerification> groupExpiredList = expiredGroupMap.get(w);
+      List<RFControlVerification> groupUpcomingExpirationsList = upcomingExpirationGroupMap.get(w);
 
       String sender = System.getenv("BAM_EMAIL_SENDER");
 
@@ -771,10 +764,10 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
 
   @PermitAll
   public void notifyUsersOfExpirationsAndUpcomingExpirations(
-      List<BeamDestinationAuthorization> expiredAuthorizationList,
-      List<BeamControlVerification> expiredVerificationList,
-      List<BeamDestinationAuthorization> upcomingAuthorizationExpirationList,
-      List<BeamControlVerification> upcomingVerificationExpirationList) {
+      List<RFSegmentAuthorization> expiredAuthorizationList,
+      List<RFControlVerification> expiredVerificationList,
+      List<RFSegmentAuthorization> upcomingAuthorizationExpirationList,
+      List<RFControlVerification> upcomingVerificationExpirationList) {
 
     boolean expiredAuth = (expiredAuthorizationList != null && !expiredAuthorizationList.isEmpty());
     boolean expiredVer = (expiredVerificationList != null && !expiredVerificationList.isEmpty());
@@ -820,8 +813,8 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
   @PermitAll
   public void performExpirationCheck(boolean checkForUpcoming) {
     LOGGER.log(Level.FINEST, "Expiration Check: Director's authorizations...");
-    BeamAuthorization auth = beamAuthorizationFacade.findCurrent();
-    List<BeamDestinationAuthorization> expiredAuthorizationList = null;
+    RFAuthorization auth = rfAuthorizationFacade.findCurrent();
+    List<RFSegmentAuthorization> expiredAuthorizationList = null;
 
     if (auth != null) {
       expiredAuthorizationList = checkForAuthorizedButExpired(auth);
@@ -832,7 +825,7 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
     }
 
     LOGGER.log(Level.FINEST, "Expiration Check: Checking for expired verifications...");
-    List<BeamControlVerification> expiredVerificationList =
+    List<RFControlVerification> expiredVerificationList =
         checkForVerifiedButExpired(); // only items which are "verified" or "provisionally
     // verified", but need to be "not verified" due to expiration
     if (expiredVerificationList != null && !expiredVerificationList.isEmpty()) {
@@ -840,8 +833,8 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
       revokeExpiredVerifications(expiredVerificationList);
     }
 
-    List<BeamControlVerification> upcomingVerificationExpirationList = null;
-    List<BeamDestinationAuthorization> upcomingAuthorizationExpirationList = null;
+    List<RFControlVerification> upcomingVerificationExpirationList = null;
+    List<RFSegmentAuthorization> upcomingAuthorizationExpirationList = null;
     if (checkForUpcoming) {
       LOGGER.log(
           Level.FINEST, "Expiration Check: Checking for upcoming verification expirations...");
@@ -862,17 +855,17 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
   }
 
   @PermitAll
-  public BeamControlVerification findWithCreditedControl(BigInteger controlVerificationId) {
-    TypedQuery<BeamControlVerification> q =
+  public RFControlVerification findWithCreditedControl(BigInteger controlVerificationId) {
+    TypedQuery<RFControlVerification> q =
         em.createQuery(
-            "select a from BeamControlVerification a join fetch a.creditedControl where a.beamControlVerificationId = :id",
-            BeamControlVerification.class);
+            "select a from RFControlVerification a join fetch a.creditedControl where a.rfControlVerificationId = :id",
+            RFControlVerification.class);
 
     q.setParameter("id", controlVerificationId);
 
-    List<BeamControlVerification> resultList = q.getResultList();
+    List<RFControlVerification> resultList = q.getResultList();
 
-    BeamControlVerification verification = null;
+    RFControlVerification verification = null;
 
     if (resultList != null && !resultList.isEmpty()) {
       verification = resultList.get(0);
