@@ -4,7 +4,7 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@taglib prefix="s" uri="http://jlab.org/jsp/smoothness"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%> 
-<c:set var="title" value="Credited Controls"/>
+<c:set var="title" value="Authorizers"/>
 <t:inventory-page title="${title}">
     <jsp:attribute name="stylesheets">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/css/systems.css"/>
@@ -26,18 +26,21 @@
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <th>Description</th>
-                            <th>Verification Team</th>
-                            <th>Verification Frequency</th>
+                            <th>Operations Type</th>
+                            <th>Facility</th>
                         </tr>
                     </thead>
                     <tbody>
-                    <c:forEach items="${controlList}" var="control">
-                        <tr data-id="${control.creditedControlId}">
-                            <td><c:out value="${control.name}"/></td>
-                            <td><c:out value="${control.description}"/></td>
-                            <td><c:out value="${control.group.name}"/></td>
-                            <td><c:out value="${control.verificationFrequency}"/></td>
+                    <c:forEach items="${facilityList}" var="facility">
+                        <tr data-id="${facility.facilityId}">
+                            <td><c:out value="John Doe (jdoe)"/></td>
+                            <td><c:out value="RF"/></td>
+                            <td><c:out value="${facility.name}"/></td>
+                        </tr>
+                        <tr data-id="${facility.facilityId}">
+                            <td><c:out value="John Doe (jdoe)"/></td>
+                            <td><c:out value="BEAM"/></td>
+                            <td><c:out value="${facility.name}"/></td>
                         </tr>
                     </c:forEach>
                     </tbody>

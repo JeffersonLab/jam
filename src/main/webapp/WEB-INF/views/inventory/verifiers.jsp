@@ -4,7 +4,7 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@taglib prefix="s" uri="http://jlab.org/jsp/smoothness"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%> 
-<c:set var="title" value="Credited Controls"/>
+<c:set var="title" value="Verifiers"/>
 <t:inventory-page title="${title}">
     <jsp:attribute name="stylesheets">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/css/systems.css"/>
@@ -25,19 +25,17 @@
                 <table class="data-table stripped-table ${readonly ? '' : 'uniselect-table editable-row-table'}">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Description</th>
-                            <th>Verification Team</th>
-                            <th>Verification Frequency</th>
+                            <th>Team Name</th>
+                            <th>Members</th>
+                            <th>Credited Control</th>
                         </tr>
                     </thead>
                     <tbody>
                     <c:forEach items="${controlList}" var="control">
                         <tr data-id="${control.creditedControlId}">
+                            <td><c:out value="SSG"/></td>
+                            <td><c:out value="John Doe (jdoe), Jane Doe (janed)"/></td>
                             <td><c:out value="${control.name}"/></td>
-                            <td><c:out value="${control.description}"/></td>
-                            <td><c:out value="${control.group.name}"/></td>
-                            <td><c:out value="${control.verificationFrequency}"/></td>
                         </tr>
                     </c:forEach>
                     </tbody>
