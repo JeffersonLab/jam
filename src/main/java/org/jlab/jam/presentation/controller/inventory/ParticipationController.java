@@ -1,4 +1,4 @@
-package org.jlab.jam.presentation.controller;
+package org.jlab.jam.presentation.controller.inventory;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -20,9 +20,9 @@ import org.jlab.smoothness.presentation.util.ParamConverter;
  * @author ryans
  */
 @WebServlet(
-    name = "ControlParticipation",
-    urlPatterns = {"/control-participation"})
-public class ControlParticipation extends HttpServlet {
+    name = "ParticipationController",
+    urlPatterns = {"/inventory/participation"})
+public class ParticipationController extends HttpServlet {
 
   @EJB FacilityFacade facilityFacade;
   @EJB CreditedControlFacade ccFacade;
@@ -71,7 +71,7 @@ public class ControlParticipation extends HttpServlet {
     request.setAttribute("error", error);
 
     request
-        .getRequestDispatcher("WEB-INF/views/control-participation.jsp")
+        .getRequestDispatcher("/WEB-INF/views/inventory/participation.jsp")
         .forward(request, response);
   }
 }

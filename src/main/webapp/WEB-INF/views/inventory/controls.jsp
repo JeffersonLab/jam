@@ -27,6 +27,7 @@
                         <tr>
                             <th>Name</th>
                             <th>Description</th>
+                            <th>Verification Frequency</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -34,6 +35,7 @@
                         <tr data-id="${control.creditedControlId}">
                             <td><c:out value="${control.name}"/></td>
                             <td><c:out value="${control.description}"/></td>
+                            <td><c:out value="${control.verificationFrequency}"/></td>
                         </tr>
                     </c:forEach>
                     </tbody>

@@ -22,7 +22,6 @@
                         <li${fn:startsWith(currentPath, '/credited-controls') ? ' class="current-primary"' : ''}><a href="${pageContext.request.contextPath}/credited-controls">Credited Controls</a></li>
                         <li${fn:startsWith(currentPath, '/inventory') ? ' class="current-primary"' : ''}><a href="${pageContext.request.contextPath}/inventory/controls">Inventory</a></li>
                         <li${'/destinations' eq currentPath ? ' class="current-primary"' : ''}><a href="${pageContext.request.contextPath}/destinations">Beam Destinations</a></li>
-                        <li${'/control-participation' eq currentPath ? ' class="current-primary"' : ''}><a href="${pageContext.request.contextPath}/control-participation">Control Participation</a></li>
                         <li${'/help' eq currentPath ? ' class="current-primary"' : ''}><a href="${pageContext.request.contextPath}/help">Help</a></li>
                     </ul>
     </jsp:attribute>

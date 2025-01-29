@@ -4,7 +4,7 @@
 <%@taglib prefix="beamauth" uri="http://jlab.org/beamauth/functions" %>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <c:set var="title" value="Control Participation"/>
-<t:page title="${title}">  
+<t:inventory-page title="${title}">
     <jsp:attribute name="stylesheets">
         <link rel="stylesheet" type="text/css"
               href="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/css/credited-controls.css"/>
@@ -19,7 +19,7 @@
         <div class="banner-breadbox">
             <ul>
                 <li>
-                    <form method="get" action="control-participation">
+                    <form method="get" action="participation">
                         <label for="facility-select">Facility: </label>
                         <select id="facility-select" name="facilityId" class="change-submit">
                             <option value=""></option>
@@ -135,4 +135,4 @@
             </c:choose>
         </section>
     </jsp:body>
-</t:page>
+</t:inventory-page>
