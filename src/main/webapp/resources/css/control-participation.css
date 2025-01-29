@@ -32,3 +32,9 @@
 .participation-scroll-pane {
     overflow: auto;
 }
+.accordion .ui-widget-content a {
+    color: blue;
+}
+.accordion .ui-widget-content a:hover {
+    color: red;
+}

@@ -24,7 +24,8 @@
                         <select id="facility-select" name="facilityId" class="change-submit">
                             <option value=""></option>
                             <c:forEach items="${facilityList}" var="facility">
-                                <option value="${facility.facilityId}"${param.facilityId eq facility.facilityId ? ' selected="selected"' : ''}><c:out value="${facility.name}"/></option>
+                                <option value="${facility.facilityId}"${param.facilityId eq facility.facilityId ? ' selected="selected"' : ''}>
+                                    <c:out value="${facility.name}"/></option>
                             </c:forEach>
                         </select>
                     </form>
@@ -38,88 +39,98 @@
                     <c:out value="${error}"/>
                 </c:when>
                 <c:otherwise>
-                    <h3>RF Operations</h3>
-                    <c:choose>
-                        <c:when test="${not empty segmentList}">
-                            <div class="participation-scroll-pane">
-                                <table class="data-table stripped-table fixed-table control-participation-table ${pageContext.request.isUserInRole('jam-admin') ? 'editable' : ''}">
-                                    <thead>
-                                    <tr>
-                                        <th rowspan="2" class="component-header">Credited Control</th>
-                                        <th colspan="${fn:length(segmentList)}">RF Segment</th>
-                                    </tr>
-                                    <tr>
-                                        <c:forEach items="${segmentList}" var="segment">
-                                            <th class="destination-header">
-                                                <c:out value="${segment.name}"/>
-                                            </th>
-                                        </c:forEach>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <c:forEach items="${ccList}" var="cc">
-                                        <tr data-cc-id="${cc.creditedControlId}">
-                                            <th><a data-dialog-title="${fn:escapeXml(cc.name)} Information" class="dialog-ready"
-                                                   href="${pageContext.request.contextPath}/credited-controls?creditedControlId=${cc.creditedControlId}&amp;notEditable=1"><c:out
-                                                    value="${cc.name}"/></a></th>
-                                            <c:forEach items="${segmentList}" var="segment">
-                                                <td data-segment-id="${segment.getRFSegmentId()}">
-                                                    <c:if test="${cc.hasRFSegment(segment)}">
-                                                        ✔
-                                                    </c:if>
-                                                </td>
+                    <div class="accordion">
+                        <h3>RF Operations</h3>
+                        <div class="content">
+                            <c:choose>
+                                <c:when test="${not empty segmentList}">
+                                    <div class="participation-scroll-pane">
+                                        <table class="data-table stripped-table fixed-table control-participation-table ${pageContext.request.isUserInRole('jam-admin') ? 'editable' : ''}">
+                                            <thead>
+                                            <tr>
+                                                <th rowspan="2" class="component-header">Credited Control</th>
+                                                <th colspan="${fn:length(segmentList)}">RF Segment</th>
+                                            </tr>
+                                            <tr>
+                                                <c:forEach items="${segmentList}" var="segment">
+                                                    <th class="destination-header">
+                                                        <c:out value="${segment.name}"/>
+                                                    </th>
+                                                </c:forEach>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <c:forEach items="${ccList}" var="cc">
+                                                <tr data-cc-id="${cc.creditedControlId}">
+                                                    <th><a data-dialog-title="${fn:escapeXml(cc.name)} Information"
+                                                           class="dialog-ready"
+                                                           href="${pageContext.request.contextPath}/credited-controls?creditedControlId=${cc.creditedControlId}&amp;notEditable=1"><c:out
+                                                            value="${cc.name}"/></a></th>
+                                                    <c:forEach items="${segmentList}" var="segment">
+                                                        <td data-segment-id="${segment.getRFSegmentId()}">
+                                                            <c:if test="${cc.hasRFSegment(segment)}">
+                                                                ✔
+                                                            </c:if>
+                                                        </td>
+                                                    </c:forEach>
+                                                </tr>
                                             </c:forEach>
-                                        </tr>
-                                    </c:forEach>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </c:when>
-                        <c:otherwise>
-                            None
-                        </c:otherwise>
-                    </c:choose>
-                    <h3>Beam Operations</h3>
-                    <c:choose>
-                        <c:when test="${not empty destinationList}">
-                            <div class="participation-scroll-pane">
-                                <table class="data-table stripped-table fixed-table control-participation-table ${pageContext.request.isUserInRole('jam-admin') ? 'editable' : ''}">
-                                    <thead>
-                                    <tr>
-                                        <th rowspan="2" class="component-header">Credited Control</th>
-                                        <th colspan="${fn:length(destinationList)}">Beam Destination</th>
-                                    </tr>
-                                    <tr>
-                                        <c:forEach items="${destinationList}" var="destination">
-                                            <th class="destination-header">
-                                                <c:out value="${destination.name}"/>
-                                            </th>
-                                        </c:forEach>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <c:forEach items="${ccList}" var="cc">
-                                        <tr data-cc-id="${cc.creditedControlId}">
-                                            <th><a data-dialog-title="${fn:escapeXml(cc.name)} Information" class="dialog-ready"
-                                                   href="${pageContext.request.contextPath}/credited-controls?creditedControlId=${cc.creditedControlId}&amp;notEditable=1"><c:out
-                                                    value="${cc.name}"/></a></th>
-                                            <c:forEach items="${destinationList}" var="destination">
-                                                <td data-destination-id="${destination.beamDestinationId}">
-                                                    <c:if test="${cc.hasBeamDestination(destination)}">
-                                                        ✔
-                                                    </c:if>
-                                                </td>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </c:when>
+                                <c:otherwise>
+                                    None
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+                    </div>
+                    <div class="accordion">
+                        <h3>Beam Operations</h3>
+                        <div class="content">
+                            <c:choose>
+                                <c:when test="${not empty destinationList}">
+                                    <div class="participation-scroll-pane">
+                                        <table class="data-table stripped-table fixed-table control-participation-table ${pageContext.request.isUserInRole('jam-admin') ? 'editable' : ''}">
+                                            <thead>
+                                            <tr>
+                                                <th rowspan="2" class="component-header">Credited Control</th>
+                                                <th colspan="${fn:length(destinationList)}">Beam Destination</th>
+                                            </tr>
+                                            <tr>
+                                                <c:forEach items="${destinationList}" var="destination">
+                                                    <th class="destination-header">
+                                                        <c:out value="${destination.name}"/>
+                                                    </th>
+                                                </c:forEach>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <c:forEach items="${ccList}" var="cc">
+                                                <tr data-cc-id="${cc.creditedControlId}">
+                                                    <th><a data-dialog-title="${fn:escapeXml(cc.name)} Information"
+                                                           class="dialog-ready"
+                                                           href="${pageContext.request.contextPath}/credited-controls?creditedControlId=${cc.creditedControlId}&amp;notEditable=1"><c:out
+                                                            value="${cc.name}"/></a></th>
+                                                    <c:forEach items="${destinationList}" var="destination">
+                                                        <td data-destination-id="${destination.beamDestinationId}">
+                                                            <c:if test="${cc.hasBeamDestination(destination)}">
+                                                                ✔
+                                                            </c:if>
+                                                        </td>
+                                                    </c:forEach>
+                                                </tr>
                                             </c:forEach>
-                                        </tr>
-                                    </c:forEach>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </c:when>
-                        <c:otherwise>
-                            None
-                        </c:otherwise>
-                    </c:choose>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </c:when>
+                                <c:otherwise>
+                                    None
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+                    </div>
                 </c:otherwise>
             </c:choose>
         </section>

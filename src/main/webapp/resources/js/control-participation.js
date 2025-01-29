@@ -67,3 +67,10 @@ jlab.toggle = function() {
 $(document).on("click", ".control-participation-table.editable td", function() {
     jlab.toggle.call(this);
 });
+$(function() {
+    $( ".accordion" ).accordion({
+        collapsible: true,
+        heightStyle: "content",
+        active: 0
+    });
+});
