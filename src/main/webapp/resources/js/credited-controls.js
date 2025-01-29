@@ -310,13 +310,13 @@ $(document).on("change", "#check-select", function () {
         $("#edit-selected-button").prop("disabled", true);
     }
 });*/
-$(document).on("click", "#component-edit-button", function() {
+$(document).on("click", "#beam-content .component-edit-button", function() {
 
     var $componentList = $("#selected-component-list");
 
     $componentList.empty();
 
-    var $rowList = $("#verification-table tbody tr.selected-row");
+    var $rowList = $("#beam-content .verification-table tbody tr.selected-row");
 
     if($rowList.length !== 1) {
         alert("select only one row");

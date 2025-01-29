@@ -81,91 +81,26 @@
                         <h3>Verifications</h3>
                         <div class="accordion">
                             <h3>RF Operations</h3>
-                            <div class="content beam-content">
+                            <div id="rf-content" class="content">
                                 <c:choose>
                                     <c:when test="${fn:length(creditedControl.getRFControlVerificationList()) < 1}">
                                         None
                                     </c:when>
                                     <c:otherwise>
-                                        Stuff exists
+                                        <t:verification-panel operationsType="rf" operationsList="${creditedControl.getRFControlVerificationList()}"/>
                                     </c:otherwise>
                                 </c:choose>
                             </div>
                         </div>
                         <div class="accordion">
                             <h3>Beam Operations</h3>
-                            <div class="content beam-content">
+                            <div id="beam-content" class="content">
                         <c:choose>
                             <c:when test="${fn:length(creditedControl.beamControlVerificationList) < 1}">
                                 None
                             </c:when>
                             <c:otherwise>
-                                <c:if test="${adminOrLeader && param.notEditable eq null}">
-                                    <button id="edit-selected-button" type="button" class="verify-button selected-row-action" disabled="disabled">Edit Verification</button>
-                                </c:if>
-                                <c:if test="${pageContext.request.isUserInRole('jam-admin') && param.notEditable eq null}">
-                                    <button id="component-edit-button" type="button" class="single-select-row-action" disabled="disabled">Edit Components</button>
-                                </c:if>
-                                <table id="verification-table" class="data-table stripped-table${(adminOrLeader && param.notEditable eq null) ? ' multicheck-table editable-row-table' : ''}">
-                                    <thead>
-                                        <tr>
-                                            <c:if test="${adminOrLeader && param.notEditable eq null}">
-                                                <th class="select-header">
-                                                    Select
-                                                    <select id="check-select" name="check-select">
-                                                        <option value="">&nbsp;</option>
-                                                        <option value="all">All</option>
-                                                        <option value="none">None</option>
-                                                    </select>
-                                                </th>
-                                            </c:if>
-                                            <th>Beam Destination</th>
-                                            <th>Verified</th>
-                                            <th>Components</th>
-                                            <th>Comments</th>
-                                            <th>Expiration Date</th>
-                                            <th class="audit-header">Audit</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <c:forEach items="${creditedControl.beamControlVerificationList}" var="verification">
-                                            <tr data-control-verification-id="${verification.beamControlVerificationId}" data-verified-username="${verification.verifiedBy}" data-status-id="${verification.verificationStatusId}">
-                                                <c:if test="${adminOrLeader && param.notEditable eq null}">
-                                                    <td>
-                                                        <input class="destination-checkbox" type="checkbox" name="destination-checkbox" value="${verification.beamControlVerificationId}"/>
-                                                    </td>
-                                                </c:if>
-                                                <td><c:out value="${verification.beamDestination.name}"/></td>
-                                                <td class="verified-cell">
-                                                  <div title="${verification.verificationStatusId eq 1 ? 'Verified' : (verification.verificationStatusId eq 50 ? 'Provisionally Verified' : 'Not Verified')}" class="small-icon baseline-small-icon ${verification.verificationStatusId eq 1 ? 'verified-icon' : (verification.verificationStatusId eq 50 ? 'provisional-icon' : 'not-verified-icon')}"></div>
-                                                  <div class="verified-date"><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}" value="${verification.verificationDate}"/></div>
-                                                  <div class="verified-by"><c:out value="${s:formatUsername(verification.verifiedBy)}"/></div>
-                                                </td>
-                                                <td>
-                                                    <c:forEach items="${verification.componentList}" var="component">
-                                                        <div class="component-status" data-id="${component.componentId}">
-                                                            <c:choose>
-                                                                <c:when test="${component.statusId eq 1}">
-                                                                    <span class="small-icon baseline-small-icon verified-icon"></span>
-                                                                </c:when>
-                                                                <c:otherwise>
-                                                                    <span class="small-icon baseline-small-icon not-verified-icon"></span>
-                                                                </c:otherwise>
-                                                            </c:choose>
-                                                            <a href="${env['JAM_COMPONENT_DETAIL_URL']}${fn:escapeXml(component.name)}"><c:out value="${component.name}"/></a>
-                                                        </div>
-                                                    </c:forEach>
-                                                </td>
-                                                <td><c:out value="${verification.comments}"/></td>
-                                                <td><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}" value="${verification.expirationDate}"/></td>
-                                                <td><a data-dialog-title="Verification History" href="credited-controls/verification-history?beamControlVerificationId=${verification.beamControlVerificationId}" title="Click for verification history">History</a></td>
-                                            </tr>
-                                        </c:forEach>
-                                    </tbody>
-                                </table>
-                                <c:if test="${adminOrLeader && param.notEditable eq null}">
-                                    <div id="multi-instructions">Hold down the control (Ctrl) or shift key when clicking to select multiple.  Hold down the Command (⌘) key on Mac.</div> 
-                                </c:if>
+                                <t:verification-panel operationsType="beam" operationsList="${creditedControl.beamControlVerificationList}"/>
                             </c:otherwise>
                         </c:choose>
                             </div>
