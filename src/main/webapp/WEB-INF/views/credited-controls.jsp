@@ -17,7 +17,7 @@
             <div class="banner-breadbox">
                 <ul>
                     <li>
-                        <a href="credited-controls">Credited Controls</a>
+                        <a href="verifications">Verifications</a>
                     </li>
                     <li>
                         <form method="get" action="credited-controls">

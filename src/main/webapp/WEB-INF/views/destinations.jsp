@@ -29,7 +29,7 @@
             <div class="banner-breadbox">
                 <ul>
                     <li>
-                        <a href="destinations">Beam Destinations</a>
+                        <a href="verifications">Verifications</a>
                     </li>
                     <li>
                         <form method="get" action="destinations">
