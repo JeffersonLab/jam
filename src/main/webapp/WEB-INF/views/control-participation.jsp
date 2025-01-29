@@ -16,14 +16,28 @@
                 src="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/js/control-participation.js"></script>
     </jsp:attribute>
     <jsp:body>
+        <div class="banner-breadbox">
+            <ul>
+                <li>
+                    <form method="get" action="control-participation">
+                        <label for="facility-select">Facility: </label>
+                        <select id="facility-select" name="facilityId" class="change-submit">
+                            <option value=""></option>
+                            <c:forEach items="${facilityList}" var="facility">
+                                <option value="${facility.facilityId}"${param.facilityId eq facility.facilityId ? ' selected="selected"' : ''}><c:out value="${facility.name}"/></option>
+                            </c:forEach>
+                        </select>
+                    </form>
+                </li>
+            </ul>
+        </div>
         <section>
-            <h2><c:out value="${title}"/></h2>
+            <h2><c:out value="${title}${empty facility ? '' : ': '.concat(facility.name)}"/></h2>
             <c:choose>
                 <c:when test="${not empty error}">
                     <c:out value="${error}"/>
                 </c:when>
                 <c:otherwise>
-                    <c:out value="${facility.name}"/>
                     <h3>RF Operations</h3>
                     <c:choose>
                         <c:when test="${not empty segmentList}">

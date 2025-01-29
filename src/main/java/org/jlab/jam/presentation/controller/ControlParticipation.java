@@ -9,10 +9,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.jlab.jam.business.session.BeamDestinationFacade;
-import org.jlab.jam.business.session.CreditedControlFacade;
-import org.jlab.jam.business.session.FacilityFacade;
-import org.jlab.jam.business.session.RFSegmentFacade;
+import org.jlab.jam.business.session.*;
 import org.jlab.jam.persistence.entity.BeamDestination;
 import org.jlab.jam.persistence.entity.CreditedControl;
 import org.jlab.jam.persistence.entity.Facility;
@@ -67,6 +64,10 @@ public class ControlParticipation extends HttpServlet {
       request.setAttribute("ccList", ccList);
     }
 
+    List<Facility> facilityList =
+        facilityFacade.findAll(new AbstractFacade.OrderDirective("weight"));
+
+    request.setAttribute("facilityList", facilityList);
     request.setAttribute("error", error);
 
     request

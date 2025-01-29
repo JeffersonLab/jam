@@ -20,7 +20,7 @@
         <div class="banner-breadbox">
             <ul>
                 <li>
-                    <a href="${pageContext.request.contextPath}/authorizations${facility.path}"><c:out value="${facility.name}"/> Authorization</a>
+                    <a href="${pageContext.request.contextPath}/authorizations${facility.path}"><c:out value="${facility.name}"/></a>
                 </li>
                 <li>
                     <span>Beam History</span>
