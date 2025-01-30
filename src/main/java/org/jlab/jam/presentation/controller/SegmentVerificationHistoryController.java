@@ -10,11 +10,11 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.jlab.jam.business.session.BeamControlVerificationFacade;
-import org.jlab.jam.business.session.BeamControlVerificationHistoryFacade;
 import org.jlab.jam.business.session.CreditedControlFacade;
-import org.jlab.jam.persistence.entity.BeamControlVerification;
-import org.jlab.jam.persistence.entity.BeamControlVerificationHistory;
+import org.jlab.jam.business.session.RFControlVerificationFacade;
+import org.jlab.jam.business.session.RFControlVerificationHistoryFacade;
+import org.jlab.jam.persistence.entity.RFControlVerification;
+import org.jlab.jam.persistence.entity.RFControlVerificationHistory;
 import org.jlab.smoothness.presentation.util.Paginator;
 import org.jlab.smoothness.presentation.util.ParamConverter;
 import org.jlab.smoothness.presentation.util.ParamUtil;
@@ -23,12 +23,12 @@ import org.jlab.smoothness.presentation.util.ParamUtil;
  * @author ryans
  */
 @WebServlet(
-    name = "DestinationVerificationHistoryController",
-    urlPatterns = {"/verifications/control/destination-history"})
-public class DestinationVerificationHistoryController extends HttpServlet {
+    name = "SegmentVerificationHistoryController",
+    urlPatterns = {"/verifications/control/segment-history"})
+public class SegmentVerificationHistoryController extends HttpServlet {
 
-  @EJB BeamControlVerificationHistoryFacade historyFacade;
-  @EJB BeamControlVerificationFacade verificationFacade;
+  @EJB RFControlVerificationHistoryFacade historyFacade;
+  @EJB RFControlVerificationFacade verificationFacade;
   @EJB CreditedControlFacade creditedControlFacade;
 
   /**
@@ -43,17 +43,17 @@ public class DestinationVerificationHistoryController extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    BigInteger beamControlVerificationId =
-        ParamConverter.convertBigInteger(request, "beamControlVerificationId");
+    BigInteger rfControlVerificationId =
+        ParamConverter.convertBigInteger(request, "rfControlVerificationId");
     int offset = ParamUtil.convertAndValidateNonNegativeInt(request, "offset", 0);
     int maxPerPage = 10;
 
-    BeamControlVerification verification =
-        verificationFacade.findWithCreditedControl(beamControlVerificationId);
+    RFControlVerification verification =
+        verificationFacade.findWithCreditedControl(rfControlVerificationId);
 
-    List<BeamControlVerificationHistory> historyList =
-        historyFacade.findHistory(beamControlVerificationId, offset, maxPerPage);
-    Long totalRecords = historyFacade.countHistory(beamControlVerificationId);
+    List<RFControlVerificationHistory> historyList =
+        historyFacade.findHistory(rfControlVerificationId, offset, maxPerPage);
+    Long totalRecords = historyFacade.countHistory(rfControlVerificationId);
 
     Paginator paginator = new Paginator(totalRecords.intValue(), offset, maxPerPage);
 
@@ -82,7 +82,7 @@ public class DestinationVerificationHistoryController extends HttpServlet {
     request.setAttribute("paginator", paginator);
 
     request
-        .getRequestDispatcher("/WEB-INF/views/verification-history/destination-history.jsp")
+        .getRequestDispatcher("/WEB-INF/views/verification-history/segment-history.jsp")
         .forward(request, response);
   }
 }

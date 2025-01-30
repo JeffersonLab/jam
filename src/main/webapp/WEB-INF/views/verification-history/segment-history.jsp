@@ -5,7 +5,7 @@
 <%@taglib prefix="s" uri="http://jlab.org/jsp/smoothness" %>
 <%@taglib prefix="beamauth" uri="http://jlab.org/beamauth/functions"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%> 
-<t:page title="Destination Verification History">
+<t:page title="Segment Verification History">
     <jsp:attribute name="stylesheets">
     </jsp:attribute>
     <jsp:attribute name="scripts">
@@ -20,7 +20,7 @@
                     <a href="${pageContext.request.contextPath}/verifications/control?creditedControlId=${verification.creditedControl.creditedControlId}">${verification.creditedControl.name}</a>
                 </li>
                 <li>
-                    <c:out value="${verification.beamDestination.name}"/> <span>History</span>
+                    <c:out value="${verification.getRFSegment().name}"/> <span>History</span>
                 </li>
             </ul>
         </div>        
@@ -28,8 +28,8 @@
             <div class="dialog-content">
                 <h3>Credited Control</h3>
                 <c:out value="${verification.creditedControl.name}"/>
-                <h3>Beam Destination</h3>
-                <c:out value="${verification.beamDestination.name}"/>
+                <h3>RF Segment</h3>
+                <c:out value="${verification.getRFSegment().name}"/>
                 <h3>Group</h3>
                 <c:out value="${verification.creditedControl.group.name}"/>
                 <h3>History</h3>
@@ -65,8 +65,8 @@
                                 </c:forEach>
                             </tbody>
                         </table>
-                        <form id="filter-form" action="${pageContext.request.contextPath}/verifications/control/destination-history" method="get">
-                            <input type="hidden" name="beamControlVerificationId" value="${fn:escapeXml(param.beamControlVerificationId)}"/>
+                        <form id="filter-form" action="${pageContext.request.contextPath}/verifications/control/segment-history" method="get">
+                            <input type="hidden" name="rfControlVerificationId" value="${fn:escapeXml(param.rfControlVerificationId)}"/>
                             <input type="hidden" id="offset-input" name="offset" value="0"/>
                         </form>
                         <button id="previous-button" type="button" data-offset="${paginator.previousOffset}" value="Previous"${paginator.previous ? '' : ' disabled="disabled"'}>Previous</button>                        

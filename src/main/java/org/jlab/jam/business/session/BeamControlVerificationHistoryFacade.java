@@ -13,7 +13,8 @@ import org.jlab.jam.persistence.entity.BeamControlVerificationHistory;
  * @author ryans
  */
 @Stateless
-public class VerificationHistoryFacade extends AbstractFacade<BeamControlVerificationHistory> {
+public class BeamControlVerificationHistoryFacade
+    extends AbstractFacade<BeamControlVerificationHistory> {
   @PersistenceContext(unitName = "jamPU")
   private EntityManager em;
 
@@ -22,7 +23,7 @@ public class VerificationHistoryFacade extends AbstractFacade<BeamControlVerific
     return em;
   }
 
-  public VerificationHistoryFacade() {
+  public BeamControlVerificationHistoryFacade() {
     super(BeamControlVerificationHistory.class);
   }
 

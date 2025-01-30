@@ -10,10 +10,12 @@
 <c:set var="operationsName" value="Beam Destination"/>
 <c:set var="operationsId" value="beamControlVerificationId"/>
 <c:set var="operationsEntity" value="beamDestination"/>
+<c:set var="historyPathSuffix" value="destination-history?beamControlVerificationId"/>
 <c:if test="${'rf' eq operationsType}">
     <c:set var="operationsName" value="RF Segment"/>
     <c:set var="operationsId" value="RFControlVerificationId"/>
     <c:set var="operationsEntity" value="RFSegment"/>
+    <c:set var="historyPathSuffix" value="segment-history?rfControlVerificationId"/>
 </c:if>
 <div class="verification-panel">
     <c:if test="${adminOrLeader && param.notEditable eq null}">
@@ -74,7 +76,7 @@
                 </td>
                 <td><c:out value="${verification.comments}"/></td>
                 <td><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}" value="${verification.expirationDate}"/></td>
-                <td><a data-dialog-title="Verification History" href="${pageContext.request.contextPath}/verifications/control/destination-history?beamControlVerificationId=${verification[operationsId]}" title="Click for verification history">History</a></td>
+                <td><a data-dialog-title="Verification History" href="${pageContext.request.contextPath}/verifications/control/${historyPathSuffix}=${verification[operationsId]}" title="Click for verification history">History</a></td>
             </tr>
         </c:forEach>
         </tbody>

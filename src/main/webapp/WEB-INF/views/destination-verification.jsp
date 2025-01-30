@@ -90,7 +90,7 @@
                                             <th>Verified By</th>
                                             <th>Comments</th>
                                             <th>Expiration Date</th>
-                                            <th></th>
+                                            <th>Audit</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -107,7 +107,7 @@
                                                 <td><c:out value="${s:formatUsername(verification.verifiedBy)}"/></td>
                                                 <td><c:out value="${verification.comments}"/></td>
                                                 <td><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}" value="${verification.expirationDate}"/></td>
-                                                <td><a class="small-icon dialog-ready comment-icon" data-dialog-title="Verification History" href="credited-controls/verification-history?beamControlVerificationId=${verification.beamControlVerificationId}" title="Click for verification history"></a></td>
+                                                <td><a class="dialog-ready" data-dialog-title="Destination Verification History" href="${pageContext.request.contextPath}/verifications/control/destination-history?beamControlVerificationId=${verification.beamControlVerificationId}" title="Click for verification history">History</a></td>
                                             </tr>
                                         </c:forEach>
                                     </tbody>
