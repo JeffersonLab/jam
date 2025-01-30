@@ -1,10 +1,8 @@
 package org.jlab.jam.persistence.view;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.Date;
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 /**
  * @author ryans
@@ -15,14 +13,7 @@ public class FacilityControlVerification implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  @Id
-  @Basic(optional = false)
-  @NotNull
-  @Column(name = "FACILITY_ID", nullable = false)
-  private BigInteger facilityId;
-
-  @Column(name = "CREDITED_CONTROL_ID")
-  private BigInteger creditedControlId;
+  @EmbeddedId protected FacilityControlVerificationPK facilityControlVerificationPK;
 
   @Column(name = "VERIFICATION_STATUS_ID")
   private Integer verificationStatusId;
@@ -33,12 +24,13 @@ public class FacilityControlVerification implements Serializable {
 
   public FacilityControlVerification() {}
 
-  public BigInteger getFacilityId() {
-    return facilityId;
+  public FacilityControlVerificationPK getFacilityControlVerificationPK() {
+    return facilityControlVerificationPK;
   }
 
-  public BigInteger getCreditedControlId() {
-    return creditedControlId;
+  public void setFacilityControlVerificationPK(
+      FacilityControlVerificationPK facilityControlVerificationPK) {
+    this.facilityControlVerificationPK = facilityControlVerificationPK;
   }
 
   public Integer getVerificationStatusId() {

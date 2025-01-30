@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "FACILITY", schema = "JAM_OWNER")
-public class Facility implements Serializable {
+public class Facility implements Serializable, Comparable<Facility> {
   private static final long serialVersionUID = 1L;
 
   @Id
@@ -113,5 +113,11 @@ public class Facility implements Serializable {
     }
     final Facility other = (Facility) obj;
     return Objects.equals(this.facilityId, other.facilityId);
+  }
+
+  @Override
+  public int compareTo(Facility o) {
+    return (this.getWeight() == null ? BigInteger.ZERO : this.getWeight())
+        .compareTo(o.getWeight() == null ? BigInteger.ZERO : o.getWeight());
   }
 }

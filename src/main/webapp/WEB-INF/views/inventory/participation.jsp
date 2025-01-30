@@ -7,7 +7,7 @@
 <t:inventory-page title="${title}">
     <jsp:attribute name="stylesheets">
         <link rel="stylesheet" type="text/css"
-              href="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/css/credited-controls.css"/>
+              href="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/css/control-verification.css"/>
         <link rel="stylesheet" type="text/css"
               href="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/css/control-participation.css"/>
     </jsp:attribute>
@@ -62,9 +62,9 @@
                                             <tbody>
                                             <c:forEach items="${ccList}" var="cc">
                                                 <tr data-cc-id="${cc.creditedControlId}">
-                                                    <th><a data-dialog-title="${fn:escapeXml(cc.name)} Information"
+                                                    <th><a data-dialog-title="${fn:escapeXml(cc.name)} Verification"
                                                            class="dialog-ready"
-                                                           href="${pageContext.request.contextPath}/credited-controls?creditedControlId=${cc.creditedControlId}&amp;notEditable=1"><c:out
+                                                           href="${pageContext.request.contextPath}/verifications/control?creditedControlId=${cc.creditedControlId}&amp;notEditable=1"><c:out
                                                             value="${cc.name}"/></a></th>
                                                     <c:forEach items="${segmentList}" var="segment">
                                                         <td data-segment-id="${segment.getRFSegmentId()}">
@@ -108,9 +108,9 @@
                                             <tbody>
                                             <c:forEach items="${ccList}" var="cc">
                                                 <tr data-cc-id="${cc.creditedControlId}">
-                                                    <th><a data-dialog-title="${fn:escapeXml(cc.name)} Information"
+                                                    <th><a data-dialog-title="${fn:escapeXml(cc.name)} Verification"
                                                            class="dialog-ready"
-                                                           href="${pageContext.request.contextPath}/credited-controls?creditedControlId=${cc.creditedControlId}&amp;notEditable=1"><c:out
+                                                           href="${pageContext.request.contextPath}/verifications/control?creditedControlId=${cc.creditedControlId}&amp;notEditable=1"><c:out
                                                             value="${cc.name}"/></a></th>
                                                     <c:forEach items="${destinationList}" var="destination">
                                                         <td data-destination-id="${destination.beamDestinationId}">

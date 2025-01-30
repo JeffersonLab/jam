@@ -45,11 +45,31 @@
         <h2 id="page-header-title"><c:out value="${title}"/></h2>
         <div class="message-box"><c:out value="${selectionMessage}"/></div>
         <h3>Credited Controls</h3>
-        <table class="data-table">
+        <table id="credited-control-verifications-table" class="data-table">
             <tbody>
             <c:forEach items="${ccList}" var="cc">
                 <tr>
                     <td><c:out value="${cc.name}"/></td>
+                    <td>
+                        <ul>
+                            <c:forEach items="${cc.facilityControlVerificationList}" var="fv">
+                                <li>
+                                    <c:choose>
+                                        <c:when test="${fv.verificationStatusId eq 1}">
+                                            <span title="Verified" class="small-icon baseline-small-icon verified-icon"></span>
+                                        </c:when>
+                                        <c:when test="${fv.verificationStatusId eq 50}">
+                                            <span title="Verified" class="small-icon baseline-small-icon provisional-icon"></span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span title="Not Verified" class="small-icon baseline-small-icon not-verified-icon"></span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                    <c:out value="${fv.getFacilityControlVerificationPK().facility.name}"/>
+                                </li>
+                            </c:forEach>
+                        </ul>
+                    </td>
                     <td>
                         <form method="get" action="${pageContext.request.contextPath}/verifications/control">
                             <input type="hidden" name="creditedControlId" value="${cc.creditedControlId}"/>

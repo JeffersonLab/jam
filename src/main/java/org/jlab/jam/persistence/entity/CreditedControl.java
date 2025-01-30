@@ -3,19 +3,10 @@ package org.jlab.jam.persistence.entity;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.jlab.jam.persistence.view.FacilityControlVerification;
 
 /**
  * @author ryans
@@ -65,6 +56,9 @@ public class CreditedControl implements Serializable, Comparable<CreditedControl
 
   @OneToMany(mappedBy = "creditedControl", fetch = FetchType.LAZY)
   private List<RFControlVerification> rfControlVerificationList;
+
+  @OneToMany(mappedBy = "facilityControlVerificationPK.creditedControl", fetch = FetchType.LAZY)
+  private List<FacilityControlVerification> facilityControlVerificationList;
 
   public CreditedControl() {}
 
@@ -143,6 +137,10 @@ public class CreditedControl implements Serializable, Comparable<CreditedControl
   public void setBeamControlVerificationList(
       List<BeamControlVerification> beamControlVerificationList) {
     this.beamControlVerificationList = beamControlVerificationList;
+  }
+
+  public List<FacilityControlVerification> getFacilityControlVerificationList() {
+    return facilityControlVerificationList;
   }
 
   public boolean hasRFSegment(RFSegment segment) {
