@@ -27,7 +27,7 @@
     </thead>
     <tbody>
         <c:forEach items="${rfList}" var="segment">
-            <c:set var="rfSegmentAuthorization" value="${rfAuthorizationMap[segment.getRFSegmentId()]}"/>
+            <c:set var="segmentAuthorization" value="${segmentAuthorizationMap[segment.getRFSegmentId()]}"/>
             <tr>
                 <td>
                     <a data-dialog-title="${segment.name} Verification" class="dialog-ready" href="${pageContext.request.contextPath}/verifications/segment?segmentId=${segment.getRFSegmentId()}&notEditable=Y"><c:out value="${segment.name}"/></a>
@@ -36,7 +36,7 @@
                     <c:if test="${not isHistory}">
                     <td class="icon-cell">
                         <c:choose>
-                            <c:when test="${(segment.verification.verificationStatusId eq 1 or segment.verification.verificationStatusId eq 50) and rfSegmentAuthorization.getRFMode() ne null and rfSegmentAuthorization.getRFMode() ne 'None'}">
+                            <c:when test="${(segment.verification.verificationStatusId eq 1 or segment.verification.verificationStatusId eq 50) and segmentAuthorization.getRFMode() ne null and segmentAuthorization.getRFMode() ne 'None'}">
                                 <span title="Approved" class="small-icon verified-icon"></span>
                             </c:when>
                             <c:otherwise>
@@ -46,7 +46,7 @@
                     </td>
                 </c:if>
                 <td>
-                    <c:set var="selectedRFMode" value="${rfSegmentAuthorization.getRFMode() eq null ? 'None' : rfSegmentAuthorization.getRFMode()}"/>
+                    <c:set var="selectedRFMode" value="${segmentAuthorization.getRFMode() eq null ? 'None' : segmentAuthorization.getRFMode()}"/>
                     <div class="readonly-field"><c:out value="${selectedRFMode}"/></div>
                     <div class="editable-field">
                         <select name="mode[]" class="mode-select">
@@ -58,7 +58,7 @@
                     </div>
                 </td>
                 <td class="${(not isHistory) && (not (selectedBeamMode eq 'None')) && (segment.verification.verificationStatusId eq 50) ? 'provisional-comments' : ''}">
-                    <c:set var="selectedComment" value="${rfSegmentAuthorization.comments eq null ? '' : rfSegmentAuthorization.comments}"/>
+                    <c:set var="selectedComment" value="${segmentAuthorization.comments eq null ? '' : segmentAuthorization.comments}"/>
                     <span class="readonly-field">
                         <c:out value="${selectedComment}"/>
                     </span>
@@ -67,10 +67,10 @@
                     </span>
                 </td>
                 <td>
-                    <fmt:formatDate var="selectedExpiration" value="${rfSegmentAuthorization.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
+                    <fmt:formatDate var="selectedExpiration" value="${segmentAuthorization.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
                     <span class="readonly-field">
                         <c:out value="${selectedExpiration}"/>
-                        <span class="expiring-soon" style="<c:out value="${rfSegmentAuthorization.expirationDate ne null and rfSegmentAuthorization.expirationDate.time > beamauth:now().time and rfSegmentAuthorization.expirationDate.time < beamauth:twoDaysFromNow().time ? 'display: block;' : 'display: none;'}"/>">(Expiring Soon)</span>
+                        <span class="expiring-soon" style="<c:out value="${segmentAuthorization.expirationDate ne null and segmentAuthorization.expirationDate.time > beamauth:now().time and segmentAuthorization.expirationDate.time < beamauth:twoDaysFromNow().time ? 'display: block;' : 'display: none;'}"/>">(Expiring Soon)</span>
                     </span>
                     <span class="editable-field">
                         <input name="expiration[]" type="text" class="expiration-input date-time-field" autocomplete="off" placeholder="${s:getFriendlyDateTimePlaceholder()}" value="${selectedBeamMode eq 'None' ? '' : selectedExpiration}"${selectedBeamMode eq 'None' ? ' readonly="readonly"' : ''}/>
