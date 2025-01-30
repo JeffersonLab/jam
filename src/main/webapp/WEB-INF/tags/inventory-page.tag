@@ -21,6 +21,7 @@
             <li${fn:startsWith(currentPath, '/inventory/participation') ? ' class="current-secondary"' : ''}><a href="${pageContext.request.contextPath}/inventory/participation">Participation</a></li>
             <li${fn:startsWith(currentPath, '/inventory/authorizers') ? ' class="current-secondary"' : ''}><a href="${pageContext.request.contextPath}/inventory/authorizers">Authorizers</a></li>
             <li${fn:startsWith(currentPath, '/inventory/verifiers') ? ' class="current-secondary"' : ''}><a href="${pageContext.request.contextPath}/inventory/verifiers">Verifiers</a></li>
+            <li${fn:startsWith(currentPath, '/inventory/watchers') ? ' class="current-secondary"' : ''}><a href="${pageContext.request.contextPath}/inventory/watchers">Watchers</a></li>
         </ul>
     </jsp:attribute>
     <jsp:body>

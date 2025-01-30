@@ -86,33 +86,7 @@
                     </div>
                 </c:when>
                 <c:otherwise>
-                    <div class="expire-links"><a id="expired-link" href="#">Expired</a> | <a id="expiring-link" href="#">Expiring</a></div>                    
-                    <h2>Credited Controls</h2>
-                    <table class="data-table stripped-table">
-                        <thead>
-                            <tr>
-                                <th>Select</th>
-                                <th>Name</th>
-                                <th>Description</th>
-                                <th>Group</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <c:forEach items="${ccList}" var="cc">
-                                <tr data-credited-control-id="${cc.creditedControlId}">
-                                    <td>
-                                        <form method="get" action="credited-controls">
-                                            <input type="hidden" name="creditedControlId" value="${cc.creditedControlId}"/>
-                                            <button class="single-char-button" type="submit">&rarr;</button>
-                                        </form>
-                                    </td>
-                                    <td><c:out value="${cc.name}"/></td>
-                                    <td><c:out value="${cc.description}"/></td>
-                                    <td><a data-dialog-title="${cc.group.name} Information" class="dialog-ready" href="group-information?groupId=${cc.group.workgroupId}"><c:out value="${cc.group.name}"/></a></td>
-                                </tr>
-                            </c:forEach>
-                        </tbody>
-                    </table> 
+                    Choose a Credited Control to continue
                 </c:otherwise>
             </c:choose>
         </section>
@@ -178,60 +152,6 @@
             <div class="dialog-button-panel">
                 <button class="dialog-close-button" type="button">OK</button>
             </div>
-        </div>  
-        <div id="expired-dialog" class="dialog" title="Expired Controls">
-            <c:choose>
-                <c:when test="${fn:length(expiredList) > 0}">
-                    <table class="data-table stripped-table">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Beam Destination</th>
-                                <th>Expiration Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <c:forEach items="${expiredList}" var="verification">
-                                <tr>
-                                    <td><c:out value="${verification.creditedControl.name}"/></td>                                    
-                                    <td><c:out value="${verification.beamDestination.name}"/></td>
-                                    <td><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}" value="${verification.expirationDate}"/></td>
-                                </tr>
-                            </c:forEach>
-                        </tbody>
-                    </table>                            
-                </c:when>
-                <c:otherwise>
-                    <div>No expired controls</div>
-                </c:otherwise>
-            </c:choose>
-        </div>  
-        <div id="expiring-dialog" class="dialog" title="Controls Expiring within Seven Days">
-            <c:choose>
-                <c:when test="${fn:length(expiringList) > 0}">
-                    <table class="data-table stripped-table">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Beam Destination</th>
-                                <th>Expiration Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <c:forEach items="${expiringList}" var="verification">
-                                <tr>
-                                    <td><c:out value="${verification.creditedControl.name}"/></td>                                    
-                                    <td><c:out value="${verification.beamDestination.name}"/></td>
-                                    <td><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}" value="${verification.expirationDate}"/></td>
-                                </tr>
-                            </c:forEach>
-                        </tbody>
-                    </table>                            
-                </c:when>
-                <c:otherwise>
-                    <div>No controls expiring within seven days</div>
-                </c:otherwise>
-            </c:choose>            
         </div>
         <div id="component-edit-dialog" class="dialog" title="Components">
             <div class="row">
