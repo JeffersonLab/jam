@@ -26,7 +26,7 @@
         </div>        
         <section>
             <div class="dialog-content">
-                <h3>Name</h3>
+                <h3>Credited Control</h3>
                 <c:out value="${verification.creditedControl.name}"/>
                 <h3>Beam Destination</h3>
                 <c:out value="${verification.beamDestination.name}"/>
@@ -65,7 +65,7 @@
                                 </c:forEach>
                             </tbody>
                         </table>
-                        <form id="filter-form" action="${pageContext.request.contextPath}/credited-controls/verification-history" method="get">
+                        <form id="filter-form" action="${pageContext.request.contextPath}/verifications/control/destination-history" method="get">
                             <input type="hidden" name="beamControlVerificationId" value="${fn:escapeXml(param.beamControlVerificationId)}"/>
                             <input type="hidden" id="offset-input" name="offset" value="0"/>
                         </form>

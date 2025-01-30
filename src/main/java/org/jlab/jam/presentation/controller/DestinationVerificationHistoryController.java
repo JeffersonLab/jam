@@ -25,7 +25,7 @@ import org.jlab.smoothness.presentation.util.ParamUtil;
 @WebServlet(
     name = "VerificationDestinationHistoryController",
     urlPatterns = {"/verifications/control/destination-history"})
-public class VerificationDestinationHistoryController extends HttpServlet {
+public class DestinationVerificationHistoryController extends HttpServlet {
 
   @EJB VerificationHistoryFacade historyFacade;
   @EJB BeamControlVerificationFacade verificationFacade;
@@ -43,17 +43,17 @@ public class VerificationDestinationHistoryController extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    BigInteger controlVerificationId =
-        ParamConverter.convertBigInteger(request, "controlVerificationId");
+    BigInteger beamControlVerificationId =
+        ParamConverter.convertBigInteger(request, "beamControlVerificationId");
     int offset = ParamUtil.convertAndValidateNonNegativeInt(request, "offset", 0);
     int maxPerPage = 10;
 
     BeamControlVerification verification =
-        verificationFacade.findWithCreditedControl(controlVerificationId);
+        verificationFacade.findWithCreditedControl(beamControlVerificationId);
 
     List<BeamControlVerificationHistory> historyList =
-        historyFacade.findHistory(controlVerificationId, offset, maxPerPage);
-    Long totalRecords = historyFacade.countHistory(controlVerificationId);
+        historyFacade.findHistory(beamControlVerificationId, offset, maxPerPage);
+    Long totalRecords = historyFacade.countHistory(beamControlVerificationId);
 
     Paginator paginator = new Paginator(totalRecords.intValue(), offset, maxPerPage);
 
