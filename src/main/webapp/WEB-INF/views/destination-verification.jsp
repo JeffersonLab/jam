@@ -30,10 +30,10 @@
             <div class="banner-breadbox">
                 <ul>
                     <li>
-                        <a href="verifications">Verifications</a>
+                        <a href="${pageContext.request.contextPath}/verifications">Verifications</a>
                     </li>
                     <li>
-                        <form method="get" action="destinations">
+                        <form method="get" action="destination">
                             <select name="destinationId" class="change-submit">
                                 <c:forEach items="${destinationList}" var="destination">
                                     <option value="${destination.beamDestinationId}"${param.destinationId eq destination.beamDestinationId ? ' selected="selected"' : ''}><c:out value="${destination.name}"/></option>

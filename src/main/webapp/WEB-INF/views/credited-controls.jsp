@@ -4,8 +4,9 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@taglib prefix="s" uri="http://jlab.org/jsp/smoothness" %>
 <%@taglib prefix="beamauth" uri="http://jlab.org/beamauth/functions"%>
-<%@taglib prefix="t" tagdir="/WEB-INF/tags"%> 
-<t:page title="Credited Controls"> 
+<%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
+<c:set var="title" value="Control Verification"/>
+<t:page title="${title}">
     <jsp:attribute name="stylesheets">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/css/credited-controls.css"/>
     </jsp:attribute>
@@ -17,7 +18,7 @@
             <div class="banner-breadbox">
                 <ul>
                     <li>
-                        <a href="verifications">Verifications</a>
+                        <a href="${pageContext.request.contextPath}/verifications">Verifications</a>
                     </li>
                     <li>
                         <form method="get" action="credited-controls">
@@ -32,32 +33,19 @@
             </div>
         </c:if>
         <section>
+            <h2><c:out value="${title}${empty creditedControl ? '' : ': '.concat(creditedControl.name)}"/></h2>
             <c:choose>
                 <c:when test="${creditedControl ne null}">
                     <div class="dialog-content">
-
-                        TODO: Rollup Status and Expiration go here
-
-                        <h3>Group</h3>
-                        <c:out value="${creditedControl.group.name}"/>
-                        <h3>Description</h3>
-                        <c:choose>
-                            <c:when test="${fn:length(creditedControl.description) > 0}">
-                                <c:out value="${creditedControl.description}"/>
-                            </c:when>
-                            <c:otherwise>
-                                <div class="message-box">None</div>
-                            </c:otherwise>
-                        </c:choose>
-                        <h3>Verification Frequency</h3>
-                        <c:choose>
-                            <c:when test="${fn:length(creditedControl.verificationFrequency) > 0}">
-                                <c:out value="${creditedControl.verificationFrequency}"/>
-                            </c:when>
-                            <c:otherwise>
-                                <div class="message-box">As Needed</div>
-                            </c:otherwise>
-                        </c:choose>
+                        <h3>Facility Verifications</h3>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                         <c:if test="${pageContext.request.isUserInRole('jam-admin')}">
                             <h3>Operability Notes <span class="readonly-field"><button id="operability-notes-edit-button" type="button">Edit</button></span></h3>    
                             <div class="notes-field">
@@ -81,7 +69,7 @@
                                 </span>
                             </div>
                         </c:if>
-                        <h3>Verifications</h3>
+                        <h3>Operations Verifications</h3>
                         <div class="accordion">
                             <h3>RF Operations</h3>
                             <div id="rf-content" class="content">

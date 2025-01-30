@@ -17,9 +17,9 @@ import org.jlab.smoothness.presentation.util.ParamConverter;
  * @author ryans
  */
 @WebServlet(
-    name = "Destinations",
-    urlPatterns = {"/destinations"})
-public class Destinations extends HttpServlet {
+    name = "DestinationVerification",
+    urlPatterns = {"/verifications/destination"})
+public class DestinationVerification extends HttpServlet {
 
   @EJB BeamDestinationFacade destinationFacade;
 
@@ -53,6 +53,6 @@ public class Destinations extends HttpServlet {
     request.setAttribute("adminOrLeader", adminOrLeader);
     request.setAttribute("destination", destination);
 
-    request.getRequestDispatcher("WEB-INF/views/destinations.jsp").forward(request, response);
+    request.getRequestDispatcher("/WEB-INF/views/destination-verification.jsp").forward(request, response);
   }
 }

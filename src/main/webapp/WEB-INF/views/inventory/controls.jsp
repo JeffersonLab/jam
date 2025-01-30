@@ -37,7 +37,7 @@
                             <td><c:out value="${control.name}"/></td>
                             <td><c:out value="${control.description}"/></td>
                             <td><c:out value="${control.group.name}"/></td>
-                            <td><c:out value="${control.verificationFrequency}"/></td>
+                            <td><c:out value="${empty control.verificationFrequency ? 'As Needed' : control.verificationFrequency}"/></td>
                         </tr>
                     </c:forEach>
                     </tbody>
