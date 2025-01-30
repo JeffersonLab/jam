@@ -396,14 +396,6 @@ jlab.editableRowTable.updateSelectionCount = function () {
     $("#selected-count").text(numSelected);
     return numSelected;
 };
-$(document).on("click", "#expired-link", function () {
-    $("#expired-dialog").dialog("open");
-    return false;
-});
-$(document).on("click", "#expiring-link", function () {
-    $("#expiring-dialog").dialog("open");
-    return false;
-});
 $(function () {
     /*Custom time picker*/
     var myControl = {

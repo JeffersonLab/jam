@@ -22,9 +22,9 @@ import org.jlab.smoothness.presentation.util.ParamConverter;
  * @author ryans
  */
 @WebServlet(
-    name = "CreditedControls",
-    urlPatterns = {"/credited-controls"})
-public class CreditedControls extends HttpServlet {
+    name = "ControlVerification",
+    urlPatterns = {"/verifications/control"})
+public class ControlVerification extends HttpServlet {
 
   @EJB CreditedControlFacade ccFacade;
   @EJB BeamControlVerificationFacade verificationFacade;
@@ -79,7 +79,9 @@ public class CreditedControls extends HttpServlet {
     request.setAttribute("expiredList", expiredList);
     request.setAttribute("expiringList", expiringList);
 
-    request.getRequestDispatcher("WEB-INF/views/credited-controls.jsp").forward(request, response);
+    request
+        .getRequestDispatcher("/WEB-INF/views/control-verification.jsp")
+        .forward(request, response);
   }
 
   private void removeInactiveVerifications(CreditedControl control) {

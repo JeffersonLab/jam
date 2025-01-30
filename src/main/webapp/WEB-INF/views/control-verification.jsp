@@ -8,10 +8,10 @@
 <c:set var="title" value="Control Verification"/>
 <t:page title="${title}">
     <jsp:attribute name="stylesheets">
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/css/credited-controls.css"/>
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/css/control-verification.css"/>
     </jsp:attribute>
     <jsp:attribute name="scripts">          
-        <script type="text/javascript" src="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/js/credited-controls.js"></script>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/js/control-verification.js"></script>
     </jsp:attribute>        
     <jsp:body>
         <c:if test="${creditedControl ne null}">
@@ -21,7 +21,7 @@
                         <a href="${pageContext.request.contextPath}/verifications">Verifications</a>
                     </li>
                     <li>
-                        <form method="get" action="credited-controls">
+                        <form method="get" action="control">
                             <select name="creditedControlId" class="change-submit">
                                 <c:forEach items="${ccList}" var="cc">
                                     <option value="${cc.creditedControlId}"${param.creditedControlId eq cc.creditedControlId ? ' selected="selected"' : ''}><c:out value="${cc.name}"/></option>

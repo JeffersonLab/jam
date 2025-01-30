@@ -53,6 +53,8 @@ public class DestinationVerification extends HttpServlet {
     request.setAttribute("adminOrLeader", adminOrLeader);
     request.setAttribute("destination", destination);
 
-    request.getRequestDispatcher("/WEB-INF/views/destination-verification.jsp").forward(request, response);
+    request
+        .getRequestDispatcher("/WEB-INF/views/destination-verification.jsp")
+        .forward(request, response);
   }
 }

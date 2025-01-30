@@ -4,68 +4,107 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@taglib prefix="s" uri="http://jlab.org/jsp/smoothness" %>
 <%@taglib prefix="beamauth" uri="http://jlab.org/beamauth/functions"%>
-<%@taglib prefix="t" tagdir="/WEB-INF/tags"%> 
-<t:page title="Verifications">
+<%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
+<c:set var="title" value="Verifications"/>
+<t:page title="${title}">
     <jsp:attribute name="stylesheets">
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/css/credited-controls.css"/>
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/css/verifications.css"/>
     </jsp:attribute>
     <jsp:attribute name="scripts">          
-        <script type="text/javascript" src="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/js/credited-controls.js"></script>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/js/verifications.js"></script>
     </jsp:attribute>        
     <jsp:body>
         <section>
         <div class="expire-links"><a id="expired-link" href="#">Expired</a> | <a id="expiring-link" href="#">Expiring</a></div>
-        <form method="get" action="credited-controls">
-            <ul class="key-value-list">
-                <li>
-                    <div class="li-key">
-                        <label for="control-select">By Credited Control</label>
-                    </div>
-                    <div class="li-value">
-                        <select id="control-select" name="creditedControlId" class="change-submit">
-                            <option value=""></option>
-                            <c:forEach items="${ccList}" var="cc">
-                                <option value="${cc.creditedControlId}"${param.creditedControlId eq cc.creditedControlId ? ' selected="selected"' : ''}><c:out value="${cc.name}"/></option>
-                            </c:forEach>
-                        </select>
-                    </div>
-                </li>
-            </ul>
-        </form>
-        <form>
-            <ul class="key-value-list">
-                <li>
-                    <div class="li-key">
-                        <label>By RF Segment</label>
-                    </div>
-                    <div class="li-value">
-                        <select name="segmentId" class="change-submit">
-                            <option value=""></option>
-                        </select>
-                    </div>
-                </li>
-            </ul>
-        </form>
-        <form method="get" action="destinations">
-            <ul class="key-value-list">
-                <li>
-                    <div class="li-key">
-                        <label for="destination-select">By Beam Destination</label>
-                    </div>
-                    <div class="li-value">
-                        <select id="destination-select" name="destinationId" class="change-submit">
-                            <option value=""></option>
-                            <c:forEach items="${destinationList}" var="destination">
-                                <option value="${destination.beamDestinationId}"${param.destinationId eq destination.beamDestinationId ? ' selected="selected"' : ''}><c:out value="${destination.name}"/></option>
-                            </c:forEach>
-                        </select>
-                    </div>
-                </li>
-            </ul>
-        </form>
-
-        TODO: Replace selects with three tables of rollup status and expiration with link to details
-
+        <s:filter-flyout-widget ribbon="true" clearButton="true">
+            <form id="filter-form" method="get" action="verifications">
+                <div id="filter-form-panel">
+                    <fieldset>
+                        <legend>Filter</legend>
+                        <ul class="key-value-list">
+                            <li>
+                                <div class="li-key">
+                                    <label for="facility-select">Facility</label>
+                                </div>
+                                <div class="li-value">
+                                    <select id="facility-select" name="facilityId">
+                                        <option value="">&nbsp;</option>
+                                        <c:forEach items="${facilityList}" var="facility">
+                                            <option value="${facility.facilityId}"${param.facilityId eq facility.facilityId ? ' selected="selected"' : ''}>
+                                                <c:out value="${facility.name}"/></option>
+                                        </c:forEach>
+                                    </select>
+                                </div>
+                            </li>
+                        </ul>
+                    </fieldset>
+                </div>
+                <input id="filter-form-submit-button" type="submit" value="Apply"/>
+            </form>
+        </s:filter-flyout-widget>
+        <h2 id="page-header-title"><c:out value="${title}"/></h2>
+        <div class="message-box"><c:out value="${selectionMessage}"/></div>
+        <h3>Credited Controls</h3>
+        <table class="data-table">
+            <tbody>
+            <c:forEach items="${ccList}" var="cc">
+                <tr>
+                    <td><c:out value="${cc.name}"/></td>
+                    <td>
+                        <form method="get" action="${pageContext.request.contextPath}/verifications/control">
+                            <input type="hidden" name="creditedControlId" value="${cc.creditedControlId}"/>
+                            <button class="single-char-button" type="submit">&rarr;</button>
+                        </form>
+                    </td>
+                </tr>
+            </c:forEach>
+            </tbody>
+        </table>
+        <h3>RF Segments</h3>
+        <table class="data-table">
+            <tbody>
+            <c:forEach items="${segmentList}" var="segment">
+                <tr>
+                    <td><c:out value="${segment.name}"/></td>
+                    <td>
+                        <form method="get" action="${pageContext.request.contextPath}/verifications/segment">
+                            <input type="hidden" name="rfSegmentId" value="${segment.rfSegmentId}"/>
+                            <button class="single-char-button" type="submit">&rarr;</button>
+                        </form>
+                    </td>
+                </tr>
+            </c:forEach>
+            </tbody>
+        </table>
+        <h3>Beam Destinations</h3>
+        <table class="data-table">
+            <tbody>
+            <c:forEach items="${destinationList}" var="destination">
+                <tr>
+                    <td>
+                        <c:choose>
+                            <c:when test="${destination.verification.verificationStatusId eq 1}">
+                                <span title="Verified" class="small-icon baseline-small-icon verified-icon"></span>
+                            </c:when>
+                            <c:when test="${destination.verification.verificationStatusId eq 50}">
+                                <span title="Verified" class="small-icon baseline-small-icon provisional-icon"></span>
+                            </c:when>
+                            <c:otherwise>
+                                <span title="Not Verified" class="small-icon baseline-small-icon not-verified-icon"></span>
+                            </c:otherwise>
+                        </c:choose>
+                        <c:out value="${destination.name}"/>
+                    </td>
+                    <td>
+                        <form method="get" action="${pageContext.request.contextPath}/verifications/destination">
+                            <input type="hidden" name="destinationId" value="${destination.beamDestinationId}"/>
+                            <button class="single-char-button" type="submit">&rarr;</button>
+                        </form>
+                    </td>
+                </tr>
+            </c:forEach>
+            </tbody>
+        </table>
         <div id="expired-dialog" class="dialog" title="Expired Controls">
             <c:choose>
                 <c:when test="${fn:length(expiredList) > 0}">

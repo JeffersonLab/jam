@@ -10,9 +10,6 @@
     overflow: auto;
     padding: 0.1em;
 }
-.expire-links {
-    float: right;
-}
 .small-icon.comment-icon {
     background: rgba(0, 0, 0, 0) url("../img/comment.png") repeat scroll 0 0;
 }
