@@ -11,10 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jlab.jam.business.session.*;
 import org.jlab.jam.business.session.AbstractFacade.OrderDirective;
-import org.jlab.jam.persistence.entity.BeamControlVerification;
-import org.jlab.jam.persistence.entity.BeamDestination;
-import org.jlab.jam.persistence.entity.CreditedControl;
-import org.jlab.jam.persistence.entity.Facility;
+import org.jlab.jam.persistence.entity.*;
 import org.jlab.smoothness.presentation.util.ParamConverter;
 
 /**
@@ -27,6 +24,7 @@ public class VerificationsController extends HttpServlet {
 
   @EJB CreditedControlFacade ccFacade;
   @EJB BeamControlVerificationFacade verificationFacade;
+  @EJB RFSegmentFacade segmentFacade;
   @EJB BeamDestinationFacade destinationFacade;
   @EJB FacilityFacade facilityFacade;
 
@@ -63,6 +61,7 @@ public class VerificationsController extends HttpServlet {
 
     List<CreditedControl> ccList = ccFacade.findAll(new OrderDirective("weight"));
 
+    List<RFSegment> segmentList = segmentFacade.filterList(true, facility);
     List<BeamDestination> destinationList = destinationFacade.findActiveDestinations();
 
     List<Facility> facilityList = facilityFacade.findAll(new OrderDirective("weight"));
@@ -76,6 +75,7 @@ public class VerificationsController extends HttpServlet {
     request.setAttribute("facility", facility);
     request.setAttribute("selectionMessage", selectionMessage);
     request.setAttribute("facilityList", facilityList);
+    request.setAttribute("segmentList", segmentList);
     request.setAttribute("destinationList", destinationList);
     request.setAttribute("adminOrLeader", adminOrLeader);
     request.setAttribute("ccList", ccList);

@@ -51,17 +51,17 @@
                     <div class="dialog-content">
                         <h3>
                             <c:choose>
-                                <c:when test="${beamDestination.verification.verificationStatusId eq 1}">
+                                <c:when test="${destination.verification.verificationStatusId eq 1}">
                                     <span title="Verified" class="small-icon baseline-small-icon verified-icon"></span>
                                 </c:when>
-                                <c:when test="${beamDestination.verification.verificationStatusId eq 50}">
+                                <c:when test="${destination.verification.verificationStatusId eq 50}">
                                     <span title="Verified" class="small-icon baseline-small-icon provisional-icon"></span>
                                 </c:when>
                                 <c:otherwise>
                                     <span title="Not Verified" class="small-icon baseline-small-icon not-verified-icon"></span>
                                 </c:otherwise>
                             </c:choose>
-                            <c:out value="${beamDestination.name}"/> Credited Control Verifications
+                            Credited Control Verifications
                         </h3>
                         <c:choose>
                             <c:when test="${fn:length(destination.beamControlVerificationList) < 1}">
@@ -120,28 +120,7 @@
                     </div>
                 </c:when>
                 <c:otherwise>                   
-                    <h2>Beam Destinations</h2>
-                    <table class="data-table stripped-table">
-                        <thead>
-                            <tr>
-                                <th>Select</th>
-                                <th>Name</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <c:forEach items="${destinationList}" var="destination">
-                                <tr data-destination-id="${destination.beamDestinationId}">
-                                    <td>
-                                        <form method="get" action="destinations">
-                                            <input type="hidden" name="destinationId" value="${destination.beamDestinationId}"/>
-                                            <button class="single-char-button" type="submit">&rarr;</button>
-                                        </form>
-                                    </td>
-                                    <td><c:out value="${destination.name}"/></td>
-                                </tr>
-                            </c:forEach>
-                        </tbody>
-                    </table>                              
+                    Choose a Beam Destination to continue
                 </c:otherwise>
             </c:choose>
             <div id="verify-dialog" class="dialog" title="Edit Credited Control Verification">

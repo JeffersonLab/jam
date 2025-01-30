@@ -29,25 +29,35 @@ public class RFSegmentFacade extends AbstractFacade<RFSegment> {
   }
 
   @PermitAll
-  public List<RFSegment> findByFacility(Facility facility) {
+  public List<RFSegment> filterList(Boolean active, Facility facility) {
     CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
     CriteriaQuery<RFSegment> cq = cb.createQuery(RFSegment.class);
     Root<RFSegment> root = cq.from(RFSegment.class);
 
     List<Predicate> filters = new ArrayList<>();
 
-    filters.add(cb.equal(root.get("facility"), facility));
+    if (facility != null) {
+      filters.add(cb.equal(root.get("facility"), facility));
+    }
 
-    filters.add(cb.equal(root.get("active"), true));
+    if (active != null) {
+      filters.add(cb.equal(root.get("active"), active));
+    }
 
     if (!filters.isEmpty()) {
       cq.where(cb.and(filters.toArray(new Predicate[] {})));
     }
 
     List<Order> orders = new ArrayList<>();
+
+    Path p1 = root.get("facility");
+    Order o1 = cb.asc(p1);
+    orders.add(o1);
+
     Path p0 = root.get("weight");
     Order o0 = cb.asc(p0);
     orders.add(o0);
+
     cq.orderBy(orders);
 
     cq.select(root);

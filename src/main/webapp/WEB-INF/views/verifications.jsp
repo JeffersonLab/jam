@@ -65,10 +65,24 @@
             <tbody>
             <c:forEach items="${segmentList}" var="segment">
                 <tr>
-                    <td><c:out value="${segment.name}"/></td>
+                    <td>
+                        <c:choose>
+                            <c:when test="${segment.verification.verificationStatusId eq 1}">
+                                <span title="Verified" class="small-icon baseline-small-icon verified-icon"></span>
+                            </c:when>
+                            <c:when test="${segment.verification.verificationStatusId eq 50}">
+                                <span title="Verified" class="small-icon baseline-small-icon provisional-icon"></span>
+                            </c:when>
+                            <c:otherwise>
+                                <span title="Not Verified" class="small-icon baseline-small-icon not-verified-icon"></span>
+                            </c:otherwise>
+                        </c:choose>
+                        <c:out value="${segment.name}"/>
+                    </td>
+                    <td><c:out value="${segment.facility.name}"/></td>
                     <td>
                         <form method="get" action="${pageContext.request.contextPath}/verifications/segment">
-                            <input type="hidden" name="rfSegmentId" value="${segment.rfSegmentId}"/>
+                            <input type="hidden" name="rfSegmentId" value="${segment.getRFSegmentId()}"/>
                             <button class="single-char-button" type="submit">&rarr;</button>
                         </form>
                     </td>
@@ -95,6 +109,7 @@
                         </c:choose>
                         <c:out value="${destination.name}"/>
                     </td>
+                    <td><c:out value="${destination.facility.name}"/></td>
                     <td>
                         <form method="get" action="${pageContext.request.contextPath}/verifications/destination">
                             <input type="hidden" name="destinationId" value="${destination.beamDestinationId}"/>

@@ -31,7 +31,7 @@
             <c:set var="beamDestinationAuthorization" value="${destinationAuthorizationMap[destination.beamDestinationId]}"/>
             <c:set var="units" value="${unitsMap[destination.beamDestinationId] ne null ? unitsMap[destination.beamDestinationId] : 'uA'}"/>
             <tr>
-                <td><a data-dialog-title="${destination.name} Information" class="dialog-ready" href="${pageContext.request.contextPath}/beam-destination-information?beamDestinationId=${destination.beamDestinationId}"><c:out value="${destination.name}"/></a></td>
+                <td><a data-dialog-title="${destination.name} Verification" class="dialog-ready" href="${pageContext.request.contextPath}/verifications/destination?destinationId=${destination.beamDestinationId}&notEditable=Y"><c:out value="${destination.name}"/></a></td>
                     <c:if test="${not isHistory}">
                     <td class="icon-cell">
                         <c:choose>
@@ -101,20 +101,18 @@
                 </td>
                 <c:if test="${not isHistory}">
                     <td class="icon-cell">
-                        <a data-dialog-title="${destination.name} Information" class="dialog-ready" href="${pageContext.request.contextPath}/beam-destination-information?beamDestinationId=${destination.beamDestinationId}">
-                            <c:choose>
-                                <c:when test="${destination.verification.verificationStatusId eq 1}">
-                                    <span title="Verified" class="small-icon verified-icon"></span>
-                                </c:when>
-                                <c:when test="${destination.verification.verificationStatusId eq 50}">
-                                    <span title="Provisionally Verified" class="small-icon provisional-icon"></span>
-                                </c:when>
-                                <c:otherwise>
-                                    <span title="Not Verified" class="small-icon not-verified-icon"></span>
-                                </c:otherwise>
-                            </c:choose>
-                            <span class="expiring-soon" style="<c:out value="${destination.verification.expirationDate ne null and destination.verification.expirationDate.time > beamauth:now().time and destination.verification.expirationDate.time < beamauth:twoDaysFromNow().time ? 'display: block;' : 'display: none;'}"/>">(Expiring Soon)</span>                                    
-                        </a>
+                        <c:choose>
+                            <c:when test="${destination.verification.verificationStatusId eq 1}">
+                                <span title="Verified" class="small-icon verified-icon"></span>
+                            </c:when>
+                            <c:when test="${destination.verification.verificationStatusId eq 50}">
+                                <span title="Provisionally Verified" class="small-icon provisional-icon"></span>
+                            </c:when>
+                            <c:otherwise>
+                                <span title="Not Verified" class="small-icon not-verified-icon"></span>
+                            </c:otherwise>
+                        </c:choose>
+                        <span class="expiring-soon" style="<c:out value="${destination.verification.expirationDate ne null and destination.verification.expirationDate.time > beamauth:now().time and destination.verification.expirationDate.time < beamauth:twoDaysFromNow().time ? 'display: block;' : 'display: none;'}"/>">(Expiring Soon)</span>
                     </td>
                 </c:if>
             </tr>
