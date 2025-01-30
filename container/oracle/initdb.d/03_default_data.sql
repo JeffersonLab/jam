@@ -52,8 +52,8 @@ insert into JAM_OWNER.rf_segment (RF_SEGMENT_ID, NAME, FACILITY_ID, ACTIVE_YN, W
 
 -- Populate Beam Destinations
 insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, '1D Spectrometer (IDL1D00)', 1, 'uA', 'Y', 1);
-insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, 'Faraday Cup #2 (IFY0L03', 1, 'uA', 'Y', 2);
-insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, 'Inline Dump (SDL0R08', 1, 'uA', 'Y', 3);
+insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, 'Faraday Cup #2 (IFY0L03)', 1, 'uA', 'Y', 2);
+insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, 'Inline Dump (SDL0R08)', 1, 'uA', 'Y', 3);
 insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, 'BSY', 1, 'uA', 'Y', 4);
 insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, 'Hall A', 1, 'uA', 'Y', 5);
 insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, 'Hall B', 1, 'uA', 'Y', 6);

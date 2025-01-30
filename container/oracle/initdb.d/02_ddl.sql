@@ -265,6 +265,30 @@ CREATE TABLE JAM_OWNER.BEAM_CONTROL_VERIFICATION_HISTORY
     CONSTRAINT BEAM_CONTROL_VERIFICATION_HISTORY_FK3 FOREIGN KEY (VERIFICATION_STATUS_ID) REFERENCES JAM_OWNER.VERIFICATION_STATUS (VERIFICATION_STATUS_ID) ON DELETE SET NULL
 );
 
+CREATE OR REPLACE FORCE VIEW JAM_OWNER.FACILITY_CONTROL_VERIFICATION (FACILITY_ID, CREDITED_CONTROL_ID, VERIFICATION_STATUS_ID, EXPIRATION_DATE) AS
+with segment_verification as (
+   select facility_id, credited_control_id, rf_segment_id, verification_status_id, expiration_date from JAM_OWNER.RF_SEGMENT join RF_CONTROL_VERIFICATION using(RF_SEGMENT_ID)
+),
+destination_verification as (
+    select facility_id, credited_control_id, beam_destination_id, verification_status_id, expiration_date from JAM_OWNER.BEAM_DESTINATION join BEAM_CONTROL_VERIFICATION using(BEAM_DESTINATION_ID)
+),
+operations_verification as (
+    select facility_id, credited_control_id, verification_status_id, expiration_date from segment_verification
+    union all
+    select facility_id, credited_control_id, verification_status_id, expiration_date from destination_verification
+)
+    SELECT facility_id,
+           credited_control_id,
+           NVL(MAX(verification_status_id), 1) AS VERIFICATION_STATUS_ID,
+           MIN(expiration_date) AS EXPIRATION_DATE
+FROM JAM_OWNER.FACILITY join operations_verification using (facility_id) group by facility_id, credited_control_id;
+
+CREATE OR REPLACE FORCE VIEW JAM_OWNER.RF_SEGMENT_VERIFICATION (RF_SEGMENT_ID, VERIFICATION_STATUS_ID, EXPIRATION_DATE) AS
+SELECT a.rf_segment_id,
+       NVL((SELECT MAX(VERIFICATION_STATUS_ID) FROM JAM_OWNER.RF_CONTROL_VERIFICATION b WHERE a.rf_segment_id = b.rf_segment_id), 1) AS VERIFICATION_STATUS_ID,
+       (SELECT MIN(EXPIRATION_DATE) FROM JAM_OWNER.RF_CONTROL_VERIFICATION b WHERE a.rf_segment_id = b.rf_segment_id) as EXPIRATION_DATE
+FROM JAM_OWNER.RF_SEGMENT a;
+
 CREATE OR REPLACE FORCE VIEW JAM_OWNER.BEAM_DESTINATION_VERIFICATION (BEAM_DESTINATION_ID, VERIFICATION_STATUS_ID, EXPIRATION_DATE) AS
 SELECT a.beam_destination_id,
        NVL((SELECT MAX(VERIFICATION_STATUS_ID) FROM JAM_OWNER.BEAM_CONTROL_VERIFICATION b WHERE a.beam_destination_id = b.beam_destination_id), 1) AS VERIFICATION_STATUS_ID,

@@ -6,6 +6,7 @@ import java.util.Objects;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.jlab.jam.persistence.view.RFSegmentVerification;
 import org.jlab.smoothness.persistence.util.YnStringToBoolean;
 
 @Entity
@@ -28,7 +29,7 @@ public class RFSegment {
 
   @OneToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "RF_SEGMENT_ID")
-  private RFControlVerification verification;
+  private RFSegmentVerification verification;
 
   @Size(max = 128)
   @Column(length = 128)
@@ -59,7 +60,7 @@ public class RFSegment {
     this.weight = weight;
   }
 
-  public RFControlVerification getVerification() {
+  public RFSegmentVerification getVerification() {
     return verification;
   }
 

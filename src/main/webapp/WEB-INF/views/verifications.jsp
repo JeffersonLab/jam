@@ -32,6 +32,20 @@
                 </li>
             </ul>
         </form>
+        <form>
+            <ul class="key-value-list">
+                <li>
+                    <div class="li-key">
+                        <label>By RF Segment</label>
+                    </div>
+                    <div class="li-value">
+                        <select name="segmentId" class="change-submit">
+                            <option value=""></option>
+                        </select>
+                    </div>
+                </li>
+            </ul>
+        </form>
         <form method="get" action="destinations">
             <ul class="key-value-list">
                 <li>
@@ -49,6 +63,9 @@
                 </li>
             </ul>
         </form>
+
+        TODO: Replace selects with three tables of rollup status and expiration with link to details
+
         <div id="expired-dialog" class="dialog" title="Expired Controls">
             <c:choose>
                 <c:when test="${fn:length(expiredList) > 0}">

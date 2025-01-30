@@ -4,8 +4,9 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@taglib prefix="s" uri="http://jlab.org/jsp/smoothness" %>
 <%@taglib prefix="beamauth" uri="http://jlab.org/beamauth/functions"%>
-<%@taglib prefix="t" tagdir="/WEB-INF/tags"%> 
-<t:page title="Destinations"> 
+<%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
+<c:set var="title" value="Destination Verification"/>
+<t:page title="${title}">
     <jsp:attribute name="stylesheets">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/css/credited-controls.css"/>
         <style type="text/css">
@@ -44,10 +45,24 @@
             </div>
         </c:if>
         <section>
+            <h2><c:out value="${title}${empty destination ? '' : ': '.concat(destination.name)}"/></h2>
             <c:choose>
                 <c:when test="${destination ne null}">
                     <div class="dialog-content">
-                        <h3>Verifications</h3>
+                        <h3>
+                            <c:choose>
+                                <c:when test="${beamDestination.verification.verificationStatusId eq 1}">
+                                    <span title="Verified" class="small-icon baseline-small-icon verified-icon"></span>
+                                </c:when>
+                                <c:when test="${beamDestination.verification.verificationStatusId eq 50}">
+                                    <span title="Verified" class="small-icon baseline-small-icon provisional-icon"></span>
+                                </c:when>
+                                <c:otherwise>
+                                    <span title="Not Verified" class="small-icon baseline-small-icon not-verified-icon"></span>
+                                </c:otherwise>
+                            </c:choose>
+                            <c:out value="${beamDestination.name}"/> Credited Control Verifications
+                        </h3>
                         <c:choose>
                             <c:when test="${fn:length(destination.beamControlVerificationList) < 1}">
                                 <div class="message-box">None</div>

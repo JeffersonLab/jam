@@ -35,6 +35,9 @@
             <c:choose>
                 <c:when test="${creditedControl ne null}">
                     <div class="dialog-content">
+
+                        TODO: Rollup Status and Expiration go here
+
                         <h3>Group</h3>
                         <c:out value="${creditedControl.group.name}"/>
                         <h3>Description</h3>
