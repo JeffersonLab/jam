@@ -66,6 +66,8 @@
                                         </c:otherwise>
                                     </c:choose>
                                     <c:out value="${fv.getFacilityControlVerificationPK().facility.name}"/>
+                                    <fmt:formatDate value="${fv.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
+                                    <span class="expiring-soon" style="<c:out value="${fv.expirationDate ne null and fv.expirationDate.time > beamauth:now().time and fv.expirationDate.time < beamauth:twoDaysFromNow().time ? 'display: inline-block;' : 'display: none;'}"/>">(Expiring Soon)</span>
                                 </li>
                             </c:forEach>
                         </ul>
@@ -101,6 +103,10 @@
                     </td>
                     <td><c:out value="${segment.facility.name}"/></td>
                     <td>
+                        <fmt:formatDate value="${segment.verification.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
+                        <span class="expiring-soon" style="<c:out value="${segment.verification.expirationDate ne null and segment.verification.expirationDate.time > beamauth:now().time and segment.verification.expirationDate.time < beamauth:twoDaysFromNow().time ? 'display: block;' : 'display: none;'}"/>">(Expiring Soon)</span>
+                    </td>
+                    <td>
                         <form method="get" action="${pageContext.request.contextPath}/verifications/segment">
                             <input type="hidden" name="segmentId" value="${segment.getRFSegmentId()}"/>
                             <button class="single-char-button" type="submit">&rarr;</button>
@@ -128,6 +134,10 @@
                             </c:otherwise>
                         </c:choose>
                         <c:out value="${destination.name}"/>
+                    </td>
+                    <td>
+                        <fmt:formatDate value="${destination.verification.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
+                        <span class="expiring-soon" style="<c:out value="${destination.verification.expirationDate ne null and destination.verification.expirationDate.time > beamauth:now().time and destination.verification.expirationDate.time < beamauth:twoDaysFromNow().time ? 'display: block;' : 'display: none;'}"/>">(Expiring Soon)</span>
                     </td>
                     <td><c:out value="${destination.facility.name}"/></td>
                     <td>
