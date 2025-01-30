@@ -1,6 +1,8 @@
 package org.jlab.jam.presentation.controller.inventory;
 
 import java.io.IOException;
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
@@ -11,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.jlab.jam.business.session.AbstractFacade;
 import org.jlab.jam.business.session.CreditedControlFacade;
 import org.jlab.jam.persistence.entity.CreditedControl;
+import org.jlab.smoothness.presentation.util.ParamConverter;
 
 /**
  * @author ryans
@@ -34,8 +37,21 @@ public class ControlsController extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    List<CreditedControl> controlList =
-        controlFacade.findAll(new AbstractFacade.OrderDirective("weight"));
+    BigInteger controlId = ParamConverter.convertBigInteger(request, "controlId");
+
+    List<CreditedControl> controlList = null;
+
+    if (controlId != null) {
+      controlList = new ArrayList<CreditedControl>();
+
+      CreditedControl control = controlFacade.find(controlId);
+
+      if (control != null) {
+        controlList.add(control);
+      }
+    } else {
+      controlList = controlFacade.findAll(new AbstractFacade.OrderDirective("weight"));
+    }
 
     request.setAttribute("controlList", controlList);
 

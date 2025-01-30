@@ -23,9 +23,9 @@ import org.jlab.smoothness.presentation.util.ParamUtil;
  * @author ryans
  */
 @WebServlet(
-    name = "VerificationHistoryController",
-    urlPatterns = {"/credited-controls/verification-history"})
-public class VerificationHistoryController extends HttpServlet {
+    name = "VerificationDestinationHistoryController",
+    urlPatterns = {"/verifications/control/destination-history"})
+public class VerificationDestinationHistoryController extends HttpServlet {
 
   @EJB VerificationHistoryFacade historyFacade;
   @EJB BeamControlVerificationFacade verificationFacade;
@@ -82,7 +82,7 @@ public class VerificationHistoryController extends HttpServlet {
     request.setAttribute("paginator", paginator);
 
     request
-        .getRequestDispatcher("/WEB-INF/views/credited-controls/verification-history.jsp")
+        .getRequestDispatcher("/WEB-INF/views/verification-history/destination-history.jsp")
         .forward(request, response);
   }
 }

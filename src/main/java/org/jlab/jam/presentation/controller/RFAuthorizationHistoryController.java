@@ -66,7 +66,7 @@ public class RFAuthorizationHistoryController extends HttpServlet {
     request.setAttribute("paginator", paginator);
 
     request
-        .getRequestDispatcher("/WEB-INF/views/history/rf-history.jsp")
+        .getRequestDispatcher("/WEB-INF/views/authorization-history/rf-history.jsp")
         .forward(request, response);
   }
 }

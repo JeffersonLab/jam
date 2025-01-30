@@ -66,7 +66,7 @@ public class BeamAuthorizationHistoryController extends HttpServlet {
     request.setAttribute("paginator", paginator);
 
     request
-        .getRequestDispatcher("/WEB-INF/views/history/beam-history.jsp")
+        .getRequestDispatcher("/WEB-INF/views/authorization-history/beam-history.jsp")
         .forward(request, response);
   }
 }

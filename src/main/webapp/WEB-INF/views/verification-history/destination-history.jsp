@@ -14,10 +14,10 @@
         <div class="banner-breadbox">
             <ul>
                 <li>
-                    <a href="${pageContext.request.contextPath}/credited-controls">Credited Controls</a>
+                    <a href="${pageContext.request.contextPath}/verifications">Verifications</a>
                 </li>
                 <li>
-                    <a href="${pageContext.request.contextPath}/credited-controls?creditedControlId=${verification.creditedControl.creditedControlId}">${verification.creditedControl.name}</a>
+                    <a href="${pageContext.request.contextPath}/verifications/control?creditedControlId=${verification.creditedControl.creditedControlId}">${verification.creditedControl.name}</a>
                 </li>
                 <li>
                     <c:out value="${verification.beamDestination.name}"/> <span>History</span>

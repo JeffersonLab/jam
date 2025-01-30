@@ -60,7 +60,7 @@ public class SegmentsAuthorizationHistoryController extends HttpServlet {
     request.setAttribute("segmentAuthorizationMap", segmentAuthorizationMap);
 
     request
-        .getRequestDispatcher("/WEB-INF/views/history/segments-history.jsp")
+        .getRequestDispatcher("/WEB-INF/views/authorization-history/segments-history.jsp")
         .forward(request, response);
   }
 }

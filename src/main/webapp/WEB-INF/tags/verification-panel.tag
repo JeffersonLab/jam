@@ -74,7 +74,7 @@
                 </td>
                 <td><c:out value="${verification.comments}"/></td>
                 <td><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}" value="${verification.expirationDate}"/></td>
-                <td><a data-dialog-title="Verification History" href="credited-controls/verification-history?beamControlVerificationId=${verification[operationsId]}" title="Click for verification history">History</a></td>
+                <td><a data-dialog-title="Verification History" href="${pageContext.request.contextPath}/verifications/control/destination-history?beamControlVerificationId=${verification[operationsId]}" title="Click for verification history">History</a></td>
             </tr>
         </c:forEach>
         </tbody>

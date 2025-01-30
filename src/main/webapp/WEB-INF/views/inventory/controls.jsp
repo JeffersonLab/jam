@@ -20,26 +20,32 @@
                     <s:editable-row-table-controls>
                     </s:editable-row-table-controls>
                 </c:if>
-                <table class="data-table stripped-table ${readonly ? '' : 'uniselect-table editable-row-table'}">
-                    <thead>
+                <div class="dialog-content">
+                    <table class="data-table stripped-table ${readonly ? '' : 'uniselect-table editable-row-table'}">
+                        <thead>
                         <tr>
-                            <th>Name</th>
+                            <c:if test="${empty param.controlId}">
+                                <th>Name</th>
+                            </c:if>
                             <th>Description</th>
                             <th>Verification Team</th>
                             <th>Verification Frequency</th>
                         </tr>
-                    </thead>
-                    <tbody>
-                    <c:forEach items="${controlList}" var="control">
-                        <tr data-id="${control.creditedControlId}">
-                            <td><c:out value="${control.name}"/></td>
-                            <td><c:out value="${control.description}"/></td>
-                            <td><c:out value="${control.group.name}"/></td>
-                            <td><c:out value="${empty control.verificationFrequency ? 'As Needed' : control.verificationFrequency}"/></td>
-                        </tr>
-                    </c:forEach>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                        <c:forEach items="${controlList}" var="control">
+                            <tr data-id="${control.creditedControlId}">
+                                <c:if test="${empty param.controlId}">
+                                <td><c:out value="${control.name}"/></td>
+                                </c:if>
+                                <td><c:out value="${control.description}"/></td>
+                                <td><c:out value="${control.group.name}"/></td>
+                                <td><c:out value="${empty control.verificationFrequency ? 'As Needed' : control.verificationFrequency}"/></td>
+                            </tr>
+                        </c:forEach>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </section>
         <s:editable-row-table-dialog>

@@ -45,10 +45,10 @@ insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,WOR
 insert into JAM_OWNER.rf_segment (RF_SEGMENT_ID, NAME, FACILITY_ID, ACTIVE_YN, WEIGHT) values(JAM_OWNER.rf_segment_id.nextval, 'Injector', 1, 'Y', 1);
 insert into JAM_OWNER.rf_segment (RF_SEGMENT_ID, NAME, FACILITY_ID, ACTIVE_YN, WEIGHT) values(JAM_OWNER.rf_segment_id.nextval, 'North Linac', 1, 'Y', 2);
 insert into JAM_OWNER.rf_segment (RF_SEGMENT_ID, NAME, FACILITY_ID, ACTIVE_YN, WEIGHT) values(JAM_OWNER.rf_segment_id.nextval, 'South Linac', 1, 'Y', 3);
-insert into JAM_OWNER.rf_segment (RF_SEGMENT_ID, NAME, FACILITY_ID, ACTIVE_YN, WEIGHT) values(JAM_OWNER.rf_segment_id.nextval, 'Entire Facility', 2, 'Y', 1);
-insert into JAM_OWNER.rf_segment (RF_SEGMENT_ID, NAME, FACILITY_ID, ACTIVE_YN, WEIGHT) values(JAM_OWNER.rf_segment_id.nextval, 'Entire Facility', 3, 'Y', 1);
-insert into JAM_OWNER.rf_segment (RF_SEGMENT_ID, NAME, FACILITY_ID, ACTIVE_YN, WEIGHT) values(JAM_OWNER.rf_segment_id.nextval, 'Entire Facility', 4, 'Y', 1);
-insert into JAM_OWNER.rf_segment (RF_SEGMENT_ID, NAME, FACILITY_ID, ACTIVE_YN, WEIGHT) values(JAM_OWNER.rf_segment_id.nextval, 'Entire Facility', 5, 'Y', 1);
+insert into JAM_OWNER.rf_segment (RF_SEGMENT_ID, NAME, FACILITY_ID, ACTIVE_YN, WEIGHT) values(JAM_OWNER.rf_segment_id.nextval, 'Entire Facility', 2, 'Y', 4);
+insert into JAM_OWNER.rf_segment (RF_SEGMENT_ID, NAME, FACILITY_ID, ACTIVE_YN, WEIGHT) values(JAM_OWNER.rf_segment_id.nextval, 'Entire Facility', 3, 'Y', 5);
+insert into JAM_OWNER.rf_segment (RF_SEGMENT_ID, NAME, FACILITY_ID, ACTIVE_YN, WEIGHT) values(JAM_OWNER.rf_segment_id.nextval, 'Entire Facility', 4, 'Y', 6);
+insert into JAM_OWNER.rf_segment (RF_SEGMENT_ID, NAME, FACILITY_ID, ACTIVE_YN, WEIGHT) values(JAM_OWNER.rf_segment_id.nextval, 'Entire Facility', 5, 'Y', 7);
 
 -- Populate Beam Destinations
 insert into JAM_OWNER.beam_destination (BEAM_DESTINATION_ID, NAME, FACILITY_ID, CURRENT_LIMIT_UNITS, ACTIVE_YN, WEIGHT) values(JAM_OWNER.beam_destination_id.nextval, '1D Spectrometer (IDL1D00)', 1, 'uA', 'Y', 1);
