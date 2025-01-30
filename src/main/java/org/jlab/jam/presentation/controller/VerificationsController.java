@@ -62,7 +62,7 @@ public class VerificationsController extends HttpServlet {
     List<CreditedControl> ccList = ccFacade.findAll(new OrderDirective("weight"));
 
     List<RFSegment> segmentList = segmentFacade.filterList(true, facility);
-    List<BeamDestination> destinationList = destinationFacade.findActiveDestinations();
+    List<BeamDestination> destinationList = destinationFacade.filterList(true, facility);
 
     List<Facility> facilityList = facilityFacade.findAll(new OrderDirective("weight"));
 

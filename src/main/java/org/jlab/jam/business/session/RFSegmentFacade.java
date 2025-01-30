@@ -1,6 +1,9 @@
 package org.jlab.jam.business.session;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import javax.annotation.security.PermitAll;
 import javax.ejb.Stateless;
@@ -8,8 +11,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
-import org.jlab.jam.persistence.entity.Facility;
-import org.jlab.jam.persistence.entity.RFSegment;
+import org.jlab.jam.persistence.entity.*;
 
 /**
  * @author ryans
@@ -26,6 +28,39 @@ public class RFSegmentFacade extends AbstractFacade<RFSegment> {
 
   public RFSegmentFacade() {
     super(RFSegment.class);
+  }
+
+  @PermitAll
+  public RFSegment findWithVerificationList(BigInteger segmentId) {
+    TypedQuery<RFSegment> q =
+        em.createQuery(
+            "select a from RFSegment a where a.rfSegmentId = :segmentId", RFSegment.class);
+
+    q.setParameter("segmentId", segmentId);
+
+    List<RFSegment> segmentList = q.getResultList();
+
+    RFSegment segment = null;
+
+    if (segmentList != null && !segmentList.isEmpty()) {
+      segment = segmentList.get(0);
+
+      // JPAUtil.initialize(destination.getControlVerificationList());
+      for (RFControlVerification verification : segment.getRFControlVerificationList()) {
+        verification.getCreditedControl().getName();
+      }
+
+      Collections.sort(
+          segment.getRFControlVerificationList(),
+          new Comparator<RFControlVerification>() {
+            @Override
+            public int compare(RFControlVerification o1, RFControlVerification o2) {
+              return o1.getCreditedControl().compareTo(o2.getCreditedControl());
+            }
+          });
+    }
+
+    return segment;
   }
 
   @PermitAll

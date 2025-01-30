@@ -82,7 +82,7 @@
                     <td><c:out value="${segment.facility.name}"/></td>
                     <td>
                         <form method="get" action="${pageContext.request.contextPath}/verifications/segment">
-                            <input type="hidden" name="rfSegmentId" value="${segment.getRFSegmentId()}"/>
+                            <input type="hidden" name="segmentId" value="${segment.getRFSegmentId()}"/>
                             <button class="single-char-button" type="submit">&rarr;</button>
                         </form>
                     </td>

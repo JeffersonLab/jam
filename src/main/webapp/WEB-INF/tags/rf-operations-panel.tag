@@ -30,7 +30,7 @@
             <c:set var="rfSegmentAuthorization" value="${rfAuthorizationMap[segment.getRFSegmentId()]}"/>
             <tr>
                 <td>
-                    <c:out value="${segment.name}"/>
+                    <a data-dialog-title="${segment.name} Verification" class="dialog-ready" href="${pageContext.request.contextPath}/verifications/segment?segmentId=${segment.getRFSegmentId()}&notEditable=Y"><c:out value="${segment.name}"/></a>
                     <input type="hidden" name="rfSegmentId[]" value="${segment.getRFSegmentId()}"/>
                 </td>
                     <c:if test="${not isHistory}">

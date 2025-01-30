@@ -9,7 +9,6 @@ import javax.annotation.security.PermitAll;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import org.jlab.jam.persistence.entity.BeamControlVerification;
@@ -31,50 +30,6 @@ public class BeamDestinationFacade extends AbstractFacade<BeamDestination> {
 
   public BeamDestinationFacade() {
     super(BeamDestination.class);
-  }
-
-  @SuppressWarnings("unchecked")
-  @PermitAll
-  public List<BeamDestination> findActiveDestinations() {
-    Query q =
-        em.createNativeQuery(
-            "select * from JAM_OWNER.beam_destination where ACTIVE_YN = 'Y' order by weight",
-            BeamDestination.class);
-
-    return q.getResultList();
-  }
-
-  @SuppressWarnings("unchecked")
-  @PermitAll
-  public List<BeamDestination> findCebafDestinations() {
-    Query q =
-        em.createNativeQuery(
-            "select * from JAM_OWNER.beam_destination where FACILITY_ID = 1 and ACTIVE_YN = 'Y' order by weight",
-            BeamDestination.class);
-
-    return q.getResultList();
-  }
-
-  @SuppressWarnings("unchecked")
-  @PermitAll
-  public List<BeamDestination> findLerfDestinations() {
-    Query q =
-        em.createNativeQuery(
-            "select * from JAM_OWNER.beam_destination where facility_id = 2 and ACTIVE_YN = 'Y' order by weight",
-            BeamDestination.class);
-
-    return q.getResultList();
-  }
-
-  @SuppressWarnings("unchecked")
-  @PermitAll
-  public List<BeamDestination> findUitfDestinations() {
-    Query q =
-        em.createNativeQuery(
-            "select * from JAM_OWNER.beam_destination where facility_id = 3 and ACTIVE_YN = 'Y' order by weight",
-            BeamDestination.class);
-
-    return q.getResultList();
   }
 
   @PermitAll
@@ -112,25 +67,35 @@ public class BeamDestinationFacade extends AbstractFacade<BeamDestination> {
   }
 
   @PermitAll
-  public List<BeamDestination> findByFacility(Facility facility) {
+  public List<BeamDestination> filterList(Boolean active, Facility facility) {
     CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
     CriteriaQuery<BeamDestination> cq = cb.createQuery(BeamDestination.class);
     Root<BeamDestination> root = cq.from(BeamDestination.class);
 
     List<Predicate> filters = new ArrayList<>();
 
-    filters.add(cb.equal(root.get("facility"), facility));
+    if (active != null) {
+      filters.add(cb.equal(root.get("active"), active));
+    }
 
-    filters.add(cb.equal(root.get("active"), true));
+    if (facility != null) {
+      filters.add(cb.equal(root.get("facility"), facility));
+    }
 
     if (!filters.isEmpty()) {
       cq.where(cb.and(filters.toArray(new Predicate[] {})));
     }
 
     List<Order> orders = new ArrayList<>();
-    Path p0 = root.get("weight");
+
+    Path p0 = root.get("facility");
     Order o0 = cb.asc(p0);
     orders.add(o0);
+
+    Path p1 = root.get("weight");
+    Order o1 = cb.asc(p1);
+    orders.add(o1);
+
     cq.orderBy(orders);
 
     cq.select(root);

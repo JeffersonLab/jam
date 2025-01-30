@@ -9,19 +9,19 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.jlab.jam.business.session.BeamDestinationFacade;
-import org.jlab.jam.persistence.entity.BeamDestination;
+import org.jlab.jam.business.session.RFSegmentFacade;
+import org.jlab.jam.persistence.entity.RFSegment;
 import org.jlab.smoothness.presentation.util.ParamConverter;
 
 /**
  * @author ryans
  */
 @WebServlet(
-    name = "DestinationVerification",
-    urlPatterns = {"/verifications/destination"})
-public class DestinationVerification extends HttpServlet {
+    name = "SegmentVerification",
+    urlPatterns = {"/verifications/segment"})
+public class SegmentVerification extends HttpServlet {
 
-  @EJB BeamDestinationFacade destinationFacade;
+  @EJB RFSegmentFacade segmentFacade;
 
   /**
    * Handles the HTTP <code>GET</code> method.
@@ -35,26 +35,26 @@ public class DestinationVerification extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    BigInteger destinationId = ParamConverter.convertBigInteger(request, "destinationId");
+    BigInteger segmentId = ParamConverter.convertBigInteger(request, "segmentId");
 
-    BeamDestination destination = null;
+    RFSegment segment = null;
     boolean adminOrLeader = false;
 
-    if (destinationId != null) {
-      destination = destinationFacade.findWithVerificationList(destinationId);
+    if (segmentId != null) {
+      segment = segmentFacade.findWithVerificationList(segmentId);
       adminOrLeader = request.getRemoteUser() != null;
       // adminOrLeader = ccFacade.isAdminOrGroupLeader(request.getRemoteUser(),
       // creditedControl.getWorkgroup().getWorkgroupId());
     }
 
-    List<BeamDestination> destinationList = destinationFacade.filterList(true, null);
+    List<RFSegment> segmentList = segmentFacade.filterList(true, null);
 
-    request.setAttribute("destinationList", destinationList);
+    request.setAttribute("segmentList", segmentList);
     request.setAttribute("adminOrLeader", adminOrLeader);
-    request.setAttribute("destination", destination);
+    request.setAttribute("segment", segment);
 
     request
-        .getRequestDispatcher("/WEB-INF/views/destination-verification.jsp")
+        .getRequestDispatcher("/WEB-INF/views/segment-verification.jsp")
         .forward(request, response);
   }
 }
