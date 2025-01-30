@@ -11,7 +11,7 @@ jlab.dateTimeToJLabString = function (x) {
     return jlab.pad(day, 2) + '-' + jlab.triCharMonthNames[month] + '-' + year + ' ' + jlab.pad(hour, 2) + ':' + jlab.pad(minute, 2);
 };
 jlab.addComponent = function () {
-    var verificationId = $("#verification-table tbody tr.selected-row").attr("data-control-verification-id"),
+    var verificationId = $("#beam-content .verification-table tbody tr.selected-row").attr("data-control-verification-id"),
         componentId = $("#component").attr("data-component-id"),
         $dialog = $("#component-edit-dialog"),
         url = jlab.contextPath + "/ajax/add-component",
@@ -35,7 +35,7 @@ jlab.addComponent = function () {
     });
 };
 jlab.removeComponent = function () {
-    var verificationId = $("#verification-table tbody tr.selected-row").attr("data-control-verification-id"),
+    var verificationId = $("#beam-content .verification-table tbody tr.selected-row").attr("data-control-verification-id"),
         componentId = $("#selected-component-list").val(),
         $dialog = $("#component-edit-dialog"),
         url = jlab.contextPath + "/ajax/remove-component",
@@ -185,7 +185,7 @@ $(document).on("click", ".verify-button", function () {
 
     $selectedList.empty();
 
-    var $verificationList = $("#verification-table tbody tr");
+    var $verificationList = $("#beam-content .verification-table tbody tr");
 
     var statusArray = [],
             verificationDateArray = [],
@@ -209,7 +209,7 @@ $(document).on("click", ".verify-button", function () {
             statusArray.push($(this).attr("data-status-id"));
             verificationDateArray.push($(".verified-date", value).text());
             verifiedByArray.push($(this).attr("data-verified-username"));
-            expirationDateArray.push($("td:nth-child(7)", value).text());
+            expirationDateArray.push($("td:nth-child(6)", value).text());
             commentsArray.push($("td:nth-child(6)", value).text());
         }
     });
