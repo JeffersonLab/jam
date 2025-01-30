@@ -13,8 +13,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.jlab.jam.business.session.ControlVerificationFacade;
-import org.jlab.jam.persistence.entity.ControlVerification;
+import org.jlab.jam.business.session.BeamControlVerificationFacade;
+import org.jlab.jam.persistence.entity.BeamControlVerification;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jlab.smoothness.presentation.util.ParamConverter;
 
@@ -27,7 +27,7 @@ import org.jlab.smoothness.presentation.util.ParamConverter;
 public class EditCc extends HttpServlet {
 
   private static final Logger logger = Logger.getLogger(EditCc.class.getName());
-  @EJB ControlVerificationFacade verificationFacade;
+  @EJB BeamControlVerificationFacade verificationFacade;
 
   /**
    * Handles the HTTP <code>POST</code> method.
@@ -42,7 +42,7 @@ public class EditCc extends HttpServlet {
       throws ServletException, IOException {
     String errorReason = null;
 
-    List<ControlVerification> downgradeList = null;
+    List<BeamControlVerification> downgradeList = null;
 
     try {
       BigInteger[] verificationIdArray =

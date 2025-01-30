@@ -3,19 +3,10 @@ package org.jlab.jam.persistence.entity;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.jlab.jam.persistence.view.FacilityControlVerification;
 
 /**
  * @author ryans
@@ -61,7 +52,13 @@ public class CreditedControl implements Serializable, Comparable<CreditedControl
   private String comments;
 
   @OneToMany(mappedBy = "creditedControl", fetch = FetchType.LAZY)
-  private List<ControlVerification> controlVerificationList;
+  private List<BeamControlVerification> beamControlVerificationList;
+
+  @OneToMany(mappedBy = "creditedControl", fetch = FetchType.LAZY)
+  private List<RFControlVerification> rfControlVerificationList;
+
+  @OneToMany(mappedBy = "facilityControlVerificationPK.creditedControl", fetch = FetchType.LAZY)
+  private List<FacilityControlVerification> facilityControlVerificationList;
 
   public CreditedControl() {}
 
@@ -125,18 +122,45 @@ public class CreditedControl implements Serializable, Comparable<CreditedControl
     this.verificationFrequency = verificationFrequency;
   }
 
-  public List<ControlVerification> getControlVerificationList() {
-    return controlVerificationList;
+  public List<RFControlVerification> getRFControlVerificationList() {
+    return rfControlVerificationList;
   }
 
-  public void setControlVerificationList(List<ControlVerification> controlVerificationList) {
-    this.controlVerificationList = controlVerificationList;
+  public void setRFControlVerificationList(List<RFControlVerification> rfControlVerificationList) {
+    this.rfControlVerificationList = rfControlVerificationList;
+  }
+
+  public List<BeamControlVerification> getBeamControlVerificationList() {
+    return beamControlVerificationList;
+  }
+
+  public void setBeamControlVerificationList(
+      List<BeamControlVerification> beamControlVerificationList) {
+    this.beamControlVerificationList = beamControlVerificationList;
+  }
+
+  public List<FacilityControlVerification> getFacilityControlVerificationList() {
+    return facilityControlVerificationList;
+  }
+
+  public boolean hasRFSegment(RFSegment segment) {
+    boolean hasSegment = false;
+    if (beamControlVerificationList != null) {
+      for (RFControlVerification verification : rfControlVerificationList) {
+        if (verification.getRFSegment().equals(segment)) {
+          hasSegment = true;
+          break;
+        }
+      }
+    }
+
+    return hasSegment;
   }
 
   public boolean hasBeamDestination(BeamDestination destination) {
     boolean hasDestination = false;
-    if (controlVerificationList != null) {
-      for (ControlVerification verification : controlVerificationList) {
+    if (beamControlVerificationList != null) {
+      for (BeamControlVerification verification : beamControlVerificationList) {
         if (verification.getBeamDestination().equals(destination)) {
           hasDestination = true;
           break;

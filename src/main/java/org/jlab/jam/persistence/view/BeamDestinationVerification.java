@@ -27,8 +27,8 @@ public class BeamDestinationVerification implements Serializable {
   @Column(name = "BEAM_DESTINATION_ID", nullable = false)
   private BigInteger beamDestinationId;
 
-  @Column(name = "VERIFICATION_ID")
-  private Integer verificationId;
+  @Column(name = "VERIFICATION_STATUS_ID")
+  private Integer verificationStatusId;
 
   @Column(name = "EXPIRATION_DATE")
   @Temporal(TemporalType.TIMESTAMP)
@@ -40,8 +40,8 @@ public class BeamDestinationVerification implements Serializable {
     return beamDestinationId;
   }
 
-  public Integer getVerificationId() {
-    return verificationId;
+  public Integer getVerificationStatusId() {
+    return verificationStatusId;
   }
 
   public Date getExpirationDate() {

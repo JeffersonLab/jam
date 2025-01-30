@@ -16,9 +16,6 @@
 .control-participation-table {
     font-size: 0.7em;
 }
-.credited-control-header {
-    width: 20%;
-}
 .destination-header {
     width: 8%; /*This will break if the # of beam destinations changes!*/
 }
@@ -31,4 +28,10 @@
 }
 .participation-scroll-pane {
     overflow: auto;
+}
+.accordion .ui-widget-content a {
+    color: blue;
+}
+.accordion .ui-widget-content a:hover {
+    color: red;
 }
