@@ -36,7 +36,7 @@ public class CreditedControlFacade extends AbstractFacade<CreditedControl> {
   }
 
   @PermitAll
-  public CreditedControl findWithVerificationList(BigInteger creditedControlId) {
+  public CreditedControl findWithVerificationListTrio(BigInteger creditedControlId) {
     TypedQuery<CreditedControl> q =
         em.createQuery(
             "select a from CreditedControl a where a.creditedControlId = :creditedControlId",
@@ -54,6 +54,7 @@ public class CreditedControlFacade extends AbstractFacade<CreditedControl> {
       // JPAUtil.initialize(cc.getControlVerificationList());
       Collections.sort(cc.getBeamControlVerificationList());
       Collections.sort(cc.getRFControlVerificationList());
+      Collections.sort(cc.getFacilityControlVerificationList());
     }
 
     return cc;

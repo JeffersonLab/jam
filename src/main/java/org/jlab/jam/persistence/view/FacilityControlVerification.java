@@ -9,7 +9,8 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "FACILITY_CONTROL_VERIFICATION", schema = "JAM_OWNER")
-public class FacilityControlVerification implements Serializable {
+public class FacilityControlVerification
+    implements Serializable, Comparable<FacilityControlVerification> {
 
   private static final long serialVersionUID = 1L;
 
@@ -39,5 +40,10 @@ public class FacilityControlVerification implements Serializable {
 
   public Date getExpirationDate() {
     return expirationDate;
+  }
+
+  @Override
+  public int compareTo(FacilityControlVerification o) {
+    return this.facilityControlVerificationPK.compareTo(o.facilityControlVerificationPK);
   }
 }

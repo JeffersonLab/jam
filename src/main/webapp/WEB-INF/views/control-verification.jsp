@@ -33,42 +33,29 @@
             </div>
         </c:if>
         <section>
-            <h2><c:out value="${title}${empty creditedControl ? '' : ': '.concat(creditedControl.name)}"/></h2>
+            <h2><c:out value="${title}${empty creditedControl ? '' : ': '.concat(creditedControl.name)}"/> (<a href="${pageContext.request.contextPath}/inventory/controls?controlId=${creditedControl.creditedControlId}" class="dialog-ready" data-dialog-title="${creditedControl.name}">🗗</a>)</h2>
             <c:choose>
                 <c:when test="${creditedControl ne null}">
                     <div class="dialog-content">
                         <h3>Facility Verifications</h3>
-                        <table>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <c:if test="${pageContext.request.isUserInRole('jam-admin')}">
-                            <h3>Operability Notes <span class="readonly-field"><button id="operability-notes-edit-button" type="button">Edit</button></span></h3>    
-                            <div class="notes-field">
-                                <form id="operability-form" method="post" action="ajax/edit-operability-note">
-                                    <span class="readonly-field">
-                                        <c:out value="${fn:length(creditedControl.comments) == 0 ? 'None' : creditedControl.comments}"/>
-                                    </span>
-                                    <span class="editable-field">
-                                        <textarea id="operability-comments" name="comments"><c:out value="${creditedControl.comments}"/></textarea>
-                                        <input type="hidden" name="creditedControlId" value="${creditedControl.creditedControlId}"/>
-                                    </span>
-                                </form>
-                            </div>
-                            <div class="edit-button-block editable-field">
-                                <span>
-                                    <button id="save-button" class="ajax-button inline-button" type="button">Save</button>
-                                    <span class="cancel-text">
-                                        or 
-                                        <a id="cancel-button" href="#">Cancel</a>
-                                    </span>
-                                </span>
-                            </div>
-                        </c:if>
+                        <ul id="facility-control-verification-list">
+                            <c:forEach items="${creditedControl.facilityControlVerificationList}" var="fv">
+                                <li>
+                                    <c:choose>
+                                        <c:when test="${fv.verificationStatusId eq 1}">
+                                            <span title="Verified" class="small-icon baseline-small-icon verified-icon"></span>
+                                        </c:when>
+                                        <c:when test="${fv.verificationStatusId eq 50}">
+                                            <span title="Verified" class="small-icon baseline-small-icon provisional-icon"></span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span title="Not Verified" class="small-icon baseline-small-icon not-verified-icon"></span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                    <c:out value="${fv.getFacilityControlVerificationPK().facility.name}"/>
+                                </li>
+                            </c:forEach>
+                        </ul>
                         <h3>Operations Verifications</h3>
                         <div class="accordion">
                             <h3>RF Operations</h3>

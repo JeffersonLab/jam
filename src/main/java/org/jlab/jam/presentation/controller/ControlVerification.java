@@ -49,7 +49,7 @@ public class ControlVerification extends HttpServlet {
     boolean adminOrLeader = false;
 
     if (creditedControlId != null) {
-      creditedControl = ccFacade.findWithVerificationList(creditedControlId);
+      creditedControl = ccFacade.findWithVerificationListTrio(creditedControlId);
 
       if (creditedControl != null) {
         removeInactiveVerifications(creditedControl);

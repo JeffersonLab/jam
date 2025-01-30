@@ -72,3 +72,8 @@ ul.ui-autocomplete {
 .accordion .ui-widget-content a:hover {
     color: red;
 }
+#facility-control-verification-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
