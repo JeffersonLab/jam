@@ -210,7 +210,7 @@ $(document).on("click", ".verify-button", function () {
             verificationDateArray.push($(".verified-date", value).text());
             verifiedByArray.push($(this).attr("data-verified-username"));
             expirationDateArray.push($("td:nth-child(6)", value).text());
-            commentsArray.push($("td:nth-child(6)", value).text());
+            commentsArray.push($("td:nth-child(5)", value).text());
         }
     });
 
