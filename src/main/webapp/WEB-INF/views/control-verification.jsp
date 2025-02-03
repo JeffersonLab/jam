@@ -149,6 +149,7 @@
                     <button id="verifySaveButton" class="dialog-submit ajax-button" type="button">Save</button>
                     <button class="dialog-close-button" type="button">Cancel</button>
                 </div>
+                <input type="hidden" id="verificationType" name="verificationType"/>
             </form>
         </div>
         <div id="success-dialog" class="dialog" title="Verification Saved Successfully">

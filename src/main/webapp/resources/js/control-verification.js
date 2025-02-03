@@ -73,6 +73,7 @@ jlab.verify = function () {
             verifiedBy = $("#verifiedBy").val(),
             expirationDate = $("#expirationDate").val(),
             comments = $("#comments").val(),
+            verificationType = $("#verificationType").val(),
             success = false,
             newLogId = null;
 
@@ -86,7 +87,7 @@ jlab.verify = function () {
     $actionButton.attr("disabled", "disabled");
 
     var request = jQuery.ajax({
-        url: jlab.contextPath + "/ajax/edit-cc",
+        url: jlab.contextPath + "/ajax/edit-operations-verifications",
         type: "POST",
         data: {
             'verificationIdArray[]': verificationIdArray,
@@ -94,13 +95,16 @@ jlab.verify = function () {
             verificationDate: verificationDate,
             verifiedBy: verifiedBy,
             expirationDate: expirationDate,
-            comments: comments
+            comments: comments,
+            verificationType: verificationType
         },
         dataType: "html"
     });
 
     request.done(function (data) {
-        if ($(".status", data).html() !== "Success") {
+        var status = $(".status", data).html();
+
+        if (status === 'Error') {
             alert('Unable to verify: ' + $(".reason", data).html());
         } else {
             /* Success */
@@ -137,6 +141,14 @@ jlab.verify = function () {
 $(document).on("click", ".verify-button", function () {
 
     var $panel = $(this).closest('.verification-panel');
+
+    var verificationLabel = "Beam Destination",
+        verificationType = "BEAM";
+
+    if($panel.hasClass("rf")) {
+        verificationLabel = "RF Segment";
+        verificationType = "RF";
+    }
 
     var $selectedList = $("#selected-verification-list");
 
@@ -206,12 +218,8 @@ $(document).on("click", ".verify-button", function () {
         comments = commentsArray[0];
     }
 
-    if (typeof jlab.verificationType === 'undefined' || jlab.verificationType === null) {
-        jlab.verificationType = 'Beam Destination';
-    }
-
     var count = $("#selected-verification-list li").length;
-    var text = count === 1 ? jlab.verificationType : jlab.verificationType + 's';
+    var text = count === 1 ? verificationLabel : verificationLabel + 's';
 
     $("#edit-dialog-verification-label").text(text);
     $("#edit-dialog-verification-count").text(count + ' ' + text);
@@ -221,6 +229,7 @@ $(document).on("click", ".verify-button", function () {
     $("#verifiedBy").val(verifiedBy);
     $("#expirationDate").val(expirationDate);
     $("#comments").val(comments);
+    $("#verificationType").val(verificationType);
 
     $("#verify-dialog").dialog("open");
 });

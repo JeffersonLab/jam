@@ -308,19 +308,19 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
 
   @PermitAll
   public String getVerificationDowngradedMessageBody(
-      String proxyServer, List<BeamControlVerification> downgradeList) {
+      String proxyServer, List<RFControlVerification> downgradeList) {
     StringBuilder builder = new StringBuilder();
 
     SimpleDateFormat formatter = new SimpleDateFormat(TimeUtil.getFriendlyDateTimePattern());
 
-    BeamControlVerification verification = downgradeList.get(0);
+    RFControlVerification verification = downgradeList.get(0);
 
     builder.append("<div><b>Credited Control:</b> ");
     builder.append(verification.getCreditedControl().getName());
-    builder.append("</div>\n<div><b>Beam Destinations:</b> ");
-    for (BeamControlVerification v : downgradeList) {
+    builder.append("</div>\n<div><b>RF Segments:</b> ");
+    for (RFControlVerification v : downgradeList) {
       builder.append("<div>");
-      builder.append(v.getBeamDestination().getName());
+      builder.append(v.getRFSegment().getName());
       builder.append("</div>");
     }
     builder.append("</div>\n<div><b>Modified On:</b> ");
@@ -483,6 +483,11 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
     }
 
     RFAuthorization rfAuthorization = rfAuthorizationFacade.findCurrent();
+
+    if (rfAuthorization == null) {
+      LOGGER.log(Level.INFO, "No current RFAuthorization, so nothing to downgrade");
+      return;
+    }
 
     RFAuthorization authClone = rfAuthorization.createAdminClone();
     // authClone.setDestinationAuthorizationList(new ArrayList<>());
