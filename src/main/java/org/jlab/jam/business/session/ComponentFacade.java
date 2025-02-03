@@ -7,9 +7,8 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.*;
+import org.jlab.jam.persistence.entity.BeamControlVerification;
 import org.jlab.jam.persistence.entity.Component;
-import org.jlab.jam.persistence.entity.ControlVerification;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
 
 /**
@@ -25,7 +24,7 @@ public class ComponentFacade extends AbstractFacade<Component> {
     return em;
   }
 
-  @EJB ControlVerificationFacade controlVerificationFacade;
+  @EJB BeamControlVerificationFacade beamControlVerificationFacade;
 
   public ComponentFacade() {
     super(Component.class);
@@ -42,7 +41,7 @@ public class ComponentFacade extends AbstractFacade<Component> {
       throw new UserFriendlyException("componentId is required");
     }
 
-    ControlVerification verification = controlVerificationFacade.find(verificationId);
+    BeamControlVerification verification = beamControlVerificationFacade.find(verificationId);
 
     if (verification == null) {
       throw new UserFriendlyException("verification with ID " + verificationId + " not found");
@@ -58,7 +57,7 @@ public class ComponentFacade extends AbstractFacade<Component> {
         }
       }
       verification.setComponentList(newList);
-      controlVerificationFacade.edit(verification);
+      beamControlVerificationFacade.edit(verification);
     }
   }
 
@@ -73,7 +72,7 @@ public class ComponentFacade extends AbstractFacade<Component> {
       throw new UserFriendlyException("componentId is required");
     }
 
-    ControlVerification verification = controlVerificationFacade.find(verificationId);
+    BeamControlVerification verification = beamControlVerificationFacade.find(verificationId);
 
     if (verification == null) {
       throw new UserFriendlyException("verification with ID " + verificationId + " not found");
@@ -93,6 +92,6 @@ public class ComponentFacade extends AbstractFacade<Component> {
 
     componentList.add(component);
 
-    controlVerificationFacade.edit(verification);
+    beamControlVerificationFacade.edit(verification);
   }
 }

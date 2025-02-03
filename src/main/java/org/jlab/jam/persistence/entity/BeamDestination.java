@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.jlab.jam.persistence.view.BeamDestinationVerification;
 import org.jlab.smoothness.persistence.util.YnStringToBoolean;
@@ -16,9 +17,10 @@ public class BeamDestination {
   @Column(name = "BEAM_DESTINATION_ID", nullable = false, precision = 0)
   private BigInteger beamDestinationId;
 
-  @Basic
-  @Column(name = "MACHINE", nullable = false, length = 32)
-  private String machine;
+  @NotNull
+  @ManyToOne
+  @JoinColumn(name = "FACILITY_ID", referencedColumnName = "FACILITY_ID", nullable = false)
+  private Facility facility;
 
   @Basic
   @Column(name = "CURRENT_LIMIT_UNITS", nullable = false, length = 3)
@@ -38,12 +40,12 @@ public class BeamDestination {
   private String name;
 
   @OneToMany(mappedBy = "beamDestination", fetch = FetchType.LAZY)
-  private List<ControlVerification> controlVerificationList;
+  private List<BeamControlVerification> beamControlVerificationList;
 
   private BigInteger weight;
 
-  public List<ControlVerification> getControlVerificationList() {
-    return controlVerificationList;
+  public List<BeamControlVerification> getBeamControlVerificationList() {
+    return beamControlVerificationList;
   }
 
   public String getName() {
@@ -74,12 +76,12 @@ public class BeamDestination {
     this.beamDestinationId = beamDestinationId;
   }
 
-  public String getMachine() {
-    return machine;
+  public Facility getFacility() {
+    return facility;
   }
 
-  public void setMachine(String machine) {
-    this.machine = machine;
+  public void setFacility(Facility facility) {
+    this.facility = facility;
   }
 
   public String getCurrentLimitUnits() {
@@ -104,14 +106,14 @@ public class BeamDestination {
     if (o == null || getClass() != o.getClass()) return false;
     BeamDestination that = (BeamDestination) o;
     return Objects.equals(beamDestinationId, that.beamDestinationId)
-        && Objects.equals(machine, that.machine)
+        && Objects.equals(facility, that.facility)
         && Objects.equals(currentLimitUnits, that.currentLimitUnits)
         && Objects.equals(name, that.name);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(beamDestinationId, machine, currentLimitUnits, name);
+    return Objects.hash(beamDestinationId, facility, currentLimitUnits, name);
   }
 
   @Override
@@ -119,8 +121,8 @@ public class BeamDestination {
     return "BeamDestination{"
         + "beamDestinationId="
         + beamDestinationId
-        + ", machine='"
-        + machine
+        + ", facility='"
+        + facility
         + '\''
         + ", currentLimitUnits='"
         + currentLimitUnits

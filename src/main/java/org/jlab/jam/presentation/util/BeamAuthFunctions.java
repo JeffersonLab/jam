@@ -32,17 +32,24 @@ public final class BeamAuthFunctions {
       modes = RF_LIST;
     } else {
       switch (facility) {
-        case "cebaf":
+        case "CEBAF":
           modes = CEBAF_LIST;
           break;
-        case "lerf":
+        case "LERF":
           modes = LERF_LIST;
           break;
-        case "uitf":
+        case "UITF":
           modes = UITF_LIST;
           break;
       }
     }
+
+    return modes;
+  }
+
+  public static List<String> rfModeList(String facility, String segment) {
+    List<String> modes = Arrays.asList("None", "RF On");
+    ;
 
     return modes;
   }

@@ -1,0 +1,194 @@
+package org.jlab.jam.business.session;
+
+import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import org.jlab.jam.persistence.entity.Facility;
+import org.jlab.jam.persistence.entity.Workgroup;
+import org.jlab.jlog.Body;
+import org.jlab.jlog.Library;
+import org.jlab.jlog.LogEntry;
+import org.jlab.jlog.LogEntryAdminExtension;
+import org.jlab.jlog.exception.AttachmentSizeException;
+import org.jlab.jlog.exception.LogCertificateException;
+import org.jlab.jlog.exception.LogIOException;
+import org.jlab.jlog.exception.LogRuntimeException;
+import org.jlab.smoothness.business.exception.UserFriendlyException;
+import org.jlab.smoothness.business.service.EmailService;
+import org.jlab.smoothness.business.util.IOUtil;
+
+/**
+ * @author ryans
+ */
+@Stateless
+public class LogbookFacade extends AbstractFacade<Workgroup> {
+
+  private static final Logger LOGGER = Logger.getLogger(LogbookFacade.class.getName());
+
+  @PersistenceContext(unitName = "jamPU")
+  private EntityManager em;
+
+  @Override
+  protected EntityManager getEntityManager() {
+    return em;
+  }
+
+  public LogbookFacade() {
+    super(Workgroup.class);
+  }
+
+  @RolesAllowed("jam-admin")
+  public void sendOpsNewAuthorizationEmail(String linkHostName, String comments)
+      throws UserFriendlyException {
+
+    String toCsv = System.getenv("JAM_PERMISSIONS_EMAIL_CSV");
+
+    if (toCsv == null || toCsv.isEmpty()) {
+      LOGGER.log(
+          Level.WARNING, "Environment variable 'JAM_PERMISSIONS_EMAIL_CSV' not found, aborting");
+      return;
+    }
+
+    String subject = System.getenv("JAM_PERMISSIONS_SUBJECT");
+
+    String body = "<a href=\"" + linkHostName + "/jam\">" + linkHostName + "/jam</a>";
+
+    body = body + "\n\n<p>Notes: " + comments + "</p>";
+
+    String sender = System.getenv("JAM_EMAIL_SENDER");
+
+    if (sender == null || sender.isEmpty()) {
+      LOGGER.log(Level.WARNING, "Environment variable 'JAM_EMAIL_SENDER' not found, aborting");
+      return;
+    }
+
+    EmailService emailService = new EmailService();
+
+    emailService.sendEmail(sender, sender, toCsv, null, subject, body, true);
+  }
+
+  @RolesAllowed("jam-admin")
+  public long sendELog(Facility facility, String proxyServer, String logbookServer)
+      throws UserFriendlyException {
+    String username = checkAuthenticated();
+
+    // String body = getELogHTMLBody(authorization);
+    String body = getAlternateELogHTMLBody(proxyServer);
+
+    String subject = System.getenv("JAM_PERMISSIONS_SUBJECT");
+
+    String logbooks = System.getenv("JAM_BOOKS_CSV");
+
+    if (logbooks == null || logbooks.isEmpty()) {
+      logbooks = "TLOG";
+      LOGGER.log(
+          Level.WARNING, "Environment variable 'JAM_BOOKS_CSV' not found, using default TLOG");
+    }
+
+    Properties config = Library.getConfiguration();
+
+    config.setProperty("SUBMIT_URL", logbookServer + "/incoming");
+    config.setProperty("FETCH_URL", logbookServer + "/entry");
+
+    LogEntry entry = new LogEntry(subject, logbooks);
+
+    entry.setBody(body, Body.ContentType.HTML);
+    entry.setTags("Readme");
+
+    LogEntryAdminExtension extension = new LogEntryAdminExtension(entry);
+    extension.setAuthor(username);
+
+    long logId;
+
+    // System.out.println(entry.getXML());
+    File tmpFile = null;
+
+    try {
+      tmpFile = grabPermissionsScreenshot(facility);
+      entry.addAttachment(tmpFile.getAbsolutePath());
+      logId = entry.submitNow();
+
+    } catch (IOException
+        | AttachmentSizeException
+        | LogIOException
+        | LogRuntimeException
+        | LogCertificateException e) {
+      throw new UserFriendlyException("Unable to send elog", e);
+    } finally {
+      if (tmpFile != null) {
+        boolean deleted = tmpFile.delete();
+        if (!deleted) {
+          LOGGER.log(
+              Level.WARNING, "Temporary image file was not deleted {0}", tmpFile.getAbsolutePath());
+        }
+      }
+    }
+
+    return logId;
+  }
+
+  private File grabPermissionsScreenshot(Facility facility) throws IOException {
+
+    String puppetServer = System.getenv("PUPPET_SHOW_SERVER_URL");
+    String internalServer = System.getenv("BACKEND_SERVER_URL");
+
+    if (puppetServer == null) {
+      puppetServer = "http://localhost";
+    }
+
+    if (internalServer == null) {
+      internalServer = "http://localhost";
+    }
+
+    internalServer = URLEncoder.encode(internalServer, StandardCharsets.UTF_8);
+
+    URL url =
+        new URL(
+            puppetServer
+                + "/puppet-show/screenshot?url="
+                + internalServer
+                + "%2Fjam%2Fauthorizations%2F"
+                + facility.getPath().substring(1) // trim leading slash
+                + "%3Fprint%3DY&fullPage=true&filename=jam.png&ignoreHTTPSErrors=true");
+
+    LOGGER.log(Level.FINEST, "Fetching URL: {0}", url.toString());
+
+    File tmpFile = null;
+    InputStream in = null;
+    OutputStream out = null;
+
+    try {
+      URLConnection con = url.openConnection();
+      in = con.getInputStream();
+
+      tmpFile = File.createTempFile("jam", ".png");
+      out = new FileOutputStream(tmpFile);
+      IOUtil.copy(in, out);
+
+    } finally {
+      IOUtil.close(in, out);
+    }
+    return tmpFile;
+  }
+
+  private String getAlternateELogHTMLBody(String server) {
+    StringBuilder builder = new StringBuilder();
+
+    builder.append(
+        "[figure:1]<div>\n\n<b><span style=\"color: red;\">Always check the Beam Authorization web application for the latest credited controls status:</span></b> ");
+    builder.append("<a href=\"");
+    builder.append(server);
+    builder.append("/jam/\">JLab Authorization Manager</a></div>\n");
+
+    return builder.toString();
+  }
+}

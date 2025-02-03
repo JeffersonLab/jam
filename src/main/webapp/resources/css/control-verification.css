@@ -1,0 +1,79 @@
+.radio-option {
+    margin-right: 1em;
+}
+#selected-verification-list {
+    border: 1px solid gray;
+    height: 10em;
+    list-style-type: none;
+    margin: 0;
+    min-width: 12em;
+    overflow: auto;
+    padding: 0.1em;
+}
+.small-icon.comment-icon {
+    background: rgba(0, 0, 0, 0) url("../img/comment.png") repeat scroll 0 0;
+}
+.editable-field {
+    display: none;
+}
+.cancel-text {
+    font-size: 12px;
+    vertical-align: bottom;
+}
+#operability-comments {
+    width: 600px;
+    height: 150px;
+}
+.edit-button-block {
+    margin-top: 0.5em;
+}
+.select-header {
+    width: 70px;
+}
+.audit-header {
+    width: 80px;
+}
+#verification-table tbody td:nth-child(8) {
+    text-align: center;
+}
+#comments {
+    width: 300px;
+    height: 100px;
+    resize: none;
+}
+body .now-button, body .me-button {
+    font-size: 12px;
+    max-width: 45px;
+    min-width: 45px;
+    width: 45px;
+}
+#rows-differ-message {
+    float: left;
+    color: red;
+}
+.row {
+    display: flex;
+}
+
+.column {
+    flex: 50%;
+}
+
+.ui-autocomplete-loading {
+    background: white url("../img/indicator16x16.gif") right center no-repeat;
+}
+
+ul.ui-autocomplete {
+    z-index: 9000;
+}
+.accordion .ui-widget-content a {
+    color: blue;
+}
+.accordion .ui-widget-content a:hover {
+    color: red;
+}
+#facility-control-verification-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}

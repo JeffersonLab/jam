@@ -10,22 +10,18 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.jlab.jam.business.session.AuthorizationFacade;
+import org.jlab.jam.business.session.BeamAuthorizationFacade;
 import org.jlab.jam.business.session.BeamDestinationFacade;
-import org.jlab.jam.persistence.entity.Authorization;
-import org.jlab.jam.persistence.entity.BeamDestination;
-import org.jlab.jam.persistence.entity.DestinationAuthorization;
+import org.jlab.jam.persistence.entity.*;
 import org.jlab.smoothness.presentation.util.ParamConverter;
 
 /**
  * @author ryans
  */
-@WebServlet(
-    name = "DestinationsAuthorizationHistoryController",
-    urlPatterns = {"/permissions/destinations-authorization-history"})
+@WebServlet(name = "DestinationsAuthorizationHistoryController")
 public class DestinationsAuthorizationHistoryController extends HttpServlet {
 
-  @EJB AuthorizationFacade authorizationFacade;
+  @EJB BeamAuthorizationFacade beamAuthorizationFacade;
   @EJB BeamDestinationFacade beamDestinationFacade;
 
   /**
@@ -40,30 +36,33 @@ public class DestinationsAuthorizationHistoryController extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    BigInteger authorizationId = ParamConverter.convertBigInteger(request, "authorizationId");
+    BigInteger beamAuthorizationId =
+        ParamConverter.convertBigInteger(request, "beamAuthorizationId");
 
-    Authorization authorization = null;
+    BeamAuthorization beamAuthorization = null;
 
-    if (authorizationId != null) {
-      authorization = authorizationFacade.find(authorizationId);
+    if (beamAuthorizationId != null) {
+      beamAuthorization = beamAuthorizationFacade.find(beamAuthorizationId);
     }
 
-    List<BeamDestination> cebafDestinationList = beamDestinationFacade.findCebafDestinations();
-    List<BeamDestination> lerfDestinationList = beamDestinationFacade.findLerfDestinations();
-    List<BeamDestination> uitfDestinationList = beamDestinationFacade.findUitfDestinations();
+    Facility facility = (Facility) request.getAttribute("facility");
 
-    Map<BigInteger, DestinationAuthorization> destinationAuthorizationMap =
-        authorizationFacade.createDestinationAuthorizationMap(authorization);
+    // TODO: Instead of querying for current list of destinations / segments then mapping to
+    // authorization,
+    // it would be better to grab list of destinations and segments that existed at time of
+    // authorization.
+    List<BeamDestination> beamList = beamDestinationFacade.filterList(true, facility);
 
-    request.setAttribute("unitsMap", authorizationFacade.getUnitsMap());
-    request.setAttribute("authorization", authorization);
-    request.setAttribute("cebafDestinationList", cebafDestinationList);
-    request.setAttribute("lerfDestinationList", lerfDestinationList);
-    request.setAttribute("uitfDestinationList", uitfDestinationList);
+    Map<BigInteger, BeamDestinationAuthorization> destinationAuthorizationMap =
+        beamAuthorizationFacade.createDestinationAuthorizationMap(beamAuthorization);
+
+    request.setAttribute("unitsMap", beamAuthorizationFacade.getUnitsMap());
+    request.setAttribute("beamAuthorization", beamAuthorization);
+    request.setAttribute("beamList", beamList);
     request.setAttribute("destinationAuthorizationMap", destinationAuthorizationMap);
 
     request
-        .getRequestDispatcher("/WEB-INF/views/permissions/destinations-authorization-history.jsp")
+        .getRequestDispatcher("/WEB-INF/views/authorization-history/destinations-history.jsp")
         .forward(request, response);
   }
 }
