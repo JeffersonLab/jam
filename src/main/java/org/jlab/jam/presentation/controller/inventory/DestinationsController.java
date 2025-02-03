@@ -1,7 +1,5 @@
 package org.jlab.jam.presentation.controller.inventory;
 
-import static org.jlab.jam.business.session.AbstractFacade.OrderDirective;
-
 import java.io.IOException;
 import java.util.List;
 import javax.ejb.EJB;

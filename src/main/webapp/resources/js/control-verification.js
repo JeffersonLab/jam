@@ -134,52 +134,7 @@ jlab.verify = function () {
         }
     });
 };
-jlab.save = function () {
-    if (jlab.isRequest()) {
-        window.console && console.log("Ajax already in progress");
-        return;
-    }
-
-    jlab.requestStart();
-
-    var leaveSpinning = false,
-            $actionButton = $("#save-button");
-
-    $actionButton.html("<span class=\"button-indicator\"></span>");
-    $actionButton.attr("disabled", "disabled");
-
-    var request = jQuery.ajax({
-        url: jlab.contextPath + "/ajax/edit-operability-note",
-        type: "POST",
-        data: $("#operability-form").serialize(),
-        dataType: "html"
-    });
-
-    request.done(function (data) {
-        if ($(".status", data).html() !== "Success") {
-            alert('Unable to save: ' + $(".reason", data).html());
-        } else {
-            /* Success */
-            leaveSpinning = true;
-            window.location.reload();
-        }
-
-    });
-
-    request.fail(function (xhr, textStatus) {
-        window.console && console.log('Unable to save: Text Status: ' + textStatus + ', Ready State: ' + xhr.readyState + ', HTTP Status Code: ' + xhr.status);
-        alert('Unable to save; server did not handle request');
-    });
-
-    request.always(function () {
-        jlab.requestEnd();
-        if (!leaveSpinning) {
-            $actionButton.html("Save");
-            $actionButton.removeAttr("disabled");
-        }
-    });
-};
-$(document).on("click", ".verify-button", function () {
+$(document).on("click", "#beam-content .verify-button", function () {
 
     var $selectedList = $("#selected-verification-list");
 
@@ -294,22 +249,6 @@ $(document).on("change", "#check-select", function () {
     }
     $("#check-select").val('');
 });
-/*$(document).on("change", ".destination-checkbox", function () {
-    var atLeastOneChecked = false;
-
-    $(".destination-checkbox").each(function (index, value) {
-        if ($(this).is(":checked")) {
-            atLeastOneChecked = true;
-            return false;
-        }
-    });
-
-    if (atLeastOneChecked) {
-        $("#edit-selected-button").prop("disabled", false);
-    } else {
-        $("#edit-selected-button").prop("disabled", true);
-    }
-});*/
 $(document).on("click", "#beam-content .component-edit-button", function() {
 
     var $componentList = $("#selected-component-list");
@@ -533,18 +472,6 @@ $(document).on("click", ".me-button", function () {
 });
 $("#success-dialog").on("dialogclose", function () {
     document.location.reload(true);
-});
-$(document).on("click", "#operability-notes-edit-button", function () {
-    $(".readonly-field").hide();
-    $(".editable-field").show();
-});
-$(document).on("click", "#cancel-button", function () {
-    $(".editable-field").hide();
-    $(".readonly-field").show();
-    return false;
-});
-$(document).on("click", "#save-button", function () {
-    jlab.save();
 });
 $(document).on("click", "#add-component-button", function () {
     jlab.addComponent();
