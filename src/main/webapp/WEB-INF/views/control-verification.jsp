@@ -53,6 +53,8 @@
                                         </c:otherwise>
                                     </c:choose>
                                     <c:out value="${fv.getFacilityControlVerificationPK().facility.name}"/>
+                                    <fmt:formatDate value="${fv.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
+                                    <span class="expiring-soon" style="<c:out value="${fv.expirationDate ne null and fv.expirationDate.time > beamauth:now().time and fv.expirationDate.time < beamauth:twoDaysFromNow().time ? 'display: inline-block;' : 'display: none;'}"/>">(Expiring Soon)</span>
                                 </li>
                             </c:forEach>
                         </ul>
