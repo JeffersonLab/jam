@@ -63,7 +63,7 @@
                         <h3>Operations Verifications</h3>
                         <div class="accordion">
                             <h3>RF Operations</h3>
-                            <div id="rf-content" class="content">
+                            <div class="content">
                                 <c:choose>
                                     <c:when test="${fn:length(creditedControl.getRFControlVerificationList()) < 1}">
                                         None
@@ -76,7 +76,7 @@
                         </div>
                         <div class="accordion">
                             <h3>Beam Operations</h3>
-                            <div id="beam-content" class="content">
+                            <div class="content">
                         <c:choose>
                             <c:when test="${fn:length(creditedControl.beamControlVerificationList) < 1}">
                                 None

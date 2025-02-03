@@ -17,7 +17,7 @@
     <c:set var="operationsEntity" value="RFSegment"/>
     <c:set var="historyPathSuffix" value="segment-history?rfControlVerificationId"/>
 </c:if>
-<div class="verification-panel">
+<div class="verification-panel ${operationsType}">
     <c:if test="${adminOrLeader && param.notEditable eq null}">
         <button type="button" class="edit-selected-button verify-button selected-row-action" disabled="disabled">Edit Verification</button>
     </c:if>
@@ -30,7 +30,7 @@
             <c:if test="${adminOrLeader && param.notEditable eq null}">
                 <th class="select-header">
                     Select
-                    <select id="check-select" name="check-select">
+                    <select class="check-select" name="check-select">
                         <option value="">&nbsp;</option>
                         <option value="all">All</option>
                         <option value="none">None</option>
