@@ -117,39 +117,46 @@
             </tbody>
         </table>
         <h3>Beam Destinations</h3>
-        <table class="data-table">
-            <tbody>
-            <c:forEach items="${destinationList}" var="destination">
-                <tr>
-                    <td>
-                        <c:choose>
-                            <c:when test="${destination.verification.verificationStatusId eq 1}">
-                                <span title="Verified" class="small-icon baseline-small-icon verified-icon"></span>
-                            </c:when>
-                            <c:when test="${destination.verification.verificationStatusId eq 50}">
-                                <span title="Verified" class="small-icon baseline-small-icon provisional-icon"></span>
-                            </c:when>
-                            <c:otherwise>
-                                <span title="Not Verified" class="small-icon baseline-small-icon not-verified-icon"></span>
-                            </c:otherwise>
-                        </c:choose>
-                        <c:out value="${destination.name}"/>
-                    </td>
-                    <td>
-                        <fmt:formatDate value="${destination.verification.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
-                        <span class="expiring-soon" style="<c:out value="${destination.verification.expirationDate ne null and destination.verification.expirationDate.time > beamauth:now().time and destination.verification.expirationDate.time < beamauth:twoDaysFromNow().time ? 'display: block;' : 'display: none;'}"/>">(Expiring Soon)</span>
-                    </td>
-                    <td><c:out value="${destination.facility.name}"/></td>
-                    <td>
-                        <form method="get" action="${pageContext.request.contextPath}/verifications/destination">
-                            <input type="hidden" name="destinationId" value="${destination.beamDestinationId}"/>
-                            <button class="single-char-button" type="submit">&rarr;</button>
-                        </form>
-                    </td>
-                </tr>
-            </c:forEach>
-            </tbody>
-        </table>
+        <c:choose>
+            <c:when test="${not empty destinationList}">
+                <table class="data-table">
+                    <tbody>
+                    <c:forEach items="${destinationList}" var="destination">
+                        <tr>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${destination.verification.verificationStatusId eq 1}">
+                                        <span title="Verified" class="small-icon baseline-small-icon verified-icon"></span>
+                                    </c:when>
+                                    <c:when test="${destination.verification.verificationStatusId eq 50}">
+                                        <span title="Verified" class="small-icon baseline-small-icon provisional-icon"></span>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <span title="Not Verified" class="small-icon baseline-small-icon not-verified-icon"></span>
+                                    </c:otherwise>
+                                </c:choose>
+                                <c:out value="${destination.name}"/>
+                            </td>
+                            <td>
+                                <fmt:formatDate value="${destination.verification.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
+                                <span class="expiring-soon" style="<c:out value="${destination.verification.expirationDate ne null and destination.verification.expirationDate.time > beamauth:now().time and destination.verification.expirationDate.time < beamauth:twoDaysFromNow().time ? 'display: block;' : 'display: none;'}"/>">(Expiring Soon)</span>
+                            </td>
+                            <td><c:out value="${destination.facility.name}"/></td>
+                            <td>
+                                <form method="get" action="${pageContext.request.contextPath}/verifications/destination">
+                                    <input type="hidden" name="destinationId" value="${destination.beamDestinationId}"/>
+                                    <button class="single-char-button" type="submit">&rarr;</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                    </tbody>
+                </table>
+            </c:when>
+            <c:otherwise>
+                None
+            </c:otherwise>
+        </c:choose>
         <div id="expired-dialog" class="dialog" title="Expired Controls">
             <c:choose>
                 <c:when test="${fn:length(expiredList) > 0}">
