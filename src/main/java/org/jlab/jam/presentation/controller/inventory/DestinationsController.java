@@ -34,10 +34,7 @@ public class DestinationsController extends HttpServlet {
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
-    OrderDirective[] order =
-        new OrderDirective[] {new OrderDirective("facility"), new OrderDirective("weight")};
-
-    List<BeamDestination> destinationList = destinationFacade.findAll(order);
+    List<BeamDestination> destinationList = destinationFacade.filterList(true, null);
 
     request.setAttribute("destinationList", destinationList);
 
