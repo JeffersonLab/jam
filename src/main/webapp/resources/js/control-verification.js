@@ -286,6 +286,8 @@ $(document).on("click", ".multicheck-table tbody tr", function (e) {
 
     var $panel = $(this).closest('.verification-panel');
 
+    var lastSelectedRow = $panel.attr("data-last-selected-row");
+
     if (e.ctrlKey || checkClicked) {
         $(this).toggleClass("selected-row");
         if ($(this).hasClass("selected-row")) {
@@ -295,12 +297,12 @@ $(document).on("click", ".multicheck-table tbody tr", function (e) {
         }
     } else if (e.shiftKey) {
         /*console.log('shift held');*/
-        if (jlab.editableRowTable.lastSelectedRow === null) { // Regular click if no previous click
+        if (lastSelectedRow === undefined || lastSelectedRow === null) { // Regular click if no previous click
             /*console.log('no last selected');*/
             $(this).find(".destination-checkbox").prop("checked", true);
             $(this).addClass("selected-row").siblings().removeClass("selected-row").find(".destination-checkbox").prop("checked", false);
         } else { // Select a range
-            var first = jlab.editableRowTable.lastSelectedRow,
+            var first = parseInt(lastSelectedRow),
                     second = $(this).index(),
                     start = Math.min(first, second),
                     end = Math.max(first, second);
@@ -308,7 +310,7 @@ $(document).on("click", ".multicheck-table tbody tr", function (e) {
             /*console.log('start: ' + start);
              console.log('end: ' + end);*/
 
-            $(".multicheck-table tbody tr").slice(start, end + 1).addClass("selected-row").find(".destination-checkbox").prop("checked", true);
+            $panel.find(".multicheck-table tbody tr").slice(start, end + 1).addClass("selected-row").find(".destination-checkbox").prop("checked", true);
         }
     } else {
         $(this).find(".destination-checkbox").prop("checked", true);
@@ -316,25 +318,27 @@ $(document).on("click", ".multicheck-table tbody tr", function (e) {
     }
 
     if ($(this).hasClass("selected-row")) {
-        jlab.editableRowTable.lastSelectedRow = $(this).index();
+        lastSelectedRow = $(this).index();
+        $panel.attr("data-last-selected-row", lastSelectedRow);
     } else {
-        jlab.editableRowTable.lastSelectedRow = null; /*If we are unselecting then reset shift select*/
+        lastSelectedRow = null; /*If we are unselecting then reset shift select*/
+        $panel.removeAttr("data-last-selected-row");
     }
 
     var numSelected = jlab.editableRowTable.updateSelectionCount($panel);
 
     if (numSelected > 0) {
-        $(".no-selection-row-action").prop("disabled", true);
-        $(".selected-row-action").prop("disabled", false);
+        $panel.find(".no-selection-row-action").prop("disabled", true);
+        $panel.find(".selected-row-action").prop("disabled", false);
     } else {
-        $(".no-selection-row-action").prop("disabled", false);
-        $(".selected-row-action").prop("disabled", true);
+        $panel.find(".no-selection-row-action").prop("disabled", false);
+        $panel.find(".selected-row-action").prop("disabled", true);
     }
 
     if(numSelected === 1) {
-        $(".single-select-row-action").prop("disabled", false);
+        $panel.find(".single-select-row-action").prop("disabled", false);
     } else {
-        $(".single-select-row-action").prop("disabled", true);
+        $panel.find(".single-select-row-action").prop("disabled", true);
     }
 });
 jlab.editableRowTable.updateSelectionCount = function ($panel) {
