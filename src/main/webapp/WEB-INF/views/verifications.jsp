@@ -66,8 +66,10 @@
                                         </c:otherwise>
                                     </c:choose>
                                     <c:out value="${fv.getFacilityControlVerificationPK().facility.name}"/>
-                                    <fmt:formatDate value="${fv.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
-                                    <span class="expiring-soon" style="<c:out value="${fv.expirationDate ne null and fv.expirationDate.time > jam:now().time and fv.expirationDate.time < jam:twoDaysFromNow().time ? 'display: inline-block;' : 'display: none;'}"/>">(Expiring Soon)</span>
+                                    <c:if test="${fv.verificationStatusId ne 100}">
+                                        <fmt:formatDate value="${fv.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
+                                        <span class="expiring-soon" style="<c:out value="${jam:isExpiringSoon(fv.expirationDate) ? 'display: inline-block;' : 'display: none;'}"/>">(Expiring Soon)</span>
+                                    </c:if>
                                 </li>
                             </c:forEach>
                         </ul>
@@ -103,8 +105,10 @@
                     </td>
                     <td><c:out value="${segment.facility.name}"/></td>
                     <td>
-                        <fmt:formatDate value="${segment.verification.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
-                        <span class="expiring-soon" style="<c:out value="${segment.verification.expirationDate ne null and segment.verification.expirationDate.time > jam:now().time and segment.verification.expirationDate.time < jam:twoDaysFromNow().time ? 'display: block;' : 'display: none;'}"/>">(Expiring Soon)</span>
+                        <c:if test="${segment.verification.verificationStatusId ne 100}">
+                            <fmt:formatDate value="${segment.verification.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
+                            <span class="expiring-soon" style="<c:out value="${jam:isExpiringSoon(segment.verification.expirationDate) ? 'display: inline-block;' : 'display: none;'}"/>">(Expiring Soon)</span>
+                        </c:if>
                     </td>
                     <td>
                         <form method="get" action="${pageContext.request.contextPath}/verifications/segment">
@@ -138,8 +142,10 @@
                                 <c:out value="${destination.name}"/>
                             </td>
                             <td>
-                                <fmt:formatDate value="${destination.verification.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
-                                <span class="expiring-soon" style="<c:out value="${destination.verification.expirationDate ne null and destination.verification.expirationDate.time > jam:now().time and destination.verification.expirationDate.time < jam:twoDaysFromNow().time ? 'display: block;' : 'display: none;'}"/>">(Expiring Soon)</span>
+                                <c:if test="${destination.verification.verificationStatusId ne 100}">
+                                    <fmt:formatDate value="${destination.verification.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
+                                    <span class="expiring-soon" style="<c:out value="${jam:isExpiringSoon(destination.verification.expirationDate) ? 'display: inline-block;' : 'display: none;'}"/>">(Expiring Soon)</span>
+                                </c:if>
                             </td>
                             <td><c:out value="${destination.facility.name}"/></td>
                             <td>

@@ -53,8 +53,10 @@
                                         </c:otherwise>
                                     </c:choose>
                                     <c:out value="${fv.getFacilityControlVerificationPK().facility.name}"/>
-                                    <fmt:formatDate value="${fv.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
-                                    <span class="expiring-soon" style="<c:out value="${fv.expirationDate ne null and fv.expirationDate.time > jam:now().time and fv.expirationDate.time < jam:twoDaysFromNow().time ? 'display: inline-block;' : 'display: none;'}"/>">(Expiring Soon)</span>
+                                    <c:if test="${fv.verificationStatusId ne 100}">
+                                        <fmt:formatDate value="${fv.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
+                                        <span class="expiring-soon" style="<c:out value="${jam:isExpiringSoon(fv.expirationDate) ? 'display: inline-block;' : 'display: none;'}"/>">(Expiring Soon)</span>
+                                    </c:if>
                                 </li>
                             </c:forEach>
                         </ul>

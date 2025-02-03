@@ -112,7 +112,9 @@
                                 <span title="Not Verified" class="small-icon not-verified-icon"></span>
                             </c:otherwise>
                         </c:choose>
-                        <span class="expiring-soon" style="<c:out value="${destination.verification.expirationDate ne null and destination.verification.expirationDate.time > jam:now().time and destination.verification.expirationDate.time < jam:twoDaysFromNow().time ? 'display: block;' : 'display: none;'}"/>">(Expiring Soon)</span>
+                        <c:if test="${destination.verification.verificationStatusId ne 100}">
+                            <span class="expiring-soon" style="<c:out value="${jam:isExpiringSoon(destination.verification.expirationDate) ? 'display: inline-block;' : 'display: none;'}"/>">(Expiring Soon)</span>
+                        </c:if>
                     </td>
                 </c:if>
             </tr>

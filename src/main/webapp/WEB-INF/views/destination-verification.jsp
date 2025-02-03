@@ -62,8 +62,10 @@
                                 </c:otherwise>
                             </c:choose>
                             Credited Control Verifications
-                            <fmt:formatDate value="${destination.verification.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
-                            <span class="expiring-soon" style="<c:out value="${destination.verification.expirationDate ne null and destination.verification.expirationDate.time > jam:now().time and destination.verification.expirationDate.time < jam:twoDaysFromNow().time ? 'display: inline-block;' : 'display: none;'}"/>">(Expiring Soon)</span>
+                            <c:if test="${destination.verification.verificationStatusId ne 100}">
+                                <fmt:formatDate value="${destination.verification.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
+                                <span class="expiring-soon" style="<c:out value="${jam:isExpiringSoon(destination.verification.expirationDate) ? 'display: inline-block;' : 'display: none;'}"/>">(Expiring Soon)</span>
+                            </c:if>
                         </h3>
                         <c:choose>
                             <c:when test="${fn:length(destination.beamControlVerificationList) < 1}">

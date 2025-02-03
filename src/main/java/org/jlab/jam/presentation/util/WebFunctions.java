@@ -9,9 +9,9 @@ import java.util.logging.Logger;
 /**
  * @author ryans
  */
-public final class BeamAuthFunctions {
+public final class WebFunctions {
 
-  private static final Logger LOGGER = Logger.getLogger(BeamAuthFunctions.class.getName());
+  private static final Logger LOGGER = Logger.getLogger(WebFunctions.class.getName());
 
   private static final List<String> RF_LIST = Arrays.asList("None", "RF Only");
   private static final List<String> CEBAF_LIST = Arrays.asList("None", "Tune", "CW");
@@ -21,7 +21,7 @@ public final class BeamAuthFunctions {
   private static final List<String> UITF_LIST =
       Arrays.asList("None", "Viewer Limited", "Tune", "CW");
 
-  private BeamAuthFunctions() {
+  private WebFunctions() {
     // cannot instantiate publicly
   }
 
@@ -62,9 +62,23 @@ public final class BeamAuthFunctions {
     return new Date();
   }
 
-  public static Date twoDaysFromNow() {
+  public static Date sevenDaysFromNow() {
     Calendar cal = Calendar.getInstance();
-    cal.add(Calendar.DATE, 2);
+    cal.add(Calendar.DATE, 7);
     return cal.getTime();
+  }
+
+  public static boolean isExpiringSoon(Date expiration) {
+    boolean expiringSoon = false;
+
+    if (expiration != null) {
+      if (expiration.after(now())) {
+        if (expiration.before(sevenDaysFromNow())) {
+          expiringSoon = true;
+        }
+      }
+    }
+
+    return expiringSoon;
   }
 }
