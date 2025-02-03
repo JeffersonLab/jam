@@ -70,7 +70,9 @@
                     <fmt:formatDate var="selectedExpiration" value="${segmentAuthorization.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
                     <span class="readonly-field">
                         <c:out value="${selectedExpiration}"/>
-                        <span class="expiring-soon" style="<c:out value="${segmentAuthorization.expirationDate ne null and segmentAuthorization.expirationDate.time > jam:now().time and segmentAuthorization.expirationDate.time < jam:twoDaysFromNow().time ? 'display: block;' : 'display: none;'}"/>">(Expiring Soon)</span>
+                        <c:if test="${selectedBeamMode ne 'None'}">
+                            <span class="expiring-soon" style="<c:out value="${jam:isExpiringSoon(segmentAuthorization.expirationDate) ? 'display: inline-block;' : 'display: none;'}"/>">(Expiring Soon)</span>
+                        </c:if>
                     </span>
                     <span class="editable-field">
                         <input name="expiration[]" type="text" class="expiration-input date-time-field" autocomplete="off" placeholder="${s:getFriendlyDateTimePlaceholder()}" value="${selectedBeamMode eq 'None' ? '' : selectedExpiration}"${selectedBeamMode eq 'None' ? ' readonly="readonly"' : ''}/>
@@ -89,7 +91,9 @@
                                     <span title="Not Verified" class="small-icon not-verified-icon"></span>
                                 </c:otherwise>
                             </c:choose>
-                            <span class="expiring-soon" style="<c:out value="${segment.verification.expirationDate ne null and segment.verification.expirationDate.time > jam:now().time and segment.verification.expirationDate.time < jam:twoDaysFromNow().time ? 'display: block;' : 'display: none;'}"/>">(Expiring Soon)</span>
+                        <c:if test="${segment.verification.verificationStatusId ne 100}">
+                            <span class="expiring-soon" style="<c:out value="${jam:isExpiringSoon(segment.verification.expirationDate) ? 'display: inline-block;' : 'display: none;'}"/>">(Expiring Soon)</span>
+                        </c:if>
                     </td>
                 </c:if>
             </tr>
