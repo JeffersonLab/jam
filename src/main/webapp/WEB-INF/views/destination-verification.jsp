@@ -3,7 +3,7 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@taglib prefix="s" uri="http://jlab.org/jsp/smoothness" %>
-<%@taglib prefix="beamauth" uri="http://jlab.org/beamauth/functions"%>
+<%@taglib prefix="jam" uri="http://jlab.org/jam/functions"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
 <c:set var="title" value="Destination Verification"/>
 <t:page title="${title}">
@@ -63,7 +63,7 @@
                             </c:choose>
                             Credited Control Verifications
                             <fmt:formatDate value="${destination.verification.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
-                            <span class="expiring-soon" style="<c:out value="${destination.verification.expirationDate ne null and destination.verification.expirationDate.time > beamauth:now().time and destination.verification.expirationDate.time < beamauth:twoDaysFromNow().time ? 'display: inline-block;' : 'display: none;'}"/>">(Expiring Soon)</span>
+                            <span class="expiring-soon" style="<c:out value="${destination.verification.expirationDate ne null and destination.verification.expirationDate.time > jam:now().time and destination.verification.expirationDate.time < jam:twoDaysFromNow().time ? 'display: inline-block;' : 'display: none;'}"/>">(Expiring Soon)</span>
                         </h3>
                         <c:choose>
                             <c:when test="${fn:length(destination.beamControlVerificationList) < 1}">

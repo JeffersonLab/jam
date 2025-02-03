@@ -7,8 +7,8 @@
 
     <display-name>Custom Functions</display-name>    
     <tlib-version>1.0</tlib-version>
-    <short-name>beamauth</short-name>
-    <uri>http://jlab.org/beamauth/functions</uri>
+    <short-name>jam</short-name>
+    <uri>http://jlab.org/jam/functions</uri>
 
     <function>
         <name>beamModeList</name>

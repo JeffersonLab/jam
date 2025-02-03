@@ -1,7 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@taglib prefix="beamauth" uri="http://jlab.org/beamauth/functions" %>
+<%@taglib prefix="jam" uri="http://jlab.org/jam/functions" %>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <c:set var="title" value="Control Participation"/>
 <t:inventory-page title="${title}">

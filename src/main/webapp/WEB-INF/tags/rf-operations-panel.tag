@@ -3,7 +3,7 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@taglib prefix="s" uri="http://jlab.org/jsp/smoothness" %>
-<%@taglib prefix="beamauth" uri="http://jlab.org/beamauth/functions"%>
+<%@taglib prefix="jam" uri="http://jlab.org/jam/functions"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
 <%@attribute name="rfList" required="true" type="java.util.List"%>
 <%@attribute name="isHistory" required="true" type="java.lang.Boolean"%>
@@ -50,7 +50,7 @@
                     <div class="readonly-field"><c:out value="${selectedRFMode}"/></div>
                     <div class="editable-field">
                         <select name="mode[]" class="mode-select">
-                            <c:forEach items="${beamauth:rfModeList(facility.name, segment.name)}" var="mode">
+                            <c:forEach items="${jam:rfModeList(facility.name, segment.name)}" var="mode">
                                 <option${mode eq selectedRFMode ? ' selected="selected"' : ''}><c:out value="${mode}"/></option>
                             </c:forEach>
                         </select>
@@ -70,7 +70,7 @@
                     <fmt:formatDate var="selectedExpiration" value="${segmentAuthorization.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
                     <span class="readonly-field">
                         <c:out value="${selectedExpiration}"/>
-                        <span class="expiring-soon" style="<c:out value="${segmentAuthorization.expirationDate ne null and segmentAuthorization.expirationDate.time > beamauth:now().time and segmentAuthorization.expirationDate.time < beamauth:twoDaysFromNow().time ? 'display: block;' : 'display: none;'}"/>">(Expiring Soon)</span>
+                        <span class="expiring-soon" style="<c:out value="${segmentAuthorization.expirationDate ne null and segmentAuthorization.expirationDate.time > jam:now().time and segmentAuthorization.expirationDate.time < jam:twoDaysFromNow().time ? 'display: block;' : 'display: none;'}"/>">(Expiring Soon)</span>
                     </span>
                     <span class="editable-field">
                         <input name="expiration[]" type="text" class="expiration-input date-time-field" autocomplete="off" placeholder="${s:getFriendlyDateTimePlaceholder()}" value="${selectedBeamMode eq 'None' ? '' : selectedExpiration}"${selectedBeamMode eq 'None' ? ' readonly="readonly"' : ''}/>
@@ -89,7 +89,7 @@
                                     <span title="Not Verified" class="small-icon not-verified-icon"></span>
                                 </c:otherwise>
                             </c:choose>
-                            <span class="expiring-soon" style="<c:out value="${segment.verification.expirationDate ne null and segment.verification.expirationDate.time > beamauth:now().time and segment.verification.expirationDate.time < beamauth:twoDaysFromNow().time ? 'display: block;' : 'display: none;'}"/>">(Expiring Soon)</span>
+                            <span class="expiring-soon" style="<c:out value="${segment.verification.expirationDate ne null and segment.verification.expirationDate.time > jam:now().time and segment.verification.expirationDate.time < jam:twoDaysFromNow().time ? 'display: block;' : 'display: none;'}"/>">(Expiring Soon)</span>
                     </td>
                 </c:if>
             </tr>

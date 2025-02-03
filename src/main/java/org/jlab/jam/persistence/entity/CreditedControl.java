@@ -192,7 +192,7 @@ public class CreditedControl implements Serializable, Comparable<CreditedControl
 
   @Override
   public String toString() {
-    return "org.jlab.beamauth.persistence.entity.CreditedControl[ creditedControlId="
+    return "org.jlab.jam.persistence.entity.CreditedControl[ creditedControlId="
         + creditedControlId
         + " ]";
   }

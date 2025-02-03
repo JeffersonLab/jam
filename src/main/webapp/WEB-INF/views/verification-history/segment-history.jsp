@@ -3,7 +3,7 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@taglib prefix="s" uri="http://jlab.org/jsp/smoothness" %>
-<%@taglib prefix="beamauth" uri="http://jlab.org/beamauth/functions"%>
+<%@taglib prefix="jam" uri="http://jlab.org/jam/functions"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%> 
 <t:page title="Segment Verification History">
     <jsp:attribute name="stylesheets">
