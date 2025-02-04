@@ -51,7 +51,7 @@ public class DestinationsAuthorizationHistoryController extends HttpServlet {
     // authorization,
     // it would be better to grab list of destinations and segments that existed at time of
     // authorization.
-    List<BeamDestination> beamList = beamDestinationFacade.filterList(true, facility);
+    List<BeamDestination> beamList = beamDestinationFacade.filterList(true, facility, null);
 
     Map<BigInteger, BeamDestinationAuthorization> destinationAuthorizationMap =
         beamAuthorizationFacade.createDestinationAuthorizationMap(beamAuthorization);

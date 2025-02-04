@@ -126,7 +126,7 @@ public class FacilityAuthorization extends HttpServlet {
     BeamAuthorization beamAuthorization = beamAuthorizationFacade.findCurrent();
 
     List<RFSegment> rfList = rfSegmentFacade.filterList(true, facility, null);
-    List<BeamDestination> beamList = beamDestinationFacade.filterList(true, facility);
+    List<BeamDestination> beamList = beamDestinationFacade.filterList(true, facility, null);
 
     Map<BigInteger, BeamDestinationAuthorization> destinationAuthorizationMap =
         beamAuthorizationFacade.createDestinationAuthorizationMap(beamAuthorization);

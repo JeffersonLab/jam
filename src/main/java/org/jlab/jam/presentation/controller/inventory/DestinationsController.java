@@ -32,7 +32,7 @@ public class DestinationsController extends HttpServlet {
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
-    List<BeamDestination> destinationList = destinationFacade.filterList(true, null);
+    List<BeamDestination> destinationList = destinationFacade.filterList(true, null, null);
 
     request.setAttribute("destinationList", destinationList);
 

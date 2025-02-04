@@ -45,7 +45,7 @@ public class DestinationVerification extends HttpServlet {
       adminOrLeader = request.getRemoteUser() != null;
     }
 
-    List<BeamDestination> destinationList = destinationFacade.filterList(true, null);
+    List<BeamDestination> destinationList = destinationFacade.filterList(true, null, null);
 
     request.setAttribute("destinationList", destinationList);
     request.setAttribute("adminOrLeader", adminOrLeader);

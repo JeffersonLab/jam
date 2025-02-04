@@ -55,7 +55,7 @@ public class ParticipationController extends HttpServlet {
       }
 
       List<RFSegment> segmentList = segmentFacade.filterList(true, facility, null);
-      List<BeamDestination> destinationList = destinationFacade.filterList(true, facility);
+      List<BeamDestination> destinationList = destinationFacade.filterList(true, facility, null);
       List<CreditedControl> ccList = ccFacade.findAllWithVerificationList();
 
       request.setAttribute("facility", facility);

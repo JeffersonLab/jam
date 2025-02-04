@@ -11,9 +11,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
-import org.jlab.jam.persistence.entity.BeamControlVerification;
-import org.jlab.jam.persistence.entity.BeamDestination;
-import org.jlab.jam.persistence.entity.Facility;
+import org.jlab.jam.persistence.entity.*;
+import org.jlab.jam.persistence.view.BeamDestinationVerification;
 
 /**
  * @author ryans
@@ -67,7 +66,8 @@ public class BeamDestinationFacade extends AbstractFacade<BeamDestination> {
   }
 
   @PermitAll
-  public List<BeamDestination> filterList(Boolean active, Facility facility) {
+  public List<BeamDestination> filterList(
+      Boolean active, Facility facility, VerificationTeam team) {
     CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
     CriteriaQuery<BeamDestination> cq = cb.createQuery(BeamDestination.class);
     Root<BeamDestination> root = cq.from(BeamDestination.class);
@@ -80,6 +80,14 @@ public class BeamDestinationFacade extends AbstractFacade<BeamDestination> {
 
     if (facility != null) {
       filters.add(cb.equal(root.get("facility"), facility));
+    }
+
+    if (team != null) {
+      Join<RFSegment, BeamDestinationVerification> verificationJoin =
+          root.join("beamControlVerificationList");
+      Join<BeamDestinationVerification, CreditedControl> controlJoin =
+          verificationJoin.join("creditedControl");
+      filters.add(cb.equal(controlJoin.get("verificationTeam"), team));
     }
 
     if (!filters.isEmpty()) {
