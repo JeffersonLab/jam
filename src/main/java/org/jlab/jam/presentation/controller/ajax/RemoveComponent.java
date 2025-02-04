@@ -53,9 +53,9 @@ public class RemoveComponent extends HttpServlet {
       String type = request.getParameter("verificationType");
 
       if ("BEAM".equals(type)) {
-        componentFacade.removeComponent(verificationId, componentId);
+        componentFacade.removeBeamComponent(verificationId, componentId);
       } else if ("RF".equals(type)) {
-
+        componentFacade.removeRFComponent(verificationId, componentId);
       } else {
         throw new UserFriendlyException("Unknown verification type: " + type);
       }

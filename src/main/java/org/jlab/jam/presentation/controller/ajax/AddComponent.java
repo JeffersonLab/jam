@@ -53,9 +53,9 @@ public class AddComponent extends HttpServlet {
       String type = request.getParameter("verificationType");
 
       if ("BEAM".equals(type)) {
-        componentFacade.addComponent(verificationId, componentId);
+        componentFacade.addBeamComponent(verificationId, componentId);
       } else if ("RF".equals(type)) {
-
+        componentFacade.addRFComponent(verificationId, componentId);
       } else {
         throw new UserFriendlyException("Unknown verification type: " + type);
       }
