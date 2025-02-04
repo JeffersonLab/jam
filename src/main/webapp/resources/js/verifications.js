@@ -12,3 +12,8 @@ $(document).on("click", ".default-clear-panel", function () {
     $("#team-select").val('');
     return false;
 });
+$( ".accordion" ).accordion({
+    collapsible: true,
+    heightStyle: "content",
+    active: 0
+});
