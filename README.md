@@ -25,8 +25,9 @@ The authorization application allows the Director of Operations (or a delegate) 
  - **Group Leader** - Responsible for verifying Credited Control readiness and assigning expiration dates for when new checks are required
 
 ### JLab Internal Docs
- - [ASE Document](https://jlabdoc.jlab.org/docushare/dsweb/Get/Document-187898)
- - [FSAD Document](https://jlabdoc.jlab.org/docushare/dsweb/Get/Document-21395)
+ - [CEBAF-LERF ASE](https://jlabdoc.jlab.org/docushare/dsweb/Get/Document-187898)
+ - [UITF ASE](https://jlabdoc.jlab.org/docushare/dsweb/Get/Document-203051)
+ - [SAD](https://jlabdoc.jlab.org/docushare/dsweb/Get/Document-21395)
 
 ## Quick Start with Compose
 1. Grab project
