@@ -176,6 +176,8 @@
                 </div>
             </div>
             <div class="dialog-button-panel">
+                <input type="hidden" id="component-edit-verification-type" name="verificationType"/>
+                <input type="hidden" id="component-edit-verification-id" name="verificationId"/>
                 <button class="dialog-close-button" type="button">OK</button>
             </div>
         </div>

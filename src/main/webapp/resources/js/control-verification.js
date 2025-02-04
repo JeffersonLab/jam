@@ -11,12 +11,14 @@ jlab.dateTimeToJLabString = function (x) {
     return jlab.pad(day, 2) + '-' + jlab.triCharMonthNames[month] + '-' + year + ' ' + jlab.pad(hour, 2) + ':' + jlab.pad(minute, 2);
 };
 jlab.addComponent = function () {
-    var verificationId = $("#beam-content .verification-table tbody tr.selected-row").attr("data-control-verification-id"),
+    var verificationId = $("#component-edit-verification-id").val(),
+        verificationType = $("#component-edit-verification-type").val(),
         componentId = $("#component").attr("data-component-id"),
         $dialog = $("#component-edit-dialog"),
         url = jlab.contextPath + "/ajax/add-component",
         $actionButton = $("#add-component-button"),
         data = {
+            verificationType: verificationType,
             verificationId: verificationId,
             componentId: componentId
         };
@@ -34,13 +36,15 @@ jlab.addComponent = function () {
         $actionButton.removeAttr("disabled");
     });
 };
-jlab.removeComponent = function () {
-    var verificationId = $("#beam-content .verification-table tbody tr.selected-row").attr("data-control-verification-id"),
+jlab.removeComponent = function ($panel) {
+    var verificationId = $("#component-edit-verification-id").val(),
+        verificationType = $("#component-edit-verification-type").val(),
         componentId = $("#selected-component-list").val(),
         $dialog = $("#component-edit-dialog"),
         url = jlab.contextPath + "/ajax/remove-component",
         $actionButton = $("#remove-component-button"),
         data = {
+        verificationType: verificationType,
         verificationId: verificationId,
         componentId: componentId
     };
@@ -283,9 +287,20 @@ $(document).on("click", ".component-edit-button", function() {
         $componentList.append('<option value="' + String(id).encodeXml() + '">' + String(label).encodeXml() + '</option>');
     });
 
-    var destination = $rowList.find("td:nth-child(2)").text();
+    var verificationType = "BEAM";
 
-    $("#component-edit-dialog").dialog({"title": destination + " Components"});
+    if($panel.hasClass("rf")) {
+        verificationType = "RF";
+    }
+
+    var verificationId = $panel.find(".verification-table tbody tr.selected-row").attr("data-control-verification-id");
+
+    $("#component-edit-verification-type").val(verificationType);
+    $("#component-edit-verification-id").val(verificationId);
+
+    var operation = $rowList.find("td:nth-child(2)").text();
+
+    $("#component-edit-dialog").dialog({"title": operation + " Components"});
 
     $("#component-edit-dialog").dialog("open");
     return false;
