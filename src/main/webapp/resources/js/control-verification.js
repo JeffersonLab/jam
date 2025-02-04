@@ -127,7 +127,7 @@ jlab.verify = function () {
         }
 
         if (success) {
-            if (newLogId !== '') {
+            if (newLogId !== undefined && newLogId != null && newLogId !== '') {
                 $("#verify-dialog").dialog("close");
                 $("#new-entry-url").attr("href", jlab.logbookServerUrl + "/entry/" + newLogId);
                 $("#new-entry-url").text(newLogId);
