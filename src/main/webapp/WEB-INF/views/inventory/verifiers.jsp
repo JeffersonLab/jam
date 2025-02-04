@@ -25,48 +25,33 @@
                         <tr>
                             <th>Team Name</th>
                             <th>Members</th>
-                            <th>Credited Control</th>
+                            <th>Credited Controls</th>
                         </tr>
                     </thead>
                     <tbody>
-                    <c:forEach items="${controlList}" var="control">
-                        <tr data-id="${control.creditedControlId}">
-                            <td><c:out value="SSG"/></td>
-                            <td><c:out value="John Doe (jdoe), Jane Doe (janed)"/></td>
-                            <td><c:out value="${control.name}"/></td>
+                    <c:forEach items="${teamList}" var="team">
+                        <tr data-id="${team.workgroupId}">
+
+                            <td><c:out value="${team.name}"/></td>
+                            <td>
+                                <ul>
+                                <c:forEach items="${team.leaders}" var="leader">
+                                    <li><c:out value="${s:formatUser(leader)}"/></li>
+                                </c:forEach>
+                                </ul>
+                            </td>
+                            <td>
+                                <ul>
+                                <c:forEach items="${team.controlList}" var="control">
+                                <li><c:out value="${control.name}"/></li>
+                                </c:forEach>
+                                </ul>
+                            </td>
                         </tr>
                     </c:forEach>
                     </tbody>
                 </table>
             </div>
         </section>
-        <s:editable-row-table-dialog>
-            <form id="row-form">
-                <ul class="key-value-list">
-                    <li>
-                        <div class="li-key">
-                            <label for="row-name">Name</label>
-                        </div>
-                        <div class="li-value">
-                            <input type="text" required="required" id="row-name"/>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="li-key">
-                            <label for="row-team">Team</label>
-                        </div>
-                        <div class="li-value">
-                            <select id="row-team" required="required">
-                                <option value="">&nbsp;</option>
-                                <c:forEach items="${teamList}" var="team">
-                                    <option value="${team.teamId}">
-                                        <c:out value="${team.name}"/></option>
-                                </c:forEach>
-                            </select>
-                        </div>
-                    </li>
-                </ul>
-            </form>
-        </s:editable-row-table-dialog>
     </jsp:body>         
 </t:inventory-page>

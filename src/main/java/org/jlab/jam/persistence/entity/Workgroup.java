@@ -7,6 +7,7 @@ import java.util.Objects;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.jlab.smoothness.persistence.view.User;
 
 /**
  * @author ryans
@@ -35,7 +36,9 @@ public class Workgroup implements Serializable {
   private String leaderRoleName;
 
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "group")
-  private List<CreditedControl> ccList;
+  private List<CreditedControl> controlList;
+
+  @Transient private List<User> leaders;
 
   public BigInteger getWorkgroupId() {
     return workgroupId;
@@ -57,8 +60,24 @@ public class Workgroup implements Serializable {
     return leaderRoleName;
   }
 
+  public List<CreditedControl> getControlList() {
+    return controlList;
+  }
+
+  public void setControlList(List<CreditedControl> controlList) {
+    this.controlList = controlList;
+  }
+
   public void setLeaderRoleName(String leaderRoleName) {
     this.leaderRoleName = leaderRoleName;
+  }
+
+  public void setLeaders(List<User> leaders) {
+    this.leaders = leaders;
+  }
+
+  public List<User> getLeaders() {
+    return leaders;
   }
 
   @Override

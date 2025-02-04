@@ -8,9 +8,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.jlab.jam.business.session.AbstractFacade;
-import org.jlab.jam.business.session.CreditedControlFacade;
-import org.jlab.jam.persistence.entity.CreditedControl;
+import org.jlab.jam.business.session.WorkgroupFacade;
+import org.jlab.jam.persistence.entity.Workgroup;
 
 /**
  * @author ryans
@@ -20,7 +19,7 @@ import org.jlab.jam.persistence.entity.CreditedControl;
     urlPatterns = {"/inventory/verifiers"})
 public class VerifiersController extends HttpServlet {
 
-  @EJB CreditedControlFacade controlFacade;
+  @EJB WorkgroupFacade groupFacade;
 
   /**
    * Handles the HTTP <code>GET</code> method.
@@ -34,10 +33,9 @@ public class VerifiersController extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    List<CreditedControl> controlList =
-        controlFacade.findAll(new AbstractFacade.OrderDirective("weight"));
+    List<Workgroup> teamList = groupFacade.findWithControlsAndUsers();
 
-    request.setAttribute("controlList", controlList);
+    request.setAttribute("teamList", teamList);
 
     request
         .getRequestDispatcher("/WEB-INF/views/inventory/verifiers.jsp")
