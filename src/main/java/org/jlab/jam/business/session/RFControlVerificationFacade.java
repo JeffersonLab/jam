@@ -684,8 +684,8 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
       List<RFControlVerification> upcomingExpirationsList,
       String proxyServer)
       throws MessagingException, UserFriendlyException {
-    Map<Workgroup, List<RFControlVerification>> expiredGroupMap = new HashMap<>();
-    Map<Workgroup, List<RFControlVerification>> upcomingExpirationGroupMap = new HashMap<>();
+    Map<VerificationTeam, List<RFControlVerification>> expiredGroupMap = new HashMap<>();
+    Map<VerificationTeam, List<RFControlVerification>> upcomingExpirationGroupMap = new HashMap<>();
 
     String subject = System.getenv("BAM_UPCOMING_EXPIRATION_SUBJECT");
 
@@ -693,11 +693,11 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
     if (expiredList != null) {
       for (RFControlVerification c : expiredList) {
         LOGGER.log(Level.FINEST, c.toString());
-        Workgroup workgroup = c.getCreditedControl().getGroup();
-        List<RFControlVerification> groupList = expiredGroupMap.get(workgroup);
+        VerificationTeam verificationTeam = c.getCreditedControl().getGroup();
+        List<RFControlVerification> groupList = expiredGroupMap.get(verificationTeam);
         if (groupList == null) {
           groupList = new ArrayList<>();
-          expiredGroupMap.put(workgroup, groupList);
+          expiredGroupMap.put(verificationTeam, groupList);
         }
         groupList.add(c);
       }
@@ -709,11 +709,11 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
     if (upcomingExpirationsList != null) {
       for (RFControlVerification c : upcomingExpirationsList) {
         LOGGER.log(Level.FINEST, c.toString());
-        Workgroup workgroup = c.getCreditedControl().getGroup();
-        List<RFControlVerification> groupList = upcomingExpirationGroupMap.get(workgroup);
+        VerificationTeam verificationTeam = c.getCreditedControl().getGroup();
+        List<RFControlVerification> groupList = upcomingExpirationGroupMap.get(verificationTeam);
         if (groupList == null) {
           groupList = new ArrayList<>();
-          upcomingExpirationGroupMap.put(workgroup, groupList);
+          upcomingExpirationGroupMap.put(verificationTeam, groupList);
         }
         groupList.add(c);
       }
@@ -721,10 +721,10 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
       LOGGER.log(Level.FINEST, "No upcoming expirations");
     }
 
-    Set<Workgroup> allGroups = new HashSet<>(expiredGroupMap.keySet());
+    Set<VerificationTeam> allGroups = new HashSet<>(expiredGroupMap.keySet());
     allGroups.addAll(upcomingExpirationGroupMap.keySet());
 
-    for (Workgroup w : allGroups) {
+    for (VerificationTeam w : allGroups) {
 
       List<String> toAddresses = new ArrayList<>();
 

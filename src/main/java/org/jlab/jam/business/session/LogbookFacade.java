@@ -13,7 +13,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.jlab.jam.persistence.entity.Facility;
-import org.jlab.jam.persistence.entity.Workgroup;
+import org.jlab.jam.persistence.entity.VerificationTeam;
 import org.jlab.jlog.Body;
 import org.jlab.jlog.Library;
 import org.jlab.jlog.LogEntry;
@@ -30,7 +30,7 @@ import org.jlab.smoothness.business.util.IOUtil;
  * @author ryans
  */
 @Stateless
-public class LogbookFacade extends AbstractFacade<Workgroup> {
+public class LogbookFacade extends AbstractFacade<VerificationTeam> {
 
   private static final Logger LOGGER = Logger.getLogger(LogbookFacade.class.getName());
 
@@ -43,7 +43,7 @@ public class LogbookFacade extends AbstractFacade<Workgroup> {
   }
 
   public LogbookFacade() {
-    super(Workgroup.class);
+    super(VerificationTeam.class);
   }
 
   @RolesAllowed("jam-admin")

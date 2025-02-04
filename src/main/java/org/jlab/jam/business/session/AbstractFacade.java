@@ -17,7 +17,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
-import org.jlab.jam.persistence.entity.Workgroup;
+import org.jlab.jam.persistence.entity.VerificationTeam;
 import org.jlab.smoothness.business.service.UserAuthorizationService;
 import org.jlab.smoothness.persistence.view.User;
 
@@ -181,7 +181,7 @@ public abstract class AbstractFacade<T> {
       return false;
     }
 
-    Workgroup group = getEntityManager().find(Workgroup.class, groupId);
+    VerificationTeam group = getEntityManager().find(VerificationTeam.class, groupId);
 
     if (group == null) {
       return false;

@@ -9,7 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
-import org.jlab.jam.persistence.entity.Workgroup;
+import org.jlab.jam.persistence.entity.VerificationTeam;
 import org.jlab.smoothness.business.service.UserAuthorizationService;
 import org.jlab.smoothness.persistence.view.User;
 
@@ -17,7 +17,7 @@ import org.jlab.smoothness.persistence.view.User;
  * @author ryans
  */
 @Stateless
-public class WorkgroupFacade extends AbstractFacade<Workgroup> {
+public class VerificationTeamFacade extends AbstractFacade<VerificationTeam> {
   @PersistenceContext(unitName = "jamPU")
   private EntityManager em;
 
@@ -26,15 +26,15 @@ public class WorkgroupFacade extends AbstractFacade<Workgroup> {
     return em;
   }
 
-  public WorkgroupFacade() {
-    super(Workgroup.class);
+  public VerificationTeamFacade() {
+    super(VerificationTeam.class);
   }
 
   @PermitAll
-  public List<Workgroup> findWithControlsAndUsers(String name) {
+  public List<VerificationTeam> findWithControlsAndUsers(String name) {
     CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
-    CriteriaQuery<Workgroup> cq = cb.createQuery(Workgroup.class);
-    Root<Workgroup> root = cq.from(Workgroup.class);
+    CriteriaQuery<VerificationTeam> cq = cb.createQuery(VerificationTeam.class);
+    Root<VerificationTeam> root = cq.from(VerificationTeam.class);
 
     List<Predicate> filters = new ArrayList<>();
 
@@ -55,11 +55,11 @@ public class WorkgroupFacade extends AbstractFacade<Workgroup> {
     cq.orderBy(orders);
 
     cq.select(root);
-    TypedQuery<Workgroup> q = getEntityManager().createQuery(cq);
+    TypedQuery<VerificationTeam> q = getEntityManager().createQuery(cq);
 
-    List<Workgroup> teamList = q.getResultList();
+    List<VerificationTeam> teamList = q.getResultList();
 
-    for (Workgroup team : teamList) {
+    for (VerificationTeam team : teamList) {
       Collections.sort(team.getControlList());
       UserAuthorizationService userService = UserAuthorizationService.getInstance();
       List<User> userList = userService.getUsersInRole(team.getLeaderRoleName());

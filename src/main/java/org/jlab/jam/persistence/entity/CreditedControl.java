@@ -37,9 +37,12 @@ public class CreditedControl implements Serializable, Comparable<CreditedControl
   private String description;
 
   @NotNull
-  @JoinColumn(name = "WORKGROUP_ID", referencedColumnName = "WORKGROUP_ID", nullable = false)
+  @JoinColumn(
+      name = "VERIFICATION_TEAM_ID",
+      referencedColumnName = "VERIFICATION_TEAM_ID",
+      nullable = false)
   @ManyToOne(optional = false, fetch = FetchType.EAGER)
-  private Workgroup group;
+  private VerificationTeam group;
 
   private BigInteger weight;
 
@@ -90,11 +93,11 @@ public class CreditedControl implements Serializable, Comparable<CreditedControl
     this.description = description;
   }
 
-  public Workgroup getGroup() {
+  public VerificationTeam getGroup() {
     return group;
   }
 
-  public void setGroup(Workgroup group) {
+  public void setGroup(VerificationTeam group) {
     this.group = group;
   }
 

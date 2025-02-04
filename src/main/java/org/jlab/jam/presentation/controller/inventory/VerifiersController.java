@@ -8,8 +8,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.jlab.jam.business.session.WorkgroupFacade;
-import org.jlab.jam.persistence.entity.Workgroup;
+import org.jlab.jam.business.session.VerificationTeamFacade;
+import org.jlab.jam.persistence.entity.VerificationTeam;
 
 /**
  * @author ryans
@@ -19,7 +19,7 @@ import org.jlab.jam.persistence.entity.Workgroup;
     urlPatterns = {"/inventory/verifiers"})
 public class VerifiersController extends HttpServlet {
 
-  @EJB WorkgroupFacade groupFacade;
+  @EJB VerificationTeamFacade groupFacade;
 
   /**
    * Handles the HTTP <code>GET</code> method.
@@ -35,7 +35,7 @@ public class VerifiersController extends HttpServlet {
 
     String name = request.getParameter("name");
 
-    List<Workgroup> teamList = groupFacade.findWithControlsAndUsers(name);
+    List<VerificationTeam> teamList = groupFacade.findWithControlsAndUsers(name);
 
     String selectionMessage = null;
 

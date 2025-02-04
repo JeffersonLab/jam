@@ -33,16 +33,6 @@ public class Facility implements Serializable, Comparable<Facility> {
   @Column(nullable = false, length = 32)
   private String path;
 
-  @NotNull
-  @JoinColumn(name = "RF_WORKGROUP_ID", referencedColumnName = "WORKGROUP_ID", nullable = false)
-  @ManyToOne(optional = false, fetch = FetchType.EAGER)
-  private Workgroup rfWorkgroup;
-
-  @NotNull
-  @JoinColumn(name = "BEAM_WORKGROUP_ID", referencedColumnName = "WORKGROUP_ID", nullable = false)
-  @ManyToOne(optional = false, fetch = FetchType.EAGER)
-  private Workgroup beamWorkgroup;
-
   @Basic(optional = false)
   @NotNull
   @Column(name = "WEIGHT", nullable = false)
@@ -70,22 +60,6 @@ public class Facility implements Serializable, Comparable<Facility> {
 
   public void setPath(String path) {
     this.path = path;
-  }
-
-  public Workgroup getRfWorkgroup() {
-    return rfWorkgroup;
-  }
-
-  public void setRfWorkgroup(Workgroup rfWorkgroup) {
-    this.rfWorkgroup = rfWorkgroup;
-  }
-
-  public Workgroup getBeamWorkgroup() {
-    return beamWorkgroup;
-  }
-
-  public void setBeamWorkgroup(Workgroup beamWorkgroup) {
-    this.beamWorkgroup = beamWorkgroup;
   }
 
   public BigInteger getWeight() {

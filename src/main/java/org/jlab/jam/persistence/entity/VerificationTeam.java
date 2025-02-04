@@ -14,7 +14,7 @@ import org.jlab.smoothness.persistence.view.User;
  */
 @Entity
 @Table(name = "VERIFICATION_TEAM", schema = "JAM_OWNER")
-public class Workgroup implements Serializable {
+public class VerificationTeam implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @Id
@@ -95,7 +95,7 @@ public class Workgroup implements Serializable {
     if (getClass() != obj.getClass()) {
       return false;
     }
-    final Workgroup other = (Workgroup) obj;
+    final VerificationTeam other = (VerificationTeam) obj;
     return Objects.equals(this.workgroupId, other.workgroupId);
   }
 }

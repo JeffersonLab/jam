@@ -685,8 +685,9 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
       List<BeamControlVerification> upcomingExpirationsList,
       String proxyServer)
       throws MessagingException, UserFriendlyException {
-    Map<Workgroup, List<BeamControlVerification>> expiredGroupMap = new HashMap<>();
-    Map<Workgroup, List<BeamControlVerification>> upcomingExpirationGroupMap = new HashMap<>();
+    Map<VerificationTeam, List<BeamControlVerification>> expiredGroupMap = new HashMap<>();
+    Map<VerificationTeam, List<BeamControlVerification>> upcomingExpirationGroupMap =
+        new HashMap<>();
 
     String subject = System.getenv("BAM_UPCOMING_EXPIRATION_SUBJECT");
 
@@ -694,11 +695,11 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
     if (expiredList != null) {
       for (BeamControlVerification c : expiredList) {
         LOGGER.log(Level.FINEST, c.toString());
-        Workgroup workgroup = c.getCreditedControl().getGroup();
-        List<BeamControlVerification> groupList = expiredGroupMap.get(workgroup);
+        VerificationTeam verificationTeam = c.getCreditedControl().getGroup();
+        List<BeamControlVerification> groupList = expiredGroupMap.get(verificationTeam);
         if (groupList == null) {
           groupList = new ArrayList<>();
-          expiredGroupMap.put(workgroup, groupList);
+          expiredGroupMap.put(verificationTeam, groupList);
         }
         groupList.add(c);
       }
@@ -710,11 +711,11 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
     if (upcomingExpirationsList != null) {
       for (BeamControlVerification c : upcomingExpirationsList) {
         LOGGER.log(Level.FINEST, c.toString());
-        Workgroup workgroup = c.getCreditedControl().getGroup();
-        List<BeamControlVerification> groupList = upcomingExpirationGroupMap.get(workgroup);
+        VerificationTeam verificationTeam = c.getCreditedControl().getGroup();
+        List<BeamControlVerification> groupList = upcomingExpirationGroupMap.get(verificationTeam);
         if (groupList == null) {
           groupList = new ArrayList<>();
-          upcomingExpirationGroupMap.put(workgroup, groupList);
+          upcomingExpirationGroupMap.put(verificationTeam, groupList);
         }
         groupList.add(c);
       }
@@ -722,10 +723,10 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
       LOGGER.log(Level.FINEST, "No upcoming expirations");
     }
 
-    Set<Workgroup> allGroups = new HashSet<>(expiredGroupMap.keySet());
+    Set<VerificationTeam> allGroups = new HashSet<>(expiredGroupMap.keySet());
     allGroups.addAll(upcomingExpirationGroupMap.keySet());
 
-    for (Workgroup w : allGroups) {
+    for (VerificationTeam w : allGroups) {
 
       List<String> toAddresses = new ArrayList<>();
 

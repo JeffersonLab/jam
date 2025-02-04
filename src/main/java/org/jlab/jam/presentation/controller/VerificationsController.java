@@ -28,7 +28,7 @@ public class VerificationsController extends HttpServlet {
   @EJB RFSegmentFacade segmentFacade;
   @EJB BeamDestinationFacade destinationFacade;
   @EJB FacilityFacade facilityFacade;
-  @EJB WorkgroupFacade workgroupFacade;
+  @EJB VerificationTeamFacade verificationTeamFacade;
 
   /**
    * Handles the HTTP <code>GET</code> method.
@@ -55,10 +55,10 @@ public class VerificationsController extends HttpServlet {
       }
     }
 
-    Workgroup team = null;
+    VerificationTeam team = null;
 
     if (teamId != null) {
-      team = workgroupFacade.find(teamId);
+      team = verificationTeamFacade.find(teamId);
 
       if (team == null) {
         throw new ServletException("Team not found with ID: " + teamId);
@@ -78,7 +78,7 @@ public class VerificationsController extends HttpServlet {
     List<BeamDestination> destinationList = destinationFacade.filterList(true, facility);
 
     List<Facility> facilityList = facilityFacade.findAll(new OrderDirective("weight"));
-    List<Workgroup> teamList = workgroupFacade.findAll(new OrderDirective("name"));
+    List<VerificationTeam> teamList = verificationTeamFacade.findAll(new OrderDirective("name"));
 
     String selectionMessage = getSelectionMessage(facility, team);
 
@@ -96,7 +96,7 @@ public class VerificationsController extends HttpServlet {
     request.getRequestDispatcher("WEB-INF/views/verifications.jsp").forward(request, response);
   }
 
-  private String getSelectionMessage(Facility facility, Workgroup team) {
+  private String getSelectionMessage(Facility facility, VerificationTeam team) {
     String selectionMessage = "All Verifications";
 
     List<String> filters = new ArrayList<>();
