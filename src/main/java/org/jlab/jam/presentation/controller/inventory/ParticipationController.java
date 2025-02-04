@@ -54,7 +54,7 @@ public class ParticipationController extends HttpServlet {
         throw new ServletException("Facility not found");
       }
 
-      List<RFSegment> segmentList = segmentFacade.filterList(true, facility);
+      List<RFSegment> segmentList = segmentFacade.filterList(true, facility, null);
       List<BeamDestination> destinationList = destinationFacade.filterList(true, facility);
       List<CreditedControl> ccList = ccFacade.findAllWithVerificationList();
 

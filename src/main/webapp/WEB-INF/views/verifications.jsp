@@ -106,41 +106,48 @@
             </c:otherwise>
         </c:choose>
         <h3>RF Segments</h3>
-        <table class="data-table">
-            <tbody>
-            <c:forEach items="${segmentList}" var="segment">
-                <tr>
-                    <td>
-                        <c:choose>
-                            <c:when test="${segment.verification.verificationStatusId eq 1}">
-                                <span title="Verified" class="small-icon baseline-small-icon verified-icon"></span>
-                            </c:when>
-                            <c:when test="${segment.verification.verificationStatusId eq 50}">
-                                <span title="Verified" class="small-icon baseline-small-icon provisional-icon"></span>
-                            </c:when>
-                            <c:otherwise>
-                                <span title="Not Verified" class="small-icon baseline-small-icon not-verified-icon"></span>
-                            </c:otherwise>
-                        </c:choose>
-                        <c:out value="${segment.name}"/>
-                    </td>
-                    <td><c:out value="${segment.facility.name}"/></td>
-                    <td>
-                        <c:if test="${segment.verification.verificationStatusId ne 100}">
-                            <fmt:formatDate value="${segment.verification.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
-                            <span class="expiring-soon" style="<c:out value="${jam:isExpiringSoon(segment.verification.expirationDate) ? 'display: inline-block;' : 'display: none;'}"/>">(Expiring Soon)</span>
-                        </c:if>
-                    </td>
-                    <td>
-                        <form method="get" action="${pageContext.request.contextPath}/verifications/segment">
-                            <input type="hidden" name="segmentId" value="${segment.getRFSegmentId()}"/>
-                            <button class="single-char-button" type="submit">&rarr;</button>
-                        </form>
-                    </td>
-                </tr>
-            </c:forEach>
-            </tbody>
-        </table>
+        <c:choose>
+            <c:when test="${not empty segmentList}">
+                <table class="data-table">
+                    <tbody>
+                    <c:forEach items="${segmentList}" var="segment">
+                        <tr>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${segment.verification.verificationStatusId eq 1}">
+                                        <span title="Verified" class="small-icon baseline-small-icon verified-icon"></span>
+                                    </c:when>
+                                    <c:when test="${segment.verification.verificationStatusId eq 50}">
+                                        <span title="Verified" class="small-icon baseline-small-icon provisional-icon"></span>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <span title="Not Verified" class="small-icon baseline-small-icon not-verified-icon"></span>
+                                    </c:otherwise>
+                                </c:choose>
+                                <c:out value="${segment.name}"/>
+                            </td>
+                            <td><c:out value="${segment.facility.name}"/></td>
+                            <td>
+                                <c:if test="${segment.verification.verificationStatusId ne 100}">
+                                    <fmt:formatDate value="${segment.verification.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
+                                    <span class="expiring-soon" style="<c:out value="${jam:isExpiringSoon(segment.verification.expirationDate) ? 'display: inline-block;' : 'display: none;'}"/>">(Expiring Soon)</span>
+                                </c:if>
+                            </td>
+                            <td>
+                                <form method="get" action="${pageContext.request.contextPath}/verifications/segment">
+                                    <input type="hidden" name="segmentId" value="${segment.getRFSegmentId()}"/>
+                                    <button class="single-char-button" type="submit">&rarr;</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                    </tbody>
+                </table>
+            </c:when>
+            <c:otherwise>
+                None
+            </c:otherwise>
+        </c:choose>
         <h3>Beam Destinations</h3>
         <c:choose>
             <c:when test="${not empty destinationList}">

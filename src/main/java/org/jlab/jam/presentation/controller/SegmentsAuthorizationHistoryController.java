@@ -50,7 +50,7 @@ public class SegmentsAuthorizationHistoryController extends HttpServlet {
     // authorization,
     // it would be better to grab list of destinations and segments that existed at time of
     // authorization.
-    List<RFSegment> rfList = rfSegmentFacade.filterList(true, facility);
+    List<RFSegment> rfList = rfSegmentFacade.filterList(true, facility, null);
 
     Map<BigInteger, RFSegmentAuthorization> segmentAuthorizationMap =
         rfAuthorizationFacade.createSegmentAuthorizationMap(rfAuthorization);

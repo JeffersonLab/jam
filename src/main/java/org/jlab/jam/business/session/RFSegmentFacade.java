@@ -12,6 +12,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import org.jlab.jam.persistence.entity.*;
+import org.jlab.jam.persistence.view.RFSegmentVerification;
 
 /**
  * @author ryans
@@ -64,7 +65,7 @@ public class RFSegmentFacade extends AbstractFacade<RFSegment> {
   }
 
   @PermitAll
-  public List<RFSegment> filterList(Boolean active, Facility facility) {
+  public List<RFSegment> filterList(Boolean active, Facility facility, VerificationTeam team) {
     CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
     CriteriaQuery<RFSegment> cq = cb.createQuery(RFSegment.class);
     Root<RFSegment> root = cq.from(RFSegment.class);
@@ -77,6 +78,14 @@ public class RFSegmentFacade extends AbstractFacade<RFSegment> {
 
     if (active != null) {
       filters.add(cb.equal(root.get("active"), active));
+    }
+
+    if (team != null) {
+      Join<RFSegment, RFSegmentVerification> verificationJoin =
+          root.join("rfControlVerificationList");
+      Join<RFSegmentVerification, CreditedControl> controlJoin =
+          verificationJoin.join("creditedControl");
+      filters.add(cb.equal(controlJoin.get("verificationTeam"), team));
     }
 
     if (!filters.isEmpty()) {

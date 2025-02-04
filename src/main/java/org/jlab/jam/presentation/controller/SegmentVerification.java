@@ -45,7 +45,7 @@ public class SegmentVerification extends HttpServlet {
       adminOrLeader = request.getRemoteUser() != null;
     }
 
-    List<RFSegment> segmentList = segmentFacade.filterList(true, null);
+    List<RFSegment> segmentList = segmentFacade.filterList(true, null, null);
 
     request.setAttribute("segmentList", segmentList);
     request.setAttribute("adminOrLeader", adminOrLeader);
