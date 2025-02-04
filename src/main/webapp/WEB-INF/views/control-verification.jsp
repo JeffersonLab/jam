@@ -112,7 +112,6 @@
                             <select id="verificationId" name="verificationId">
                                 <option value="&nbsp;"> </option>
                                 <option value="100">Not Verified</option>
-                                <option value="50">Provisionally Verified</option>
                                 <option value="1">Verified</option>
                             </select>
                         </div>
