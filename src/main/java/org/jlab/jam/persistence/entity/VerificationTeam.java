@@ -35,7 +35,7 @@ public class VerificationTeam implements Serializable {
   @Column(name = "DIRECTORY_ROLE_NAME", nullable = false, length = 64)
   private String directoryRoleName;
 
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "group")
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "verificationTeam")
   private List<CreditedControl> controlList;
 
   @Transient private List<User> userList;

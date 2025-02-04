@@ -59,45 +59,52 @@
         <h2 id="page-header-title"><c:out value="${title}"/></h2>
         <div class="message-box"><c:out value="${selectionMessage}"/></div>
         <h3>Credited Controls</h3>
-        <table id="credited-control-verifications-table" class="data-table">
-            <tbody>
-            <c:forEach items="${ccList}" var="cc">
-                <tr>
-                    <td><c:out value="${cc.name}"/></td>
-                    <td>
-                        <ul>
-                            <c:forEach items="${cc.facilityControlVerificationList}" var="fv">
-                                <li>
-                                    <c:choose>
-                                        <c:when test="${fv.verificationStatusId eq 1}">
-                                            <span title="Verified" class="small-icon baseline-small-icon verified-icon"></span>
-                                        </c:when>
-                                        <c:when test="${fv.verificationStatusId eq 50}">
-                                            <span title="Verified" class="small-icon baseline-small-icon provisional-icon"></span>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <span title="Not Verified" class="small-icon baseline-small-icon not-verified-icon"></span>
-                                        </c:otherwise>
-                                    </c:choose>
-                                    <c:out value="${fv.getFacilityControlVerificationPK().facility.name}"/>
-                                    <c:if test="${fv.verificationStatusId ne 100}">
-                                        <fmt:formatDate value="${fv.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
-                                        <span class="expiring-soon" style="<c:out value="${jam:isExpiringSoon(fv.expirationDate) ? 'display: inline-block;' : 'display: none;'}"/>">(Expiring Soon)</span>
-                                    </c:if>
-                                </li>
-                            </c:forEach>
-                        </ul>
-                    </td>
-                    <td>
-                        <form method="get" action="${pageContext.request.contextPath}/verifications/control">
-                            <input type="hidden" name="creditedControlId" value="${cc.creditedControlId}"/>
-                            <button class="single-char-button" type="submit">&rarr;</button>
-                        </form>
-                    </td>
-                </tr>
-            </c:forEach>
-            </tbody>
-        </table>
+        <c:choose>
+            <c:when test="${not empty ccList}">
+                <table id="credited-control-verifications-table" class="data-table">
+                    <tbody>
+                    <c:forEach items="${ccList}" var="cc">
+                        <tr>
+                            <td><c:out value="${cc.name}"/></td>
+                            <td>
+                                <ul>
+                                    <c:forEach items="${cc.facilityControlVerificationList}" var="fv">
+                                        <li>
+                                            <c:choose>
+                                                <c:when test="${fv.verificationStatusId eq 1}">
+                                                    <span title="Verified" class="small-icon baseline-small-icon verified-icon"></span>
+                                                </c:when>
+                                                <c:when test="${fv.verificationStatusId eq 50}">
+                                                    <span title="Verified" class="small-icon baseline-small-icon provisional-icon"></span>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span title="Not Verified" class="small-icon baseline-small-icon not-verified-icon"></span>
+                                                </c:otherwise>
+                                            </c:choose>
+                                            <c:out value="${fv.getFacilityControlVerificationPK().facility.name}"/>
+                                            <c:if test="${fv.verificationStatusId ne 100}">
+                                                <fmt:formatDate value="${fv.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
+                                                <span class="expiring-soon" style="<c:out value="${jam:isExpiringSoon(fv.expirationDate) ? 'display: inline-block;' : 'display: none;'}"/>">(Expiring Soon)</span>
+                                            </c:if>
+                                        </li>
+                                    </c:forEach>
+                                </ul>
+                            </td>
+                            <td>
+                                <form method="get" action="${pageContext.request.contextPath}/verifications/control">
+                                    <input type="hidden" name="creditedControlId" value="${cc.creditedControlId}"/>
+                                    <button class="single-char-button" type="submit">&rarr;</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                    </tbody>
+                </table>
+            </c:when>
+            <c:otherwise>
+                None
+            </c:otherwise>
+        </c:choose>
         <h3>RF Segments</h3>
         <table class="data-table">
             <tbody>

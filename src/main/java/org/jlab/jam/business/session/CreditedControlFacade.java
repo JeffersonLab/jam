@@ -14,6 +14,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import org.jlab.jam.persistence.entity.CreditedControl;
 import org.jlab.jam.persistence.entity.Facility;
+import org.jlab.jam.persistence.entity.VerificationTeam;
 import org.jlab.jam.persistence.view.FacilityControlVerification;
 import org.jlab.smoothness.persistence.util.JPAUtil;
 
@@ -86,7 +87,7 @@ public class CreditedControlFacade extends AbstractFacade<CreditedControl> {
   }
 
   @PermitAll
-  public List<CreditedControl> filterList(Facility facility) {
+  public List<CreditedControl> filterList(Facility facility, VerificationTeam team) {
     CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
     CriteriaQuery<CreditedControl> cq = cb.createQuery(CreditedControl.class);
     Root<CreditedControl> root = cq.from(CreditedControl.class);
@@ -109,6 +110,10 @@ public class CreditedControlFacade extends AbstractFacade<CreditedControl> {
       orders.add(o1);
     }
 
+    if (team != null) {
+      filters.add(cb.equal(root.get("verificationTeam"), team));
+    }
+
     if (!filters.isEmpty()) {
       cq.where(cb.and(filters.toArray(new Predicate[] {})));
     }
@@ -126,8 +131,9 @@ public class CreditedControlFacade extends AbstractFacade<CreditedControl> {
   }
 
   @PermitAll
-  public List<CreditedControl> findWithFacilityVerification(Facility facility) {
-    List<CreditedControl> ccList = filterList(facility);
+  public List<CreditedControl> findWithFacilityVerification(
+      Facility facility, VerificationTeam team) {
+    List<CreditedControl> ccList = filterList(facility, team);
 
     if (ccList != null) {
       for (CreditedControl cc : ccList) {
@@ -140,6 +146,18 @@ public class CreditedControlFacade extends AbstractFacade<CreditedControl> {
                     .compareTo(o2.getFacilityControlVerificationPK());
               }
             });
+
+        if (facility != null) {
+          for (FacilityControlVerification facilityControlVerification :
+              new ArrayList<>(cc.getFacilityControlVerificationList())) {
+            if (!facilityControlVerification
+                .getFacilityControlVerificationPK()
+                .getFacility()
+                .equals(facility)) {
+              cc.getFacilityControlVerificationList().remove(facilityControlVerification);
+            }
+          }
+        }
       }
     }
 

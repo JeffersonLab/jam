@@ -65,7 +65,7 @@ public class ControlVerification extends HttpServlet {
 
         adminOrLeader =
             ccFacade.isAdminOrGroupLeader(
-                username, creditedControl.getGroup().getVerificationTeamId());
+                username, creditedControl.getVerificationTeam().getVerificationTeamId());
       }
     } else {
       expiredList = verificationFacade.checkForExpired();

@@ -42,7 +42,7 @@ public class CreditedControl implements Serializable, Comparable<CreditedControl
       referencedColumnName = "VERIFICATION_TEAM_ID",
       nullable = false)
   @ManyToOne(optional = false, fetch = FetchType.EAGER)
-  private VerificationTeam group;
+  private VerificationTeam verificationTeam;
 
   private BigInteger weight;
 
@@ -93,12 +93,12 @@ public class CreditedControl implements Serializable, Comparable<CreditedControl
     this.description = description;
   }
 
-  public VerificationTeam getGroup() {
-    return group;
+  public VerificationTeam getVerificationTeam() {
+    return verificationTeam;
   }
 
-  public void setGroup(VerificationTeam group) {
-    this.group = group;
+  public void setVerificationTeam(VerificationTeam verificationTeam) {
+    this.verificationTeam = verificationTeam;
   }
 
   public BigInteger getWeight() {

@@ -72,7 +72,7 @@ public class VerificationsController extends HttpServlet {
     expiredList = verificationFacade.checkForExpired();
     expiringList = verificationFacade.checkForUpcomingVerificationExpirations();
 
-    List<CreditedControl> ccList = ccFacade.findWithFacilityVerification(facility);
+    List<CreditedControl> ccList = ccFacade.findWithFacilityVerification(facility, team);
 
     List<RFSegment> segmentList = segmentFacade.filterList(true, facility);
     List<BeamDestination> destinationList = destinationFacade.filterList(true, facility);

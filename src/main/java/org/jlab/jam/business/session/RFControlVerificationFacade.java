@@ -169,7 +169,7 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
 
       Date modifiedDate = new Date();
 
-      String role = verification.getCreditedControl().getGroup().getDirectoryRoleName();
+      String role = verification.getCreditedControl().getVerificationTeam().getDirectoryRoleName();
 
       List<User> leaders = auth.getUsersInRole(role);
 
@@ -693,7 +693,7 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
     if (expiredList != null) {
       for (RFControlVerification c : expiredList) {
         LOGGER.log(Level.FINEST, c.toString());
-        VerificationTeam verificationTeam = c.getCreditedControl().getGroup();
+        VerificationTeam verificationTeam = c.getCreditedControl().getVerificationTeam();
         List<RFControlVerification> groupList = expiredGroupMap.get(verificationTeam);
         if (groupList == null) {
           groupList = new ArrayList<>();
@@ -709,7 +709,7 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
     if (upcomingExpirationsList != null) {
       for (RFControlVerification c : upcomingExpirationsList) {
         LOGGER.log(Level.FINEST, c.toString());
-        VerificationTeam verificationTeam = c.getCreditedControl().getGroup();
+        VerificationTeam verificationTeam = c.getCreditedControl().getVerificationTeam();
         List<RFControlVerification> groupList = upcomingExpirationGroupMap.get(verificationTeam);
         if (groupList == null) {
           groupList = new ArrayList<>();

@@ -170,7 +170,7 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
 
       Date modifiedDate = new Date();
 
-      String role = verification.getCreditedControl().getGroup().getDirectoryRoleName();
+      String role = verification.getCreditedControl().getVerificationTeam().getDirectoryRoleName();
 
       List<User> leaders = auth.getUsersInRole(role);
 
@@ -695,7 +695,7 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
     if (expiredList != null) {
       for (BeamControlVerification c : expiredList) {
         LOGGER.log(Level.FINEST, c.toString());
-        VerificationTeam verificationTeam = c.getCreditedControl().getGroup();
+        VerificationTeam verificationTeam = c.getCreditedControl().getVerificationTeam();
         List<BeamControlVerification> groupList = expiredGroupMap.get(verificationTeam);
         if (groupList == null) {
           groupList = new ArrayList<>();
@@ -711,7 +711,7 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
     if (upcomingExpirationsList != null) {
       for (BeamControlVerification c : upcomingExpirationsList) {
         LOGGER.log(Level.FINEST, c.toString());
-        VerificationTeam verificationTeam = c.getCreditedControl().getGroup();
+        VerificationTeam verificationTeam = c.getCreditedControl().getVerificationTeam();
         List<BeamControlVerification> groupList = upcomingExpirationGroupMap.get(verificationTeam);
         if (groupList == null) {
           groupList = new ArrayList<>();
