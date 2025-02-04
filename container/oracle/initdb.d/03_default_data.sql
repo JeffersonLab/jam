@@ -1,15 +1,15 @@
 alter session set container = XEPDB1;
 
--- Populate Verification Status
+-- Populate Verification Statuses
 insert into JAM_OWNER.VERIFICATION_STATUS (VERIFICATION_STATUS_ID, NAME) values (1, 'Verified');
 insert into JAM_OWNER.VERIFICATION_STATUS (VERIFICATION_STATUS_ID, NAME) values (50, 'Provisionally Verified');
 insert into JAM_OWNER.VERIFICATION_STATUS (VERIFICATION_STATUS_ID, NAME) values (100, 'Not Verified');
 
--- Populate Workgroup
-insert into JAM_OWNER.WORKGROUP (WORKGROUP_ID, NAME, LEADER_ROLE_NAME) values (1, 'Group 1', 'group1Leaders');
-insert into JAM_OWNER.WORKGROUP (WORKGROUP_ID, NAME, LEADER_ROLE_NAME) values (2, 'Group 2', 'group2Leaders');
-insert into JAM_OWNER.WORKGROUP (WORKGROUP_ID, NAME, LEADER_ROLE_NAME) values (3, 'Group 3', 'group3Leaders');
-insert into JAM_OWNER.WORKGROUP (WORKGROUP_ID, NAME, LEADER_ROLE_NAME) values (4, 'Group 4', 'group4Leaders');
+-- Populate Verification Teams
+insert into JAM_OWNER.VERIFICATION_TEAM (VERIFICATION_TEAM_ID, NAME, DIRECTORY_ROLE_NAME) values (1, 'Group 1', 'group1Leaders');
+insert into JAM_OWNER.VERIFICATION_TEAM (VERIFICATION_TEAM_ID, NAME, DIRECTORY_ROLE_NAME) values (2, 'Group 2', 'group2Leaders');
+insert into JAM_OWNER.VERIFICATION_TEAM (VERIFICATION_TEAM_ID, NAME, DIRECTORY_ROLE_NAME) values (3, 'Group 3', 'group3Leaders');
+insert into JAM_OWNER.VERIFICATION_TEAM (VERIFICATION_TEAM_ID, NAME, DIRECTORY_ROLE_NAME) values (4, 'Group 4', 'group4Leaders');
 
 -- Populate Facilities
 insert into JAM_OWNER.FACILITY (FACILITY_ID, NAME, PATH, WEIGHT) values (1, 'CEBAF', '/cebaf',  1);

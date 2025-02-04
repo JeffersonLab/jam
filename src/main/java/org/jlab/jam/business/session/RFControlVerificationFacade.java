@@ -169,7 +169,7 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
 
       Date modifiedDate = new Date();
 
-      String role = verification.getCreditedControl().getGroup().getLeaderRoleName();
+      String role = verification.getCreditedControl().getGroup().getDirectoryRoleName();
 
       List<User> leaders = auth.getUsersInRole(role);
 
@@ -730,7 +730,7 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
 
       UserAuthorizationService auth = UserAuthorizationService.getInstance();
 
-      String role = w.getLeaderRoleName();
+      String role = w.getDirectoryRoleName();
 
       List<User> leaders = auth.getUsersInRole(role);
 

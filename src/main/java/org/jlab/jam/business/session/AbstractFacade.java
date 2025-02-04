@@ -189,7 +189,7 @@ public abstract class AbstractFacade<T> {
 
     UserAuthorizationService auth = UserAuthorizationService.getInstance();
 
-    List<User> leaders = auth.getUsersInRole(group.getLeaderRoleName());
+    List<User> leaders = auth.getUsersInRole(group.getDirectoryRoleName());
 
     return isAdminOrGroupLeader(username, leaders);
   }

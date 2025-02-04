@@ -62,8 +62,8 @@ public class VerificationTeamFacade extends AbstractFacade<VerificationTeam> {
     for (VerificationTeam team : teamList) {
       Collections.sort(team.getControlList());
       UserAuthorizationService userService = UserAuthorizationService.getInstance();
-      List<User> userList = userService.getUsersInRole(team.getLeaderRoleName());
-      team.setLeaders(userList);
+      List<User> userList = userService.getUsersInRole(team.getDirectoryRoleName());
+      team.setUserList(userList);
     }
 
     return teamList;

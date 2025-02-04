@@ -43,8 +43,6 @@ public class DestinationVerification extends HttpServlet {
     if (destinationId != null) {
       destination = destinationFacade.findWithVerificationList(destinationId);
       adminOrLeader = request.getRemoteUser() != null;
-      // adminOrLeader = ccFacade.isAdminOrGroupLeader(request.getRemoteUser(),
-      // creditedControl.getWorkgroup().getWorkgroupId());
     }
 
     List<BeamDestination> destinationList = destinationFacade.filterList(true, null);

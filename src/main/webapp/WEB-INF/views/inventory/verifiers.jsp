@@ -36,17 +36,17 @@
                         </thead>
                         <tbody>
                         <c:forEach items="${teamList}" var="team">
-                            <tr data-id="${team.workgroupId}">
+                            <tr data-id="${team.verificationTeamId}">
                                 <c:if test="${empty param.name}">
                                     <td><c:out value="${team.name}"/></td>
                                 </c:if>
                                 <c:if test="${pageContext.request.isUserInRole('jam-admin')}">
-                                    <td><c:out value="${team.leaderRoleName}"/></td>
+                                    <td><c:out value="${team.directoryRoleName}"/></td>
                                 </c:if>
                                 <td>
                                     <ul>
-                                        <c:forEach items="${team.leaders}" var="leader">
-                                            <li><c:out value="${s:formatUser(leader)}"/></li>
+                                        <c:forEach items="${team.userList}" var="user">
+                                            <li><c:out value="${s:formatUser(user)}"/></li>
                                         </c:forEach>
                                     </ul>
                                 </td>

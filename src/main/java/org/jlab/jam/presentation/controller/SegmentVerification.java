@@ -43,8 +43,6 @@ public class SegmentVerification extends HttpServlet {
     if (segmentId != null) {
       segment = segmentFacade.findWithVerificationList(segmentId);
       adminOrLeader = request.getRemoteUser() != null;
-      // adminOrLeader = ccFacade.isAdminOrGroupLeader(request.getRemoteUser(),
-      // creditedControl.getWorkgroup().getWorkgroupId());
     }
 
     List<RFSegment> segmentList = segmentFacade.filterList(true, null);

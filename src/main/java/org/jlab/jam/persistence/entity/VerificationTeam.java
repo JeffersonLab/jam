@@ -21,7 +21,7 @@ public class VerificationTeam implements Serializable {
   @Basic(optional = false)
   @NotNull
   @Column(name = "VERIFICATION_TEAM_ID", nullable = false, precision = 22, scale = 0)
-  private BigInteger workgroupId;
+  private BigInteger verificationTeamId;
 
   @Basic(optional = false)
   @NotNull
@@ -33,19 +33,19 @@ public class VerificationTeam implements Serializable {
   @NotNull
   @Size(min = 1, max = 64)
   @Column(name = "DIRECTORY_ROLE_NAME", nullable = false, length = 64)
-  private String leaderRoleName;
+  private String directoryRoleName;
 
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "group")
   private List<CreditedControl> controlList;
 
-  @Transient private List<User> leaders;
+  @Transient private List<User> userList;
 
-  public BigInteger getWorkgroupId() {
-    return workgroupId;
+  public BigInteger getVerificationTeamId() {
+    return verificationTeamId;
   }
 
-  public void setWorkgroupId(BigInteger groupId) {
-    this.workgroupId = groupId;
+  public void setVerificationTeamId(BigInteger verificationTeamId) {
+    this.verificationTeamId = verificationTeamId;
   }
 
   public String getName() {
@@ -56,8 +56,8 @@ public class VerificationTeam implements Serializable {
     this.name = name;
   }
 
-  public String getLeaderRoleName() {
-    return leaderRoleName;
+  public String getDirectoryRoleName() {
+    return directoryRoleName;
   }
 
   public List<CreditedControl> getControlList() {
@@ -68,22 +68,22 @@ public class VerificationTeam implements Serializable {
     this.controlList = controlList;
   }
 
-  public void setLeaderRoleName(String leaderRoleName) {
-    this.leaderRoleName = leaderRoleName;
+  public void setDirectoryRoleName(String directoryRoleName) {
+    this.directoryRoleName = directoryRoleName;
   }
 
-  public void setLeaders(List<User> leaders) {
-    this.leaders = leaders;
+  public void setUserList(List<User> userList) {
+    this.userList = userList;
   }
 
-  public List<User> getLeaders() {
-    return leaders;
+  public List<User> getUserList() {
+    return userList;
   }
 
   @Override
   public int hashCode() {
     int hash = 5;
-    hash = 97 * hash + (this.workgroupId != null ? this.workgroupId.hashCode() : 0);
+    hash = 97 * hash + (this.verificationTeamId != null ? this.verificationTeamId.hashCode() : 0);
     return hash;
   }
 
@@ -96,6 +96,6 @@ public class VerificationTeam implements Serializable {
       return false;
     }
     final VerificationTeam other = (VerificationTeam) obj;
-    return Objects.equals(this.workgroupId, other.workgroupId);
+    return Objects.equals(this.verificationTeamId, other.verificationTeamId);
   }
 }

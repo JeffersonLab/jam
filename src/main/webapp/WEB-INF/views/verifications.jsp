@@ -44,7 +44,7 @@
                                     <select id="team-select" name="teamId">
                                         <option value="">&nbsp;</option>
                                         <c:forEach items="${teamList}" var="team">
-                                            <option value="${team.workgroupId}"${param.teamId eq team.workgroupId ? ' selected="selected"' : ''}>
+                                            <option value="${team.verificationTeamId}"${param.teamId eq team.verificationTeamId ? ' selected="selected"' : ''}>
                                                 <c:out value="${team.name}"/></option>
                                         </c:forEach>
                                     </select>
