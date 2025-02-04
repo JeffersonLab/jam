@@ -40,19 +40,27 @@ public class ControlsController extends HttpServlet {
     BigInteger controlId = ParamConverter.convertBigInteger(request, "controlId");
 
     List<CreditedControl> controlList = null;
+    CreditedControl selectedControl = null;
 
     if (controlId != null) {
       controlList = new ArrayList<CreditedControl>();
 
-      CreditedControl control = controlFacade.find(controlId);
+      selectedControl = controlFacade.find(controlId);
 
-      if (control != null) {
-        controlList.add(control);
+      if (selectedControl != null) {
+        controlList.add(selectedControl);
       }
     } else {
       controlList = controlFacade.findAll(new AbstractFacade.OrderDirective("weight"));
     }
 
+    String selectionMessage = null;
+
+    if (selectedControl != null) {
+      selectionMessage = "Control \"" + selectedControl.getName() + "\"";
+    }
+
+    request.setAttribute("selectionMessage", selectionMessage);
     request.setAttribute("controlList", controlList);
 
     request

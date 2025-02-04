@@ -33,8 +33,17 @@ public class VerifiersController extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    List<Workgroup> teamList = groupFacade.findWithControlsAndUsers();
+    String name = request.getParameter("name");
 
+    List<Workgroup> teamList = groupFacade.findWithControlsAndUsers(name);
+
+    String selectionMessage = null;
+
+    if (name != null) {
+      selectionMessage = "Team \"" + name + "\"";
+    }
+
+    request.setAttribute("selectionMessage", selectionMessage);
     request.setAttribute("teamList", teamList);
 
     request

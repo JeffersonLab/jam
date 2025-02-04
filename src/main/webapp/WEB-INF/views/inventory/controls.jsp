@@ -39,7 +39,12 @@
                                 <td><c:out value="${control.name}"/></td>
                                 </c:if>
                                 <td><c:out value="${control.description}"/></td>
-                                <td><c:out value="${control.group.name}"/></td>
+                                <td>
+                                    <c:url var="url" value="/inventory/verifiers">
+                                        <c:param name="name" value="${control.group.name}"/>
+                                    </c:url>
+                                    <a href="${url}"><c:out value="${control.group.name}"/></a>
+                                </td>
                                 <td><c:out value="${empty control.verificationFrequency ? 'As Needed' : control.verificationFrequency}"/></td>
                             </tr>
                         </c:forEach>
