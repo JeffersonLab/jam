@@ -30,8 +30,8 @@
                 <c:out value="${verification.creditedControl.name}"/>
                 <h3>Beam Destination</h3>
                 <c:out value="${verification.beamDestination.name}"/>
-                <h3>Group</h3>
-                <c:out value="${verification.creditedControl.group.name}"/>
+                <h3>Verification Team</h3>
+                <c:out value="${verification.creditedControl.verificationTeam.name}"/>
                 <h3>History</h3>
                 <c:choose>
                     <c:when test="${fn:length(historyList) < 1}">

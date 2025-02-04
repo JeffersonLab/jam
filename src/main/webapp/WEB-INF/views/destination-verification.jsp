@@ -88,7 +88,7 @@
                                                     </select>
                                                 </th>
                                             </c:if>
-                                            <th>Credited Control and Group</th>
+                                            <th>Control and Team</th>
                                             <th>Verified</th>
                                             <th>Verified Date</th>
                                             <th>Verified By</th>
@@ -105,7 +105,7 @@
                                                         <input class="destination-checkbox" type="checkbox" name="destination-checkbox" value="${verification.beamControlVerificationId}"/>
                                                     </td>
                                                 </c:if>
-                                                <td><c:out value="${verification.creditedControl.name}"/>; <c:out value="${verification.creditedControl.group.name}"/></td>
+                                                <td><c:out value="${verification.creditedControl.name}"/>; <c:out value="${verification.creditedControl.verificationTeam.name}"/></td>
                                                 <td class="icon-cell"><span title="${verification.verificationStatusId eq 1 ? 'Verified' : (verification.verificationStatusId eq 50 ? 'Provisionally Verified' : 'Not Verified')}" class="small-icon baseline-small-icon ${verification.verificationStatusId eq 1 ? 'verified-icon' : (verification.verificationStatusId eq 50 ? 'provisional-icon' : 'not-verified-icon')}"></span></td>
                                                 <td><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}" value="${verification.verificationDate}"/></td>
                                                 <td><c:out value="${s:formatUsername(verification.verifiedBy)}"/></td>

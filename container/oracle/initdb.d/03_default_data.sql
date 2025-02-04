@@ -20,7 +20,7 @@ insert into JAM_OWNER.FACILITY (FACILITY_ID, NAME, PATH, WEIGHT) values (5, 'VTA
 
 -- Populate Credited Controls
 insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,VERIFICATION_TEAM_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'Earth Berms/Overburden','Non-structural fill, cover, or berms',1,1,'1 Year');
-insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,VERIFICATION_TEAM_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'Structural Shielding','Beam enclosure concrete structure',1,2,'1 Year');
+insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,VERIFICATION_TEAM_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'Structural Shielding','Beam enclosure concrete structure',2,2,'1 Year');
 insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,VERIFICATION_TEAM_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'Movable Shielding','Includes penetrations',1,3,'1 Year');
 insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,VERIFICATION_TEAM_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'Beam Dump Cooling Building Design','Structural integrity of the buildings and their sump pits',1,4,'1 Year');
 insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,VERIFICATION_TEAM_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'Nitrogen Gas Supply Orifices','1/8" orifice plates to restrict the amount of nitrogen that could be introduced into the tunnel enclosures',1,5,'1 Year');
