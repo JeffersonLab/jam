@@ -267,10 +267,10 @@ CREATE TABLE JAM_OWNER.BEAM_CONTROL_VERIFICATION_HISTORY
 
 CREATE OR REPLACE FORCE VIEW JAM_OWNER.FACILITY_CONTROL_VERIFICATION (FACILITY_ID, CREDITED_CONTROL_ID, VERIFICATION_STATUS_ID, EXPIRATION_DATE) AS
 with segment_verification as (
-   select facility_id, credited_control_id, rf_segment_id, verification_status_id, expiration_date from JAM_OWNER.RF_SEGMENT join RF_CONTROL_VERIFICATION using(RF_SEGMENT_ID)
+   select facility_id, credited_control_id, rf_segment_id, verification_status_id, expiration_date from JAM_OWNER.RF_SEGMENT join RF_CONTROL_VERIFICATION using(RF_SEGMENT_ID) where active_yn = 'Y'
 ),
 destination_verification as (
-    select facility_id, credited_control_id, beam_destination_id, verification_status_id, expiration_date from JAM_OWNER.BEAM_DESTINATION join BEAM_CONTROL_VERIFICATION using(BEAM_DESTINATION_ID)
+    select facility_id, credited_control_id, beam_destination_id, verification_status_id, expiration_date from JAM_OWNER.BEAM_DESTINATION join BEAM_CONTROL_VERIFICATION using(BEAM_DESTINATION_ID) where active_yn = 'Y'
 ),
 operations_verification as (
     select facility_id, credited_control_id, verification_status_id, expiration_date from segment_verification
