@@ -24,6 +24,9 @@
                     <thead>
                         <tr>
                             <th>Team Name</th>
+                            <c:if test="${pageContext.request.isUserInRole('jam-admin')}">
+                                <th>User Directory Role Name</th>
+                            </c:if>
                             <th>Members</th>
                             <th>Credited Controls</th>
                         </tr>
@@ -31,8 +34,10 @@
                     <tbody>
                     <c:forEach items="${teamList}" var="team">
                         <tr data-id="${team.workgroupId}">
-
                             <td><c:out value="${team.name}"/></td>
+                            <c:if test="${pageContext.request.isUserInRole('jam-admin')}">
+                                <td><c:out value="${team.leaderRoleName}"/></td>
+                            </c:if>
                             <td>
                                 <ul>
                                 <c:forEach items="${team.leaders}" var="leader">
