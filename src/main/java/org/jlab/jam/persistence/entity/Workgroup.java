@@ -13,14 +13,14 @@ import org.jlab.smoothness.persistence.view.User;
  * @author ryans
  */
 @Entity
-@Table(name = "WORKGROUP", schema = "JAM_OWNER")
+@Table(name = "VERIFICATION_TEAM", schema = "JAM_OWNER")
 public class Workgroup implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @Id
   @Basic(optional = false)
   @NotNull
-  @Column(name = "WORKGROUP_ID", nullable = false, precision = 22, scale = 0)
+  @Column(name = "VERIFICATION_TEAM_ID", nullable = false, precision = 22, scale = 0)
   private BigInteger workgroupId;
 
   @Basic(optional = false)
@@ -32,7 +32,7 @@ public class Workgroup implements Serializable {
   @Basic(optional = false)
   @NotNull
   @Size(min = 1, max = 64)
-  @Column(name = "LEADER_ROLE_NAME", nullable = false, length = 64)
+  @Column(name = "DIRECTORY_ROLE_NAME", nullable = false, length = 64)
   private String leaderRoleName;
 
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "group")

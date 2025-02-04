@@ -36,6 +36,20 @@
                                     </select>
                                 </div>
                             </li>
+                            <li>
+                                <div class="li-key">
+                                    <label for="team-select">Team</label>
+                                </div>
+                                <div class="li-value">
+                                    <select id="team-select" name="teamId">
+                                        <option value="">&nbsp;</option>
+                                        <c:forEach items="${teamList}" var="team">
+                                            <option value="${team.workgroupId}"${param.teamId eq team.workgroupId ? ' selected="selected"' : ''}>
+                                                <c:out value="${team.name}"/></option>
+                                        </c:forEach>
+                                    </select>
+                                </div>
+                            </li>
                         </ul>
                     </fieldset>
                 </div>

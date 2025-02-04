@@ -10,35 +10,26 @@ insert into JAM_OWNER.WORKGROUP (WORKGROUP_ID, NAME, LEADER_ROLE_NAME) values (1
 insert into JAM_OWNER.WORKGROUP (WORKGROUP_ID, NAME, LEADER_ROLE_NAME) values (2, 'Group 2', 'group2Leaders');
 insert into JAM_OWNER.WORKGROUP (WORKGROUP_ID, NAME, LEADER_ROLE_NAME) values (3, 'Group 3', 'group3Leaders');
 insert into JAM_OWNER.WORKGROUP (WORKGROUP_ID, NAME, LEADER_ROLE_NAME) values (4, 'Group 4', 'group4Leaders');
-insert into JAM_OWNER.WORKGROUP (WORKGROUP_ID, NAME, LEADER_ROLE_NAME) values (5, 'Group 5', 'group5Leaders');
-insert into JAM_OWNER.WORKGROUP (WORKGROUP_ID, NAME, LEADER_ROLE_NAME) values (6, 'Group 6', 'group6Leaders');
-insert into JAM_OWNER.WORKGROUP (WORKGROUP_ID, NAME, LEADER_ROLE_NAME) values (7, 'Group 7', 'group7Leaders');
-insert into JAM_OWNER.WORKGROUP (WORKGROUP_ID, NAME, LEADER_ROLE_NAME) values (8, 'Group 8', 'group8Leaders');
-insert into JAM_OWNER.WORKGROUP (WORKGROUP_ID, NAME, LEADER_ROLE_NAME) values (9, 'Group 9', 'group9Leaders');
-insert into JAM_OWNER.WORKGROUP (WORKGROUP_ID, NAME, LEADER_ROLE_NAME) values (10, 'Group 10', 'group10Leaders');
-insert into JAM_OWNER.WORKGROUP (WORKGROUP_ID, NAME, LEADER_ROLE_NAME) values (11, 'Group 11', 'group11Leaders');
-insert into JAM_OWNER.WORKGROUP (WORKGROUP_ID, NAME, LEADER_ROLE_NAME) values (12, 'Group 12', 'group12Leaders');
-insert into JAM_OWNER.WORKGROUP (WORKGROUP_ID, NAME, LEADER_ROLE_NAME) values (13, 'Group 13', 'group13Leaders');
 
 -- Populate Facilities
-insert into JAM_OWNER.FACILITY (FACILITY_ID, NAME, PATH, RF_WORKGROUP_ID, BEAM_WORKGROUP_ID, WEIGHT) values (1, 'CEBAF', '/cebaf', 4, 5, 1);
-insert into JAM_OWNER.FACILITY (FACILITY_ID, NAME, PATH, RF_WORKGROUP_ID, BEAM_WORKGROUP_ID, WEIGHT) values (2, 'LERF', '/lerf', 6, 7, 2);
-insert into JAM_OWNER.FACILITY (FACILITY_ID, NAME, PATH, RF_WORKGROUP_ID, BEAM_WORKGROUP_ID, WEIGHT) values (3, 'UITF', '/uitf', 8, 9, 3);
-insert into JAM_OWNER.FACILITY (FACILITY_ID, NAME, PATH, RF_WORKGROUP_ID, BEAM_WORKGROUP_ID, WEIGHT) values (4, 'CMTF', '/cmtf', 10, 11, 4);
-insert into JAM_OWNER.FACILITY (FACILITY_ID, NAME, PATH, RF_WORKGROUP_ID, BEAM_WORKGROUP_ID, WEIGHT) values (5, 'VTA', '/vta', 12, 13, 5);
+insert into JAM_OWNER.FACILITY (FACILITY_ID, NAME, PATH, WEIGHT) values (1, 'CEBAF', '/cebaf',  1);
+insert into JAM_OWNER.FACILITY (FACILITY_ID, NAME, PATH, WEIGHT) values (2, 'LERF', '/lerf', 2);
+insert into JAM_OWNER.FACILITY (FACILITY_ID, NAME, PATH, WEIGHT) values (3, 'UITF', '/uitf', 3);
+insert into JAM_OWNER.FACILITY (FACILITY_ID, NAME, PATH, WEIGHT) values (4, 'CMTF', '/cmtf', 4);
+insert into JAM_OWNER.FACILITY (FACILITY_ID, NAME, PATH, WEIGHT) values (5, 'VTA', '/vta', 5);
 
 -- Populate Credited Controls
-insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,WORKGROUP_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'Earth Berms/Overburden','Non-structural fill, cover, or berms',1,1,'1 Year');
-insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,WORKGROUP_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'Structural Shielding','Beam enclosure concrete structure',1,2,'1 Year');
-insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,WORKGROUP_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'Movable Shielding','Includes penetrations',1,3,'1 Year');
-insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,WORKGROUP_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'Beam Dump Cooling Building Design','Structural integrity of the buildings and their sump pits',1,4,'1 Year');
-insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,WORKGROUP_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'Nitrogen Gas Supply Orifices','1/8" orifice plates to restrict the amount of nitrogen that could be introduced into the tunnel enclosures',1,5,'1 Year');
-insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,WORKGROUP_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'ODH vents, lintels and facility configuration','Passive ceiling vents, door configuration, and lintels for slowing helium migration into stairwells',1,6,'1 Year');
-insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,WORKGROUP_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'PSS Access Controls','CEBAF and LERF controls for keeping people out of segments. Includes tunnel door maglock, keyswitches, sweep procedures, klaxons, beacons',1,7,'1 Year');
-insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,WORKGROUP_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'CEBAF PSS Beam Containment Controls','CEBAF controls for keeping beam inside segments (protect adjacent segments). Critical devices including beam stops, beam segment steering elecromagnets, and interlocks such as magnet power supply/RF waveguide pressure interfaces',1,8,'1 Year');
-insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,WORKGROUP_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'ODH System Controls','Oxygen sensors and alarms',1,9,'1 Year');
-insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,WORKGROUP_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'Doors, Gates, Fences, and other Barriers','Non-interlocked administrative controls for personnel safety',1,10,'1 Year');
-insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,WORKGROUP_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'UITF Nitrogen Gas Supply Orifices','1/8" orifice plates to restrict the amount of nitrogen that could be introduced into the UITF enclosure',1,11,'1 Year');
+insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,VERIFICATION_TEAM_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'Earth Berms/Overburden','Non-structural fill, cover, or berms',1,1,'1 Year');
+insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,VERIFICATION_TEAM_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'Structural Shielding','Beam enclosure concrete structure',1,2,'1 Year');
+insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,VERIFICATION_TEAM_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'Movable Shielding','Includes penetrations',1,3,'1 Year');
+insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,VERIFICATION_TEAM_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'Beam Dump Cooling Building Design','Structural integrity of the buildings and their sump pits',1,4,'1 Year');
+insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,VERIFICATION_TEAM_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'Nitrogen Gas Supply Orifices','1/8" orifice plates to restrict the amount of nitrogen that could be introduced into the tunnel enclosures',1,5,'1 Year');
+insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,VERIFICATION_TEAM_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'ODH vents, lintels and facility configuration','Passive ceiling vents, door configuration, and lintels for slowing helium migration into stairwells',1,6,'1 Year');
+insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,VERIFICATION_TEAM_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'PSS Access Controls','CEBAF and LERF controls for keeping people out of segments. Includes tunnel door maglock, keyswitches, sweep procedures, klaxons, beacons',1,7,'1 Year');
+insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,VERIFICATION_TEAM_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'CEBAF PSS Beam Containment Controls','CEBAF controls for keeping beam inside segments (protect adjacent segments). Critical devices including beam stops, beam segment steering elecromagnets, and interlocks such as magnet power supply/RF waveguide pressure interfaces',1,8,'1 Year');
+insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,VERIFICATION_TEAM_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'ODH System Controls','Oxygen sensors and alarms',1,9,'1 Year');
+insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,VERIFICATION_TEAM_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'Doors, Gates, Fences, and other Barriers','Non-interlocked administrative controls for personnel safety',1,10,'1 Year');
+insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,VERIFICATION_TEAM_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'UITF Nitrogen Gas Supply Orifices','1/8" orifice plates to restrict the amount of nitrogen that could be introduced into the UITF enclosure',1,11,'1 Year');
 
 
 -- Populate RF Segments

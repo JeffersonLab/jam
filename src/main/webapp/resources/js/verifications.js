@@ -9,5 +9,6 @@ $(document).on("click", "#expiring-link", function () {
 });
 $(document).on("click", ".default-clear-panel", function () {
     $("#facility-select").val('');
+    $("#team-select").val('');
     return false;
 });

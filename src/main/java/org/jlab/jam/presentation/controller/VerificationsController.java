@@ -2,6 +2,7 @@ package org.jlab.jam.presentation.controller;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
@@ -27,6 +28,7 @@ public class VerificationsController extends HttpServlet {
   @EJB RFSegmentFacade segmentFacade;
   @EJB BeamDestinationFacade destinationFacade;
   @EJB FacilityFacade facilityFacade;
+  @EJB WorkgroupFacade workgroupFacade;
 
   /**
    * Handles the HTTP <code>GET</code> method.
@@ -41,6 +43,7 @@ public class VerificationsController extends HttpServlet {
       throws ServletException, IOException {
 
     BigInteger facilityId = ParamConverter.convertBigInteger(request, "facilityId");
+    BigInteger teamId = ParamConverter.convertBigInteger(request, "teamId");
 
     Facility facility = null;
 
@@ -49,6 +52,16 @@ public class VerificationsController extends HttpServlet {
 
       if (facility == null) {
         throw new ServletException("Facility not found with ID: " + facilityId);
+      }
+    }
+
+    Workgroup team = null;
+
+    if (teamId != null) {
+      team = workgroupFacade.find(teamId);
+
+      if (team == null) {
+        throw new ServletException("Team not found with ID: " + teamId);
       }
     }
 
@@ -65,16 +78,14 @@ public class VerificationsController extends HttpServlet {
     List<BeamDestination> destinationList = destinationFacade.filterList(true, facility);
 
     List<Facility> facilityList = facilityFacade.findAll(new OrderDirective("weight"));
+    List<Workgroup> teamList = workgroupFacade.findAll(new OrderDirective("name"));
 
-    String selectionMessage = "All Verifications";
-
-    if (facility != null) {
-      selectionMessage = "Facility \"" + facility.getName() + "\"";
-    }
+    String selectionMessage = getSelectionMessage(facility, team);
 
     request.setAttribute("facility", facility);
     request.setAttribute("selectionMessage", selectionMessage);
     request.setAttribute("facilityList", facilityList);
+    request.setAttribute("teamList", teamList);
     request.setAttribute("segmentList", segmentList);
     request.setAttribute("destinationList", destinationList);
     request.setAttribute("adminOrLeader", adminOrLeader);
@@ -83,5 +94,30 @@ public class VerificationsController extends HttpServlet {
     request.setAttribute("expiringList", expiringList);
 
     request.getRequestDispatcher("WEB-INF/views/verifications.jsp").forward(request, response);
+  }
+
+  private String getSelectionMessage(Facility facility, Workgroup team) {
+    String selectionMessage = "All Verifications";
+
+    List<String> filters = new ArrayList<>();
+
+    if (facility != null) {
+      filters.add("Facility \"" + facility.getName() + "\"");
+    }
+
+    if (team != null) {
+      filters.add("Team \"" + team.getName() + "\"");
+    }
+
+    if (!filters.isEmpty()) {
+      selectionMessage = filters.get(0);
+
+      for (int i = 1; i < filters.size(); i++) {
+        String filter = filters.get(i);
+        selectionMessage += " and " + filter;
+      }
+    }
+
+    return selectionMessage;
   }
 }
