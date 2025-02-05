@@ -21,7 +21,7 @@
                     </s:editable-row-table-controls>
                 </c:if>
                 <div class="dialog-content">
-                    <table class="data-table stripped-table ${readonly ? '' : 'uniselect-table editable-row-table'}">
+                    <table id="verifiers-table" class="data-table stripped-table ${readonly ? '' : 'uniselect-table editable-row-table'}">
                         <thead>
                         <tr>
                             <c:if test="${empty param.name}">

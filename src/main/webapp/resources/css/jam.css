@@ -72,3 +72,11 @@ dd ul {
 .expiring-soon {
     color: red;
 }
+#verifiers-table ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+#verifiers-table li {
+    margin: 0.5em 0;
+}
