@@ -24,7 +24,7 @@
                         <form method="get" action="control">
                             <select name="creditedControlId" class="change-submit">
                                 <c:forEach items="${ccList}" var="cc">
-                                    <option value="${cc.creditedControlId}"${param.creditedControlId eq cc.creditedControlId ? ' selected="selected"' : ''}><c:out value="${cc.name}"/></option>
+                                    <option value="${cc.creditedControlId}"${param.creditedControlId eq cc.creditedControlId ? ' selected="selected"' : ''}><c:out value="${cc.verificationTeam.name} / ${cc.name}"/></option>
                                 </c:forEach>
                             </select>
                         </form>
@@ -33,7 +33,10 @@
             </div>
         </c:if>
         <section>
-            <h2><c:out value="${title}${empty creditedControl ? '' : ': '.concat(creditedControl.name)}"/> (<a href="${pageContext.request.contextPath}/inventory/controls?controlId=${creditedControl.creditedControlId}" class="dialog-ready" data-dialog-title="${creditedControl.name}">🗗</a>)</h2>
+            <c:if test="${not empty creditedControl}">
+                <div class="top-right-box"><a href="${pageContext.request.contextPath}/inventory/controls?controlId=${creditedControl.creditedControlId}" class="dialog-ready" data-dialog-title="${creditedControl.name}">Info</a></div>
+            </c:if>
+            <h2 id="page-header-title"><c:out value="${title}"/></h2>
             <c:choose>
                 <c:when test="${creditedControl ne null}">
                     <div class="dialog-content">

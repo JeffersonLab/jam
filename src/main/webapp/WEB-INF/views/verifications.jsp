@@ -17,7 +17,7 @@
     </jsp:attribute>
     <jsp:body>
         <section>
-        <div class="expire-links"><a id="expired-link" href="#">Expired</a> | <a id="expiring-link"
+        <div class="top-right-box"><a id="expired-link" href="#">Expired</a> | <a id="expiring-link"
                                                                                  href="#">Expiring</a></div>
         <s:filter-flyout-widget ribbon="true" clearButton="true">
             <form id="filter-form" method="get" action="verifications">

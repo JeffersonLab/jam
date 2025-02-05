@@ -36,7 +36,7 @@
                         <form method="get" action="segment">
                             <select name="segmentId" class="change-submit">
                                 <c:forEach items="${segmentList}" var="segment">
-                                    <option value="${segment.getRFSegmentId()}"${param.segmentId eq segment.getRFSegmentId() ? ' selected="selected"' : ''}><c:out value="${segment.name}"/></option>
+                                    <option value="${segment.getRFSegmentId()}"${param.segmentId eq segment.getRFSegmentId() ? ' selected="selected"' : ''}><c:out value="${segment.facility.name} / ${segment.name}"/></option>
                                 </c:forEach>
                             </select>
                         </form>
@@ -45,7 +45,7 @@
             </div>
         </c:if>
         <section>
-            <h2><c:out value="${title}${empty segment ? '' : ': '.concat(segment.name)}"/></h2>
+            <h2 id="page-header-title"><c:out value="${title}"/></h2>
             <c:choose>
                 <c:when test="${segment ne null}">
                     <div class="dialog-content">
@@ -88,7 +88,7 @@
                                                     </select>
                                                 </th>
                                             </c:if>
-                                            <th>Control and Team</th>
+                                            <th>Team / Control</th>
                                             <th>Verified</th>
                                             <th>Verified Date</th>
                                             <th>Verified By</th>
@@ -105,7 +105,7 @@
                                                         <input class="segment-checkbox" type="checkbox" name="segment-checkbox" value="${verification.getRFControlVerificationId()}"/>
                                                     </td>
                                                 </c:if>
-                                                <td><c:out value="${verification.creditedControl.name}"/>; <c:out value="${verification.creditedControl.verificationTeam.name}"/></td>
+                                                <td><c:out value="${verification.creditedControl.verificationTeam.name}"/> / <c:out value="${verification.creditedControl.name}"/></td>
                                                 <td class="icon-cell"><span title="${verification.verificationStatusId eq 1 ? 'Verified' : (verification.verificationStatusId eq 50 ? 'Provisionally Verified' : 'Not Verified')}" class="small-icon baseline-small-icon ${verification.verificationStatusId eq 1 ? 'verified-icon' : (verification.verificationStatusId eq 50 ? 'provisional-icon' : 'not-verified-icon')}"></span></td>
                                                 <td><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}" value="${verification.verificationDate}"/></td>
                                                 <td><c:out value="${s:formatUsername(verification.verifiedBy)}"/></td>

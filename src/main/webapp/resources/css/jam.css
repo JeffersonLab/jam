@@ -80,3 +80,6 @@ dd ul {
 #verifiers-table li {
     margin: 0.5em 0;
 }
+.top-right-box {
+    float: right;
+}
