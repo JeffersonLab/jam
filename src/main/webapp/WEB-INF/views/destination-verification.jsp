@@ -105,7 +105,13 @@
                                                         <input class="destination-checkbox" type="checkbox" name="destination-checkbox" value="${verification.beamControlVerificationId}"/>
                                                     </td>
                                                 </c:if>
-                                                <td><c:out value="${verification.creditedControl.verificationTeam.name}"/> / <c:out value="${verification.creditedControl.name}"/></td>
+                                                <td>
+                                                    <c:url value="/verifications/control" var="url">
+                                                        <c:param name="creditedControlId" value="${verification.creditedControl.creditedControlId}"/>
+                                                        <c:param name="notEditable" value="1"/>
+                                                    </c:url>
+                                                    <c:out value="${verification.creditedControl.verificationTeam.name}"/> / <a href="${url}" class="dialog-ready" data-dialog-title="${fn:escapeXml(verification.creditedControl.name)}"><c:out value="${verification.creditedControl.name}"/></a>
+                                                </td>
                                                 <td class="icon-cell"><span title="${verification.verificationStatusId eq 1 ? 'Verified' : (verification.verificationStatusId eq 50 ? 'Provisionally Verified' : 'Not Verified')}" class="small-icon baseline-small-icon ${verification.verificationStatusId eq 1 ? 'verified-icon' : (verification.verificationStatusId eq 50 ? 'provisional-icon' : 'not-verified-icon')}"></span></td>
                                                 <td><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}" value="${verification.verificationDate}"/></td>
                                                 <td><c:out value="${s:formatUsername(verification.verifiedBy)}"/></td>
