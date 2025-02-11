@@ -39,7 +39,7 @@ public class AuthorizersController extends HttpServlet {
 
     List<Facility> facilityList =
         facilityFacade.findAll(new AbstractFacade.OrderDirective("weight"));
-    List<Authorizer> authorizerList = authorizerFacade.filterList(null, null);
+    List<Authorizer> authorizerList = authorizerFacade.filterList(null, null, null);
 
     request.setAttribute("facilityList", facilityList);
     request.setAttribute("authorizerList", authorizerList);

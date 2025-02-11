@@ -9,6 +9,7 @@
     <jsp:attribute name="stylesheets">
     </jsp:attribute>
     <jsp:attribute name="scripts">
+        <script type="text/javascript" src="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/js/authorizers.js"></script>
     </jsp:attribute>        
     <jsp:body>
         <section>
@@ -30,7 +31,7 @@
                     </thead>
                     <tbody>
                     <c:forEach items="${authorizerList}" var="authorizer">
-                        <tr data-facility-id="${authorizer.authorizerPK.facility.facilityId}">
+                        <tr data-username="${fn:escapeXml(authorizer.authorizerPK.username)}" data-facility-id="${authorizer.authorizerPK.facility.facilityId}">
                             <td><c:out value="${authorizer.authorizerPK.facility.name}"/></td>
                             <td><c:out value="${authorizer.authorizerPK.operationsType}"/></td>
                             <td><c:out value="${s:formatUsername(authorizer.authorizerPK.username)}"/></td>

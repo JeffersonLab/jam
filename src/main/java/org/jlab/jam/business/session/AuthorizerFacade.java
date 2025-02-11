@@ -1,22 +1,29 @@
 package org.jlab.jam.business.session;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import org.jlab.jam.persistence.entity.Authorizer;
+import org.jlab.jam.persistence.entity.AuthorizerPK;
 import org.jlab.jam.persistence.entity.Facility;
 import org.jlab.jam.persistence.enumeration.OperationsType;
+import org.jlab.smoothness.business.exception.UserFriendlyException;
 
 /**
  * @author ryans
  */
 @Stateless
 public class AuthorizerFacade extends AbstractFacade<Authorizer> {
+  @EJB FacilityFacade facilityFacade;
+
   @PersistenceContext(unitName = "jamPU")
   private EntityManager em;
 
@@ -30,7 +37,7 @@ public class AuthorizerFacade extends AbstractFacade<Authorizer> {
   }
 
   @PermitAll
-  public List<Authorizer> filterList(Facility facility, OperationsType type) {
+  public List<Authorizer> filterList(Facility facility, OperationsType type, String username) {
     CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
     CriteriaQuery<Authorizer> cq = cb.createQuery(Authorizer.class);
     Root<Authorizer> root = cq.from(Authorizer.class);
@@ -43,6 +50,10 @@ public class AuthorizerFacade extends AbstractFacade<Authorizer> {
 
     if (type != null) {
       filters.add(cb.equal(root.get("authorizerPK").get("operationsType"), type));
+    }
+
+    if (username != null) {
+      filters.add(cb.equal(root.get("authorizerPK").get("username"), username));
     }
 
     if (!filters.isEmpty()) {
@@ -69,5 +80,68 @@ public class AuthorizerFacade extends AbstractFacade<Authorizer> {
 
     TypedQuery<Authorizer> q = getEntityManager().createQuery(cq);
     return q.getResultList();
+  }
+
+  @RolesAllowed("jam-admin")
+  public void addAuthorizer(BigInteger facilityId, OperationsType type, String username)
+      throws UserFriendlyException {
+
+    if (facilityId == null) {
+      throw new UserFriendlyException("facilityId is required");
+    }
+
+    Facility facility = facilityFacade.find(facilityId);
+
+    if (facility == null) {
+      throw new UserFriendlyException("facility with ID " + facilityId + " not found");
+    }
+
+    if (type == null) {
+      throw new UserFriendlyException("type is required");
+    }
+
+    if (username == null) {
+      throw new UserFriendlyException("username is required");
+    }
+
+    Authorizer authorizer = new Authorizer();
+    AuthorizerPK authorizerPK = new AuthorizerPK();
+    authorizerPK.setFacility(facility);
+    authorizerPK.setOperationsType(type);
+    authorizerPK.setUsername(username);
+
+    authorizer.setAuthorizerPK(authorizerPK);
+
+    create(authorizer);
+  }
+
+  @RolesAllowed("jam-admin")
+  public void removeAuthorizer(BigInteger facilityId, OperationsType type, String username)
+      throws UserFriendlyException {
+    if (facilityId == null) {
+      throw new UserFriendlyException("facilityId is required");
+    }
+
+    Facility facility = facilityFacade.find(facilityId);
+
+    if (facility == null) {
+      throw new UserFriendlyException("facility with ID " + facilityId + " not found");
+    }
+
+    if (type == null) {
+      throw new UserFriendlyException("type is required");
+    }
+
+    if (username == null) {
+      throw new UserFriendlyException("username is required");
+    }
+
+    List<Authorizer> authorizerList = filterList(facility, type, username);
+
+    if (authorizerList == null || authorizerList.isEmpty()) {
+      throw new UserFriendlyException("Authorizer not found");
+    }
+
+    remove(authorizerList.get(0));
   }
 }
