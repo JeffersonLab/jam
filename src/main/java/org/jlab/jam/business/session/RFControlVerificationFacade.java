@@ -440,7 +440,7 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
   public void revokeExpiredVerifications(List<RFControlVerification> expiredList) {
     Query q =
         em.createQuery(
-            "update RFControlVerification a set a.verificationId = 100, a.comments = 'Expired', a.verifiedBy = null, a.verificationDate = :vDate, a.modifiedDate = :vDate, a.modifiedBy = 'authadm' where a.controlVerificationId in :list");
+            "update RFControlVerification a set a.verificationStatusId = 100, a.comments = 'Expired', a.verifiedBy = null, a.verificationDate = :vDate, a.modifiedDate = :vDate, a.modifiedBy = 'authadm' where a.controlVerificationId in :list");
 
     List<BigInteger> expiredIdList = new ArrayList<>();
 

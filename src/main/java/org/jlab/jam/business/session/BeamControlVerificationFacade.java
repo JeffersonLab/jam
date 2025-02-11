@@ -442,7 +442,7 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
   public void revokeExpiredVerifications(List<BeamControlVerification> expiredList) {
     Query q =
         em.createQuery(
-            "update BeamControlVerification a set a.verificationId = 100, a.comments = 'Expired', a.verifiedBy = null, a.verificationDate = :vDate, a.modifiedDate = :vDate, a.modifiedBy = 'authadm' where a.controlVerificationId in :list");
+            "update BeamControlVerification a set a.verificationStatusId = 100, a.comments = 'Expired', a.verifiedBy = null, a.verificationDate = :vDate, a.modifiedDate = :vDate, a.modifiedBy = 'authadm' where a.controlVerificationId in :list");
 
     List<BigInteger> expiredIdList = new ArrayList<>();
 
