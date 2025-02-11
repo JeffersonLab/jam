@@ -29,16 +29,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                    <c:forEach items="${facilityList}" var="facility">
-                        <tr data-id="${facility.facilityId}">
-                            <td><c:out value="John Doe (jdoe)"/></td>
-                            <td><c:out value="RF"/></td>
-                            <td><c:out value="${facility.name}"/></td>
-                        </tr>
-                        <tr data-id="${facility.facilityId}">
-                            <td><c:out value="John Doe (jdoe)"/></td>
-                            <td><c:out value="BEAM"/></td>
-                            <td><c:out value="${facility.name}"/></td>
+                    <c:forEach items="${authorizerList}" var="authorizer">
+                        <tr data-facility-id="${authorizer.authorizerPK.facility.facilityId}">
+                            <td><c:out value="${authorizer.authorizerPK.username}"/></td>
+                            <td><c:out value="${authorizer.authorizerPK.operationsType}"/></td>
+                            <td><c:out value="${authorizer.authorizerPK.facility.name}"/></td>
                         </tr>
                     </c:forEach>
                     </tbody>
