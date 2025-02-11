@@ -13,7 +13,56 @@
     </jsp:attribute>        
     <jsp:body>
         <section>
-            <h2 class="page-header-title"><c:out value="${title}"/></h2>
+            <s:filter-flyout-widget clearButton="true">
+                <form id="filter-form" method="get" action="authorizers">
+                    <div id="filter-form-panel">
+                        <fieldset>
+                            <legend>Filter</legend>
+                            <ul class="key-value-list">
+                                <li>
+                                    <div class="li-key">
+                                        <label for="facility-select">Facility</label>
+                                    </div>
+                                    <div class="li-value">
+                                        <select id="facility-select" name="facilityId">
+                                            <option value="">&nbsp;</option>
+                                            <c:forEach items="${facilityList}" var="facility">
+                                                <option value="${facility.facilityId}"${param.facilityId eq facility.facilityId ? ' selected="selected"' : ''}>
+                                                    <c:out value="${facility.name}"/></option>
+                                            </c:forEach>
+                                        </select>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="li-key">
+                                        <label for="type-select">Operations Type</label>
+                                    </div>
+                                    <div class="li-value">
+                                        <select id="type-select" name="type">
+                                            <option value="">&nbsp;</option>
+                                            <option value="RF"${param.type eq 'RF' ? ' selected="selected"' : ''}>RF</option>
+                                            <option value="BEAM"${param.type eq 'BEAM' ? ' selected="selected"' : ''}>BEAM</option>
+                                        </select>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="li-key">
+                                        <label for="username">Username</label>
+                                    </div>
+                                    <div class="li-value">
+                                        <input id="username"
+                                               name="username" value="${fn:escapeXml(param.username)}"
+                                               placeholder="username"/>
+                                    </div>
+                                </li>
+                            </ul>
+                        </fieldset>
+                    </div>
+                    <input type="hidden" id="offset-input" name="offset" value="0"/>
+                    <input id="filter-form-submit-button" type="submit" value="Apply"/>
+                </form>
+            </s:filter-flyout-widget>
+            <h2 id="page-header-title"><c:out value="${title}"/></h2>
             <div class="message-box"><c:out value="${selectionMessage}"/></div>
             <div id="chart-wrap" class="chart-wrap-backdrop">
                 <c:set var="readonly" value="${!pageContext.request.isUserInRole('jam-admin')}"/>

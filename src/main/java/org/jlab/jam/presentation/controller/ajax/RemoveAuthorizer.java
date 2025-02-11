@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 import org.jlab.jam.business.session.AuthorizerFacade;
 import org.jlab.jam.persistence.enumeration.OperationsType;
+import org.jlab.jam.presentation.controller.inventory.AuthorizersController;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jlab.smoothness.business.util.ExceptionUtil;
 import org.jlab.smoothness.presentation.util.ParamConverter;
@@ -50,7 +51,7 @@ public class RemoveAuthorizer extends HttpServlet {
     try {
       BigInteger facilityId = ParamConverter.convertBigInteger(request, "facilityId");
       String username = request.getParameter("username");
-      OperationsType type = AddAuthorizer.convertOperationsType(request, "type");
+      OperationsType type = AuthorizersController.convertOperationsType(request, "type");
 
       authorizerFacade.removeAuthorizer(facilityId, type, username);
     } catch (UserFriendlyException e) {

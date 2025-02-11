@@ -52,7 +52,7 @@ public class AuthorizerFacade extends AbstractFacade<Authorizer> {
       filters.add(cb.equal(root.get("authorizerPK").get("operationsType"), type));
     }
 
-    if (username != null) {
+    if (username != null && !username.isEmpty()) {
       filters.add(cb.equal(root.get("authorizerPK").get("username"), username));
     }
 

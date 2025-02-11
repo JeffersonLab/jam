@@ -109,5 +109,6 @@ $(document).on("click", "#remove-row-button", function() {
 $(document).on("click", ".default-clear-panel", function () {
     $("#facility-select").val('');
     $("#type-select").val('');
+    $("#username").val('');
     return false;
 });

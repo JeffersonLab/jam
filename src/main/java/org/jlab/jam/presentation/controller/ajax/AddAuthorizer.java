@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 import org.jlab.jam.business.session.AuthorizerFacade;
 import org.jlab.jam.persistence.enumeration.OperationsType;
+import org.jlab.jam.presentation.controller.inventory.AuthorizersController;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jlab.smoothness.business.util.ExceptionUtil;
 import org.jlab.smoothness.presentation.util.ParamConverter;
@@ -50,7 +51,7 @@ public class AddAuthorizer extends HttpServlet {
     try {
       BigInteger facilityId = ParamConverter.convertBigInteger(request, "facilityId");
       String username = request.getParameter("username");
-      OperationsType type = convertOperationsType(request, "type");
+      OperationsType type = AuthorizersController.convertOperationsType(request, "type");
 
       authorizerFacade.addAuthorizer(facilityId, type, username);
     } catch (UserFriendlyException e) {
@@ -91,24 +92,5 @@ public class AddAuthorizer extends HttpServlet {
       }
       gen.writeEnd();
     }
-  }
-
-  public static OperationsType convertOperationsType(HttpServletRequest request, String name)
-      throws UserFriendlyException {
-    String value = request.getParameter(name);
-
-    if (value == null) {
-      throw new UserFriendlyException("Parameter type is required");
-    }
-
-    OperationsType result = null;
-
-    try {
-      result = OperationsType.valueOf(value);
-    } catch (IllegalArgumentException e) {
-      throw new UserFriendlyException("type must be one of 'RF' or 'BEAM'");
-    }
-
-    return result;
   }
 }
