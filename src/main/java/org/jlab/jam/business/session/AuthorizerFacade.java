@@ -144,4 +144,14 @@ public class AuthorizerFacade extends AbstractFacade<Authorizer> {
 
     remove(authorizerList.get(0));
   }
+
+  @PermitAll
+  public void isAuthorizer(Facility facility, OperationsType type, String username)
+      throws UserFriendlyException {
+    List<Authorizer> authorizerList = filterList(facility, type, username);
+
+    if (authorizerList == null || authorizerList.isEmpty()) {
+      throw new UserFriendlyException("Not Authorized to Authorize!");
+    }
+  }
 }

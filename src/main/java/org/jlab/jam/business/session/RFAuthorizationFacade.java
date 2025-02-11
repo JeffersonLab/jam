@@ -19,6 +19,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import org.jlab.jam.persistence.entity.*;
+import org.jlab.jam.persistence.enumeration.OperationsType;
 import org.jlab.jlog.Body;
 import org.jlab.jlog.Library;
 import org.jlab.jlog.LogEntry;
@@ -43,6 +44,7 @@ public class RFAuthorizationFacade extends AbstractFacade<RFAuthorization> {
   @PersistenceContext(unitName = "jamPU")
   private EntityManager em;
 
+  @EJB AuthorizerFacade authorizerFacade;
   @EJB RFSegmentFacade segmentFacade;
 
   @Override
@@ -130,11 +132,13 @@ public class RFAuthorizationFacade extends AbstractFacade<RFAuthorization> {
     return segmentAuthorizationMap;
   }
 
-  @RolesAllowed("jam-admin")
+  @PermitAll
   public void saveAuthorization(
       Facility facility, String comments, List<RFSegmentAuthorization> segmentAuthorizationList)
       throws UserFriendlyException {
     String username = checkAuthenticated();
+
+    authorizerFacade.isAuthorizer(facility, OperationsType.BEAM, username);
 
     RFAuthorization authorization = new RFAuthorization();
     authorization.setFacility(facility);

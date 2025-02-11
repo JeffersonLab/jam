@@ -10,7 +10,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -21,6 +20,7 @@ import org.jlab.jam.persistence.entity.BeamAuthorization;
 import org.jlab.jam.persistence.entity.BeamDestination;
 import org.jlab.jam.persistence.entity.BeamDestinationAuthorization;
 import org.jlab.jam.persistence.entity.Facility;
+import org.jlab.jam.persistence.enumeration.OperationsType;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
 
 /**
@@ -35,6 +35,7 @@ public class BeamAuthorizationFacade extends AbstractFacade<BeamAuthorization> {
   @PersistenceContext(unitName = "jamPU")
   private EntityManager em;
 
+  @EJB AuthorizerFacade authorizerFacade;
   @EJB BeamDestinationFacade destinationFacade;
 
   @Override
@@ -122,13 +123,15 @@ public class BeamAuthorizationFacade extends AbstractFacade<BeamAuthorization> {
     return destinationAuthorizationMap;
   }
 
-  @RolesAllowed("jam-admin")
+  @PermitAll
   public void saveAuthorization(
       Facility facility,
       String comments,
       List<BeamDestinationAuthorization> beamDestinationAuthorizationList)
       throws UserFriendlyException {
     String username = checkAuthenticated();
+
+    authorizerFacade.isAuthorizer(facility, OperationsType.BEAM, username);
 
     BeamAuthorization beamAuthorization = new BeamAuthorization();
     beamAuthorization.setFacility(facility);
