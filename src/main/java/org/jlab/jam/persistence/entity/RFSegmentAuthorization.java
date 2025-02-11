@@ -162,6 +162,7 @@ public class RFSegmentAuthorization implements Serializable {
   public RFSegmentAuthorization createAdminClone(RFAuthorization authClone) {
     RFSegmentAuthorization other = new RFSegmentAuthorization();
     other.rfAuthorization = authClone;
+    other.facility = facility;
     other.comments = this.comments;
     other.expirationDate = this.expirationDate;
     other.segment = this.segment;

@@ -181,6 +181,7 @@ public class BeamDestinationAuthorization implements Serializable {
   public BeamDestinationAuthorization createAdminClone(BeamAuthorization authClone) {
     BeamDestinationAuthorization other = new BeamDestinationAuthorization();
     other.beamAuthorization = authClone;
+    other.facility = facility;
     other.beamMode = this.beamMode;
     other.comments = this.comments;
     other.cwLimit = this.cwLimit;

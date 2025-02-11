@@ -157,6 +157,7 @@ public class RFAuthorization implements Serializable {
 
   public RFAuthorization createAdminClone() {
     RFAuthorization other = new RFAuthorization();
+    other.facility = facility;
     other.authorizationDate = this.authorizationDate;
     other.authorizedBy = this.authorizedBy;
     other.comments = this.comments;

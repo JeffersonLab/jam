@@ -157,6 +157,7 @@ public class BeamAuthorization implements Serializable {
 
   public BeamAuthorization createAdminClone() {
     BeamAuthorization other = new BeamAuthorization();
+    other.facility = facility;
     other.authorizationDate = this.authorizationDate;
     other.authorizedBy = this.authorizedBy;
     other.comments = this.comments;
