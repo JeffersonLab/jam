@@ -8,8 +8,11 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.jlab.jam.business.session.AbstractFacade;
 import org.jlab.jam.business.session.AuthorizerFacade;
+import org.jlab.jam.business.session.FacilityFacade;
 import org.jlab.jam.persistence.entity.Authorizer;
+import org.jlab.jam.persistence.entity.Facility;
 
 /**
  * @author ryans
@@ -19,6 +22,7 @@ import org.jlab.jam.persistence.entity.Authorizer;
     urlPatterns = {"/inventory/authorizers"})
 public class AuthorizersController extends HttpServlet {
 
+  @EJB FacilityFacade facilityFacade;
   @EJB AuthorizerFacade authorizerFacade;
 
   /**
@@ -33,8 +37,11 @@ public class AuthorizersController extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    List<Authorizer> authorizerList = authorizerFacade.findAll();
+    List<Facility> facilityList =
+        facilityFacade.findAll(new AbstractFacade.OrderDirective("weight"));
+    List<Authorizer> authorizerList = authorizerFacade.filterList(null, null);
 
+    request.setAttribute("facilityList", facilityList);
     request.setAttribute("authorizerList", authorizerList);
 
     request

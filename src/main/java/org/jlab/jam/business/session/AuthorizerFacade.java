@@ -7,10 +7,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import org.jlab.jam.persistence.entity.Authorizer;
 import org.jlab.jam.persistence.entity.Facility;
 import org.jlab.jam.persistence.enumeration.OperationsType;
@@ -53,6 +50,23 @@ public class AuthorizerFacade extends AbstractFacade<Authorizer> {
     }
 
     cq.select(root);
+
+    List<Order> orders = new ArrayList<>();
+
+    Path p0 = root.get("authorizerPK").get("facility").get("weight");
+    Order o0 = cb.asc(p0);
+    orders.add(o0);
+
+    Path p1 = root.get("authorizerPK").get("operationsType");
+    Order o1 = cb.asc(p1);
+    orders.add(o1);
+
+    Path p2 = root.get("authorizerPK").get("username");
+    Order o2 = cb.asc(p2);
+    orders.add(o2);
+
+    cq.orderBy(orders);
+
     TypedQuery<Authorizer> q = getEntityManager().createQuery(cq);
     return q.getResultList();
   }
