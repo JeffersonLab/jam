@@ -19,10 +19,10 @@ A [Java EE 8](https://en.wikipedia.org/wiki/Jakarta_EE) web application for both
 The authorization application allows the Director of Operations (or a delegate) to clearly communicate and document authorization for various facilities at JLab to either generate beam or engage in RF operations. For beam generation the maximum current and beam mode ("permissions") that are authorized are provided for a given beam destination.  This information is stored in a database and presented via the web for easy access.   There are three beam generating facilities, each with their own set of beam destinations and beam modes: CEBAF, LERF, UITF.  There are seven facilities which generate RF: CEBAF Injector, CEBAF North Linac, CEBAF South Linac, LERF, CMTF, and VTA.  In addition to director authorization, the app also tracks Credited Controls and their verification.  Each beam destination is assigned a set of controls and each control is assigned to a particular responsible group.  A beam desintation is ready for beam only if all the controls assigned are verified by their responsible group.  Both group verifications and director permissions have expirations.   Emails and Jefferson Lab logbook entires are created to aid communication of new director permissions, responsible group verifications (upgrades and downgrades), and verification and permissions expirations.
 
 ### Roles
- - **Operations Director** - Responsible for authorizing beam
+ - **Authorizer / Operations Director** - Responsible for authorizing beam
  - **Operability / Admin** - Responsible for process administration and continuous improvement
- - **Operator** - Must honor permissions set by the Director when running the machines
- - **Group Leader** - Responsible for verifying Credited Control readiness and assigning expiration dates for when new checks are required
+ - **Operator** - Must honor permissions set by the Director when operating facilities
+ - **Verification Team** - Responsible for verifying Credited Control readiness and assigning expiration dates for when new checks are required
 
 ### JLab Internal Docs
  - [CEBAF-LERF ASE](https://jlabdoc.jlab.org/docushare/dsweb/Get/Document-187898)
