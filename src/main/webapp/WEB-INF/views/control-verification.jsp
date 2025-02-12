@@ -72,7 +72,7 @@
                                         None
                                     </c:when>
                                     <c:otherwise>
-                                        <t:verification-panel operationsType="rf" operationsList="${creditedControl.getRFControlVerificationList()}"/>
+                                        <t:verification-panel operationsType="rf" operationsList="${creditedControl.getRFControlVerificationList()}" groupByOperation="false"/>
                                     </c:otherwise>
                                 </c:choose>
                             </div>
@@ -85,7 +85,7 @@
                                 None
                             </c:when>
                             <c:otherwise>
-                                <t:verification-panel operationsType="beam" operationsList="${creditedControl.beamControlVerificationList}"/>
+                                <t:verification-panel operationsType="beam" operationsList="${creditedControl.beamControlVerificationList}" groupByOperation="false"/>
                             </c:otherwise>
                         </c:choose>
                             </div>
@@ -97,92 +97,5 @@
                 </c:otherwise>
             </c:choose>
         </section>
-        <div id="verify-dialog" class="dialog" title="Edit Credited Control Verification">
-            <form>
-                <ul class="key-value-list">
-                    <li>
-                        <div class="li-key"><span id="edit-dialog-verification-label">Beam Destinations</span>:</div>
-                        <div class="li-value">
-                            <ul id="selected-verification-list">
-
-                            </ul>
-                            <span id="edit-dialog-verification-count"></span>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="li-key">Status:</div>
-                        <div class="li-value">
-                            <select id="verificationId" name="verificationId">
-                                <option value="&nbsp;"> </option>
-                                <option value="100">Not Verified</option>
-                                <option value="1">Verified</option>
-                            </select>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="li-key">Verification Date:</div>
-                        <div class="li-value">
-                            <input id="verificationDate" name="verificationDate" type="text" class="date-time-field nowable-field" placeholder="${s:getFriendlyDateTimePlaceholder()}"/>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="li-key">Verified By:</div>
-                        <div class="li-value">
-                            <input id="verifiedBy" name="verifiedBy" type="text" placeholder="username" class="username-autocomplete" maxlength="64"/>
-                            <button class="me-button" type="button">Me</button>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="li-key">Expiration Date:</div>
-                        <div class="li-value">
-                            <input id="expirationDate" name="expirationDate" type="text" class="date-time-field" placeholder="${s:getFriendlyDateTimePlaceholder()}"/>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="li-key">Comments:</div>
-                        <div class="li-value">
-                            <textarea id="comments" name="comments"></textarea>
-                        </div>
-                    </li>
-                </ul>
-                <input type="hidden" id="creditedControlId" name="creditedControlId"/>
-                <div class="dialog-button-panel">
-                    <span id="rows-differ-message">Note: One or more selected rows existing values differ</span>
-                    <button id="verifySaveButton" class="dialog-submit ajax-button" type="button">Save</button>
-                    <button class="dialog-close-button" type="button">Cancel</button>
-                </div>
-                <input type="hidden" id="verificationType" name="verificationType"/>
-            </form>
-        </div>
-        <div id="success-dialog" class="dialog" title="Verification Saved Successfully">
-            <span class="logentry-success">Verification contained downgrade so a new log entry was created: <a id="new-entry-url" href="#"></a></span>
-            <div class="dialog-button-panel">
-                <button class="dialog-close-button" type="button">OK</button>
-            </div>
-        </div>
-        <div id="component-edit-dialog" class="dialog" title="Components">
-            <div class="row">
-                <div class="column">
-                    <fieldset>
-                        <legend>Add</legend>
-                        <input type="text" id="component" name="component" placeholder="search for name" autocomplete="off"/>
-                        <button id="add-component-button" type="button">Add</button>
-                    </fieldset>
-                </div>
-                <div class="column">
-                    <fieldset>
-                        <legend>Remove</legend>
-                        <select id="selected-component-list">
-                        </select>
-                        <button id="remove-component-button" type="button">Remove</button>
-                    </fieldset>
-                </div>
-            </div>
-            <div class="dialog-button-panel">
-                <input type="hidden" id="component-edit-verification-type" name="verificationType"/>
-                <input type="hidden" id="component-edit-verification-id" name="verificationId"/>
-                <button class="dialog-close-button" type="button">OK</button>
-            </div>
-        </div>
     </jsp:body>         
 </t:page>
