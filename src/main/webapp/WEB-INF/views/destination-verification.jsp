@@ -8,7 +8,7 @@
 <c:set var="title" value="Destination Verification"/>
 <t:page title="${title}">
     <jsp:attribute name="stylesheets">
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/css/control-verification.css"/>
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/css/verification-panel.css"/>
         <style type="text/css">
             .dialog-content {
                 padding-bottom: 1em;
@@ -23,7 +23,7 @@
             jlab = jlab || {};
             jlab.verificationType = 'Control-Group';
         </script>
-        <script type="text/javascript" src="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/js/control-verification.js"></script>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/js/verification-panel.js"></script>
     </jsp:attribute>        
     <jsp:body>
         <c:if test="${destination ne null}">
@@ -69,62 +69,10 @@
                         </h3>
                         <c:choose>
                             <c:when test="${fn:length(destination.beamControlVerificationList) < 1}">
-                                <div class="message-box">None</div>
+                                None
                             </c:when>
                             <c:otherwise>
-                                <c:if test="${adminOrLeader && param.notEditable eq null}">
-                                    <button id="edit-selected-button" type="button" class="verify-button selected-row-action" disabled="disabled">Edit Selected</button>
-                                </c:if>
-                                <table id="verification-table" class="data-table stripped-table${(adminOrLeader && param.notEditable eq null) ? ' multicheck-table editable-row-table' : ''}">
-                                    <thead>
-                                        <tr>
-                                            <c:if test="${adminOrLeader && param.notEditable eq null}">
-                                                <th>
-                                                    Select
-                                                    <select id="check-select" name="check-select">
-                                                        <option value="">&nbsp;</option>
-                                                        <option value="all">All</option>
-                                                        <option value="none">None</option>
-                                                    </select>
-                                                </th>
-                                            </c:if>
-                                            <th>Team / Control</th>
-                                            <th>Verified</th>
-                                            <th>Verified Date</th>
-                                            <th>Verified By</th>
-                                            <th>Comments</th>
-                                            <th>Expiration Date</th>
-                                            <th>Audit</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <c:forEach items="${destination.beamControlVerificationList}" var="verification">
-                                            <tr data-control-verification-id="${verification.beamControlVerificationId}" data-verified-username="${verification.verifiedBy}" data-status-id="${verification.verificationStatusId}">
-                                                <c:if test="${adminOrLeader && param.notEditable eq null}">
-                                                    <td>
-                                                        <input class="destination-checkbox" type="checkbox" name="destination-checkbox" value="${verification.beamControlVerificationId}"/>
-                                                    </td>
-                                                </c:if>
-                                                <td>
-                                                    <c:url value="/verifications/control" var="url">
-                                                        <c:param name="creditedControlId" value="${verification.creditedControl.creditedControlId}"/>
-                                                        <c:param name="notEditable" value="1"/>
-                                                    </c:url>
-                                                    <c:out value="${verification.creditedControl.verificationTeam.name}"/> / <a href="${url}" class="dialog-ready" data-dialog-title="${fn:escapeXml(verification.creditedControl.name)}"><c:out value="${verification.creditedControl.name}"/></a>
-                                                </td>
-                                                <td class="icon-cell"><span title="${verification.verificationStatusId eq 1 ? 'Verified' : (verification.verificationStatusId eq 50 ? 'Provisionally Verified' : 'Not Verified')}" class="small-icon baseline-small-icon ${verification.verificationStatusId eq 1 ? 'verified-icon' : (verification.verificationStatusId eq 50 ? 'provisional-icon' : 'not-verified-icon')}"></span></td>
-                                                <td><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}" value="${verification.verificationDate}"/></td>
-                                                <td><c:out value="${s:formatUsername(verification.verifiedBy)}"/></td>
-                                                <td><c:out value="${verification.comments}"/></td>
-                                                <td><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}" value="${verification.expirationDate}"/></td>
-                                                <td><a class="dialog-ready" data-dialog-title="Destination Verification History" href="${pageContext.request.contextPath}/verifications/control/destination-history?beamControlVerificationId=${verification.beamControlVerificationId}" title="Click for verification history">History</a></td>
-                                            </tr>
-                                        </c:forEach>
-                                    </tbody>
-                                </table>
-                                <c:if test="${adminOrLeader && param.notEditable eq null}">
-                                    <div id="multi-instructions">Hold down the control (Ctrl) or shift key when clicking to select multiple.  Hold down the Command (⌘) key on Mac.</div> 
-                                </c:if>
+                                <t:verification-panel operationsType="beam" operationsList="${destination.beamControlVerificationList}" groupByOperation="true"/>
                             </c:otherwise>
                         </c:choose>
                     </div>
@@ -133,69 +81,6 @@
                     Choose a Beam Destination to continue
                 </c:otherwise>
             </c:choose>
-            <div id="verify-dialog" class="dialog" title="Edit Credited Control Verification">
-                <form>
-                    <ul class="key-value-list">
-                        <li>
-                            <div class="li-key"><span id="edit-dialog-verification-label">Beam Destinations</span>:</div>
-                            <div class="li-value">
-                                <ul id="selected-verification-list">
-
-                                </ul>
-                                <span id="edit-dialog-verification-count"></span>
-                            </div>
-                        </li>                    
-                        <li>
-                            <div class="li-key">Status:</div>
-                            <div class="li-value">
-                                <select id="verificationId" name="verificationId">
-                                    <option value="&nbsp;"> </option>
-                                    <option value="100">Not Verified</option>
-                                    <option value="50">Provisionally Verified</option>
-                                    <option value="1">Verified</option>
-                                </select>
-                            </div>
-                        </li>      
-                        <li>
-                            <div class="li-key">Verification Date:</div>
-                            <div class="li-value">
-                                <input id="verificationDate" name="verificationDate" type="text" class="date-time-field nowable-field" placeholder="${s:getFriendlyDateTimePlaceholder()}"/>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="li-key">Verified By:</div>
-                            <div class="li-value">
-                                <input id="verifiedBy" name="verifiedBy" type="text" placeholder="username" class="username-autocomplete" maxlength="64"/>
-                                <button class="me-button" type="button">Me</button>
-                            </div>
-                        </li>                        
-                        <li>
-                            <div class="li-key">Expiration Date:</div>
-                            <div class="li-value">
-                                <input id="expirationDate" name="expirationDate" type="text" class="date-time-field" placeholder="${s:getFriendlyDateTimePlaceholder()}"/>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="li-key">Comments:</div>
-                            <div class="li-value">
-                                <textarea id="comments" name="comments"></textarea>
-                            </div>
-                        </li>                    
-                    </ul>
-                    <input type="hidden" id="creditedControlId" name="creditedControlId"/>
-                    <div class="dialog-button-panel">
-                        <span id="rows-differ-message">Note: One or more selected rows existing values differ</span>
-                        <button id="verifySaveButton" class="dialog-submit ajax-button" type="button">Save</button>
-                        <button class="dialog-close-button" type="button">Cancel</button>
-                    </div>
-                </form>
-            </div>
         </section>
-        <div id="success-dialog" class="dialog" title="Verification Saved Successfully">
-            <span class="logentry-success">Verification contained downgrade so a new log entry was created: <a id="new-entry-url" href="#"></a></span>
-            <div class="dialog-button-panel">
-                <button class="dialog-close-button" type="button">OK</button>
-            </div>
-        </div>        
     </jsp:body>         
 </t:page>
