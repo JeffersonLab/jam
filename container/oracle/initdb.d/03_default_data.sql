@@ -18,6 +18,10 @@ insert into JAM_OWNER.FACILITY (FACILITY_ID, NAME, PATH, WEIGHT) values (3, 'UIT
 insert into JAM_OWNER.FACILITY (FACILITY_ID, NAME, PATH, WEIGHT) values (4, 'CMTF', '/cmtf', 4);
 insert into JAM_OWNER.FACILITY (FACILITY_ID, NAME, PATH, WEIGHT) values (5, 'VTA', '/vta', 5);
 
+-- Populate Authorizers
+insert into JAM_OWNER.AUTHORIZER (FACILITY_ID, OPERATIONS_TYPE, USERNAME) values (1, 'RF', 'tbrown');
+insert into JAM_OWNER.AUTHORIZER (FACILITY_ID, OPERATIONS_TYPE, USERNAME) values (1, 'BEAM', 'tbrown');
+
 -- Populate Credited Controls
 insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,VERIFICATION_TEAM_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'Earth Berms/Overburden','Non-structural fill, cover, or berms',1,1,'1 Year');
 insert into JAM_OWNER.CREDITED_CONTROL (CREDITED_CONTROL_ID,NAME,DESCRIPTION,VERIFICATION_TEAM_ID,WEIGHT,VERIFICATION_FREQUENCY) values (JAM_OWNER.CREDITED_CONTROL_ID.nextval,'Structural Shielding','Beam enclosure concrete structure',2,2,'1 Year');
