@@ -350,14 +350,14 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
       throws UserFriendlyException {
     String username = checkAuthenticated();
 
-    String subject = System.getenv("BAM_DOWNGRADED_SUBJECT");
+    String subject = System.getenv("JAM_DOWNGRADED_SUBJECT");
 
-    String logbooks = System.getenv("BAM_BOOKS_CSV");
+    String logbooks = System.getenv("JAM_BOOKS_CSV");
 
     if (logbooks == null || logbooks.isEmpty()) {
       logbooks = "TLOG";
       LOGGER.log(
-          Level.WARNING, "Environment variable 'BAM_BOOKS_CSV' not found, using default TLOG");
+          Level.WARNING, "Environment variable 'JAM_BOOKS_CSV' not found, using default TLOG");
     }
 
     Properties config = Library.getConfiguration();
@@ -386,13 +386,13 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
 
   @PermitAll
   public void sendVerificationDowngradedEmail(String body) throws UserFriendlyException {
-    String toCsv = System.getenv("BAM_DOWNGRADED_EMAIL_CSV");
+    String toCsv = System.getenv("JAM_DOWNGRADED_EMAIL_CSV");
 
-    String subject = System.getenv("BAM_DOWNGRADED_SUBJECT");
+    String subject = System.getenv("JAM_DOWNGRADED_SUBJECT");
 
     EmailService emailService = new EmailService();
 
-    String sender = System.getenv("BAM_EMAIL_SENDER");
+    String sender = System.getenv("JAM_EMAIL_SENDER");
 
     emailService.sendEmail(sender, sender, toCsv, null, subject, body, true);
   }
@@ -512,8 +512,7 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
             destClone.setBeamMode("None");
             destClone.setCwLimit(null);
             destClone.setComments(
-                "Permission automatically revoked due to credited control verification "
-                    + reason);
+                "Permission automatically revoked due to credited control verification " + reason);
             LOGGER.log(Level.FINEST, "Found something to downgrade");
             atLeastOne = true;
             break; // Found a match so revoke and then break out of loop
@@ -638,9 +637,9 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
       List<BeamControlVerification> upcomingVerificationExpirationList,
       String proxyServer)
       throws MessagingException, UserFriendlyException {
-    String toCsv = System.getenv("BAM_UPCOMING_EXPIRATION_EMAIL_CSV");
+    String toCsv = System.getenv("JAM_UPCOMING_EXPIRATION_EMAIL_CSV");
 
-    String subject = System.getenv("BAM_UPCOMING_EXPIRATION_SUBJECT");
+    String subject = System.getenv("JAM_UPCOMING_EXPIRATION_SUBJECT");
 
     String body =
         getExpiredMessageBody(
@@ -652,7 +651,7 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
 
     EmailService emailService = new EmailService();
 
-    String sender = System.getenv("BAM_EMAIL_SENDER");
+    String sender = System.getenv("JAM_EMAIL_SENDER");
 
     emailService.sendEmail(sender, sender, toCsv, null, subject, body, true);
   }
@@ -663,9 +662,9 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
       List<BeamControlVerification> expiredVerificationList,
       String proxyServer)
       throws MessagingException, UserFriendlyException {
-    String toCsv = System.getenv("BAM_EXPIRED_EMAIL_CSV");
+    String toCsv = System.getenv("JAM_EXPIRED_EMAIL_CSV");
 
-    String subject = System.getenv("BAM_EXPIRED_SUBJECT");
+    String subject = System.getenv("JAM_EXPIRED_SUBJECT");
 
     String body =
         getExpiredMessageBody(
@@ -673,7 +672,7 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
 
     EmailService emailService = new EmailService();
 
-    String sender = System.getenv("BAM_EMAIL_SENDER");
+    String sender = System.getenv("JAM_EMAIL_SENDER");
 
     emailService.sendEmail(sender, sender, toCsv, null, subject, body, true);
     LOGGER.log(Level.FINEST, "notifyOps, toCsv: {0], body: {1}", new Object[] {toCsv, body});
@@ -689,7 +688,7 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
     Map<VerificationTeam, List<BeamControlVerification>> upcomingExpirationGroupMap =
         new HashMap<>();
 
-    String subject = System.getenv("BAM_UPCOMING_EXPIRATION_SUBJECT");
+    String subject = System.getenv("JAM_UPCOMING_EXPIRATION_SUBJECT");
 
     LOGGER.log(Level.FINEST, "Expirations:");
     if (expiredList != null) {
@@ -748,7 +747,7 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
       List<BeamControlVerification> groupUpcomingExpirationsList =
           upcomingExpirationGroupMap.get(w);
 
-      String sender = System.getenv("BAM_EMAIL_SENDER");
+      String sender = System.getenv("JAM_EMAIL_SENDER");
 
       String body =
           getExpiredMessageBody(
