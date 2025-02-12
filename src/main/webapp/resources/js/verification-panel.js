@@ -154,6 +154,10 @@ $(document).on("click", ".verify-button", function () {
         verificationType = "RF";
     }
 
+    if($panel.hasClass("groupByOperation")) {
+        verificationLabel = "Control";
+    }
+
     var $selectedList = $("#selected-verification-list");
 
     $selectedList.empty();
@@ -170,7 +174,7 @@ $(document).on("click", ".verify-button", function () {
     $verificationList.each(function (index, value) {
         if ($(".destination-checkbox", value).is(":checked")) {
             var id = $(this).attr("data-control-verification-id"),
-                label = $("td:nth-child(2)", value).text(),
+                label = $("td:nth-child(2)", value).text().trim(),
                 $notReadyComponents = $("td:nth-child(4) .not-verified-icon", value);
 
             if($notReadyComponents.length > 0) {

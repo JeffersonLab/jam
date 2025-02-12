@@ -22,7 +22,7 @@
 <c:if test="${groupByOperation}">
     <c:set var="rowKey" value="Team / Control"/>
 </c:if>
-<div class="verification-panel ${operationsType}">
+<div class="verification-panel ${operationsType} ${groupByOperation ? 'groupByOperation' : ''}">
     <c:if test="${adminOrLeader && param.notEditable eq null}">
         <button type="button" class="edit-selected-button verify-button selected-row-action" disabled="disabled">Edit Verification</button>
     </c:if>
@@ -94,7 +94,7 @@
                 </td>
                 <td><c:out value="${verification.comments}"/></td>
                 <td><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}" value="${verification.expirationDate}"/></td>
-                <td><a data-dialog-title="Verification History" href="${pageContext.request.contextPath}/verifications/control/${historyPathSuffix}=${verification[operationsId]}" title="Click for verification history">History</a></td>
+                <td><a class="${groupByOperation ? 'dialog-ready' : ''}" data-dialog-title="Verification History" href="${pageContext.request.contextPath}/verifications/control/${historyPathSuffix}=${verification[operationsId]}" title="Click for verification history">History</a></td>
             </tr>
         </c:forEach>
         </tbody>
