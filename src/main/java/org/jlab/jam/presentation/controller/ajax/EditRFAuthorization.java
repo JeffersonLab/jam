@@ -21,7 +21,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.jlab.jam.business.session.FacilityFacade;
 import org.jlab.jam.business.session.LogbookFacade;
 import org.jlab.jam.business.session.RFAuthorizationFacade;
+import org.jlab.jam.business.session.WatcherFacade;
 import org.jlab.jam.persistence.entity.*;
+import org.jlab.jam.persistence.enumeration.OperationsType;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jlab.smoothness.business.util.TimeUtil;
 import org.jlab.smoothness.presentation.util.ParamConverter;
@@ -39,6 +41,7 @@ public class EditRFAuthorization extends HttpServlet {
   @EJB RFAuthorizationFacade rfAuthorizationFacade;
   @EJB FacilityFacade facilityFacade;
   @EJB LogbookFacade logbookFacade;
+  @EJB WatcherFacade watcherFacade;
 
   /**
    * Handles the HTTP <code>POST</code> method.
@@ -98,7 +101,7 @@ public class EditRFAuthorization extends HttpServlet {
       String proxyServer = System.getenv("FRONTEND_SERVER_URL");
 
       try {
-        logbookFacade.sendOpsNewAuthorizationEmail(proxyServer, comments);
+        watcherFacade.sendNewAuthorizationEmail(facility, OperationsType.RF, proxyServer, comments);
       } catch (UserFriendlyException e) {
         errorReason = "Authorization was saved, but we were unable to send to ops an email.  ";
         LOGGER.log(Level.SEVERE, errorReason, e);

@@ -23,7 +23,6 @@ import org.jlab.jlog.exception.LogCertificateException;
 import org.jlab.jlog.exception.LogIOException;
 import org.jlab.jlog.exception.LogRuntimeException;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
-import org.jlab.smoothness.business.service.EmailService;
 import org.jlab.smoothness.business.util.IOUtil;
 
 /**
@@ -44,36 +43,6 @@ public class LogbookFacade extends AbstractFacade<VerificationTeam> {
 
   public LogbookFacade() {
     super(VerificationTeam.class);
-  }
-
-  @RolesAllowed("jam-admin")
-  public void sendOpsNewAuthorizationEmail(String linkHostName, String comments)
-      throws UserFriendlyException {
-
-    String toCsv = System.getenv("JAM_PERMISSIONS_EMAIL_CSV");
-
-    if (toCsv == null || toCsv.isEmpty()) {
-      LOGGER.log(
-          Level.WARNING, "Environment variable 'JAM_PERMISSIONS_EMAIL_CSV' not found, aborting");
-      return;
-    }
-
-    String subject = System.getenv("JAM_PERMISSIONS_SUBJECT");
-
-    String body = "<a href=\"" + linkHostName + "/jam\">" + linkHostName + "/jam</a>";
-
-    body = body + "\n\n<p>Notes: " + comments + "</p>";
-
-    String sender = System.getenv("JAM_EMAIL_SENDER");
-
-    if (sender == null || sender.isEmpty()) {
-      LOGGER.log(Level.WARNING, "Environment variable 'JAM_EMAIL_SENDER' not found, aborting");
-      return;
-    }
-
-    EmailService emailService = new EmailService();
-
-    emailService.sendEmail(sender, sender, toCsv, null, subject, body, true);
   }
 
   @RolesAllowed("jam-admin")

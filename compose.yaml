@@ -33,7 +33,6 @@ services:
       JAM_TECHNICAL_CONTACT: 'larry@example.com'
       JAM_DOC_CSV: 'https://github.com/JeffersonLab/jam|JAM Home,https://jlab.org|JLAB Home'
       JAM_BOOKS_CSV: TLOG
-      JAM_PERMISSIONS_EMAIL_CSV: permission-recipient1@example.com,permission-recipient2@example.com
       JAM_UPCOMING_EXPIRATION_EMAIL_CSV: upcoming-recipient@example.com,upcoming-recipient2@example.com
       JAM_EXPIRED_EMAIL_CSV: expired-recipient1@example.com,expired-recipient2@example.com
       JAM_DOWNGRADED_EMAIL_CSV: downgrade-recipient1@example.com,downgrade-recipient2@example.com
