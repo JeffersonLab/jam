@@ -400,7 +400,7 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
   public List<RFSegmentAuthorization> checkForAuthorizedButExpired(RFAuthorization mostRecent) {
     TypedQuery<RFSegmentAuthorization> q =
         em.createQuery(
-            "select a from RFSegmentAuthorization a where a.rfAuthorization.rfAuthorizationId = :authId and a.expirationDate < sysdate and a.beamMode != 'None' and a.segment.active = true order by a.segmentAuthorizationPK.rfSegmentId asc",
+            "select a from RFSegmentAuthorization a where a.rfAuthorization.rfAuthorizationId = :authId and a.expirationDate < sysdate and a.rfMode != 'None' and a.segment.active = true order by a.segmentAuthorizationPK.rfSegmentId asc",
             RFSegmentAuthorization.class);
 
     BigInteger authId = mostRecent.getRfAuthorizationId();
@@ -513,7 +513,7 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
           if (destinationId.equals(verification.getRFSegment().getRFSegmentId())) {
             destClone.setRFMode("None");
             destClone.setComments(
-                "Permission automatically revoked due to group credited control verification "
+                "Permission automatically revoked due to credited control verification "
                     + reason);
             LOGGER.log(Level.FINEST, "Found something to downgrade");
             atLeastOne = true;

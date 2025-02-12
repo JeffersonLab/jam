@@ -28,7 +28,8 @@ public class FacilityAuthorization extends HttpServlet {
   @EJB RFAuthorizationFacade rfAuthorizationFacade;
   @EJB BeamAuthorizationFacade beamAuthorizationFacade;
   @EJB BeamDestinationFacade beamDestinationFacade;
-  @EJB BeamControlVerificationFacade verificationFacade;
+  @EJB RFControlVerificationFacade rfVerificationFacade;
+  @EJB BeamControlVerificationFacade beamVerificationFacade;
   @EJB FacilityFacade facilityFacade;
   @EJB RFSegmentFacade rfSegmentFacade;
 
@@ -120,7 +121,8 @@ public class FacilityAuthorization extends HttpServlet {
   private void handleFacility(
       HttpServletRequest request, HttpServletResponse response, Facility facility)
       throws ServletException, IOException {
-    verificationFacade.performExpirationCheck(false);
+    rfVerificationFacade.performExpirationCheck(false);
+    beamVerificationFacade.performExpirationCheck(false);
 
     RFAuthorization rfAuthorization = rfAuthorizationFacade.findCurrent();
     BeamAuthorization beamAuthorization = beamAuthorizationFacade.findCurrent();

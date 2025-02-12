@@ -512,7 +512,7 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
             destClone.setBeamMode("None");
             destClone.setCwLimit(null);
             destClone.setComments(
-                "Permission automatically revoked due to group credited control verification "
+                "Permission automatically revoked due to credited control verification "
                     + reason);
             LOGGER.log(Level.FINEST, "Found something to downgrade");
             atLeastOne = true;
