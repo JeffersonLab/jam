@@ -224,4 +224,39 @@ $(function () {
         heightStyle: "content",
         active: 0
     });
+
+    $('.jstree').jstree({
+        core: {
+            themes: {
+                theme: "classic",
+                dots: true,
+                icons: true
+            },
+        },
+        types: {
+            "#": {
+                "max_children": 1
+            },
+            "CATEGORY": {
+                "icon": "../resources/img/category.png"
+            },
+            "SYSTEM": {
+                "icon": "../resources/img/system.png"
+            },
+            "COMPONENT": {
+                "icon": "../resources/img/component.png"
+            },
+            "GROUP": {
+                "icon": "../resources/img/group.png"
+
+            },
+            "default": {
+                "icon": "../resources/img/component.png"
+            }
+        },
+        plugins: ["types", "state", "conditionalselect"],
+        conditionalselect: function (node) {
+            return false;
+        }
+    });
 });

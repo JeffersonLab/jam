@@ -73,3 +73,42 @@ textarea[readonly] {
 .accordion .ui-widget-content a:hover {
     color: red;
 }
+
+.status-tree .jstree-anchor {
+    position: relative;
+    right: -22px;
+}
+
+.status-tree .jstree-themeicon::before {
+    content: '';
+    display: inline-block;
+    height: 16px;
+    width: 16px;
+    vertical-align: top;
+    position: relative;
+    left: -22px;
+    top: 4px;
+}
+
+div.jstree .jstree-clicked,
+div.jstree .jstree-hovered {
+    box-shadow: none;
+    border-radius: 0;
+    background: none;
+}
+
+.jstree > ul > li.jstree-closed > i.jstree-ocl {
+    background-position: -132px -69px;
+}
+
+.jstree > ul > li.jstree-open > i.jstree-ocl {
+    background-position: -164px -69px;
+}
+
+.status-tree .jstree-node[data-status="Ready"] > .jstree-anchor > .jstree-themeicon::before {
+    background: url("../img/ready.png") 0 0;
+}
+
+.status-tree .jstree-node[data-status="Not Ready"] > .jstree-anchor > .jstree-themeicon::before {
+    background: url("../img/not-ready.png") 0 0;
+}

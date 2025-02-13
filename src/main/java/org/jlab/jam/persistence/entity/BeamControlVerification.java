@@ -179,6 +179,21 @@ public class BeamControlVerification implements Serializable, Comparable<BeamCon
     this.componentList = componentList;
   }
 
+  public BigInteger getComponentStatusId() {
+    BigInteger statusId = BigInteger.valueOf(1);
+
+    if(componentList != null) {
+      for(Component component : componentList) {
+        if(!component.getStatusId().equals(BigInteger.valueOf(1))) {
+          statusId = BigInteger.valueOf(100);
+          break;
+        }
+      }
+    }
+
+    return statusId;
+  }
+
   @Override
   public int hashCode() {
     int hash = 0;
