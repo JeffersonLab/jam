@@ -66,6 +66,20 @@ public class BeamDestinationFacade extends AbstractFacade<BeamDestination> {
   }
 
   @PermitAll
+  public List<BeamDestination> filterListWithTree(
+      Boolean active, Facility facility, VerificationTeam team) {
+    List<BeamDestination> destinationList = filterList(active, facility, team);
+
+    for (BeamDestination destination : destinationList) {
+      for (BeamControlVerification verification : destination.getBeamControlVerificationList()) {
+        verification.getCreditedControl().getName();
+      }
+    }
+
+    return destinationList;
+  }
+
+  @PermitAll
   public List<BeamDestination> filterList(
       Boolean active, Facility facility, VerificationTeam team) {
     CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();

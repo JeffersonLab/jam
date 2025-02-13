@@ -8,8 +8,10 @@
 <t:page title="Auth - ${title}">
     <jsp:attribute name="stylesheets">       
         <jsp:invoke fragment="stylesheets"/>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/jstree/3.3.8/themes/classic/style.css" />
     </jsp:attribute>
     <jsp:attribute name="scripts">
+        <script src="${pageContext.request.contextPath}/resources/jstree/3.3.8/jstree.min.js"></script>
         <jsp:invoke fragment="scripts"/>
     </jsp:attribute>
     <jsp:body>
