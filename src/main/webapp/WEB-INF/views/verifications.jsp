@@ -67,6 +67,11 @@
                 <c:choose>
                     <c:when test="${not empty ccList}">
                         <table id="credited-control-verifications-table" class="data-table">
+                            <thead>
+                                <tr>
+                                    <th colspan="3">Facility Control Status with Expiration</th>
+                                </tr>
+                            </thead>
                             <tbody>
                             <c:forEach items="${ccList}" var="cc">
                                 <tr>
@@ -125,9 +130,17 @@
                 <c:choose>
                     <c:when test="${not empty segmentList}">
                         <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th colspan="3">Facility Segment Status with Expiration</th>
+                                </tr>
+                            </thead>
                             <tbody>
                             <c:forEach items="${segmentList}" var="segment">
                                 <tr>
+                                    <td>
+                                        <c:out value="${segment.name}"/>
+                                    </td>
                                     <td>
                                         <c:choose>
                                             <c:when test="${segment.verification.verificationStatusId eq 1}">
@@ -143,10 +156,7 @@
                                                       class="small-icon baseline-small-icon not-verified-icon"></span>
                                             </c:otherwise>
                                         </c:choose>
-                                        <c:out value="${segment.name}"/>
-                                    </td>
-                                    <td><c:out value="${segment.facility.name}"/></td>
-                                    <td>
+                                        <c:out value="${segment.facility.name}"/>
                                         <c:if test="${segment.verification.verificationStatusId ne 100}">
                                             <fmt:formatDate value="${segment.verification.expirationDate}"
                                                             pattern="${s:getFriendlyDateTimePattern()}"/>
@@ -178,9 +188,17 @@
                 <c:choose>
                     <c:when test="${not empty destinationList}">
                         <table class="data-table">
+                            <thead>
+                            <tr>
+                                <th colspan="3">Facility Destination Status with Expiration</th>
+                            </tr>
+                            </thead>
                             <tbody>
                             <c:forEach items="${destinationList}" var="destination">
                                 <tr>
+                                    <td>
+                                        <c:out value="${destination.name}"/>
+                                    </td>
                                     <td>
                                         <c:choose>
                                             <c:when test="${destination.verification.verificationStatusId eq 1}">
@@ -196,9 +214,7 @@
                                                       class="small-icon baseline-small-icon not-verified-icon"></span>
                                             </c:otherwise>
                                         </c:choose>
-                                        <c:out value="${destination.name}"/>
-                                    </td>
-                                    <td>
+                                        <c:out value="${destination.facility.name}"/>
                                         <c:if test="${destination.verification.verificationStatusId ne 100}">
                                             <fmt:formatDate value="${destination.verification.expirationDate}"
                                                             pattern="${s:getFriendlyDateTimePattern()}"/>
@@ -206,7 +222,6 @@
                                                   style="<c:out value="${jam:isExpiringSoon(destination.verification.expirationDate) ? 'display: inline-block;' : 'display: none;'}"/>">(Expiring Soon)</span>
                                         </c:if>
                                     </td>
-                                    <td><c:out value="${destination.facility.name}"/></td>
                                     <td>
                                         <form method="get"
                                               action="${pageContext.request.contextPath}/verifications/destination">
