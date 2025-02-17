@@ -96,8 +96,10 @@
                                                     </c:choose>
                                                     <c:out value="${fv.getFacilityControlVerificationPK().facility.name}"/>
                                                     <c:if test="${fv.verificationStatusId ne 100}">
-                                                        <fmt:formatDate value="${fv.expirationDate}"
-                                                                        pattern="${s:getFriendlyDateTimePattern()}"/>
+                                                        <span title="Earliest Control Expiration">
+                                                            <fmt:formatDate value="${fv.expirationDate}"
+                                                                            pattern="${s:getFriendlyDateTimePattern()}"/>
+                                                        </span>
                                                         <span class="expiring-soon"
                                                               style="<c:out value="${jam:isExpiringSoon(fv.expirationDate) ? 'display: inline-block;' : 'display: none;'}"/>">(Expiring Soon)</span>
                                                     </c:if>
@@ -158,8 +160,10 @@
                                         </c:choose>
                                         <c:out value="${segment.facility.name}"/>
                                         <c:if test="${segment.verification.verificationStatusId ne 100}">
-                                            <fmt:formatDate value="${segment.verification.expirationDate}"
-                                                            pattern="${s:getFriendlyDateTimePattern()}"/>
+                                            <span title="Earliest Control Expiration">
+                                                <fmt:formatDate value="${segment.verification.expirationDate}"
+                                                                pattern="${s:getFriendlyDateTimePattern()}"/>
+                                            </span>
                                             <span class="expiring-soon"
                                                   style="<c:out value="${jam:isExpiringSoon(segment.verification.expirationDate) ? 'display: inline-block;' : 'display: none;'}"/>">(Expiring Soon)</span>
                                         </c:if>
@@ -216,8 +220,10 @@
                                         </c:choose>
                                         <c:out value="${destination.facility.name}"/>
                                         <c:if test="${destination.verification.verificationStatusId ne 100}">
-                                            <fmt:formatDate value="${destination.verification.expirationDate}"
-                                                            pattern="${s:getFriendlyDateTimePattern()}"/>
+                                            <span title="Earliest Control Expiration">
+                                                <fmt:formatDate value="${destination.verification.expirationDate}"
+                                                                pattern="${s:getFriendlyDateTimePattern()}"/>
+                                            </span>
                                             <span class="expiring-soon"
                                                   style="<c:out value="${jam:isExpiringSoon(destination.verification.expirationDate) ? 'display: inline-block;' : 'display: none;'}"/>">(Expiring Soon)</span>
                                         </c:if>

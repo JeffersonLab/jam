@@ -57,7 +57,9 @@
                                     </c:choose>
                                     <c:out value="${fv.getFacilityControlVerificationPK().facility.name}"/>
                                     <c:if test="${fv.verificationStatusId ne 100}">
-                                        <fmt:formatDate value="${fv.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
+                                        <span title="Earliest Control Expiration">
+                                            <fmt:formatDate value="${fv.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
+                                        </span>
                                         <span class="expiring-soon" style="<c:out value="${jam:isExpiringSoon(fv.expirationDate) ? 'display: inline-block;' : 'display: none;'}"/>">(Expiring Soon)</span>
                                     </c:if>
                                 </li>

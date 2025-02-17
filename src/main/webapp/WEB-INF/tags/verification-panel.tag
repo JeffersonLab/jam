@@ -141,7 +141,7 @@
             <li>
                 <div class="li-key">Expiration Date:</div>
                 <div class="li-value">
-                    <input id="expirationDate" name="expirationDate" type="text" class="date-time-field" placeholder="${s:getFriendlyDateTimePlaceholder()}"/>
+                    <input id="expirationDate" name="expirationDate" type="text" class="date-time-field" placeholder="${s:getFriendlyDateTimePlaceholder()}" autocomplete="off"/>
                 </div>
             </li>
             <li>

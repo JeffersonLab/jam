@@ -63,7 +63,9 @@
                             </c:choose>
                             Credited Control Verifications
                             <c:if test="${segment.verification.verificationStatusId ne 100}">
-                                <fmt:formatDate value="${segment.verification.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
+                                <span title="Earliest Control Expiration">
+                                    <fmt:formatDate value="${segment.verification.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
+                                </span>
                                 <span class="expiring-soon" style="<c:out value="${jam:isExpiringSoon(segment.verification.expirationDate) ? 'display: inline-block;' : 'display: none;'}"/>">(Expiring Soon)</span>
                             </c:if>
                         </h3>
