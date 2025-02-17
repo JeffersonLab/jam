@@ -35,6 +35,11 @@ public class Facility implements Serializable, Comparable<Facility> {
 
   @Basic(optional = false)
   @NotNull
+  @Column(name = "MANAGER_USERNAME", nullable = false)
+  private String managerUsername;
+
+  @Basic(optional = false)
+  @NotNull
   @Column(name = "WEIGHT", nullable = false)
   private BigInteger weight;
 
@@ -60,6 +65,14 @@ public class Facility implements Serializable, Comparable<Facility> {
 
   public void setPath(String path) {
     this.path = path;
+  }
+
+  public String getManagerUsername() {
+    return managerUsername;
+  }
+
+  public void setManagerUsername(String managerUsername) {
+    this.managerUsername = managerUsername;
   }
 
   public BigInteger getWeight() {

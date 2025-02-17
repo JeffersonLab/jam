@@ -24,12 +24,14 @@
                     <thead>
                         <tr>
                             <th>Name</th>
+                            <th>Manager</th>
                         </tr>
                     </thead>
                     <tbody>
                     <c:forEach items="${facilityList}" var="facility">
                         <tr data-id="${facility.facilityId}">
                             <td><c:out value="${facility.name}"/></td>
+                            <td><c:out value="${s:formatUsername(facility.managerUsername)}"/></td>
                         </tr>
                     </c:forEach>
                     </tbody>
