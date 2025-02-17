@@ -14,6 +14,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.jlab.jam.persistence.entity.Facility;
 import org.jlab.jam.persistence.entity.VerificationTeam;
+import org.jlab.jam.persistence.enumeration.OperationsType;
 import org.jlab.jlog.Body;
 import org.jlab.jlog.Library;
 import org.jlab.jlog.LogEntry;
@@ -46,14 +47,15 @@ public class LogbookFacade extends AbstractFacade<VerificationTeam> {
   }
 
   @RolesAllowed("jam-admin")
-  public long sendELog(Facility facility, String proxyServer, String logbookServer)
+  public long sendELog(
+      Facility facility, OperationsType type, String proxyServer, String logbookServer)
       throws UserFriendlyException {
     String username = checkAuthenticated();
 
     // String body = getELogHTMLBody(authorization);
     String body = getAlternateELogHTMLBody(proxyServer);
 
-    String subject = System.getenv("JAM_PERMISSIONS_SUBJECT");
+    String subject = facility.getName() + " " + type.getLabel() + " Authorization Updated";
 
     String logbooks = System.getenv("JAM_BOOKS_CSV");
 
@@ -82,7 +84,7 @@ public class LogbookFacade extends AbstractFacade<VerificationTeam> {
     File tmpFile = null;
 
     try {
-      tmpFile = grabPermissionsScreenshot(facility);
+      tmpFile = grabPermissionsScreenshot(facility, type);
       entry.addAttachment(tmpFile.getAbsolutePath());
       logId = entry.submitNow();
 
@@ -105,7 +107,8 @@ public class LogbookFacade extends AbstractFacade<VerificationTeam> {
     return logId;
   }
 
-  private File grabPermissionsScreenshot(Facility facility) throws IOException {
+  private File grabPermissionsScreenshot(Facility facility, OperationsType type)
+      throws IOException {
 
     String puppetServer = System.getenv("PUPPET_SHOW_SERVER_URL");
     String internalServer = System.getenv("BACKEND_SERVER_URL");
@@ -127,7 +130,9 @@ public class LogbookFacade extends AbstractFacade<VerificationTeam> {
                 + internalServer
                 + "%2Fjam%2Fauthorizations%2F"
                 + facility.getPath().substring(1) // trim leading slash
-                + "%3Fprint%3DY&fullPage=true&filename=jam.png&ignoreHTTPSErrors=true");
+                + "%3Ffocus%3D"
+                + type
+                + "%26print%3DY&fullPage=true&filename=jam.png&ignoreHTTPSErrors=true&waitUntil=networkidle2");
 
     LOGGER.log(Level.FINEST, "Fetching URL: {0}", url.toString());
 

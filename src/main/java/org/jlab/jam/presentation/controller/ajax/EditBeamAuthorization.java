@@ -61,7 +61,7 @@ public class EditBeamAuthorization extends HttpServlet {
     Long logId = null;
     Facility facility = null;
     String comments = null;
-    Boolean sendNotifications = false;
+    Boolean sendNotifications = true;
 
     try {
       BigInteger facilityId = ParamConverter.convertBigInteger(request, "facilityId");
@@ -77,16 +77,6 @@ public class EditBeamAuthorization extends HttpServlet {
       }
 
       comments = request.getParameter("comments");
-
-      try {
-        sendNotifications = ParamConverter.convertYNBoolean(request, "notification");
-
-        if (sendNotifications == null) {
-          sendNotifications = false;
-        }
-      } catch (Exception e) {
-        throw new UserFriendlyException("Unable to parse notifications parameter");
-      }
 
       List<BeamDestinationAuthorization> beamDestinationAuthorizationList =
           convertDestinationAuthorizationList(facility, request);
@@ -115,7 +105,9 @@ public class EditBeamAuthorization extends HttpServlet {
       try {
         String logbookServer = System.getenv("LOGBOOK_SERVER_URL");
 
-        logId = logbookFacade.sendELog(facility, proxyServer, logbookServer);
+        logId = logbookFacade.sendELog(facility, OperationsType.BEAM, proxyServer, logbookServer);
+
+        beamAuthorizationFacade.setLogEntry(logId, logbookServer);
       } catch (Exception e) {
         errorReason = "Authorization was saved, but we were unable to send to eLog";
         LOGGER.log(Level.SEVERE, errorReason, e);

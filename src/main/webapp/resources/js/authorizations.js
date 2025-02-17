@@ -224,4 +224,13 @@ $(function () {
         heightStyle: "content",
         active: 0
     });
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const focus = urlParams.get('focus');
+
+    if(focus === 'RF') {
+        $("#beam-accordion").accordion("option","active",false);
+    } else if(focus === 'BEAM') {
+        $("#rf-accordion").accordion("option","active",false);
+    }
 });

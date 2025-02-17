@@ -45,20 +45,6 @@ h2 button {
 .comment-input {
     width: 95%;
 }
-.footer {
-    display: table;
-    width: 100%;
-}
-.footer-row {
-    display: table-row;
-}
-.footer-row > div {
-    display: table-cell;
-}
-.history-panel {
-    text-align: right;
-    vertical-align: bottom;
-}
 input[readonly],
 textarea[readonly] {
     background-color: #dddddd;
@@ -72,4 +58,16 @@ textarea[readonly] {
 }
 .accordion .ui-widget-content a:hover {
     color: red;
+}
+.footer-panel,
+.control-panel {
+    display: flex;
+    margin-bottom: 1em;
+}
+.control-item {
+    flex: 1 1 50%;
+}
+.logentry-panel {
+    flex: 2;
+    text-align: right;
 }

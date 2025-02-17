@@ -193,4 +193,15 @@ public class BeamAuthorizationFacade extends AbstractFacade<BeamAuthorization> {
 
     LOGGER.log(Level.FINE, "Director's Authorization saved successfully");
   }
+
+  @PermitAll
+  public void setLogEntry(Long logId, String logbookServer) {
+    BeamAuthorization current = findCurrent();
+
+    if (current != null && logId != null) {
+      String url = logbookServer + "/entry/" + logId;
+
+      current.setLogentryUrl(url);
+    }
+  }
 }

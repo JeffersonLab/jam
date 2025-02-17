@@ -59,6 +59,10 @@ public class BeamAuthorization implements Serializable {
   @Column(length = 2048)
   private String comments;
 
+  @Size(max = 2048)
+  @Column(name = "LOGENTRY_URL", length = 2048)
+  private String logentryUrl;
+
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "beamAuthorization", fetch = FetchType.EAGER)
   private List<BeamDestinationAuthorization> beamDestinationAuthorizationList;
 
@@ -118,6 +122,14 @@ public class BeamAuthorization implements Serializable {
 
   public void setComments(String comments) {
     this.comments = comments;
+  }
+
+  public String getLogentryUrl() {
+    return logentryUrl;
+  }
+
+  public void setLogentryUrl(String logentryUrl) {
+    this.logentryUrl = logentryUrl;
   }
 
   public List<BeamDestinationAuthorization> getDestinationAuthorizationList() {

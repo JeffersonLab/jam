@@ -59,6 +59,10 @@ public class RFAuthorization implements Serializable {
   @Column(length = 2048)
   private String comments;
 
+  @Size(max = 2048)
+  @Column(name = "LOGENTRY_URL", length = 2048)
+  private String logentryUrl;
+
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "rfAuthorization", fetch = FetchType.EAGER)
   private List<RFSegmentAuthorization> rfSegmentAuthorizationList;
 
@@ -118,6 +122,14 @@ public class RFAuthorization implements Serializable {
 
   public void setComments(String comments) {
     this.comments = comments;
+  }
+
+  public String getLogentryUrl() {
+    return logentryUrl;
+  }
+
+  public void setLogentryUrl(String logentryUrl) {
+    this.logentryUrl = logentryUrl;
   }
 
   public List<RFSegmentAuthorization> getRFSegmentAuthorizationList() {
