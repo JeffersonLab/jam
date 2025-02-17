@@ -13,7 +13,6 @@ public final class WebFunctions {
 
   private static final Logger LOGGER = Logger.getLogger(WebFunctions.class.getName());
 
-  private static final List<String> RF_LIST = Arrays.asList("None", "RF Only");
   private static final List<String> CEBAF_LIST = Arrays.asList("None", "Tune", "CW");
   private static final List<String> LERF_LIST =
       Arrays.asList(
@@ -28,28 +27,17 @@ public final class WebFunctions {
   public static List<String> beamModeList(String facility, String destination) {
     List<String> modes = null;
 
-    if (destination.contains("RF Operations")) {
-      modes = RF_LIST;
-    } else {
-      switch (facility) {
-        case "CEBAF":
-          modes = CEBAF_LIST;
-          break;
-        case "LERF":
-          modes = LERF_LIST;
-          break;
-        case "UITF":
-          modes = UITF_LIST;
-          break;
-      }
+    switch (facility) {
+      case "CEBAF":
+        modes = CEBAF_LIST;
+        break;
+      case "LERF":
+        modes = LERF_LIST;
+        break;
+      case "UITF":
+        modes = UITF_LIST;
+        break;
     }
-
-    return modes;
-  }
-
-  public static List<String> rfModeList(String facility, String segment) {
-    List<String> modes = Arrays.asList("None", "RF On");
-    ;
 
     return modes;
   }

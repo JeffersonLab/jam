@@ -152,7 +152,7 @@ public class RFAuthorizationFacade extends AbstractFacade<RFAuthorization> {
     for (RFSegmentAuthorization da : segmentAuthorizationList) {
 
       RFSegment segment = segmentFacade.find(da.getSegmentAuthorizationPK().getRFSegmentId());
-      if (!"None".equals(da.getRFMode())) {
+      if (da.isHighPowerRf()) {
 
         // Check if credited control agrees
         if (!(segment.getVerification().getVerificationStatusId() <= 50)) {

@@ -3,20 +3,10 @@ package org.jlab.jam.persistence.entity;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.jlab.smoothness.persistence.util.YnStringToBoolean;
 
 /**
  * @author ryans
@@ -38,11 +28,10 @@ public class RFSegmentAuthorization implements Serializable {
   @JoinColumn(name = "FACILITY_ID", referencedColumnName = "FACILITY_ID", nullable = false)
   private Facility facility;
 
-  @Basic(optional = false)
-  @NotNull
-  @Size(min = 1, max = 16)
-  @Column(name = "RF_MODE", nullable = false, length = 16)
-  private String rfMode;
+  @Basic
+  @Column(name = "HIGH_POWER_RF_YN", nullable = false, length = 1)
+  @Convert(converter = YnStringToBoolean.class)
+  private boolean highPowerRf;
 
   @Basic(optional = true)
   @Size(max = 256)
@@ -101,12 +90,12 @@ public class RFSegmentAuthorization implements Serializable {
     this.facility = facility;
   }
 
-  public String getRFMode() {
-    return rfMode;
+  public boolean isHighPowerRf() {
+    return highPowerRf;
   }
 
-  public void setRFMode(String rfMode) {
-    this.rfMode = rfMode;
+  public void setHighPowerRf(boolean highPowerRf) {
+    this.highPowerRf = highPowerRf;
   }
 
   public String getComments() {

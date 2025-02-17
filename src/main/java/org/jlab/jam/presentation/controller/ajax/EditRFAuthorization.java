@@ -143,9 +143,11 @@ public class EditRFAuthorization extends HttpServlet {
       for (int i = 0; i < modeArray.length; i++) {
         String mode = modeArray[i];
 
+        boolean highPowerRf = "Yes".equals(mode);
+
         RFSegmentAuthorization da = new RFSegmentAuthorization();
 
-        da.setRFMode(mode);
+        da.setHighPowerRf(highPowerRf);
 
         String comments = commentsArray[i];
         da.setComments(comments);

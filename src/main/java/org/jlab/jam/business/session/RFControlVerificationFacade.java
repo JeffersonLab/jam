@@ -400,7 +400,7 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
   public List<RFSegmentAuthorization> checkForAuthorizedButExpired(RFAuthorization mostRecent) {
     TypedQuery<RFSegmentAuthorization> q =
         em.createQuery(
-            "select a from RFSegmentAuthorization a where a.rfAuthorization.rfAuthorizationId = :authId and a.expirationDate < sysdate and a.rfMode != 'None' and a.segment.active = true order by a.segmentAuthorizationPK.rfSegmentId asc",
+            "select a from RFSegmentAuthorization a where a.rfAuthorization.rfAuthorizationId = :authId and a.expirationDate < sysdate and a.highPowerRf = true and a.segment.active = true order by a.segmentAuthorizationPK.rfSegmentId asc",
             RFSegmentAuthorization.class);
 
     BigInteger authId = mostRecent.getRfAuthorizationId();
@@ -505,13 +505,13 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
         // authClone.getDestinationAuthorizationList().add(destClone);
         newList.add(destClone);
 
-        if ("None".equals(auth.getRFMode())) {
-          continue; // Already None so no need to revoke; move on to next
+        if (!auth.isHighPowerRf()) {
+          continue; // Already No High RF Auth so no need to revoke; move on to next
         }
         BigInteger destinationId = auth.getSegmentAuthorizationPK().getRFSegmentId();
         for (RFControlVerification verification : verificationList) {
           if (destinationId.equals(verification.getRFSegment().getRFSegmentId())) {
-            destClone.setRFMode("None");
+            destClone.setHighPowerRf(false);
             destClone.setComments(
                 "Permission automatically revoked due to credited control verification " + reason);
             LOGGER.log(Level.FINEST, "Found something to downgrade");
@@ -554,11 +554,11 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
         // authClone.getDestinationAuthorizationList().add(destClone);
         newList.add(destClone);
 
-        if ("None".equals(auth.getRFMode())) {
-          continue; // Already None so no need to revoke; move on to next
+        if (!auth.isHighPowerRf()) {
+          continue; // Already No High Power RF auth so no need to revoke; move on to next
         }
         if (segmentList.contains(auth)) {
-          destClone.setRFMode("None");
+          destClone.setHighPowerRf(false);
           destClone.setComments(
               "Permission automatically revoked due to director's authorization expiration");
           LOGGER.log(Level.FINEST, "Found something to downgrade");
@@ -617,7 +617,7 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
 
     if (auth.getRFSegmentAuthorizationList() != null) {
       for (RFSegmentAuthorization dest : auth.getRFSegmentAuthorizationList()) {
-        if (!"None".equals(dest.getRFMode())
+        if (dest.isHighPowerRf()
             && dest.getExpirationDate().after(now)
             && dest.getExpirationDate().before(threeDaysFromNow)) {
           upcomingExpirations.add(dest);

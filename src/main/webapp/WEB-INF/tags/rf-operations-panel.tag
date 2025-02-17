@@ -20,7 +20,7 @@
                 </c:if>
         </tr>
         <tr>
-            <th>RF Mode</th>
+            <th>High Power RF</th>
             <th>Comment</th>
             <th class="expiration-header">Expiration</th>
         </tr>
@@ -36,7 +36,7 @@
                     <c:if test="${not isHistory}">
                     <td class="icon-cell">
                         <c:choose>
-                            <c:when test="${(segment.verification.verificationStatusId eq 1 or segment.verification.verificationStatusId eq 50) and segmentAuthorization.getRFMode() ne null and segmentAuthorization.getRFMode() ne 'None'}">
+                            <c:when test="${(segment.verification.verificationStatusId eq 1 or segment.verification.verificationStatusId eq 50) and segmentAuthorization.isHighPowerRf()}">
                                 <span title="Approved" class="small-icon verified-icon"></span>
                             </c:when>
                             <c:otherwise>
@@ -46,36 +46,34 @@
                     </td>
                 </c:if>
                 <td>
-                    <c:set var="selectedRFMode" value="${segmentAuthorization.getRFMode() eq null ? 'None' : segmentAuthorization.getRFMode()}"/>
-                    <div class="readonly-field"><c:out value="${selectedRFMode}"/></div>
+                    <c:set var="selectedHighPowerRf" value="${segmentAuthorization.highPowerRf ? 'Yes' : 'No'}"/>
+                    <div class="readonly-field"><c:out value="${selectedHighPowerRf}"/></div>
                     <div class="editable-field">
                         <select name="mode[]" class="mode-select">
-                            <c:forEach items="${jam:rfModeList(facility.name, segment.name)}" var="mode">
-                                <option${mode eq selectedRFMode ? ' selected="selected"' : ''}><c:out value="${mode}"/></option>
-                            </c:forEach>
+                            <option${'No' eq selectedHighPowerRf ? ' selected="selected"' : ''}>No</option>
+                            <option${'Yes' eq selectedHighPowerRf ? ' selected="selected"' : ''}>Yes</option>
                         </select>
-                        <c:out value="${mode}"/>
                     </div>
                 </td>
-                <td class="${(not isHistory) && (not (selectedBeamMode eq 'None')) && (segment.verification.verificationStatusId eq 50) ? 'provisional-comments' : ''}">
+                <td class="${(not isHistory) && (not (selectedHighPowerRf eq 'No')) && (segment.verification.verificationStatusId eq 50) ? 'provisional-comments' : ''}">
                     <c:set var="selectedComment" value="${segmentAuthorization.comments eq null ? '' : segmentAuthorization.comments}"/>
                     <span class="readonly-field">
                         <c:out value="${selectedComment}"/>
                     </span>
                     <span class="editable-field">
-                        <textarea name="comment[]" class="comment-input" type="text"${selectedRfMode eq 'None' ? ' readonly="readonly"' : ''}><c:out value="${selectedBeamMode eq 'None' ? '' : selectedComment}"/></textarea>
+                        <textarea name="comment[]" class="comment-input" type="text"${selectedHighPowerRf eq 'No' ? ' readonly="readonly"' : ''}><c:out value="${selectedHighPowerRf eq 'No' ? '' : selectedComment}"/></textarea>
                     </span>
                 </td>
                 <td>
                     <fmt:formatDate var="selectedExpiration" value="${segmentAuthorization.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
                     <span class="readonly-field">
                         <c:out value="${selectedExpiration}"/>
-                        <c:if test="${selectedBeamMode ne 'None'}">
+                        <c:if test="${selectedHighPowerRf ne 'No'}">
                             <span class="expiring-soon" style="<c:out value="${jam:isExpiringSoon(segmentAuthorization.expirationDate) ? 'display: inline-block;' : 'display: none;'}"/>">(Expiring Soon)</span>
                         </c:if>
                     </span>
                     <span class="editable-field">
-                        <input name="expiration[]" type="text" class="expiration-input date-time-field" autocomplete="off" placeholder="${s:getFriendlyDateTimePlaceholder()}" value="${selectedBeamMode eq 'None' ? '' : selectedExpiration}"${selectedBeamMode eq 'None' ? ' readonly="readonly"' : ''}/>
+                        <input name="expiration[]" type="text" class="expiration-input date-time-field" autocomplete="off" placeholder="${s:getFriendlyDateTimePlaceholder()}" value="${selectedHighPowerRf eq 'No' ? '' : selectedExpiration}"${selectedHighPowerRf eq 'No' ? ' readonly="readonly"' : ''}/>
                     </span>
                 </td>
                 <c:if test="${not isHistory}">
