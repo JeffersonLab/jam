@@ -137,7 +137,7 @@ public class RFAuthorizationFacade extends AbstractFacade<RFAuthorization> {
       throws UserFriendlyException {
     String username = checkAuthenticated();
 
-    if(!isAdmin()) {
+    if (!isAdmin()) {
       authorizerFacade.isAuthorizer(facility, OperationsType.RF, username);
     }
 

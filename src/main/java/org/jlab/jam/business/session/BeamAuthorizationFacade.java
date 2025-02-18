@@ -131,7 +131,7 @@ public class BeamAuthorizationFacade extends AbstractFacade<BeamAuthorization> {
       throws UserFriendlyException {
     String username = checkAuthenticated();
 
-    if(!isAdmin()) {
+    if (!isAdmin()) {
       authorizerFacade.isAuthorizer(facility, OperationsType.BEAM, username);
     }
 
