@@ -101,6 +101,8 @@ public class EditRFAuthorization extends HttpServlet {
         String logbookServer = System.getenv("LOGBOOK_SERVER_URL");
 
         logId = logbookFacade.sendELog(facility, OperationsType.RF, proxyServer, logbookServer);
+
+        rfAuthorizationFacade.setLogEntry(logId, logbookServer);
       } catch (Exception e) {
         errorReason = "Authorization was saved, but we were unable to send to eLog";
         LOGGER.log(Level.SEVERE, errorReason, e);

@@ -316,4 +316,15 @@ public class RFAuthorizationFacade extends AbstractFacade<RFAuthorization> {
 
     return builder.toString();
   }
+
+  @PermitAll
+  public void setLogEntry(Long logId, String logbookServer) {
+    RFAuthorization current = findCurrent();
+
+    if (current != null && logId != null) {
+      String url = logbookServer + "/entry/" + logId;
+
+      current.setLogentryUrl(url);
+    }
+  }
 }
