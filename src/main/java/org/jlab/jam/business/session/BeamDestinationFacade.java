@@ -12,7 +12,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import org.jlab.jam.persistence.entity.*;
-import org.jlab.jam.persistence.view.BeamDestinationVerification;
 
 /**
  * @author ryans
@@ -83,11 +82,13 @@ public class BeamDestinationFacade extends AbstractFacade<BeamDestination> {
     }
 
     if (team != null) {
-      Join<RFSegment, BeamDestinationVerification> verificationJoin =
-          root.join("beamControlVerificationList");
-      Join<BeamDestinationVerification, CreditedControl> controlJoin =
-          verificationJoin.join("creditedControl");
-      filters.add(cb.equal(controlJoin.get("verificationTeam"), team));
+      Subquery<BeamControlVerification> subquery = cq.subquery(BeamControlVerification.class);
+      Root<BeamControlVerification> subRoot = subquery.from(BeamControlVerification.class);
+      Join<BeamControlVerification, BeamDestination> destination = subRoot.join("beamDestination");
+      Join<BeamControlVerification, CreditedControl> control = subRoot.join("creditedControl");
+      subquery.select(destination.get("beamDestinationId"));
+      subquery.where(cb.equal(control.get("verificationTeam"), team));
+      filters.add(cb.in(root.get("beamDestinationId")).value(subquery));
     }
 
     if (!filters.isEmpty()) {

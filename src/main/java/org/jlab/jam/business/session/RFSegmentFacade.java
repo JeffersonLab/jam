@@ -12,7 +12,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import org.jlab.jam.persistence.entity.*;
-import org.jlab.jam.persistence.view.RFSegmentVerification;
 
 /**
  * @author ryans
@@ -81,11 +80,13 @@ public class RFSegmentFacade extends AbstractFacade<RFSegment> {
     }
 
     if (team != null) {
-      Join<RFSegment, RFSegmentVerification> verificationJoin =
-          root.join("rfControlVerificationList");
-      Join<RFSegmentVerification, CreditedControl> controlJoin =
-          verificationJoin.join("creditedControl");
-      filters.add(cb.equal(controlJoin.get("verificationTeam"), team));
+      Subquery<RFControlVerification> subquery = cq.subquery(RFControlVerification.class);
+      Root<RFControlVerification> subRoot = subquery.from(RFControlVerification.class);
+      Join<RFControlVerification, RFSegment> segment = subRoot.join("rfSegment");
+      Join<RFControlVerification, CreditedControl> control = subRoot.join("creditedControl");
+      subquery.select(segment.get("rfSegmentId"));
+      subquery.where(cb.equal(control.get("verificationTeam"), team));
+      filters.add(cb.in(root.get("rfSegmentId")).value(subquery));
     }
 
     if (!filters.isEmpty()) {
