@@ -60,8 +60,7 @@ public class LogbookFacade extends AbstractFacade<VerificationTeam> {
     String logbooks = facility.getLogbooksCsv();
 
     if (logbooks == null || logbooks.isEmpty()) {
-      LOGGER.log(
-          Level.WARNING, "No logbook_csv defined, skipping sendELog");
+      LOGGER.log(Level.WARNING, "No logbook_csv defined, skipping sendELog");
       throw new UserFriendlyException("No logbook_csv defined, skipping sendELog");
     }
 
