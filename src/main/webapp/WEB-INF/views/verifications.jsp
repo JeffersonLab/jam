@@ -112,6 +112,8 @@
                                               action="${pageContext.request.contextPath}/verifications/control">
                                             <input type="hidden" name="creditedControlId"
                                                    value="${cc.creditedControlId}"/>
+                                            <input type="hidden" name="facilityId"
+                                                   value="${fn:escapeXml(param.facilityId)}"/>
                                             <button class="single-char-button" type="submit">&rarr;</button>
                                         </form>
                                     </td>

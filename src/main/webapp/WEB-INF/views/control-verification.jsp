@@ -12,13 +12,19 @@
     </jsp:attribute>
     <jsp:attribute name="scripts">          
         <script type="text/javascript" src="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/js/verification-panel.js"></script>
-    </jsp:attribute>        
+        <script>
+            $(document).on("click", ".default-clear-panel", function () {
+                $("#facility-select").val('');
+                return false;
+            });
+        </script>
+    </jsp:attribute>
     <jsp:body>
         <c:if test="${creditedControl ne null}">
             <div class="banner-breadbox">
                 <ul>
                     <li>
-                        <a href="${pageContext.request.contextPath}/verifications">Verifications</a>
+                        <a href="${pageContext.request.contextPath}/verifications?facilityId=${fn:escapeXml(param.facilityId)}">Verifications</a>
                     </li>
                     <li>
                         <form method="get" action="control">
@@ -36,7 +42,35 @@
             <c:if test="${not empty creditedControl}">
                 <div class="top-right-box"><a href="${pageContext.request.contextPath}/inventory/controls?controlId=${creditedControl.creditedControlId}" class="dialog-ready" data-dialog-title="${creditedControl.name}">Info</a></div>
             </c:if>
+            <s:filter-flyout-widget ribbon="true" clearButton="true">
+                <form id="filter-form" method="get" action="control">
+                    <div id="filter-form-panel">
+                        <fieldset>
+                            <legend>Filter</legend>
+                            <ul class="key-value-list">
+                                <li>
+                                    <div class="li-key">
+                                        <label for="facility-select">Facility</label>
+                                    </div>
+                                    <div class="li-value">
+                                        <select id="facility-select" name="facilityId">
+                                            <option value="">&nbsp;</option>
+                                            <c:forEach items="${facilityList}" var="facility">
+                                                <option value="${facility.facilityId}"${param.facilityId eq facility.facilityId ? ' selected="selected"' : ''}>
+                                                    <c:out value="${facility.name}"/></option>
+                                            </c:forEach>
+                                        </select>
+                                    </div>
+                                </li>
+                            </ul>
+                        </fieldset>
+                    </div>
+                    <input type="hidden" name="creditedControlId" value="${fn:escapeXml(param.creditedControlId)}"/>
+                    <input id="filter-form-submit-button" type="submit" value="Apply"/>
+                </form>
+            </s:filter-flyout-widget>
             <h2 id="page-header-title"><c:out value="${title}"/></h2>
+            <div class="message-box"><c:out value="${selectionMessage}"/></div>
             <c:choose>
                 <c:when test="${creditedControl ne null}">
                     <div class="dialog-content">

@@ -13,9 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.jlab.jam.business.session.AbstractFacade.OrderDirective;
 import org.jlab.jam.business.session.BeamControlVerificationFacade;
 import org.jlab.jam.business.session.CreditedControlFacade;
-import org.jlab.jam.persistence.entity.BeamControlVerification;
-import org.jlab.jam.persistence.entity.CreditedControl;
-import org.jlab.jam.persistence.entity.RFControlVerification;
+import org.jlab.jam.business.session.FacilityFacade;
+import org.jlab.jam.persistence.entity.*;
+import org.jlab.jam.persistence.view.FacilityControlVerification;
 import org.jlab.smoothness.presentation.util.ParamConverter;
 
 /**
@@ -28,6 +28,7 @@ public class ControlVerification extends HttpServlet {
 
   @EJB CreditedControlFacade ccFacade;
   @EJB BeamControlVerificationFacade verificationFacade;
+  @EJB FacilityFacade facilityFacade;
 
   /**
    * Handles the HTTP <code>GET</code> method.
@@ -43,6 +44,18 @@ public class ControlVerification extends HttpServlet {
 
     BigInteger creditedControlId = ParamConverter.convertBigInteger(request, "creditedControlId");
 
+    BigInteger facilityId = ParamConverter.convertBigInteger(request, "facilityId");
+
+    Facility facility = null;
+
+    if (facilityId != null) {
+      facility = facilityFacade.find(facilityId);
+
+      if (facility == null) {
+        throw new ServletException("Facility not found with ID: " + facilityId);
+      }
+    }
+
     List<BeamControlVerification> expiredList = null;
     List<BeamControlVerification> expiringList = null;
     CreditedControl creditedControl = null;
@@ -52,7 +65,7 @@ public class ControlVerification extends HttpServlet {
       creditedControl = ccFacade.findWithVerificationListTrio(creditedControlId);
 
       if (creditedControl != null) {
-        removeInactiveVerifications(creditedControl);
+        removeInactiveVerificationsAndFilter(creditedControl, facility);
 
         String username = request.getRemoteUser();
 
@@ -74,9 +87,15 @@ public class ControlVerification extends HttpServlet {
 
     List<CreditedControl> ccList = ccFacade.findAll(new OrderDirective("weight"));
 
+    List<Facility> facilityList = facilityFacade.findAll(new OrderDirective("weight"));
+
+    String selectionMessage = VerificationsController.getSelectionMessage(facility, null);
+
+    request.setAttribute("selectionMessage", selectionMessage);
     request.setAttribute("adminOrLeader", adminOrLeader);
     request.setAttribute("creditedControl", creditedControl);
     request.setAttribute("ccList", ccList);
+    request.setAttribute("facilityList", facilityList);
     request.setAttribute("expiredList", expiredList);
     request.setAttribute("expiringList", expiringList);
 
@@ -85,12 +104,22 @@ public class ControlVerification extends HttpServlet {
         .forward(request, response);
   }
 
-  private void removeInactiveVerifications(CreditedControl control) {
+  private void removeInactiveVerificationsAndFilter(CreditedControl control, Facility facility) {
     if (control.getBeamControlVerificationList() != null) {
       List<BeamControlVerification> beamVerificationList = new ArrayList<>();
       for (BeamControlVerification bc : control.getBeamControlVerificationList()) {
         if (bc.getBeamDestination().isActive()) {
-          beamVerificationList.add(bc);
+          boolean add = true;
+
+          if (facility != null) {
+            if (!bc.getBeamDestination().getFacility().equals(facility)) {
+              add = false;
+            }
+          }
+
+          if (add) {
+            beamVerificationList.add(bc);
+          }
         }
       }
       control.setBeamControlVerificationList(beamVerificationList);
@@ -100,10 +129,32 @@ public class ControlVerification extends HttpServlet {
       List<RFControlVerification> rfVerificationList = new ArrayList<>();
       for (RFControlVerification bc : control.getRFControlVerificationList()) {
         if (bc.getRFSegment().isActive()) {
-          rfVerificationList.add(bc);
+          boolean add = true;
+
+          if (facility != null) {
+            if (!bc.getRFSegment().getFacility().equals(facility)) {
+              add = false;
+            }
+          }
+
+          if (add) {
+            rfVerificationList.add(bc);
+          }
         }
       }
       control.setRFControlVerificationList(rfVerificationList);
+    }
+
+    if (facility != null) {
+      for (FacilityControlVerification facilityControlVerification :
+          new ArrayList<>(control.getFacilityControlVerificationList())) {
+        if (!facilityControlVerification
+            .getFacilityControlVerificationPK()
+            .getFacility()
+            .equals(facility)) {
+          control.getFacilityControlVerificationList().remove(facilityControlVerification);
+        }
+      }
     }
   }
 }

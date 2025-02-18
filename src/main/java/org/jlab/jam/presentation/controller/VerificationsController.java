@@ -96,7 +96,7 @@ public class VerificationsController extends HttpServlet {
     request.getRequestDispatcher("WEB-INF/views/verifications.jsp").forward(request, response);
   }
 
-  private String getSelectionMessage(Facility facility, VerificationTeam team) {
+  public static String getSelectionMessage(Facility facility, VerificationTeam team) {
     String selectionMessage = "All Verifications";
 
     List<String> filters = new ArrayList<>();
