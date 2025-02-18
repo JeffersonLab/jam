@@ -153,6 +153,10 @@ public abstract class AbstractFacade<T> {
     }
   }
 
+  protected boolean isAdmin() {
+    return context.isCallerInRole("jam-admin");
+  }
+
   protected boolean isAdminOrGroupLeader(String username, List<User> leaders) {
     boolean isAdminOrLeader = false;
 
