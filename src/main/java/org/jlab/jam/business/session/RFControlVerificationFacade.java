@@ -145,6 +145,10 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
       throw new UserFriendlyException("expiration date cannot be in the past");
     }
 
+    if(expirationDate == null && verificationId == 1) {
+      throw new UserFriendlyException("expiration date required when status is Verified");
+    }
+
     List<RFControlVerification> downgradeList = new ArrayList<>();
 
     UserAuthorizationService auth = UserAuthorizationService.getInstance();
