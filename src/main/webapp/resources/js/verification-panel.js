@@ -77,6 +77,7 @@ jlab.verify = function () {
             verifiedBy = $("#verifiedBy").val(),
             expirationDate = $("#expirationDate").val(),
             comments = $("#comments").val(),
+            externalUrl = $("#link").val(),
             verificationType = $("#verificationType").val(),
             success = false,
             newLogId = null;
@@ -100,6 +101,7 @@ jlab.verify = function () {
             verifiedBy: verifiedBy,
             expirationDate: expirationDate,
             comments: comments,
+            externalUrl: externalUrl,
             verificationType: verificationType
         },
         dataType: "html"

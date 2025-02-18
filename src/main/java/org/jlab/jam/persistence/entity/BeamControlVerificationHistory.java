@@ -17,6 +17,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  * @author ryans
@@ -73,6 +74,10 @@ public class BeamControlVerificationHistory implements Serializable {
   @Basic(optional = true)
   @Column(name = "COMMENTS", nullable = true)
   private String comments;
+
+  @Size(max = 4000)
+  @Column(name = "EXTERNAL_URL", length = 4000)
+  private String externalUrl;
 
   @JoinColumn(
       name = "BEAM_CONTROL_VERIFICATION_ID",
@@ -144,6 +149,14 @@ public class BeamControlVerificationHistory implements Serializable {
 
   public void setComments(String comments) {
     this.comments = comments;
+  }
+
+  public String getExternalUrl() {
+    return externalUrl;
+  }
+
+  public void setExternalUrl(String externalUrl) {
+    this.externalUrl = externalUrl;
   }
 
   public BeamControlVerification getBeamControlVerification() {
