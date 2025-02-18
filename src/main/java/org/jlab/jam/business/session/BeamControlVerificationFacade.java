@@ -140,13 +140,18 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
       throw new UserFriendlyException("control verification ID array must not be empty");
     }
 
+    // Clear Expiration Date if "Not Verified"
+    if (expirationDate != null && verificationId == 100) {
+      expirationDate = null;
+    }
+
     Date now = new Date();
 
     if (expirationDate != null && expirationDate.before(now)) {
       throw new UserFriendlyException("expiration date cannot be in the past");
     }
 
-    if(expirationDate == null && verificationId == 1) {
+    if (expirationDate == null && verificationId == 1) {
       throw new UserFriendlyException("expiration date required when status is Verified");
     }
 
