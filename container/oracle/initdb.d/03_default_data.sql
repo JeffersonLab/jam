@@ -12,11 +12,11 @@ insert into JAM_OWNER.VERIFICATION_TEAM (VERIFICATION_TEAM_ID, NAME, DIRECTORY_R
 insert into JAM_OWNER.VERIFICATION_TEAM (VERIFICATION_TEAM_ID, NAME, DIRECTORY_ROLE_NAME) values (4, 'Group 4', 'group4Leaders');
 
 -- Populate Facilities
-insert into JAM_OWNER.FACILITY (FACILITY_ID, NAME, PATH, MANAGER_USERNAME, WEIGHT) values (1, 'CEBAF', '/cebaf', 'tbrown',  1);
-insert into JAM_OWNER.FACILITY (FACILITY_ID, NAME, PATH, MANAGER_USERNAME, WEIGHT) values (2, 'LERF', '/lerf', 'tbrown', 2);
-insert into JAM_OWNER.FACILITY (FACILITY_ID, NAME, PATH, MANAGER_USERNAME, WEIGHT) values (3, 'UITF', '/uitf', 'tbrown', 3);
-insert into JAM_OWNER.FACILITY (FACILITY_ID, NAME, PATH, MANAGER_USERNAME, WEIGHT) values (4, 'CMTF', '/cmtf', 'tbrown', 4);
-insert into JAM_OWNER.FACILITY (FACILITY_ID, NAME, PATH, MANAGER_USERNAME, WEIGHT) values (5, 'VTA', '/vta', 'tbrown', 5);
+insert into JAM_OWNER.FACILITY (FACILITY_ID, NAME, PATH, MANAGER_USERNAME, LOGBOOKS_CSV, WEIGHT) values (1, 'CEBAF', '/cebaf', 'tbrown', 'TLOG',  1);
+insert into JAM_OWNER.FACILITY (FACILITY_ID, NAME, PATH, MANAGER_USERNAME, LOGBOOKS_CSV, WEIGHT) values (2, 'LERF', '/lerf', 'tbrown', 'TLOG', 2);
+insert into JAM_OWNER.FACILITY (FACILITY_ID, NAME, PATH, MANAGER_USERNAME, LOGBOOKS_CSV, WEIGHT) values (3, 'UITF', '/uitf', 'tbrown', 'TLOG', 3);
+insert into JAM_OWNER.FACILITY (FACILITY_ID, NAME, PATH, MANAGER_USERNAME, LOGBOOKS_CSV, WEIGHT) values (4, 'CMTF', '/cmtf', 'tbrown', 'TLOG', 4);
+insert into JAM_OWNER.FACILITY (FACILITY_ID, NAME, PATH, MANAGER_USERNAME, LOGBOOKS_CSV, WEIGHT) values (5, 'VTA', '/vta', 'tbrown', 'TLOG', 5);
 
 -- Populate Authorizers
 insert into JAM_OWNER.AUTHORIZER (FACILITY_ID, OPERATIONS_TYPE, USERNAME) values (1, 'RF', 'tbrown');

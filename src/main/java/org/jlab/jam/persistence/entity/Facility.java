@@ -38,6 +38,9 @@ public class Facility implements Serializable, Comparable<Facility> {
   @Column(name = "MANAGER_USERNAME", nullable = false)
   private String managerUsername;
 
+  @Column(name = "LOGBOOKS_CSV")
+  private String logbooksCsv;
+
   @Basic(optional = false)
   @NotNull
   @Column(name = "WEIGHT", nullable = false)
@@ -73,6 +76,14 @@ public class Facility implements Serializable, Comparable<Facility> {
 
   public void setManagerUsername(String managerUsername) {
     this.managerUsername = managerUsername;
+  }
+
+  public String getLogbooksCsv() {
+    return logbooksCsv;
+  }
+
+  public void setLogbooksCsv(String logbooksCsv) {
+    this.logbooksCsv = logbooksCsv;
   }
 
   public BigInteger getWeight() {

@@ -25,6 +25,7 @@
                         <tr>
                             <th>Name</th>
                             <th>Manager</th>
+                            <th>Logbooks</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -32,6 +33,7 @@
                         <tr data-id="${facility.facilityId}">
                             <td><c:out value="${facility.name}"/></td>
                             <td><c:out value="${s:formatUsername(facility.managerUsername)}"/></td>
+                            <td><c:out value="${facility.logbooksCsv}"/></td>
                         </tr>
                     </c:forEach>
                     </tbody>

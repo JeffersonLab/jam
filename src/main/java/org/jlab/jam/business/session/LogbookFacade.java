@@ -57,12 +57,12 @@ public class LogbookFacade extends AbstractFacade<VerificationTeam> {
 
     String subject = facility.getName() + " " + type.getLabel() + " Authorization Updated";
 
-    String logbooks = System.getenv("JAM_BOOKS_CSV");
+    String logbooks = facility.getLogbooksCsv();
 
     if (logbooks == null || logbooks.isEmpty()) {
-      logbooks = "TLOG";
       LOGGER.log(
-          Level.WARNING, "Environment variable 'JAM_BOOKS_CSV' not found, using default TLOG");
+          Level.WARNING, "No logbook_csv defined, skipping sendELog");
+      throw new UserFriendlyException("No logbook_csv defined, skipping sendELog");
     }
 
     Properties config = Library.getConfiguration();

@@ -67,7 +67,6 @@ Uses the [Smoothness Environment Variables](https://github.com/JeffersonLab/smoo
 
 | Name                              | Description                                                                                                                                 |
 |-----------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
-| JAM_BOOKS_CSV                     | Comma separated list of Jefferson Lab Logbook names to log to when permissions are updated or controls are downgraded                       |
 | JAM_UPCOMING_EXPIRATION_EMAIL_CSV | Comma separated list of email recipients of both expired and upcoming expirations (admin heads-up email)                                    |
 | JAM_EXPIRED_EMAIL_CSV             | Comma separated list of email recipients of expired permissions and control verifications (ops semi-synchronous notification of expiration) |
 | JAM_DOWNGRADED_EMAIL_CSV          | Comma separated list of email recipients for control verifications downgrades                                                               |
