@@ -11,47 +11,41 @@
 <%@attribute name="isHistory" required="true" type="java.lang.Boolean"%>
 <div id="authorization-panel">
     <div class="chart-wrap-backdrop">
-        <div id="rf-accordion" class="accordion">
-            <h3>RF Operations</h3>
-            <div class="content">
-                <form id="rf-authorization-form" method="post" action="${pageContext.request.contextPath}/ajax/edit-rf-auth">
-                    <input type="hidden" name="facilityId" value="${facility.facilityId}">
-                    <c:choose>
-                        <c:when test="${not empty rfList}">
-                            <div class="control-panel">
-                                <div class="control-item edit-button-panel">
-                                    <c:if test="${isEditable}">
-                                        <span class="readonly-field"><button id="rf-edit-button" type="button">Edit RF Operations</button></span>
-                                    </c:if>
-                                    <div class="editable-field">
-                                        <div>
-                                            <button id="rf-save-button" class="ajax-button inline-button" type="button">Save</button>
-                                            <span class="cancel-text">or <a id="rf-cancel-button" href="#">Cancel</a></span>
-                                        </div>
+        <c:if test="${not empty rfList}">
+            <div id="rf-accordion" class="accordion">
+                <h3>RF Operations</h3>
+                <div class="content">
+                    <form id="rf-authorization-form" method="post" action="${pageContext.request.contextPath}/ajax/edit-rf-auth">
+                        <input type="hidden" name="facilityId" value="${facility.facilityId}">
+                        <div class="control-panel">
+                            <div class="control-item edit-button-panel">
+                                <c:if test="${isEditable}">
+                                    <span class="readonly-field"><button id="rf-edit-button" type="button">Edit RF Operations</button></span>
+                                </c:if>
+                                <div class="editable-field">
+                                    <div>
+                                        <button id="rf-save-button" class="ajax-button inline-button" type="button">Save</button>
+                                        <span class="cancel-text">or <a id="rf-cancel-button" href="#">Cancel</a></span>
                                     </div>
                                 </div>
-                                <div class="control history-panel">
-                                    <c:if test="${not isHistory && param.print ne 'Y'}">
-                                        <a data-dialog-title="Authorization History" href="${pageContext.request.contextPath}/authorizations${facility.path}/rf-history" title="Click for authorization history">History</a>
-                                    </c:if>
-                                </div>
                             </div>
-                            <t:rf-operations-panel rfList="${rfList}" isHistory="${isHistory}"/>
-                        </c:when>
-                        <c:otherwise>
-                            None
-                        </c:otherwise>
-                    </c:choose>
-                </form>
+                            <div class="control history-panel">
+                                <c:if test="${not isHistory && param.print ne 'Y'}">
+                                    <a data-dialog-title="Authorization History" href="${pageContext.request.contextPath}/authorizations${facility.path}/rf-history" title="Click for authorization history">History</a>
+                                </c:if>
+                            </div>
+                        </div>
+                        <t:rf-operations-panel rfList="${rfList}" isHistory="${isHistory}"/>
+                    </form>
+                </div>
             </div>
-        </div>
-        <div id="beam-accordion" class="accordion">
-            <h3>Beam Operations</h3>
-            <div class="content">
-                <form id="beam-authorization-form" method="post" action="${pageContext.request.contextPath}/ajax/edit-beam-auth">
-                    <input type="hidden" name="facilityId" value="${facility.facilityId}">
-                <c:choose>
-                    <c:when test="${not empty beamList}">
+        </c:if>
+        <c:if test="${not empty beamList}">
+            <div id="beam-accordion" class="accordion">
+                <h3>Beam Operations</h3>
+                <div class="content">
+                    <form id="beam-authorization-form" method="post" action="${pageContext.request.contextPath}/ajax/edit-beam-auth">
+                        <input type="hidden" name="facilityId" value="${facility.facilityId}">
                         <div class="control-panel">
                             <div class="control-item edit-button-panel">
                                 <c:if test="${isEditable}">
@@ -72,13 +66,9 @@
                         </div>
                         <div class="editable-field power-limited-note"><b>Note</b>: Blank/Empty Current Limit results in "Dump Power Limited"</div>
                         <t:beam-operations-panel beamList="${beamList}" isHistory="${isHistory}"/>
-                    </c:when>
-                    <c:otherwise>
-                        None
-                    </c:otherwise>
-                </c:choose>
-                </form>
+                    </form>
+                </div>
             </div>
-        </div>
+        </c:if>
     </div>
 </div>
