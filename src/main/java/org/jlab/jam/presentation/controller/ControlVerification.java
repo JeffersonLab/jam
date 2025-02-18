@@ -89,7 +89,7 @@ public class ControlVerification extends HttpServlet {
 
     List<Facility> facilityList = facilityFacade.findAll(new OrderDirective("weight"));
 
-    String selectionMessage = VerificationsController.getSelectionMessage(facility, null);
+    String selectionMessage = getSelectionMessage(creditedControl, facility);
 
     request.setAttribute("selectionMessage", selectionMessage);
     request.setAttribute("adminOrLeader", adminOrLeader);
@@ -156,5 +156,35 @@ public class ControlVerification extends HttpServlet {
         }
       }
     }
+  }
+
+  public static String getSelectionMessage(CreditedControl control, Facility facility) {
+    String selectionMessage = "All Verifications";
+
+    List<String> filters = new ArrayList<>();
+
+    if (control != null) {
+      filters.add(
+          "Control \""
+              + control.getVerificationTeam().getName()
+              + " / "
+              + control.getName()
+              + "\"");
+    }
+
+    if (facility != null) {
+      filters.add("Facility \"" + facility.getName() + "\"");
+    }
+
+    if (!filters.isEmpty()) {
+      selectionMessage = filters.get(0);
+
+      for (int i = 1; i < filters.size(); i++) {
+        String filter = filters.get(i);
+        selectionMessage += " and " + filter;
+      }
+    }
+
+    return selectionMessage;
   }
 }
