@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -77,13 +76,6 @@ public class CreditedControlFacade extends AbstractFacade<CreditedControl> {
     }
 
     return ccList;
-  }
-
-  @RolesAllowed("jam-admin")
-  public void updateComments(BigInteger creditedControlId, String comments) {
-    CreditedControl control = find(creditedControlId);
-
-    control.setComments(comments);
   }
 
   @PermitAll

@@ -44,14 +44,14 @@
                                     <td><c:out value="${team.directoryRoleName}"/></td>
                                 </c:if>
                                 <td>
-                                    <ul>
+                                    <ul class="jam-cell-list">
                                         <c:forEach items="${team.userList}" var="user">
                                             <li><c:out value="${s:formatUser(user)}"/></li>
                                         </c:forEach>
                                     </ul>
                                 </td>
                                 <td>
-                                    <ul>
+                                    <ul class="jam-cell-list">
                                         <c:forEach items="${team.controlList}" var="control">
                                             <li><c:out value="${control.name}"/></li>
                                         </c:forEach>

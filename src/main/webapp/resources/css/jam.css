@@ -72,13 +72,13 @@ dd ul {
 .expiring-soon {
     color: red;
 }
-#verifiers-table ul {
+ul.jam-cell-list {
     list-style-type: none;
     margin: 0;
     padding: 0;
 }
-#verifiers-table li {
-    margin: 0.5em 0;
+ul.jam-cell-list li {
+    margin: 0.75em 0;
 }
 .top-right-box {
     float: right;

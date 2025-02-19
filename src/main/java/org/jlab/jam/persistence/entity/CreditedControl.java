@@ -2,10 +2,12 @@ package org.jlab.jam.persistence.entity;
 
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.jlab.jam.persistence.view.DocLink;
 import org.jlab.jam.persistence.view.FacilityControlVerification;
 
 /**
@@ -50,9 +52,9 @@ public class CreditedControl implements Serializable, Comparable<CreditedControl
   @Size(min = 0, max = 128)
   private String verificationFrequency;
 
-  @Size(max = 2048)
-  @Column(length = 2048)
-  private String comments;
+  @Size(max = 4000)
+  @Column(name = "DOC_LABEL_URL_CSV", length = 4000)
+  private String docLabelUrlCsv;
 
   @OneToMany(mappedBy = "creditedControl", fetch = FetchType.LAZY)
   private List<BeamControlVerification> beamControlVerificationList;
@@ -113,12 +115,28 @@ public class CreditedControl implements Serializable, Comparable<CreditedControl
     return verificationFrequency;
   }
 
-  public String getComments() {
-    return comments;
+  public String getDocLabelUrlCsv() {
+    return docLabelUrlCsv;
   }
 
-  public void setComments(String comments) {
-    this.comments = comments;
+  public void setDocLabelUrlCsv(String docLabelUrlCsv) {
+    this.docLabelUrlCsv = docLabelUrlCsv;
+  }
+
+  public List<DocLink> getDocLinkList() {
+    List<DocLink> list = new ArrayList<>();
+
+    if (docLabelUrlCsv != null && !docLabelUrlCsv.isEmpty()) {
+      String[] records = docLabelUrlCsv.split(",");
+      for (String record : records) {
+        String[] fields = record.split("\\|");
+        String label = fields[0];
+        String url = fields[1];
+        list.add(new DocLink(label, url));
+      }
+    }
+
+    return list;
   }
 
   public void setVerificationFrequency(String verificationFrequency) {

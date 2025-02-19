@@ -28,6 +28,7 @@
                                 <th>Name</th>
                             </c:if>
                             <th>Description</th>
+                            <th>Documentation</th>
                             <th>Verification Team</th>
                             <th>Verification Frequency</th>
                         </tr>
@@ -39,6 +40,13 @@
                                 <td><c:out value="${control.name}"/></td>
                                 </c:if>
                                 <td><c:out value="${control.description}"/></td>
+                                <td>
+                                    <ul class="jam-cell-list">
+                                    <c:forEach items="${control.docLinkList}" var="link">
+                                        <li><a href="${link.url}"><c:out value="${link.label}"/></a></li>
+                                    </c:forEach>
+                                    </ul>
+                                </td>
                                 <td>
                                     <c:url var="url" value="/inventory/verifiers">
                                         <c:param name="name" value="${control.verificationTeam.name}"/>
