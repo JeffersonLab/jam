@@ -116,7 +116,8 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
       Date verificationDate,
       String verifiedUsername,
       Date expirationDate,
-      String comments)
+      String comments,
+      String externalUrl)
       throws UserFriendlyException {
     String username = checkAuthenticated();
 
@@ -192,6 +193,7 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
       verification.setVerifiedBy(verifiedUsername);
       verification.setExpirationDate(expirationDate);
       verification.setComments(comments);
+      verification.setExternalUrl(externalUrl);
 
       if (downgrade) {
         downgradeList.add(verification);
@@ -205,6 +207,7 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
       history.setVerifiedBy(verifiedUsername);
       history.setExpirationDate(expirationDate);
       history.setComments(comments);
+      history.setExternalUrl(externalUrl);
       history.setBeamControlVerification(verification);
       em.persist(history);
     }

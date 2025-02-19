@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.util.Date;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  * @author ryans
@@ -55,6 +56,10 @@ public class RFControlVerificationHistory implements Serializable {
   @Basic(optional = true)
   @Column(name = "COMMENTS", nullable = true)
   private String comments;
+
+  @Size(max = 4000)
+  @Column(name = "EXTERNAL_URL", length = 4000)
+  private String externalUrl;
 
   @JoinColumn(
       name = "RF_CONTROL_VERIFICATION_ID",
@@ -126,6 +131,14 @@ public class RFControlVerificationHistory implements Serializable {
 
   public void setComments(String comments) {
     this.comments = comments;
+  }
+
+  public String getExternalUrl() {
+    return externalUrl;
+  }
+
+  public void setExternalUrl(String externalUrl) {
+    this.externalUrl = externalUrl;
   }
 
   public RFControlVerification getRFControlVerification() {

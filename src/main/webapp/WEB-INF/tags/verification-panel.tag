@@ -92,7 +92,15 @@
                         </div>
                     </c:forEach>
                 </td>
-                <td><c:out value="${verification.comments}"/></td>
+                <td>
+                    <div class="comments-div"><c:out value="${verification.comments}"/></div>
+                    <c:if test="${not empty verification.externalUrl}">
+                        <br/>
+                        <div>
+                            <a class="doc-anchor" href="${verification.externalUrl}">Documentation</a>
+                        </div>
+                    </c:if>
+                </td>
                 <td><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}" value="${verification.expirationDate}"/></td>
                 <td><a class="${groupByOperation ? 'dialog-ready' : ''}" data-dialog-title="Verification History" href="${pageContext.request.contextPath}/verifications/control/${historyPathSuffix}=${verification[operationsId]}" title="Click for verification history">History</a></td>
             </tr>
@@ -148,6 +156,12 @@
                 <div class="li-key">Comments:</div>
                 <div class="li-value">
                     <textarea id="comments" name="comments"></textarea>
+                </div>
+            </li>
+            <li>
+                <div class="li-key">Documentation URL:</div>
+                <div class="li-value">
+                    <input type="text" id="link" name="link"/>
                 </div>
             </li>
         </ul>

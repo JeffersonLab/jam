@@ -66,6 +66,10 @@ public class RFControlVerification implements Serializable, Comparable<RFControl
   @Column(length = 2048)
   private String comments;
 
+  @Size(max = 4000)
+  @Column(name = "EXTERNAL_URL", length = 4000)
+  private String externalUrl;
+
   @OneToMany(mappedBy = "rfControlVerification", fetch = FetchType.LAZY)
   private List<RFControlVerificationHistory> rfControlVerificationHistoryList;
 
@@ -152,6 +156,14 @@ public class RFControlVerification implements Serializable, Comparable<RFControl
 
   public void setComments(String comments) {
     this.comments = comments;
+  }
+
+  public String getExternalUrl() {
+    return externalUrl;
+  }
+
+  public void setExternalUrl(String externalUrl) {
+    this.externalUrl = externalUrl;
   }
 
   public List<RFControlVerificationHistory> getRFControlVerificationHistoryList() {

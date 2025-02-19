@@ -57,6 +57,7 @@ public class EditOperationsVerifications extends HttpServlet {
       String verifiedByUsername = request.getParameter("verifiedBy");
       Date expirationDate = ParamConverter.convertFriendlyDateTime(request, "expirationDate");
       String comments = request.getParameter("comments");
+      String externalUrl = request.getParameter("externalUrl");
       String type = request.getParameter("verificationType");
 
       if ("BEAM".equals(type)) {
@@ -67,7 +68,8 @@ public class EditOperationsVerifications extends HttpServlet {
                 verificationDate,
                 verifiedByUsername,
                 expirationDate,
-                comments);
+                comments,
+                externalUrl);
       } else if ("RF".equals(type)) {
         rfDowngradeList =
             rfVerificationFacade.edit(
@@ -76,7 +78,8 @@ public class EditOperationsVerifications extends HttpServlet {
                 verificationDate,
                 verifiedByUsername,
                 expirationDate,
-                comments);
+                comments,
+                externalUrl);
       } else {
         throw new UserFriendlyException("Unknown verification type: " + type);
       }
