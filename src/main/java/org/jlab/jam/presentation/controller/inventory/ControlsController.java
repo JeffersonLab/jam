@@ -12,7 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jlab.jam.business.session.AbstractFacade;
 import org.jlab.jam.business.session.CreditedControlFacade;
+import org.jlab.jam.business.session.VerificationTeamFacade;
 import org.jlab.jam.persistence.entity.CreditedControl;
+import org.jlab.jam.persistence.entity.VerificationTeam;
 import org.jlab.smoothness.presentation.util.ParamConverter;
 
 /**
@@ -24,6 +26,7 @@ import org.jlab.smoothness.presentation.util.ParamConverter;
 public class ControlsController extends HttpServlet {
 
   @EJB CreditedControlFacade controlFacade;
+  @EJB VerificationTeamFacade teamFacade;
 
   /**
    * Handles the HTTP <code>GET</code> method.
@@ -60,6 +63,9 @@ public class ControlsController extends HttpServlet {
       selectionMessage = "Control \"" + selectedControl.getName() + "\"";
     }
 
+    List<VerificationTeam> teamList = teamFacade.findAll(new AbstractFacade.OrderDirective("name"));
+
+    request.setAttribute("teamList", teamList);
     request.setAttribute("selectionMessage", selectionMessage);
     request.setAttribute("controlList", controlList);
 

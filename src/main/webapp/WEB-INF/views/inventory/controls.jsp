@@ -9,13 +9,14 @@
     <jsp:attribute name="stylesheets">
     </jsp:attribute>
     <jsp:attribute name="scripts">
+               <script type="text/javascript" src="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/js/controls.js"></script>
     </jsp:attribute>        
     <jsp:body>
         <section>
             <h2 class="page-header-title"><c:out value="${title}"/></h2>
             <div class="message-box"><c:out value="${selectionMessage}"/></div>
             <div id="chart-wrap" class="chart-wrap-backdrop">
-                <c:set var="readonly" value="${true}"/>
+                <c:set var="readonly" value="${!pageContext.request.isUserInRole('jam-admin') || param.notEditable ne null}"/>
                 <c:if test="${not readonly}">
                     <s:editable-row-table-controls>
                     </s:editable-row-table-controls>
@@ -35,7 +36,7 @@
                         </thead>
                         <tbody>
                         <c:forEach items="${controlList}" var="control">
-                            <tr data-id="${control.creditedControlId}">
+                            <tr data-id="${control.creditedControlId}" data-team-id="${control.verificationTeam.verificationTeamId}" data-doc="${fn:escapeXml(control.docLabelUrlCsv)}">
                                 <c:if test="${empty param.controlId}">
                                 <td><c:out value="${control.name}"/></td>
                                 </c:if>
@@ -78,7 +79,23 @@
                             <label for="row-name">Name</label>
                         </div>
                         <div class="li-value">
-                            <input type="text" required="required" id="row-name"/>
+                            <input type="text" id="row-name" autocomplete="off"/>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="li-key">
+                            <label for="row-description">Description</label>
+                        </div>
+                        <div class="li-value">
+                            <textarea id="row-description" autocomplete="off"></textarea>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="li-key">
+                            <label for="row-doc">Documentation</label>
+                        </div>
+                        <div class="li-value">
+                            <input type="text" id="row-doc" autocomplete="off" placeholder="{label}|{url},..."/>
                         </div>
                     </li>
                     <li>
@@ -89,10 +106,18 @@
                             <select id="row-team" required="required">
                                 <option value="">&nbsp;</option>
                                 <c:forEach items="${teamList}" var="team">
-                                    <option value="${team.teamId}">
+                                    <option value="${team.verificationTeamId}">
                                         <c:out value="${team.name}"/></option>
                                 </c:forEach>
                             </select>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="li-key">
+                            <label for="row-frequency">Frequency</label>
+                        </div>
+                        <div class="li-value">
+                            <input type="text" id="row-frequency"/>
                         </div>
                     </li>
                 </ul>

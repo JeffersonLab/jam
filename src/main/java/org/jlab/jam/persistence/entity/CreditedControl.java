@@ -23,6 +23,11 @@ public class CreditedControl implements Serializable, Comparable<CreditedControl
   private static final long serialVersionUID = 1L;
 
   @Id
+  @SequenceGenerator(
+      name = "CreditedControlId",
+      sequenceName = "CREDITED_CONTROL_ID",
+      allocationSize = 1)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "CreditedControlId")
   @Basic(optional = false)
   @NotNull
   @Column(name = "CREDITED_CONTROL_ID", nullable = false, precision = 22, scale = 0)
@@ -132,7 +137,7 @@ public class CreditedControl implements Serializable, Comparable<CreditedControl
         String[] fields = record.split("\\|");
         String label = fields[0];
         String url = null;
-        if(fields.length > 1) {
+        if (fields.length > 1) {
           url = fields[1];
         }
         list.add(new DocLink(label, url));
