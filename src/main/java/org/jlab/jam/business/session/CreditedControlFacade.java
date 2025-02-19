@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -15,6 +16,7 @@ import org.jlab.jam.persistence.entity.CreditedControl;
 import org.jlab.jam.persistence.entity.Facility;
 import org.jlab.jam.persistence.entity.VerificationTeam;
 import org.jlab.jam.persistence.view.FacilityControlVerification;
+import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jlab.smoothness.persistence.util.JPAUtil;
 
 /**
@@ -154,5 +156,57 @@ public class CreditedControlFacade extends AbstractFacade<CreditedControl> {
     }
 
     return ccList;
+  }
+
+  @RolesAllowed("jam-admin")
+  public void addControl(
+      String name, String description, String doc, BigInteger teamId, String frequency)
+      throws UserFriendlyException {
+    if (name == null || name.isEmpty()) {
+      throw new UserFriendlyException("name is required");
+    }
+
+    if (description == null || description.isEmpty()) {
+      throw new UserFriendlyException("description is required");
+    }
+
+    if (teamId == null) {
+      throw new UserFriendlyException("team is required");
+    }
+
+    VerificationTeam team = em.find(VerificationTeam.class, teamId);
+
+    if (team == null) {
+      throw new UserFriendlyException("team not found with id " + teamId);
+    }
+
+    if (frequency == null || frequency.isEmpty()) {
+      throw new UserFriendlyException("frequency is required");
+    }
+
+    CreditedControl cc = new CreditedControl();
+
+    cc.setName(name);
+    cc.setDescription(description);
+    cc.setDocLabelUrlCsv(doc);
+    cc.setVerificationTeam(team);
+    cc.setVerificationFrequency(frequency);
+
+    create(cc);
+  }
+
+  @RolesAllowed("jam-admin")
+  public void removeControl(BigInteger controlId) throws UserFriendlyException {
+    if (controlId == null) {
+      throw new UserFriendlyException("control ID is required");
+    }
+
+    CreditedControl control = find(controlId);
+
+    if (control == null) {
+      throw new UserFriendlyException("control not found with id " + controlId);
+    }
+
+    remove(control);
   }
 }
