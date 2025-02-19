@@ -36,7 +36,7 @@
                         </thead>
                         <tbody>
                         <c:forEach items="${controlList}" var="control">
-                            <tr data-id="${control.creditedControlId}">
+                            <tr data-id="${control.creditedControlId}" data-team-id="${control.verificationTeam.verificationTeamId}" data-doc="${fn:escapeXml(control.docLabelUrlCsv)}">
                                 <c:if test="${empty param.controlId}">
                                 <td><c:out value="${control.name}"/></td>
                                 </c:if>

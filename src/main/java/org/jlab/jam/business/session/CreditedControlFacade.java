@@ -209,4 +209,54 @@ public class CreditedControlFacade extends AbstractFacade<CreditedControl> {
 
     remove(control);
   }
+
+  @RolesAllowed("jam-admin")
+  public void editControl(
+      BigInteger controlId,
+      String name,
+      String description,
+      String doc,
+      BigInteger teamId,
+      String frequency)
+      throws UserFriendlyException {
+    if (name == null || name.isEmpty()) {
+      throw new UserFriendlyException("name is required");
+    }
+
+    if (description == null || description.isEmpty()) {
+      throw new UserFriendlyException("description is required");
+    }
+
+    if (teamId == null) {
+      throw new UserFriendlyException("team is required");
+    }
+
+    VerificationTeam team = em.find(VerificationTeam.class, teamId);
+
+    if (team == null) {
+      throw new UserFriendlyException("team not found with id " + teamId);
+    }
+
+    if (frequency == null || frequency.isEmpty()) {
+      throw new UserFriendlyException("frequency is required");
+    }
+
+    if (controlId == null) {
+      throw new UserFriendlyException("control ID is required");
+    }
+
+    CreditedControl cc = find(controlId);
+
+    if (cc == null) {
+      throw new UserFriendlyException("control not found with id " + controlId);
+    }
+
+    cc.setName(name);
+    cc.setDescription(description);
+    cc.setDocLabelUrlCsv(doc);
+    cc.setVerificationTeam(team);
+    cc.setVerificationFrequency(frequency);
+
+    edit(cc);
+  }
 }
