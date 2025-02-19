@@ -43,7 +43,16 @@
                                 <td>
                                     <ul class="jam-cell-list">
                                     <c:forEach items="${control.docLinkList}" var="link">
-                                        <li><a href="${link.url}"><c:out value="${link.label}"/></a></li>
+                                        <li>
+                                            <c:choose>
+                                                <c:when test="${not empty link.url}">
+                                                    <a href="${link.url}"><c:out value="${link.label}"/></a>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <c:out value="${link.label}"/>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </li>
                                     </c:forEach>
                                     </ul>
                                 </td>

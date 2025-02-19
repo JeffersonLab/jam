@@ -131,7 +131,10 @@ public class CreditedControl implements Serializable, Comparable<CreditedControl
       for (String record : records) {
         String[] fields = record.split("\\|");
         String label = fields[0];
-        String url = fields[1];
+        String url = null;
+        if(fields.length > 1) {
+          url = fields[1];
+        }
         list.add(new DocLink(label, url));
       }
     }
