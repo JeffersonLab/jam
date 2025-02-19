@@ -62,6 +62,7 @@
                                         <td>
                                             <c:out value="${history.comments}"/>
                                             <c:if test="${not empty history.externalUrl}">
+                                                <br/>
                                                 <div>
                                                     <a href="${history.externalUrl}">Documentation</a>
                                                 </div>

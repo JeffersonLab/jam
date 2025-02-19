@@ -37,6 +37,9 @@
     height: 100px;
     resize: none;
 }
+#link {
+    width: 300px;
+}
 body .now-button, body .me-button {
     font-size: 12px;
     max-width: 45px;

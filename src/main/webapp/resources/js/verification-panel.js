@@ -170,7 +170,8 @@ $(document).on("click", ".verify-button", function () {
             verificationDateArray = [],
             verifiedByArray = [],
             expirationDateArray = [],
-            commentsArray = [];
+            commentsArray = [],
+            linkArray = [];
 
 
     $verificationList.each(function (index, value) {
@@ -189,7 +190,8 @@ $(document).on("click", ".verify-button", function () {
             verificationDateArray.push($(".verified-date", value).text());
             verifiedByArray.push($(this).attr("data-verified-username"));
             expirationDateArray.push($("td:nth-child(6)", value).text());
-            commentsArray.push($("td:nth-child(5)", value).text());
+            commentsArray.push($(".comments-div", value).text());
+            linkArray.push($(".doc-anchor", value).attr("href"));
         }
     });
 
@@ -202,16 +204,39 @@ $(document).on("click", ".verify-button", function () {
             verificationDate = '',
             verifiedBy = '',
             expirationDate = '',
-            comments = '';
+            comments = '',
+            link = '';
 
     var rowsDiffer = false;
 
     for (var i = 1; i < statusArray.length; i++) {
-        if (statusArray[0] !== statusArray[i] ||
-                verificationDateArray[0] !== verificationDateArray[i] ||
-                verifiedByArray[0] !== verifiedByArray[i] ||
-                expirationDateArray[0] !== expirationDateArray[i] ||
-                comments[0] !== comments[i]) {
+        if (statusArray[0] !== statusArray[i]) {
+            console.log('statuses differ');
+            rowsDiffer = true;
+            break;
+        }
+        if(verificationDateArray[0] !== verificationDateArray[i]) {
+            console.log('verified dates differ');
+            rowsDiffer = true;
+            break;
+        }
+        if(verifiedByArray[0] !== verifiedByArray[i]) {
+            console.log('verified bys differ');
+            rowsDiffer = true;
+            break;
+        }
+        if(expirationDateArray[0] !== expirationDateArray[i]) {
+            console.log('expiration dates differ');
+            rowsDiffer = true;
+            break;
+        }
+        if(commentsArray[0] !== commentsArray[i]) {
+            console.log('comments differ', commentsArray[0], commentsArray[i]);
+            rowsDiffer = true;
+            break;
+        }
+        if(linkArray[0] !== linkArray[i]) {
+            console.log('doc urls differ');
             rowsDiffer = true;
             break;
         }
@@ -226,6 +251,7 @@ $(document).on("click", ".verify-button", function () {
         verifiedBy = verifiedByArray[0];
         expirationDate = expirationDateArray[0];
         comments = commentsArray[0];
+        link = linkArray[0];
     }
 
     var count = $("#selected-verification-list li").length;
@@ -239,6 +265,7 @@ $(document).on("click", ".verify-button", function () {
     $("#verifiedBy").val(verifiedBy);
     $("#expirationDate").val(expirationDate);
     $("#comments").val(comments);
+    $("#link").val(link);
     $("#verificationType").val(verificationType);
 
     $("#verify-dialog").dialog("open");

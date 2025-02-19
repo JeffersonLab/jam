@@ -93,10 +93,11 @@
                     </c:forEach>
                 </td>
                 <td>
-                    <c:out value="${verification.comments}"/>
+                    <div class="comments-div"><c:out value="${verification.comments}"/></div>
                     <c:if test="${not empty verification.externalUrl}">
+                        <br/>
                         <div>
-                            <a href="${verification.externalUrl}">Documentation</a>
+                            <a class="doc-anchor" href="${verification.externalUrl}">Documentation</a>
                         </div>
                     </c:if>
                 </td>

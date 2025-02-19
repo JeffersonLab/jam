@@ -60,10 +60,11 @@
                                         <td><c:out value="${s:formatUsername(history.verifiedBy)}"/></td>
                                         <td class="icon-cell"><span title="${history.verificationStatusId eq 1 ? 'Verified' : (history.verificationStatusId eq 50 ? 'Provisionally Verified' : 'Not Verified')}" class="small-icon baseline-small-icon ${history.verificationStatusId eq 1 ? 'verified-icon' : (history.verificationStatusId eq 50 ? 'provisional-icon' : 'not-verified-icon')}"></span></td>
                                         <td>
-                                            <c:out value="${history.comments}"/>
+                                            <div class="comments-div"><c:out value="${history.comments}"/></div>
                                             <c:if test="${not empty history.externalUrl}">
+                                                <br/>
                                                 <div>
-                                                    <a href="${history.externalUrl}">Documentation</a>
+                                                    <a class="doc-anchor" href="${history.externalUrl}">Documentation</a>
                                                 </div>
                                             </c:if>
                                         </td>
