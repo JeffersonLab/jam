@@ -83,3 +83,6 @@ dd ul {
 .top-right-box {
     float: right;
 }
+.comments-div {
+    word-break: break-word;
+}
