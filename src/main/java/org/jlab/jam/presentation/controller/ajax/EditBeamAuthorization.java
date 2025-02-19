@@ -62,6 +62,7 @@ public class EditBeamAuthorization extends HttpServlet {
     Facility facility = null;
     String comments = null;
     Boolean sendNotifications = true;
+    BigInteger beamAuthorizationId = null;
 
     try {
       BigInteger facilityId = ParamConverter.convertBigInteger(request, "facilityId");
@@ -81,8 +82,9 @@ public class EditBeamAuthorization extends HttpServlet {
       List<BeamDestinationAuthorization> beamDestinationAuthorizationList =
           convertDestinationAuthorizationList(facility, request);
 
-      beamAuthorizationFacade.saveAuthorization(
-          facility, comments, beamDestinationAuthorizationList);
+      beamAuthorizationId =
+          beamAuthorizationFacade.saveAuthorization(
+              facility, comments, beamDestinationAuthorizationList);
     } catch (UserFriendlyException e) {
       errorReason = e.getUserMessage();
       LOGGER.log(Level.INFO, "Unable to save authorization: " + errorReason);
@@ -107,7 +109,7 @@ public class EditBeamAuthorization extends HttpServlet {
 
         logId = logbookFacade.sendELog(facility, OperationsType.BEAM, proxyServer, logbookServer);
 
-        beamAuthorizationFacade.setLogEntry(logId, logbookServer);
+        beamAuthorizationFacade.setLogEntry(beamAuthorizationId, logId, logbookServer);
       } catch (Exception e) {
         errorReason = "Authorization was saved, but we were unable to send to eLog";
         LOGGER.log(Level.SEVERE, errorReason, e);

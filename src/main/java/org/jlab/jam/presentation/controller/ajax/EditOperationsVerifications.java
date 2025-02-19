@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -16,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.jlab.jam.business.session.BeamControlVerificationFacade;
 import org.jlab.jam.business.session.RFControlVerificationFacade;
 import org.jlab.jam.persistence.entity.BeamControlVerification;
+import org.jlab.jam.persistence.entity.Facility;
 import org.jlab.jam.persistence.entity.RFControlVerification;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jlab.smoothness.presentation.util.ParamConverter;
@@ -46,8 +49,8 @@ public class EditOperationsVerifications extends HttpServlet {
       throws ServletException, IOException {
     String errorReason = null;
 
-    List<BeamControlVerification> beamDowngradeList = null;
-    List<RFControlVerification> rfDowngradeList = null;
+    Map<Facility, List<BeamControlVerification>> beamDowngradeMap = null;
+    Map<Facility, List<RFControlVerification>> rfDowngradeMap = null;
 
     try {
       BigInteger[] verificationIdArray =
@@ -61,7 +64,7 @@ public class EditOperationsVerifications extends HttpServlet {
       String type = request.getParameter("verificationType");
 
       if ("BEAM".equals(type)) {
-        beamDowngradeList =
+        beamDowngradeMap =
             beamVerificationFacade.edit(
                 verificationIdArray,
                 verificationId,
@@ -71,7 +74,7 @@ public class EditOperationsVerifications extends HttpServlet {
                 comments,
                 externalUrl);
       } else if ("RF".equals(type)) {
-        rfDowngradeList =
+        rfDowngradeMap =
             rfVerificationFacade.edit(
                 verificationIdArray,
                 verificationId,
@@ -91,15 +94,15 @@ public class EditOperationsVerifications extends HttpServlet {
       logger.log(Level.SEVERE, errorReason, e);
     }
 
-    CorrespondenceResult result = null;
+    Map<Facility, CorrespondenceResult> resultMap = null;
     String proxyServer = System.getenv("FRONTEND_SERVER_URL");
     String logbookServer = System.getenv("LOGBOOK_SERVER_URL");
 
     if (errorReason == null) {
-      if (beamDowngradeList != null && !beamDowngradeList.isEmpty()) {
-        result = handleBeamCorrespondence(beamDowngradeList, proxyServer, logbookServer);
-      } else if (rfDowngradeList != null && !rfDowngradeList.isEmpty()) {
-        result = handleRFCorrespondence(rfDowngradeList, proxyServer, logbookServer);
+      if (beamDowngradeMap != null && !beamDowngradeMap.isEmpty()) {
+        resultMap = handleBeamCorrespondence(beamDowngradeMap, proxyServer, logbookServer);
+      } else if (rfDowngradeMap != null && !rfDowngradeMap.isEmpty()) {
+        resultMap = handleRFCorrespondence(rfDowngradeMap, proxyServer, logbookServer);
       } else {
         // Nothing was downgraded, so no need for correspondence
       }
@@ -109,20 +112,25 @@ public class EditOperationsVerifications extends HttpServlet {
 
     PrintWriter pw = response.getWriter();
 
-    String xml;
+    String xml = "";
 
     if (errorReason == null) { // no error saving to DB
-      if (result == null) { // no need for correspondence
+      if (resultMap == null || resultMap.isEmpty()) { // no need for correspondence
         xml = "<response><span class=\"status\">Success</span>" + "</response>";
       } else { // Attempted correspondence
-        if (result.emailErrorReason == null && result.elogErrorReason == null) {
+        xml = "<response><span class=\"status\">Success</span>";
+        for (Facility facility : resultMap.keySet()) {
+          CorrespondenceResult result = resultMap.get(facility);
+
           xml =
-              "<response><span class=\"status\">Success</span><span class=\"logid\">"
+              xml
+                  + "<span class=\"logid\">"
                   + (result.logId == null ? "" : result.logId)
-                  + "</span></response>";
-        } else {
+                  + "</span>";
+
           xml =
-              "<response><span class=\"status\">PartialSuccess</span><span class=\"logid\">"
+              xml
+                  + "<span class=\"logid\">"
                   + (result.logId == null ? "" : result.logId)
                   + "</span>"
                   + "<span class=\"elog-error\">"
@@ -130,8 +138,9 @@ public class EditOperationsVerifications extends HttpServlet {
                   + "</span>"
                   + "<span class=\"email-error\">"
                   + (result.emailErrorReason == null ? "" : result.emailErrorReason)
-                  + "</span>"
-                  + "</response>";
+                  + "</span>";
+
+          xml = xml + "</response>";
         }
       }
     } else {
@@ -153,52 +162,74 @@ public class EditOperationsVerifications extends HttpServlet {
     }
   }
 
-  private CorrespondenceResult handleRFCorrespondence(
-      List<RFControlVerification> rfDowngradeList, String proxyServer, String logbookServer) {
-    CorrespondenceResult result = new CorrespondenceResult();
+  private Map<Facility, CorrespondenceResult> handleRFCorrespondence(
+      Map<Facility, List<RFControlVerification>> rfDowngradeMap,
+      String proxyServer,
+      String logbookServer) {
+    Map<Facility, CorrespondenceResult> resultMap = new HashMap<>();
 
-    String body =
-        rfVerificationFacade.getVerificationDowngradedMessageBody(proxyServer, rfDowngradeList);
+    for (Facility facility : rfDowngradeMap.keySet()) {
+      CorrespondenceResult result = new CorrespondenceResult();
 
-    try {
-      result.logId = rfVerificationFacade.sendVerificationDowngradedELog(body, logbookServer);
-    } catch (Exception e) {
-      result.elogErrorReason = "Edit saved, but unable to create elog";
-      logger.log(Level.SEVERE, result.elogErrorReason, e);
+      resultMap.put(facility, result);
+
+      List<RFControlVerification> rfDowngradeList = rfDowngradeMap.get(facility);
+
+      String body =
+          rfVerificationFacade.getVerificationDowngradedMessageBody(
+              facility, proxyServer, rfDowngradeList);
+
+      try {
+        result.logId = rfVerificationFacade.sendVerificationDowngradedELog(body, logbookServer);
+      } catch (Exception e) {
+        result.elogErrorReason = "Edit saved, but unable to create elog";
+        logger.log(Level.SEVERE, result.elogErrorReason, e);
+      }
+
+      try {
+        rfVerificationFacade.sendVerificationDowngradedEmail(body);
+      } catch (Exception e) {
+        result.emailErrorReason = "Edit saved and elog entry created, but unable to send email";
+        logger.log(Level.SEVERE, result.emailErrorReason, e);
+      }
     }
 
-    try {
-      rfVerificationFacade.sendVerificationDowngradedEmail(body);
-    } catch (Exception e) {
-      result.emailErrorReason = "Edit saved and elog entry created, but unable to send email";
-      logger.log(Level.SEVERE, result.emailErrorReason, e);
-    }
-
-    return result;
+    return resultMap;
   }
 
-  private CorrespondenceResult handleBeamCorrespondence(
-      List<BeamControlVerification> beamDowngradeList, String proxyServer, String logbookServer) {
-    CorrespondenceResult result = new CorrespondenceResult();
+  private Map<Facility, CorrespondenceResult> handleBeamCorrespondence(
+      Map<Facility, List<BeamControlVerification>> beamDowngradeMap,
+      String proxyServer,
+      String logbookServer) {
+    Map<Facility, CorrespondenceResult> resultMap = new HashMap<>();
 
-    String body =
-        beamVerificationFacade.getVerificationDowngradedMessageBody(proxyServer, beamDowngradeList);
+    for (Facility facility : beamDowngradeMap.keySet()) {
+      CorrespondenceResult result = new CorrespondenceResult();
 
-    try {
-      result.logId = beamVerificationFacade.sendVerificationDowngradedELog(body, logbookServer);
-    } catch (Exception e) {
-      result.elogErrorReason = "Edit saved, but unable to create elog";
-      logger.log(Level.SEVERE, result.elogErrorReason, e);
+      resultMap.put(facility, result);
+
+      List<BeamControlVerification> beamDowngradeList = beamDowngradeMap.get(facility);
+
+      String body =
+          beamVerificationFacade.getVerificationDowngradedMessageBody(
+              proxyServer, beamDowngradeList);
+
+      try {
+        result.logId = beamVerificationFacade.sendVerificationDowngradedELog(body, logbookServer);
+      } catch (Exception e) {
+        result.elogErrorReason = "Edit saved, but unable to create elog";
+        logger.log(Level.SEVERE, result.elogErrorReason, e);
+      }
+
+      try {
+        beamVerificationFacade.sendVerificationDowngradedEmail(body);
+      } catch (Exception e) {
+        result.emailErrorReason = "Edit saved and elog entry created, but unable to send email";
+        logger.log(Level.SEVERE, result.emailErrorReason, e);
+      }
     }
 
-    try {
-      beamVerificationFacade.sendVerificationDowngradedEmail(body);
-    } catch (Exception e) {
-      result.emailErrorReason = "Edit saved and elog entry created, but unable to send email";
-      logger.log(Level.SEVERE, result.emailErrorReason, e);
-    }
-
-    return result;
+    return resultMap;
   }
 
   public static class CorrespondenceResult {

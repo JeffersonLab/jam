@@ -17,6 +17,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import org.jlab.jam.persistence.entity.*;
 import org.jlab.jam.persistence.entity.BeamAuthorization;
+import org.jlab.jam.persistence.enumeration.OperationsType;
 import org.jlab.jlog.Body;
 import org.jlab.jlog.Library;
 import org.jlab.jlog.LogEntry;
@@ -45,6 +46,8 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
   @EJB CreditedControlFacade controlFacade;
   @EJB BeamDestinationFacade destinationFacade;
   @EJB BeamAuthorizationFacade beamAuthorizationFacade;
+  @EJB LogbookFacade logbookFacade;
+  @EJB FacilityFacade facilityFacade;
 
   @Override
   protected EntityManager getEntityManager() {
@@ -110,7 +113,7 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
   }
 
   @PermitAll
-  public List<BeamControlVerification> edit(
+  public Map<Facility, List<BeamControlVerification>> edit(
       BigInteger[] controlVerificationIdArray,
       Integer verificationId,
       Date verificationDate,
@@ -156,7 +159,7 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
       throw new UserFriendlyException("expiration date required when status is Verified");
     }
 
-    List<BeamControlVerification> downgradeList = new ArrayList<>();
+    Map<Facility, List<BeamControlVerification>> downgradeMap = new HashMap<>();
 
     UserAuthorizationService auth = UserAuthorizationService.getInstance();
 
@@ -196,6 +199,12 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
       verification.setExternalUrl(externalUrl);
 
       if (downgrade) {
+        Facility facility = verification.getBeamDestination().getFacility();
+        List<BeamControlVerification> downgradeList = downgradeMap.get(facility);
+        if (downgradeList == null) {
+          downgradeList = new ArrayList<>();
+          downgradeMap.put(facility, downgradeList);
+        }
         downgradeList.add(verification);
       }
 
@@ -212,11 +221,14 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
       em.persist(history);
     }
 
-    if (!downgradeList.isEmpty()) {
-      clearDirectorPermissionForDowngrade(downgradeList);
+    if (!downgradeMap.isEmpty()) {
+      for (Facility facility : downgradeMap.keySet()) {
+        List<BeamControlVerification> downgradeList = downgradeMap.get(facility);
+        clearDirectorPermissionForDowngrade(facility, downgradeList);
+      }
     }
 
-    return downgradeList;
+    return downgradeMap;
   }
 
   @PermitAll
@@ -445,13 +457,15 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
   }
 
   @PermitAll
-  public void revokeExpiredAuthorizations(List<BeamDestinationAuthorization> authorizationList) {
+  public void revokeExpiredAuthorizations(
+      Facility facility, List<BeamDestinationAuthorization> authorizationList) {
     LOGGER.log(Level.FINEST, "I think I've got something authorization-wise to downgrade");
-    this.clearDirectorPermissionByDestinationAuthorization(authorizationList);
+    this.clearDirectorPermissionByDestinationAuthorization(facility, authorizationList);
   }
 
   @PermitAll
-  public void revokeExpiredVerifications(List<BeamControlVerification> expiredList) {
+  public void revokeExpiredVerifications(
+      Facility facility, List<BeamControlVerification> expiredList) {
     Query q =
         em.createQuery(
             "update BeamControlVerification a set a.verificationStatusId = 100, a.comments = 'Expired', a.verifiedBy = null, a.verificationDate = :vDate, a.modifiedDate = :vDate, a.modifiedBy = 'authadm' where a.beamControlVerificationId in :list");
@@ -475,34 +489,51 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
 
     em.flush();
 
-    clearDirectorPermissionForExpired(expiredList);
+    clearDirectorPermissionForExpired(facility, expiredList);
   }
 
   @PermitAll
-  public void clearDirectorPermissionForExpired(List<BeamControlVerification> verificationList) {
-    clearDirectorPermissionByCreditedControl(verificationList, true);
+  public void clearDirectorPermissionForExpired(
+      Facility facility, List<BeamControlVerification> verificationList) {
+    clearDirectorPermissionByCreditedControl(facility, verificationList, true);
   }
 
   @PermitAll
-  public void clearDirectorPermissionForDowngrade(List<BeamControlVerification> verificationList) {
-    clearDirectorPermissionByCreditedControl(verificationList, false);
+  public void clearDirectorPermissionForDowngrade(
+      Facility facility, List<BeamControlVerification> verificationList) {
+    clearDirectorPermissionByCreditedControl(facility, verificationList, false);
+  }
+
+  private void createLogEntry(Facility facility, BigInteger beamAuthorizationId) {
+    try {
+      String proxyServer = System.getenv("FRONTEND_SERVER_URL");
+      String logbookServer = System.getenv("LOGBOOK_SERVER_URL");
+
+      long logId =
+          logbookFacade.sendELog(facility, OperationsType.BEAM, proxyServer, logbookServer);
+
+      beamAuthorizationFacade.setLogEntry(beamAuthorizationId, logId, logbookServer);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error creating log entry", e);
+    }
   }
 
   private void clearDirectorPermissionByCreditedControl(
-      List<BeamControlVerification> verificationList, Boolean expiration) {
+      Facility facility, List<BeamControlVerification> verificationList, Boolean expiration) {
     String reason = "expiration";
 
     if (!expiration) {
       reason = "downgrade";
     }
 
-    BeamAuthorization beamAuthorization = beamAuthorizationFacade.findCurrent();
+    BeamAuthorization beamAuthorization = beamAuthorizationFacade.findCurrent(facility);
 
     BeamAuthorization authClone = beamAuthorization.createAdminClone();
     // authClone.setDestinationAuthorizationList(new ArrayList<>());
     List<BeamDestinationAuthorization> newList = new ArrayList<>();
 
     boolean atLeastOne = false;
+    List<String> revokedDestinationList = new ArrayList<>();
 
     // The destination authorization list will be null if already cleared previously: remember there
     // are two ways in which a clear can happen and they can race to see who clears permissions
@@ -524,9 +555,13 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
             destClone.setBeamMode("None");
             destClone.setCwLimit(null);
             destClone.setComments(
-                "Permission automatically revoked due to credited control verification " + reason);
+                "Permission automatically revoked due to credited control "
+                    + verification.getCreditedControl().getName()
+                    + " verification "
+                    + reason);
             LOGGER.log(Level.FINEST, "Found something to downgrade");
             atLeastOne = true;
+            revokedDestinationList.add(destClone.getDestination().getName());
             break; // Found a match so revoke and then break out of loop
           }
         }
@@ -534,6 +569,10 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
     }
 
     if (atLeastOne) {
+      String comments = authClone.getComments();
+      String csv = IOUtil.toCsv(revokedDestinationList.toArray());
+      comments = comments + "\n CHANGE: Segment control verification revoked: " + csv;
+      authClone.setComments(comments);
       em.persist(authClone);
       for (BeamDestinationAuthorization da : newList) {
         DestinationAuthorizationPK pk = new DestinationAuthorizationPK();
@@ -542,12 +581,14 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
         da.setDestinationAuthorizationPK(pk);
         em.persist(da);
       }
+
+      createLogEntry(facility, authClone.getBeamAuthorizationId());
     }
   }
 
   private void clearDirectorPermissionByDestinationAuthorization(
-      List<BeamDestinationAuthorization> destinationList) {
-    BeamAuthorization beamAuthorization = beamAuthorizationFacade.findCurrent();
+      Facility facility, List<BeamDestinationAuthorization> destinationList) {
+    BeamAuthorization beamAuthorization = beamAuthorizationFacade.findCurrent(facility);
 
     BeamAuthorization authClone = beamAuthorization.createAdminClone();
     // authClone.setDestinationAuthorizationList(new ArrayList<>());
@@ -830,16 +871,16 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
   }
 
   @PermitAll
-  public void performExpirationCheck(boolean checkForUpcoming) {
+  public void performExpirationCheck(Facility facility, boolean checkForUpcoming) {
     LOGGER.log(Level.FINEST, "Expiration Check: Director's authorizations...");
-    BeamAuthorization auth = beamAuthorizationFacade.findCurrent();
+    BeamAuthorization auth = beamAuthorizationFacade.findCurrent(facility);
     List<BeamDestinationAuthorization> expiredAuthorizationList = null;
 
     if (auth != null) {
       expiredAuthorizationList = checkForAuthorizedButExpired(auth);
       if (expiredAuthorizationList != null && !expiredAuthorizationList.isEmpty()) {
         LOGGER.log(Level.FINEST, "Expiration Check: Revoking expired authorization");
-        revokeExpiredAuthorizations(expiredAuthorizationList);
+        revokeExpiredAuthorizations(facility, expiredAuthorizationList);
       }
     }
 
@@ -849,7 +890,7 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
     // verified", but need to be "not verified" due to expiration
     if (expiredVerificationList != null && !expiredVerificationList.isEmpty()) {
       LOGGER.log(Level.FINEST, "Expiration Check: Revoking expired verifications...");
-      revokeExpiredVerifications(expiredVerificationList);
+      revokeExpiredVerifications(facility, expiredVerificationList);
     }
 
     List<BeamControlVerification> upcomingVerificationExpirationList = null;
@@ -891,5 +932,13 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
     }
 
     return verification;
+  }
+
+  @PermitAll
+  public void performExpirationCheckAll() {
+    List<Facility> facilityList = facilityFacade.findAll();
+    for (Facility facility : facilityList) {
+      performExpirationCheck(facility, true);
+    }
   }
 }

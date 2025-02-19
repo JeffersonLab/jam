@@ -121,11 +121,11 @@ public class FacilityAuthorization extends HttpServlet {
   private void handleFacility(
       HttpServletRequest request, HttpServletResponse response, Facility facility)
       throws ServletException, IOException {
-    rfVerificationFacade.performExpirationCheck(false);
-    beamVerificationFacade.performExpirationCheck(false);
+    rfVerificationFacade.performExpirationCheck(facility, false);
+    beamVerificationFacade.performExpirationCheck(facility, false);
 
-    RFAuthorization rfAuthorization = rfAuthorizationFacade.findCurrent();
-    BeamAuthorization beamAuthorization = beamAuthorizationFacade.findCurrent();
+    RFAuthorization rfAuthorization = rfAuthorizationFacade.findCurrent(facility);
+    BeamAuthorization beamAuthorization = beamAuthorizationFacade.findCurrent(facility);
 
     List<RFSegment> rfList = rfSegmentFacade.filterList(true, facility, null);
     List<BeamDestination> beamList = beamDestinationFacade.filterList(true, facility, null);

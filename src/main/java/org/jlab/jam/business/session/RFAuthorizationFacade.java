@@ -79,11 +79,13 @@ public class RFAuthorizationFacade extends AbstractFacade<RFAuthorization> {
 
   @SuppressWarnings("unchecked")
   @PermitAll
-  public RFAuthorization findCurrent() {
+  public RFAuthorization findCurrent(Facility facility) {
     Query q =
         em.createNativeQuery(
-            "select * from (select * from rf_authorization order by modified_date desc) where rownum <= 1",
+            "select * from (select * from rf_authorization where facility = :facility order by modified_date desc) where rownum <= 1",
             RFAuthorization.class);
+
+    q.setParameter("facility", facility);
 
     List<RFAuthorization> rfAuthorizationList = q.getResultList();
 
@@ -132,7 +134,7 @@ public class RFAuthorizationFacade extends AbstractFacade<RFAuthorization> {
   }
 
   @PermitAll
-  public void saveAuthorization(
+  public BigInteger saveAuthorization(
       Facility facility, String comments, List<RFSegmentAuthorization> segmentAuthorizationList)
       throws UserFriendlyException {
     String username = checkAuthenticated();
@@ -198,13 +200,15 @@ public class RFAuthorizationFacade extends AbstractFacade<RFAuthorization> {
     }
 
     LOGGER.log(Level.FINE, "Director's Authorization saved successfully");
+    return authorization.getRfAuthorizationId();
   }
 
   @RolesAllowed("jam-admin")
-  public long sendELog(String proxyServer, String logbookServer) throws UserFriendlyException {
+  public long sendELog(Facility facility, String proxyServer, String logbookServer)
+      throws UserFriendlyException {
     String username = checkAuthenticated();
 
-    RFAuthorization rfAuthorization = findCurrent();
+    RFAuthorization rfAuthorization = findCurrent(facility);
 
     if (rfAuthorization == null) {
       throw new UserFriendlyException("No authorizations found");
@@ -320,8 +324,8 @@ public class RFAuthorizationFacade extends AbstractFacade<RFAuthorization> {
   }
 
   @PermitAll
-  public void setLogEntry(Long logId, String logbookServer) {
-    RFAuthorization current = findCurrent();
+  public void setLogEntry(BigInteger rfAuthorizationId, Long logId, String logbookServer) {
+    RFAuthorization current = find(rfAuthorizationId);
 
     if (current != null && logId != null) {
       String url = logbookServer + "/entry/" + logId;

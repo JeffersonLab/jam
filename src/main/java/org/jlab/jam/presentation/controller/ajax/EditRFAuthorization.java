@@ -59,6 +59,7 @@ public class EditRFAuthorization extends HttpServlet {
     Facility facility = null;
     String comments = null;
     Boolean sendNotifications = true;
+    BigInteger rfAuthorizationId = null;
 
     try {
       BigInteger facilityId = ParamConverter.convertBigInteger(request, "facilityId");
@@ -78,7 +79,8 @@ public class EditRFAuthorization extends HttpServlet {
       List<RFSegmentAuthorization> rfSegmentAuthorizationList =
           convertSegmentAuthorizationList(facility, request);
 
-      rfAuthorizationFacade.saveAuthorization(facility, comments, rfSegmentAuthorizationList);
+      rfAuthorizationId =
+          rfAuthorizationFacade.saveAuthorization(facility, comments, rfSegmentAuthorizationList);
     } catch (UserFriendlyException e) {
       errorReason = e.getUserMessage();
       LOGGER.log(Level.INFO, "Unable to save authorization: " + errorReason);
@@ -102,7 +104,7 @@ public class EditRFAuthorization extends HttpServlet {
 
         logId = logbookFacade.sendELog(facility, OperationsType.RF, proxyServer, logbookServer);
 
-        rfAuthorizationFacade.setLogEntry(logId, logbookServer);
+        rfAuthorizationFacade.setLogEntry(rfAuthorizationId, logId, logbookServer);
       } catch (Exception e) {
         errorReason = "Authorization was saved, but we were unable to send to eLog";
         LOGGER.log(Level.SEVERE, errorReason, e);

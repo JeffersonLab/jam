@@ -71,11 +71,13 @@ public class BeamAuthorizationFacade extends AbstractFacade<BeamAuthorization> {
 
   @SuppressWarnings("unchecked")
   @PermitAll
-  public BeamAuthorization findCurrent() {
+  public BeamAuthorization findCurrent(Facility facility) {
     Query q =
         em.createNativeQuery(
-            "select * from (select * from beam_authorization order by modified_date desc) where rownum <= 1",
+            "select * from (select * from beam_authorization where facility = :facility order by modified_date desc) where rownum <= 1",
             BeamAuthorization.class);
+
+    q.setParameter("facility", facility);
 
     List<BeamAuthorization> beamAuthorizationList = q.getResultList();
 
@@ -124,7 +126,7 @@ public class BeamAuthorizationFacade extends AbstractFacade<BeamAuthorization> {
   }
 
   @PermitAll
-  public void saveAuthorization(
+  public BigInteger saveAuthorization(
       Facility facility,
       String comments,
       List<BeamDestinationAuthorization> beamDestinationAuthorizationList)
@@ -194,11 +196,12 @@ public class BeamAuthorizationFacade extends AbstractFacade<BeamAuthorization> {
     }
 
     LOGGER.log(Level.FINE, "Director's Authorization saved successfully");
+    return beamAuthorization.getBeamAuthorizationId();
   }
 
   @PermitAll
-  public void setLogEntry(Long logId, String logbookServer) {
-    BeamAuthorization current = findCurrent();
+  public void setLogEntry(BigInteger beamAuthorizationId, Long logId, String logbookServer) {
+    BeamAuthorization current = find(beamAuthorizationId);
 
     if (current != null && logId != null) {
       String url = logbookServer + "/entry/" + logId;

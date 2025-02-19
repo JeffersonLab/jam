@@ -16,6 +16,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import org.jlab.jam.persistence.entity.*;
+import org.jlab.jam.persistence.enumeration.OperationsType;
 import org.jlab.jlog.Body;
 import org.jlab.jlog.Library;
 import org.jlab.jlog.LogEntry;
@@ -44,6 +45,8 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
   @EJB CreditedControlFacade controlFacade;
   @EJB RFSegmentFacade segmentFacade;
   @EJB RFAuthorizationFacade rfAuthorizationFacade;
+  @EJB LogbookFacade logbookFacade;
+  @EJB FacilityFacade facilityFacade;
 
   @Override
   protected EntityManager getEntityManager() {
@@ -109,7 +112,7 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
   }
 
   @PermitAll
-  public List<RFControlVerification> edit(
+  public Map<Facility, List<RFControlVerification>> edit(
       BigInteger[] controlVerificationIdArray,
       Integer verificationId,
       Date verificationDate,
@@ -155,7 +158,7 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
       throw new UserFriendlyException("expiration date required when status is Verified");
     }
 
-    List<RFControlVerification> downgradeList = new ArrayList<>();
+    Map<Facility, List<RFControlVerification>> downgradeMap = new HashMap<>();
 
     UserAuthorizationService auth = UserAuthorizationService.getInstance();
 
@@ -195,6 +198,12 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
       verification.setExternalUrl(externalUrl);
 
       if (downgrade) {
+        Facility facility = verification.getRFSegment().getFacility();
+        List<RFControlVerification> downgradeList = downgradeMap.get(facility);
+        if (downgradeList == null) {
+          downgradeList = new ArrayList<>();
+          downgradeMap.put(facility, downgradeList);
+        }
         downgradeList.add(verification);
       }
 
@@ -211,11 +220,14 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
       em.persist(history);
     }
 
-    if (!downgradeList.isEmpty()) {
-      clearDirectorPermissionForDowngrade(downgradeList);
+    if (!downgradeMap.isEmpty()) {
+      for (Facility facility : downgradeMap.keySet()) {
+        List<RFControlVerification> downgradeList = downgradeMap.get(facility);
+        clearDirectorPermissionForDowngrade(facility, downgradeList);
+      }
     }
 
-    return downgradeList;
+    return downgradeMap;
   }
 
   @PermitAll
@@ -320,7 +332,7 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
 
   @PermitAll
   public String getVerificationDowngradedMessageBody(
-      String proxyServer, List<RFControlVerification> downgradeList) {
+      Facility facility, String proxyServer, List<RFControlVerification> downgradeList) {
     StringBuilder builder = new StringBuilder();
 
     SimpleDateFormat formatter = new SimpleDateFormat(TimeUtil.getFriendlyDateTimePattern());
@@ -433,23 +445,27 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
   }
 
   @PermitAll
-  public List<RFControlVerification> checkForVerifiedButExpired() {
+  public List<RFControlVerification> checkForVerifiedButExpired(Facility facility) {
     TypedQuery<RFControlVerification> q =
         em.createQuery(
-            "select a from RFControlVerification a join fetch a.creditedControl where a.expirationDate < sysdate and a.rfSegment.active = true and a.verificationStatusId in (1, 50) order by a.creditedControl.weight asc",
+            "select a from RFControlVerification a join fetch a.creditedControl where a.expirationDate < sysdate and a.rfSegment.active = true and a.verificationStatusId in (1, 50) and a.rfSegment.facility = :facility order by a.creditedControl.weight asc",
             RFControlVerification.class);
+
+    q.setParameter("facility", facility);
 
     return q.getResultList();
   }
 
   @PermitAll
-  public void revokeExpiredAuthorizations(List<RFSegmentAuthorization> authorizationList) {
+  public void revokeExpiredAuthorizations(
+      Facility facility, List<RFSegmentAuthorization> authorizationList) {
     LOGGER.log(Level.FINEST, "I think I've got something authorization-wise to downgrade");
-    this.clearDirectorPermissionBySegmentAuthorization(authorizationList);
+    this.clearDirectorPermissionBySegmentAuthorization(facility, authorizationList);
   }
 
   @PermitAll
-  public void revokeExpiredVerifications(List<RFControlVerification> expiredList) {
+  public void revokeExpiredVerifications(
+      Facility facility, List<RFControlVerification> expiredList) {
     Query q =
         em.createQuery(
             "update RFControlVerification a set a.verificationStatusId = 100, a.comments = 'Expired', a.verifiedBy = null, a.verificationDate = :vDate, a.modifiedDate = :vDate, a.modifiedBy = 'authadm' where a.rfControlVerificationId in :list");
@@ -473,28 +489,43 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
 
     em.flush();
 
-    clearDirectorPermissionForExpired(expiredList);
+    clearDirectorPermissionForExpired(facility, expiredList);
   }
 
   @PermitAll
-  public void clearDirectorPermissionForExpired(List<RFControlVerification> verificationList) {
-    clearDirectorPermissionByCreditedControl(verificationList, true);
+  public void clearDirectorPermissionForExpired(
+      Facility facility, List<RFControlVerification> verificationList) {
+    clearDirectorPermissionByCreditedControl(facility, verificationList, true);
   }
 
   @PermitAll
-  public void clearDirectorPermissionForDowngrade(List<RFControlVerification> verificationList) {
-    clearDirectorPermissionByCreditedControl(verificationList, false);
+  public void clearDirectorPermissionForDowngrade(
+      Facility facility, List<RFControlVerification> verificationList) {
+    clearDirectorPermissionByCreditedControl(facility, verificationList, false);
+  }
+
+  private void createLogEntry(Facility facility, BigInteger rfAuthorizationId) {
+    try {
+      String proxyServer = System.getenv("FRONTEND_SERVER_URL");
+      String logbookServer = System.getenv("LOGBOOK_SERVER_URL");
+
+      long logId = logbookFacade.sendELog(facility, OperationsType.RF, proxyServer, logbookServer);
+
+      rfAuthorizationFacade.setLogEntry(rfAuthorizationId, logId, logbookServer);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error creating log entry", e);
+    }
   }
 
   private void clearDirectorPermissionByCreditedControl(
-      List<RFControlVerification> verificationList, Boolean expiration) {
+      Facility facility, List<RFControlVerification> verificationList, Boolean expiration) {
     String reason = "expiration";
 
     if (!expiration) {
       reason = "downgrade";
     }
 
-    RFAuthorization rfAuthorization = rfAuthorizationFacade.findCurrent();
+    RFAuthorization rfAuthorization = rfAuthorizationFacade.findCurrent(facility);
 
     if (rfAuthorization == null) {
       LOGGER.log(Level.INFO, "No current RFAuthorization, so nothing to downgrade");
@@ -506,6 +537,7 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
     List<RFSegmentAuthorization> newList = new ArrayList<>();
 
     boolean atLeastOne = false;
+    List<String> revokedSegmentList = new ArrayList<>();
 
     // The destination authorization list will be null if already cleared previously: remember there
     // are two ways in which a clear can happen and they can race to see who clears permissions
@@ -525,9 +557,13 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
           if (destinationId.equals(verification.getRFSegment().getRFSegmentId())) {
             destClone.setHighPowerRf(false);
             destClone.setComments(
-                "Permission automatically revoked due to credited control verification " + reason);
+                "Permission automatically revoked due to credited control "
+                    + verification.getCreditedControl().getName()
+                    + " verification "
+                    + reason);
             LOGGER.log(Level.FINEST, "Found something to downgrade");
             atLeastOne = true;
+            revokedSegmentList.add(destClone.getSegment().getName());
             break; // Found a match so revoke and then break out of loop
           }
         }
@@ -535,6 +571,10 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
     }
 
     if (atLeastOne) {
+      String comments = authClone.getComments();
+      String csv = IOUtil.toCsv(revokedSegmentList.toArray());
+      comments = comments + "\n CHANGE: Segment control verification revoked: " + csv;
+      authClone.setComments(comments);
       em.persist(authClone);
       for (RFSegmentAuthorization da : newList) {
         SegmentAuthorizationPK pk = new SegmentAuthorizationPK();
@@ -543,12 +583,14 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
         da.setSegmentAuthorizationPK(pk);
         em.persist(da);
       }
+
+      createLogEntry(facility, authClone.getRfAuthorizationId());
     }
   }
 
   private void clearDirectorPermissionBySegmentAuthorization(
-      List<RFSegmentAuthorization> segmentList) {
-    RFAuthorization rfAuthorization = rfAuthorizationFacade.findCurrent();
+      Facility facility, List<RFSegmentAuthorization> segmentList) {
+    RFAuthorization rfAuthorization = rfAuthorizationFacade.findCurrent(facility);
 
     RFAuthorization authClone = rfAuthorization.createAdminClone();
     // authClone.setDestinationAuthorizationList(new ArrayList<>());
@@ -609,11 +651,13 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
   }
 
   @PermitAll
-  public List<RFControlVerification> checkForUpcomingVerificationExpirations() {
+  public List<RFControlVerification> checkForUpcomingVerificationExpirations(Facility facility) {
     TypedQuery<RFControlVerification> q =
         em.createQuery(
-            "select a from RFControlVerification a join fetch a.creditedControl where a.expirationDate >= sysdate and (a.expirationDate - 7) <= sysdate and a.verificationStatusId in (1, 50) and a.rfSegment.active = true order by a.creditedControl.weight asc",
+            "select a from RFControlVerification a join fetch a.creditedControl where a.expirationDate >= sysdate and (a.expirationDate - 7) <= sysdate and a.verificationStatusId in (1, 50) and a.rfSegment.active = true and a.rfSegment.facility = :facility order by a.creditedControl.weight asc",
             RFControlVerification.class);
+
+    q.setParameter("facility", facility);
 
     return q.getResultList();
   }
@@ -669,6 +713,7 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
 
   @PermitAll
   public void notifyOps(
+      Facility facility,
       List<RFSegmentAuthorization> expiredAuthorizationList,
       List<RFControlVerification> expiredVerificationList,
       String proxyServer)
@@ -780,6 +825,7 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
 
   @PermitAll
   public void notifyUsersOfExpirationsAndUpcomingExpirations(
+      Facility facility,
       List<RFSegmentAuthorization> expiredAuthorizationList,
       List<RFControlVerification> expiredVerificationList,
       List<RFSegmentAuthorization> upcomingAuthorizationExpirationList,
@@ -810,7 +856,7 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
 
         // Ops
         if (expiredAuth || expiredVer) {
-          notifyOps(expiredAuthorizationList, expiredVerificationList, proxyServer);
+          notifyOps(facility, expiredAuthorizationList, expiredVerificationList, proxyServer);
         }
 
         // Groups
@@ -827,26 +873,26 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
   }
 
   @PermitAll
-  public void performExpirationCheck(boolean checkForUpcoming) {
+  public void performExpirationCheck(Facility facility, boolean checkForUpcoming) {
     LOGGER.log(Level.FINEST, "Expiration Check: Director's authorizations...");
-    RFAuthorization auth = rfAuthorizationFacade.findCurrent();
+    RFAuthorization auth = rfAuthorizationFacade.findCurrent(facility);
     List<RFSegmentAuthorization> expiredAuthorizationList = null;
 
     if (auth != null) {
       expiredAuthorizationList = checkForAuthorizedButExpired(auth);
       if (expiredAuthorizationList != null && !expiredAuthorizationList.isEmpty()) {
         LOGGER.log(Level.FINEST, "Expiration Check: Revoking expired authorization");
-        revokeExpiredAuthorizations(expiredAuthorizationList);
+        revokeExpiredAuthorizations(facility, expiredAuthorizationList);
       }
     }
 
     LOGGER.log(Level.FINEST, "Expiration Check: Checking for expired verifications...");
     List<RFControlVerification> expiredVerificationList =
-        checkForVerifiedButExpired(); // only items which are "verified" or "provisionally
+        checkForVerifiedButExpired(facility); // only items which are "verified" or "provisionally
     // verified", but need to be "not verified" due to expiration
     if (expiredVerificationList != null && !expiredVerificationList.isEmpty()) {
       LOGGER.log(Level.FINEST, "Expiration Check: Revoking expired verifications...");
-      revokeExpiredVerifications(expiredVerificationList);
+      revokeExpiredVerifications(facility, expiredVerificationList);
     }
 
     List<RFControlVerification> upcomingVerificationExpirationList = null;
@@ -854,7 +900,7 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
     if (checkForUpcoming) {
       LOGGER.log(
           Level.FINEST, "Expiration Check: Checking for upcoming verification expirations...");
-      upcomingVerificationExpirationList = checkForUpcomingVerificationExpirations();
+      upcomingVerificationExpirationList = checkForUpcomingVerificationExpirations(facility);
 
       LOGGER.log(
           Level.FINEST, "Expiration Check: Checking for upcoming authorization expirations...");
@@ -864,6 +910,7 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
     }
 
     notifyUsersOfExpirationsAndUpcomingExpirations(
+        facility,
         expiredAuthorizationList,
         expiredVerificationList,
         upcomingAuthorizationExpirationList,
@@ -888,5 +935,13 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
     }
 
     return verification;
+  }
+
+  @PermitAll
+  public void performExpirationCheckAll() {
+    List<Facility> facilityList = facilityFacade.findAll();
+    for (Facility facility : facilityList) {
+      performExpirationCheck(facility, true);
+    }
   }
 }

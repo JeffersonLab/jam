@@ -21,7 +21,8 @@ public class DailyScheduledCheck {
 
   private Timer timer;
   @Resource private TimerService timerService;
-  @EJB BeamControlVerificationFacade verificationFacade;
+  @EJB RFControlVerificationFacade rfVerificationFacade;
+  @EJB BeamControlVerificationFacade beamVerificationFacade;
 
   @PostConstruct
   private void init() {
@@ -59,6 +60,7 @@ public class DailyScheduledCheck {
     LOGGER.log(
         Level.INFO,
         "handleTimeout: Checking for expired / upcoming expiration of authorization and verification...");
-    verificationFacade.performExpirationCheck(true);
+    rfVerificationFacade.performExpirationCheckAll();
+    beamVerificationFacade.performExpirationCheckAll();
   }
 }
