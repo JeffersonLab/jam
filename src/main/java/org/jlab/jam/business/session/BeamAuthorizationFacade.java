@@ -74,10 +74,10 @@ public class BeamAuthorizationFacade extends AbstractFacade<BeamAuthorization> {
   public BeamAuthorization findCurrent(Facility facility) {
     Query q =
         em.createNativeQuery(
-            "select * from (select * from beam_authorization where facility = :facility order by modified_date desc) where rownum <= 1",
+            "select * from (select * from beam_authorization where facility_id = :facility_id order by modified_date desc) where rownum <= 1",
             BeamAuthorization.class);
 
-    q.setParameter("facility", facility);
+    q.setParameter("facility_id", facility.getFacilityId());
 
     List<BeamAuthorization> beamAuthorizationList = q.getResultList();
 

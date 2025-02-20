@@ -10,7 +10,6 @@ import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.mail.MessagingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -18,6 +17,7 @@ import javax.persistence.TypedQuery;
 import org.jlab.jam.persistence.entity.*;
 import org.jlab.jam.persistence.entity.BeamAuthorization;
 import org.jlab.jam.persistence.enumeration.OperationsType;
+import org.jlab.jam.persistence.view.BeamExpirationEvent;
 import org.jlab.jlog.Body;
 import org.jlab.jlog.Library;
 import org.jlab.jlog.LogEntry;
@@ -683,195 +683,7 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
   }
 
   @PermitAll
-  public void notifyAdmins(
-      List<BeamDestinationAuthorization> expiredAuthorizationList,
-      List<BeamControlVerification> expiredVerificationList,
-      List<BeamDestinationAuthorization> upcomingAuthorizationExpirationList,
-      List<BeamControlVerification> upcomingVerificationExpirationList,
-      String proxyServer)
-      throws MessagingException, UserFriendlyException {
-    String toCsv = System.getenv("JAM_UPCOMING_EXPIRATION_EMAIL_CSV");
-
-    String subject = System.getenv("JAM_UPCOMING_EXPIRATION_SUBJECT");
-
-    String body =
-        getExpiredMessageBody(
-            proxyServer,
-            expiredAuthorizationList,
-            expiredVerificationList,
-            upcomingAuthorizationExpirationList,
-            upcomingVerificationExpirationList);
-
-    EmailService emailService = new EmailService();
-
-    String sender = System.getenv("JAM_EMAIL_SENDER");
-
-    emailService.sendEmail(sender, sender, toCsv, null, subject, body, true);
-  }
-
-  @PermitAll
-  public void notifyOps(
-      List<BeamDestinationAuthorization> expiredAuthorizationList,
-      List<BeamControlVerification> expiredVerificationList,
-      String proxyServer)
-      throws MessagingException, UserFriendlyException {
-    String toCsv = System.getenv("JAM_EXPIRED_EMAIL_CSV");
-
-    String subject = System.getenv("JAM_EXPIRED_SUBJECT");
-
-    String body =
-        getExpiredMessageBody(
-            proxyServer, expiredAuthorizationList, expiredVerificationList, null, null);
-
-    EmailService emailService = new EmailService();
-
-    String sender = System.getenv("JAM_EMAIL_SENDER");
-
-    emailService.sendEmail(sender, sender, toCsv, null, subject, body, true);
-    LOGGER.log(Level.FINEST, "notifyOps, toCsv: {0], body: {1}", new Object[] {toCsv, body});
-  }
-
-  @PermitAll
-  public void notifyGroups(
-      List<BeamControlVerification> expiredList,
-      List<BeamControlVerification> upcomingExpirationsList,
-      String proxyServer)
-      throws MessagingException, UserFriendlyException {
-    Map<VerificationTeam, List<BeamControlVerification>> expiredGroupMap = new HashMap<>();
-    Map<VerificationTeam, List<BeamControlVerification>> upcomingExpirationGroupMap =
-        new HashMap<>();
-
-    String subject = System.getenv("JAM_UPCOMING_EXPIRATION_SUBJECT");
-
-    LOGGER.log(Level.FINEST, "Expirations:");
-    if (expiredList != null) {
-      for (BeamControlVerification c : expiredList) {
-        LOGGER.log(Level.FINEST, c.toString());
-        VerificationTeam verificationTeam = c.getCreditedControl().getVerificationTeam();
-        List<BeamControlVerification> groupList = expiredGroupMap.get(verificationTeam);
-        if (groupList == null) {
-          groupList = new ArrayList<>();
-          expiredGroupMap.put(verificationTeam, groupList);
-        }
-        groupList.add(c);
-      }
-    } else {
-      LOGGER.log(Level.FINEST, "No expirations");
-    }
-
-    LOGGER.log(Level.FINEST, "Upcoming Expirations:");
-    if (upcomingExpirationsList != null) {
-      for (BeamControlVerification c : upcomingExpirationsList) {
-        LOGGER.log(Level.FINEST, c.toString());
-        VerificationTeam verificationTeam = c.getCreditedControl().getVerificationTeam();
-        List<BeamControlVerification> groupList = upcomingExpirationGroupMap.get(verificationTeam);
-        if (groupList == null) {
-          groupList = new ArrayList<>();
-          upcomingExpirationGroupMap.put(verificationTeam, groupList);
-        }
-        groupList.add(c);
-      }
-    } else {
-      LOGGER.log(Level.FINEST, "No upcoming expirations");
-    }
-
-    Set<VerificationTeam> allGroups = new HashSet<>(expiredGroupMap.keySet());
-    allGroups.addAll(upcomingExpirationGroupMap.keySet());
-
-    for (VerificationTeam w : allGroups) {
-
-      List<String> toAddresses = new ArrayList<>();
-
-      UserAuthorizationService auth = UserAuthorizationService.getInstance();
-
-      String role = w.getDirectoryRoleName();
-
-      List<User> leaders = auth.getUsersInRole(role);
-
-      if (leaders != null) {
-        for (User s : leaders) {
-          if (s.getUsername() != null) {
-            toAddresses.add((s.getUsername() + "@jlab.org"));
-          }
-        }
-      }
-
-      List<BeamControlVerification> groupExpiredList = expiredGroupMap.get(w);
-      List<BeamControlVerification> groupUpcomingExpirationsList =
-          upcomingExpirationGroupMap.get(w);
-
-      String sender = System.getenv("JAM_EMAIL_SENDER");
-
-      String body =
-          getExpiredMessageBody(
-              proxyServer, null, groupExpiredList, null, groupUpcomingExpirationsList);
-
-      if (!toAddresses.isEmpty()) {
-        EmailService emailService = new EmailService();
-
-        String toCsv = toAddresses.get(0);
-
-        for (int i = 1; i < toAddresses.size(); i++) {
-          toCsv = toCsv + "," + toAddresses.get(i);
-        }
-
-        // Ensure in test env database records JAM_OWNER.WORKGROUP.LEADER_ROLE_NAME point to bogus
-        // group else real people will be notified.
-        emailService.sendEmail(sender, sender, toCsv, null, subject, body, true);
-      }
-    }
-  }
-
-  @PermitAll
-  public void notifyUsersOfExpirationsAndUpcomingExpirations(
-      List<BeamDestinationAuthorization> expiredAuthorizationList,
-      List<BeamControlVerification> expiredVerificationList,
-      List<BeamDestinationAuthorization> upcomingAuthorizationExpirationList,
-      List<BeamControlVerification> upcomingVerificationExpirationList) {
-
-    boolean expiredAuth = (expiredAuthorizationList != null && !expiredAuthorizationList.isEmpty());
-    boolean expiredVer = (expiredVerificationList != null && !expiredVerificationList.isEmpty());
-    boolean upcomingAuth =
-        (upcomingAuthorizationExpirationList != null
-            && !upcomingAuthorizationExpirationList.isEmpty());
-    boolean upcomingVer =
-        (upcomingVerificationExpirationList != null
-            && !upcomingVerificationExpirationList.isEmpty());
-
-    if (expiredAuth || expiredVer || upcomingAuth || upcomingVer) {
-
-      LOGGER.log(Level.FINEST, "Notifying users");
-      String proxyServer = System.getenv("FRONTEND_SERVER_URL");
-
-      try {
-        // Admins
-        notifyAdmins(
-            expiredAuthorizationList,
-            expiredVerificationList,
-            upcomingAuthorizationExpirationList,
-            upcomingVerificationExpirationList,
-            proxyServer);
-
-        // Ops
-        if (expiredAuth || expiredVer) {
-          notifyOps(expiredAuthorizationList, expiredVerificationList, proxyServer);
-        }
-
-        // Groups
-        if (expiredVer || upcomingVer) {
-          notifyGroups(expiredVerificationList, upcomingVerificationExpirationList, proxyServer);
-        }
-
-      } catch (MessagingException | NullPointerException | UserFriendlyException e) {
-        LOGGER.log(Level.WARNING, "Unable to send email", e);
-      }
-    } else {
-      LOGGER.log(Level.FINEST, "Nothing to notify users about");
-    }
-  }
-
-  @PermitAll
-  public void performExpirationCheck(Facility facility, boolean checkForUpcoming) {
+  public BeamExpirationEvent performExpirationCheck(Facility facility, boolean checkForUpcoming) {
     LOGGER.log(Level.FINEST, "Expiration Check: Director's authorizations...");
     BeamAuthorization auth = beamAuthorizationFacade.findCurrent(facility);
     List<BeamDestinationAuthorization> expiredAuthorizationList = null;
@@ -907,11 +719,22 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
       }
     }
 
-    notifyUsersOfExpirationsAndUpcomingExpirations(
-        expiredAuthorizationList,
-        expiredVerificationList,
-        upcomingAuthorizationExpirationList,
-        upcomingVerificationExpirationList);
+    BeamExpirationEvent event = null;
+
+    if (expiredAuthorizationList != null
+        || upcomingAuthorizationExpirationList != null
+        || expiredVerificationList != null
+        || upcomingVerificationExpirationList != null) {
+      event =
+          new BeamExpirationEvent(
+              facility,
+              expiredAuthorizationList,
+              upcomingAuthorizationExpirationList,
+              expiredVerificationList,
+              upcomingVerificationExpirationList);
+    }
+
+    return event;
   }
 
   @PermitAll

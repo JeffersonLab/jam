@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jlab.jam.business.session.*;
 import org.jlab.jam.persistence.entity.*;
+import org.jlab.jam.persistence.view.BeamExpirationEvent;
+import org.jlab.jam.persistence.view.RFExpirationEvent;
 
 /**
  * @author ryans
@@ -32,6 +34,7 @@ public class FacilityAuthorization extends HttpServlet {
   @EJB BeamControlVerificationFacade beamVerificationFacade;
   @EJB FacilityFacade facilityFacade;
   @EJB RFSegmentFacade rfSegmentFacade;
+  @EJB EmailFacade emailFacade;
 
   /**
    * Handles the HTTP <code>GET</code> method.
@@ -121,8 +124,12 @@ public class FacilityAuthorization extends HttpServlet {
   private void handleFacility(
       HttpServletRequest request, HttpServletResponse response, Facility facility)
       throws ServletException, IOException {
-    rfVerificationFacade.performExpirationCheck(facility, false);
-    beamVerificationFacade.performExpirationCheck(facility, false);
+    RFExpirationEvent rfEvent = rfVerificationFacade.performExpirationCheck(facility, false);
+    BeamExpirationEvent beamEvent = beamVerificationFacade.performExpirationCheck(facility, false);
+
+    if (rfEvent != null || beamEvent != null) {
+      emailFacade.sendAsyncExpirationEmails(facility, rfEvent, beamEvent);
+    }
 
     RFAuthorization rfAuthorization = rfAuthorizationFacade.findCurrent(facility);
     BeamAuthorization beamAuthorization = beamAuthorizationFacade.findCurrent(facility);

@@ -82,10 +82,10 @@ public class RFAuthorizationFacade extends AbstractFacade<RFAuthorization> {
   public RFAuthorization findCurrent(Facility facility) {
     Query q =
         em.createNativeQuery(
-            "select * from (select * from rf_authorization where facility = :facility order by modified_date desc) where rownum <= 1",
+            "select * from (select * from rf_authorization where facility_id = :facility_id order by modified_date desc) where rownum <= 1",
             RFAuthorization.class);
 
-    q.setParameter("facility", facility);
+    q.setParameter("facility_id", facility.getFacilityId());
 
     List<RFAuthorization> rfAuthorizationList = q.getResultList();
 
