@@ -566,7 +566,7 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
         comments = "";
       }
       String csv = IOUtil.toCsv(revokedSegmentList.toArray());
-      comments = comments + "\n CHANGE: Segment control verification revoked: " + csv;
+      comments = comments + "\nCHANGE: Segment control verification revoked: " + csv;
       authClone.setComments(comments);
       em.persist(authClone);
       for (RFSegmentAuthorization da : newList) {
@@ -591,6 +591,7 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
     List<RFSegmentAuthorization> newList = new ArrayList<>();
 
     boolean atLeastOne = false;
+    List<String> revokedSegmentList = new ArrayList<>();
 
     // The destination authorization list will be null if already cleared previously: remember there
     // are two ways in which a clear can happen and they can race to see who clears permissions
@@ -607,15 +608,24 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
         }
         if (segmentList.contains(auth)) {
           destClone.setHighPowerRf(false);
+          destClone.setExpirationDate(null);
           destClone.setComments(
               "Permission automatically revoked due to director's authorization expiration");
           LOGGER.log(Level.FINEST, "Found something to downgrade");
           atLeastOne = true;
+          revokedSegmentList.add(destClone.getSegment().getName());
         }
       }
     }
 
     if (atLeastOne) {
+      String comments = authClone.getComments();
+      if (comments == null) {
+        comments = "";
+      }
+      String csv = IOUtil.toCsv(revokedSegmentList.toArray());
+      comments = comments + "\nCHANGE: Segment authorization revoked: " + csv;
+      authClone.setComments(comments);
       em.persist(authClone);
       for (RFSegmentAuthorization da : newList) {
         SegmentAuthorizationPK pk = new SegmentAuthorizationPK();
@@ -624,6 +634,9 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
         da.setSegmentAuthorizationPK(pk);
         em.persist(da);
       }
+
+      logbookFacade.sendAsyncAuthorizationLogEntry(
+          facility, OperationsType.RF, authClone.getRfAuthorizationId());
     }
   }
 

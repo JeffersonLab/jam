@@ -567,7 +567,7 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
         comments = "";
       }
       String csv = IOUtil.toCsv(revokedDestinationList.toArray());
-      comments = comments + "\n CHANGE: Segment control verification revoked: " + csv;
+      comments = comments + "\nCHANGE: Destination control verification revoked: " + csv;
       authClone.setComments(comments);
       em.persist(authClone);
       for (BeamDestinationAuthorization da : newList) {
@@ -592,6 +592,7 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
     List<BeamDestinationAuthorization> newList = new ArrayList<>();
 
     boolean atLeastOne = false;
+    List<String> revokedDestinationList = new ArrayList<>();
 
     // The destination authorization list will be null if already cleared previously: remember there
     // are two ways in which a clear can happen and they can race to see who clears permissions
@@ -601,7 +602,6 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
       for (BeamDestinationAuthorization auth :
           beamAuthorization.getDestinationAuthorizationList()) {
         BeamDestinationAuthorization destClone = auth.createAdminClone(authClone);
-        // authClone.getDestinationAuthorizationList().add(destClone);
         newList.add(destClone);
 
         if ("None".equals(auth.getBeamMode())) {
@@ -610,15 +610,23 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
         if (destinationList.contains(auth)) {
           destClone.setBeamMode("None");
           destClone.setCwLimit(null);
+          destClone.setExpirationDate(null);
           destClone.setComments(
               "Permission automatically revoked due to director's authorization expiration");
-          LOGGER.log(Level.FINEST, "Found something to downgrade");
           atLeastOne = true;
+          revokedDestinationList.add(destClone.getDestination().getName());
         }
       }
     }
 
     if (atLeastOne) {
+      String comments = authClone.getComments();
+      if (comments == null) {
+        comments = "";
+      }
+      String csv = IOUtil.toCsv(revokedDestinationList.toArray());
+      comments = comments + "\nCHANGE: Destination authorization revoked: " + csv;
+      authClone.setComments(comments);
       em.persist(authClone);
       for (BeamDestinationAuthorization da : newList) {
         DestinationAuthorizationPK pk = new DestinationAuthorizationPK();
@@ -627,6 +635,9 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
         da.setDestinationAuthorizationPK(pk);
         em.persist(da);
       }
+
+      logbookFacade.sendAsyncAuthorizationLogEntry(
+          facility, OperationsType.BEAM, authClone.getBeamAuthorizationId());
     }
   }
 
