@@ -26,6 +26,9 @@ import org.jlab.smoothness.persistence.view.User;
  */
 @DeclareRoles({"jam-admin"})
 public abstract class AbstractFacade<T> {
+  /* Username to insert into modified_by when auto-revoking authorization and verification */
+  public static final String AUTO_REVOKE_USERNAME = "jam-admin";
+
   @Resource private SessionContext context;
 
   private final Class<T> entityClass;

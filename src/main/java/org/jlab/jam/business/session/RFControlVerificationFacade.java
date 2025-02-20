@@ -468,7 +468,9 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
       Facility facility, List<RFControlVerification> expiredList) {
     Query q =
         em.createQuery(
-            "update RFControlVerification a set a.verificationStatusId = 100, a.comments = 'Expired', a.verifiedBy = null, a.verificationDate = :vDate, a.modifiedDate = :vDate, a.modifiedBy = 'authadm' where a.rfControlVerificationId in :list");
+            "update RFControlVerification a set a.verificationStatusId = 100, a.comments = 'Expired', a.verifiedBy = null, a.verificationDate = :vDate, a.modifiedDate = :vDate, a.modifiedBy = '"
+                + AUTO_REVOKE_USERNAME
+                + "' where a.rfControlVerificationId in :list");
 
     List<BigInteger> expiredIdList = new ArrayList<>();
 
@@ -543,6 +545,7 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
         for (RFControlVerification verification : verificationList) {
           if (destinationId.equals(verification.getRFSegment().getRFSegmentId())) {
             destClone.setHighPowerRf(false);
+            destClone.setExpirationDate(null);
             destClone.setComments(
                 "Permission automatically revoked due to credited control "
                     + verification.getCreditedControl().getName()
@@ -629,7 +632,7 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
       List<RFControlVerification> verificationList, Date modifiedDate) {
     for (RFControlVerification v : verificationList) {
       RFControlVerificationHistory history = new RFControlVerificationHistory();
-      history.setModifiedBy("jam-admin");
+      history.setModifiedBy(AUTO_REVOKE_USERNAME);
       history.setModifiedDate(modifiedDate);
       history.setVerificationStatusId(100);
       history.setVerificationDate(modifiedDate);

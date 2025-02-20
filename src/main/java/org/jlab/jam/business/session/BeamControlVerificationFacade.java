@@ -466,9 +466,15 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
   @PermitAll
   public void revokeExpiredVerifications(
       Facility facility, List<BeamControlVerification> expiredList) {
+
+    // Prob should be doing select for update or whatever to ensure concurrent calls to this method
+    // don't result in duplicate history records.
+
     Query q =
         em.createQuery(
-            "update BeamControlVerification a set a.verificationStatusId = 100, a.comments = 'Expired', a.verifiedBy = null, a.verificationDate = :vDate, a.modifiedDate = :vDate, a.modifiedBy = 'authadm' where a.beamControlVerificationId in :list");
+            "update BeamControlVerification a set a.verificationStatusId = 100, a.comments = 'Expired', a.verifiedBy = null, a.verificationDate = :vDate, a.modifiedDate = :vDate, a.modifiedBy = '"
+                + AUTO_REVOKE_USERNAME
+                + "' where a.beamControlVerificationId in :list");
 
     List<BigInteger> expiredIdList = new ArrayList<>();
 
@@ -540,6 +546,7 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
           if (destinationId.equals(verification.getBeamDestination().getBeamDestinationId())) {
             destClone.setBeamMode("None");
             destClone.setCwLimit(null);
+            destClone.setExpirationDate(null);
             destClone.setComments(
                 "Permission automatically revoked due to credited control "
                     + verification.getCreditedControl().getName()
@@ -628,7 +635,7 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
       List<BeamControlVerification> verificationList, Date modifiedDate) {
     for (BeamControlVerification v : verificationList) {
       BeamControlVerificationHistory history = new BeamControlVerificationHistory();
-      history.setModifiedBy("jam-admin");
+      history.setModifiedBy(AUTO_REVOKE_USERNAME);
       history.setModifiedDate(modifiedDate);
       history.setVerificationStatusId(100);
       history.setVerificationDate(modifiedDate);
