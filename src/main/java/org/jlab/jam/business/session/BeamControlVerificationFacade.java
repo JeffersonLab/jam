@@ -504,20 +504,6 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
     clearDirectorPermissionByCreditedControl(facility, verificationList, false);
   }
 
-  private void createLogEntry(Facility facility, BigInteger beamAuthorizationId) {
-    try {
-      String proxyServer = System.getenv("FRONTEND_SERVER_URL");
-      String logbookServer = System.getenv("LOGBOOK_SERVER_URL");
-
-      long logId =
-          logbookFacade.sendELog(facility, OperationsType.BEAM, proxyServer, logbookServer);
-
-      beamAuthorizationFacade.setLogEntry(beamAuthorizationId, logId, logbookServer);
-    } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, "Error creating log entry", e);
-    }
-  }
-
   private void clearDirectorPermissionByCreditedControl(
       Facility facility, List<BeamControlVerification> verificationList, Boolean expiration) {
     String reason = "expiration";
@@ -570,6 +556,9 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
 
     if (atLeastOne) {
       String comments = authClone.getComments();
+      if (comments == null) {
+        comments = "";
+      }
       String csv = IOUtil.toCsv(revokedDestinationList.toArray());
       comments = comments + "\n CHANGE: Segment control verification revoked: " + csv;
       authClone.setComments(comments);
@@ -582,7 +571,8 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
         em.persist(da);
       }
 
-      createLogEntry(facility, authClone.getBeamAuthorizationId());
+      logbookFacade.sendAsyncAuthorizationLogEntry(
+          facility, OperationsType.BEAM, authClone.getBeamAuthorizationId());
     }
   }
 

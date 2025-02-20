@@ -1,6 +1,7 @@
 package org.jlab.jam.business.session;
 
 import java.io.*;
+import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -8,7 +9,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
+import javax.ejb.Asynchronous;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -34,6 +38,9 @@ public class LogbookFacade extends AbstractFacade<VerificationTeam> {
 
   private static final Logger LOGGER = Logger.getLogger(LogbookFacade.class.getName());
 
+  @EJB RFAuthorizationFacade rfAuthorizationFacade;
+  @EJB BeamAuthorizationFacade beamAuthorizationFacade;
+
   @PersistenceContext(unitName = "jamPU")
   private EntityManager em;
 
@@ -46,8 +53,35 @@ public class LogbookFacade extends AbstractFacade<VerificationTeam> {
     super(VerificationTeam.class);
   }
 
+  @PermitAll
+  @Asynchronous
+  public void sendAsyncAuthorizationLogEntry(
+      Facility facility, OperationsType type, BigInteger authorizationId) {
+    try {
+      String proxyServer = System.getenv("FRONTEND_SERVER_URL");
+      String logbookServer = System.getenv("LOGBOOK_SERVER_URL");
+
+      long logId = sendAuthorizationLogEntry(facility, type, proxyServer, logbookServer);
+
+      if (OperationsType.RF.equals(type)) {
+        rfAuthorizationFacade.setLogEntry(authorizationId, logId, logbookServer);
+      } else {
+        beamAuthorizationFacade.setLogEntry(authorizationId, logId, logbookServer);
+      }
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error creating log entry", e);
+    }
+  }
+
   @RolesAllowed("jam-admin")
   public long sendELog(
+      Facility facility, OperationsType type, String proxyServer, String logbookServer)
+      throws UserFriendlyException {
+    return sendAuthorizationLogEntry(facility, type, proxyServer, logbookServer);
+  }
+
+  @PermitAll
+  public long sendAuthorizationLogEntry(
       Facility facility, OperationsType type, String proxyServer, String logbookServer)
       throws UserFriendlyException {
     String username = checkAuthenticated();
