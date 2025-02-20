@@ -5,6 +5,16 @@ h3 {
 .signature-field {
     margin-top: 0.25em;
 }
+.auth-notes-span {
+    white-space: pre-line;
+}
+#rf-comments,
+#beam-comments {
+    width: 100%;
+    height: 100px;
+    resize: none;
+    margin-bottom: 1em;
+}
 h2 button {
     vertical-align: middle;
 }

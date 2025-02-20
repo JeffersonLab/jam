@@ -125,9 +125,7 @@
 </table>
 <h3>Notes</h3>
 <div class="notes-field">
-            <span class="readonly-field">
-                <c:out value="${fn:length(beamAuthorization.comments) == 0 ? 'None' : beamAuthorization.comments}"/>
-            </span>
+<span class="auth-notes-span readonly-field"><c:out value="${fn:length(beamAuthorization.comments) == 0 ? 'None' : beamAuthorization.comments}"/></span>
     <span class="editable-field">
                 <textarea id="beam-comments" name="comments"><c:out value="${beamAuthorization.comments}"/></textarea>
             </span>

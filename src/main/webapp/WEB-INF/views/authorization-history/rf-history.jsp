@@ -7,6 +7,11 @@
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%> 
 <t:facility-authorizations-page title="RF Authorization History">
     <jsp:attribute name="stylesheets">
+        <style>
+            .auth-notes-span {
+                white-space: pre-line;
+            }
+        </style>
     </jsp:attribute>
     <jsp:attribute name="scripts">
         <script type="text/javascript">
@@ -53,7 +58,7 @@
                                         <td><c:out value="${s:formatUsername(history.modifiedBy)}"/></td>
                                         <td><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}" value="${history.authorizationDate}"/></td>
                                         <td><c:out value="${s:formatUsername(history.authorizedBy)}"/></td>
-                                        <td><c:out value="${history.comments}"/></td>
+                                        <td><span class="auth-notes-span"><c:out value="${history.comments}"/></span></td>
                                         <td><a href="${pageContext.request.contextPath}/authorizations${facility.path}/rf-history/segments?rfAuthorizationId=${history.rfAuthorizationId}">Segment Details</a></td>
                                     </tr>
                                 </c:forEach>
