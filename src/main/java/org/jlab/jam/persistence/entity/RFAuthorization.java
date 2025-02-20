@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.jlab.jam.business.session.AbstractFacade;
 
 /**
  * @author ryans
@@ -173,7 +174,7 @@ public class RFAuthorization implements Serializable {
     other.authorizationDate = this.authorizationDate;
     other.authorizedBy = this.authorizedBy;
     other.comments = this.comments;
-    other.setModifiedBy("jam-admin");
+    other.setModifiedBy(AbstractFacade.AUTO_REVOKE_USERNAME);
     other.setModifiedDate(new Date());
     return other;
   }

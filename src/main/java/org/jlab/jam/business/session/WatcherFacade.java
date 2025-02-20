@@ -3,7 +3,6 @@ package org.jlab.jam.business.session;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -18,7 +17,6 @@ import org.jlab.jam.persistence.entity.Watcher;
 import org.jlab.jam.persistence.entity.WatcherPK;
 import org.jlab.jam.persistence.enumeration.OperationsType;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
-import org.jlab.smoothness.business.service.EmailService;
 
 /**
  * @author ryans
@@ -148,63 +146,5 @@ public class WatcherFacade extends AbstractFacade<Watcher> {
     }
 
     remove(watcherList.get(0));
-  }
-
-  @PermitAll
-  public void sendNewAuthorizationEmail(
-      Facility facility, OperationsType type, String linkHostName, String comments)
-      throws UserFriendlyException {
-
-    List<Watcher> watcherList = filterList(facility, type, null);
-
-    if (watcherList == null || watcherList.isEmpty()) {
-      LOGGER.log(
-          Level.WARNING,
-          "No Watchers configured for facility "
-              + facility.getName()
-              + " and OperationsType "
-              + type.name()
-              + ", aborting");
-      return;
-    }
-
-    String subject = System.getenv("JAM_PERMISSIONS_SUBJECT");
-
-    if (subject == null) {
-      subject = "New Authorization";
-      LOGGER.log(Level.WARNING, "No JAM_PERMISSIONS_SUBJECT configured");
-    }
-
-    String body = "<a href=\"" + linkHostName + "/jam\">" + linkHostName + "/jam</a>";
-
-    body = body + "\n\n<p>Notes: " + comments + "</p>";
-
-    String sender = System.getenv("JAM_EMAIL_SENDER");
-
-    if (sender == null || sender.isEmpty()) {
-      LOGGER.log(Level.WARNING, "Environment variable 'JAM_EMAIL_SENDER' not found, aborting");
-      return;
-    }
-
-    final String JLAB_EMAIL_DOMAIN = "@jlab.org";
-    String toCsv = "";
-
-    if (watcherList.size() > 0) {
-      Watcher watcher = watcherList.get(0);
-      String username = watcher.getWatcherPK().getUsername();
-      String address = username + JLAB_EMAIL_DOMAIN;
-      toCsv += address;
-    }
-
-    for (int i = 1; i < watcherList.size(); i++) {
-      Watcher watcher = watcherList.get(i);
-      String username = watcher.getWatcherPK().getUsername();
-      String address = username + JLAB_EMAIL_DOMAIN;
-      toCsv += "," + address;
-    }
-
-    EmailService emailService = new EmailService();
-
-    emailService.sendEmail(sender, sender, toCsv, null, subject, body, true);
   }
 }

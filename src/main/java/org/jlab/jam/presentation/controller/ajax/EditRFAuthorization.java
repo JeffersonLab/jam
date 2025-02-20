@@ -18,10 +18,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.jlab.jam.business.session.FacilityFacade;
-import org.jlab.jam.business.session.LogbookFacade;
-import org.jlab.jam.business.session.RFAuthorizationFacade;
-import org.jlab.jam.business.session.WatcherFacade;
+import org.jlab.jam.business.session.*;
 import org.jlab.jam.persistence.entity.*;
 import org.jlab.jam.persistence.enumeration.OperationsType;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
@@ -41,7 +38,7 @@ public class EditRFAuthorization extends HttpServlet {
   @EJB RFAuthorizationFacade rfAuthorizationFacade;
   @EJB FacilityFacade facilityFacade;
   @EJB LogbookFacade logbookFacade;
-  @EJB WatcherFacade watcherFacade;
+  @EJB EmailFacade emailFacade;
 
   /**
    * Handles the HTTP <code>POST</code> method.
@@ -59,6 +56,7 @@ public class EditRFAuthorization extends HttpServlet {
     Facility facility = null;
     String comments = null;
     Boolean sendNotifications = true;
+    BigInteger rfAuthorizationId = null;
 
     try {
       BigInteger facilityId = ParamConverter.convertBigInteger(request, "facilityId");
@@ -78,7 +76,8 @@ public class EditRFAuthorization extends HttpServlet {
       List<RFSegmentAuthorization> rfSegmentAuthorizationList =
           convertSegmentAuthorizationList(facility, request);
 
-      rfAuthorizationFacade.saveAuthorization(facility, comments, rfSegmentAuthorizationList);
+      rfAuthorizationId =
+          rfAuthorizationFacade.saveAuthorization(facility, comments, rfSegmentAuthorizationList);
     } catch (UserFriendlyException e) {
       errorReason = e.getUserMessage();
       LOGGER.log(Level.INFO, "Unable to save authorization: " + errorReason);
@@ -90,19 +89,16 @@ public class EditRFAuthorization extends HttpServlet {
     if (errorReason == null && sendNotifications) {
       String proxyServer = System.getenv("FRONTEND_SERVER_URL");
 
-      try {
-        watcherFacade.sendNewAuthorizationEmail(facility, OperationsType.RF, proxyServer, comments);
-      } catch (UserFriendlyException e) {
-        errorReason = "Authorization was saved, but we were unable to send to ops an email.  ";
-        LOGGER.log(Level.SEVERE, errorReason, e);
-      }
+      emailFacade.sendAsyncAuthorizerChangeEmail(OperationsType.RF, rfAuthorizationId);
 
       try {
         String logbookServer = System.getenv("LOGBOOK_SERVER_URL");
 
-        logId = logbookFacade.sendELog(facility, OperationsType.RF, proxyServer, logbookServer);
+        logId =
+            logbookFacade.sendAuthorizationLogEntry(
+                facility, OperationsType.RF, proxyServer, logbookServer);
 
-        rfAuthorizationFacade.setLogEntry(logId, logbookServer);
+        rfAuthorizationFacade.setLogEntry(rfAuthorizationId, logId, logbookServer);
       } catch (Exception e) {
         errorReason = "Authorization was saved, but we were unable to send to eLog";
         LOGGER.log(Level.SEVERE, errorReason, e);
