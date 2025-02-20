@@ -1,5 +1,6 @@
 package org.jlab.jam.business.session;
 
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
@@ -11,6 +12,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.jlab.jam.persistence.entity.*;
+import org.jlab.jam.persistence.enumeration.OperationsType;
 import org.jlab.jam.persistence.view.BeamExpirationEvent;
 import org.jlab.jam.persistence.view.RFExpirationEvent;
 import org.jlab.jam.persistence.view.TeamExpirationEvent;
@@ -33,6 +35,8 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
   private EntityManager em;
 
   @EJB WatcherFacade watcherFacade;
+  @EJB RFAuthorizationFacade rfAuthorizationFacade;
+  @EJB BeamAuthorizationFacade beamAuthorizationFacade;
 
   @Override
   protected EntityManager getEntityManager() {
@@ -60,8 +64,14 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
   // Authorizer update event
   @PermitAll
   @Asynchronous
-  public void sendAsyncAuthorizerChangeEmail() {
-
+  public void sendAsyncAuthorizerChangeEmail(OperationsType type, BigInteger authorizationId) {
+    if (OperationsType.RF.equals(type)) {
+      RFAuthorization auth = rfAuthorizationFacade.find(authorizationId);
+      sendRFAuthorizationUpdateEmail(auth);
+    } else {
+      BeamAuthorization auth = beamAuthorizationFacade.find(authorizationId);
+      sendBeamAuthorizationUpdateEmail(auth);
+    }
   }
 
   // AUTO_EXPIRE event
@@ -324,6 +334,132 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
       } else {
         LOGGER.warning("Skipping admin/manager email: No addresses provided");
       }
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, e.getMessage(), e);
+    }
+  }
+
+  public void sendRFAuthorizationUpdateEmail(RFAuthorization auth) {
+    try {
+      Facility facility = auth.getFacility();
+      OperationsType type = OperationsType.RF;
+
+      List<Watcher> watcherList = watcherFacade.filterList(facility, type, null);
+
+      if (watcherList == null || watcherList.isEmpty()) {
+        LOGGER.log(
+            Level.WARNING,
+            "No Watchers configured for facility "
+                + facility.getName()
+                + " and OperationsType "
+                + type.name()
+                + ", aborting");
+        return;
+      }
+
+      String subject = System.getenv("JAM_PERMISSIONS_SUBJECT");
+
+      if (subject == null) {
+        subject = "New Authorization";
+        LOGGER.log(Level.WARNING, "No JAM_PERMISSIONS_SUBJECT configured");
+      }
+
+      String proxyServer = System.getenv("FRONTEND_SERVER_URL");
+
+      String body = "<a href=\"" + proxyServer + "/jam\">" + proxyServer + "/jam</a>";
+
+      body = body + "\n\n<p>Notes: " + auth.getComments() + "</p>";
+
+      String sender = System.getenv("JAM_EMAIL_SENDER");
+
+      if (sender == null || sender.isEmpty()) {
+        LOGGER.log(Level.WARNING, "Environment variable 'JAM_EMAIL_SENDER' not found, aborting");
+        return;
+      }
+
+      final String JLAB_EMAIL_DOMAIN = "@jlab.org";
+      String toCsv = "";
+
+      if (watcherList.size() > 0) {
+        Watcher watcher = watcherList.get(0);
+        String username = watcher.getWatcherPK().getUsername();
+        String address = username + JLAB_EMAIL_DOMAIN;
+        toCsv += address;
+      }
+
+      for (int i = 1; i < watcherList.size(); i++) {
+        Watcher watcher = watcherList.get(i);
+        String username = watcher.getWatcherPK().getUsername();
+        String address = username + JLAB_EMAIL_DOMAIN;
+        toCsv += "," + address;
+      }
+
+      EmailService emailService = new EmailService();
+
+      emailService.sendEmail(sender, sender, toCsv, null, subject, body, true);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, e.getMessage(), e);
+    }
+  }
+
+  public void sendBeamAuthorizationUpdateEmail(BeamAuthorization auth) {
+    try {
+      Facility facility = auth.getFacility();
+      OperationsType type = OperationsType.BEAM;
+
+      List<Watcher> watcherList = watcherFacade.filterList(facility, type, null);
+
+      if (watcherList == null || watcherList.isEmpty()) {
+        LOGGER.log(
+            Level.WARNING,
+            "No Watchers configured for facility "
+                + facility.getName()
+                + " and OperationsType "
+                + type.name()
+                + ", aborting");
+        return;
+      }
+
+      String subject = System.getenv("JAM_PERMISSIONS_SUBJECT");
+
+      if (subject == null) {
+        subject = "New Authorization";
+        LOGGER.log(Level.WARNING, "No JAM_PERMISSIONS_SUBJECT configured");
+      }
+
+      String proxyServer = System.getenv("FRONTEND_SERVER_URL");
+
+      String body = "<a href=\"" + proxyServer + "/jam\">" + proxyServer + "/jam</a>";
+
+      body = body + "\n\n<p>Notes: " + auth.getComments() + "</p>";
+
+      String sender = System.getenv("JAM_EMAIL_SENDER");
+
+      if (sender == null || sender.isEmpty()) {
+        LOGGER.log(Level.WARNING, "Environment variable 'JAM_EMAIL_SENDER' not found, aborting");
+        return;
+      }
+
+      final String JLAB_EMAIL_DOMAIN = "@jlab.org";
+      String toCsv = "";
+
+      if (watcherList.size() > 0) {
+        Watcher watcher = watcherList.get(0);
+        String username = watcher.getWatcherPK().getUsername();
+        String address = username + JLAB_EMAIL_DOMAIN;
+        toCsv += address;
+      }
+
+      for (int i = 1; i < watcherList.size(); i++) {
+        Watcher watcher = watcherList.get(i);
+        String username = watcher.getWatcherPK().getUsername();
+        String address = username + JLAB_EMAIL_DOMAIN;
+        toCsv += "," + address;
+      }
+
+      EmailService emailService = new EmailService();
+
+      emailService.sendEmail(sender, sender, toCsv, null, subject, body, true);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, e.getMessage(), e);
     }

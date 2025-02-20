@@ -10,7 +10,6 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -71,13 +70,6 @@ public class LogbookFacade extends AbstractFacade<VerificationTeam> {
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error creating log entry", e);
     }
-  }
-
-  @RolesAllowed("jam-admin")
-  public long sendELog(
-      Facility facility, OperationsType type, String proxyServer, String logbookServer)
-      throws UserFriendlyException {
-    return sendAuthorizationLogEntry(facility, type, proxyServer, logbookServer);
   }
 
   @PermitAll
