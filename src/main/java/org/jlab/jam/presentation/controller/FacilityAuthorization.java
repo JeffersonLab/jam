@@ -15,8 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jlab.jam.business.session.*;
 import org.jlab.jam.persistence.entity.*;
-import org.jlab.jam.persistence.view.BeamExpirationEvent;
-import org.jlab.jam.persistence.view.RFExpirationEvent;
+import org.jlab.jam.persistence.view.FacilityExpirationEvent;
 
 /**
  * @author ryans
@@ -30,11 +29,10 @@ public class FacilityAuthorization extends HttpServlet {
   @EJB RFAuthorizationFacade rfAuthorizationFacade;
   @EJB BeamAuthorizationFacade beamAuthorizationFacade;
   @EJB BeamDestinationFacade beamDestinationFacade;
-  @EJB RFControlVerificationFacade rfVerificationFacade;
-  @EJB BeamControlVerificationFacade beamVerificationFacade;
   @EJB FacilityFacade facilityFacade;
   @EJB RFSegmentFacade rfSegmentFacade;
   @EJB EmailFacade emailFacade;
+  @EJB ExpirationManager expirationManager;
 
   /**
    * Handles the HTTP <code>GET</code> method.
@@ -124,11 +122,16 @@ public class FacilityAuthorization extends HttpServlet {
   private void handleFacility(
       HttpServletRequest request, HttpServletResponse response, Facility facility)
       throws ServletException, IOException {
-    RFExpirationEvent rfEvent = rfVerificationFacade.performExpirationCheck(facility, false);
-    BeamExpirationEvent beamEvent = beamVerificationFacade.performExpirationCheck(facility, false);
 
-    if (rfEvent != null || beamEvent != null) {
-      emailFacade.sendAsyncExpirationEmails(facility, rfEvent, beamEvent);
+    try {
+      FacilityExpirationEvent event = expirationManager.expireByFacility(facility);
+
+      if (event != null) {
+        emailFacade.sendAsyncExpirationEmails(event);
+      }
+
+    } catch (InterruptedException e) {
+      throw new ServletException("Unable to expire", e);
     }
 
     RFAuthorization rfAuthorization = rfAuthorizationFacade.findCurrent(facility);

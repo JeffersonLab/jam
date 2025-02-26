@@ -262,13 +262,6 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
   }
 
   @PermitAll
-  public void revokeExpiredAuthorizations(
-      Facility facility, List<RFSegmentAuthorization> authorizationList) {
-    LOGGER.log(Level.FINEST, "I think I've got something authorization-wise to downgrade");
-    this.clearDirectorPermissionBySegmentAuthorization(facility, authorizationList);
-  }
-
-  @PermitAll
   public void revokeExpiredVerifications(
       Facility facility, List<RFControlVerification> expiredList) {
     Query q =
@@ -295,8 +288,6 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
     insertExpiredHistory(expiredList, modifiedDate);
 
     em.flush();
-
-    clearDirectorPermissionForExpired(facility, expiredList);
   }
 
   @PermitAll
@@ -392,16 +383,11 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
     RFAuthorization rfAuthorization = rfAuthorizationFacade.findCurrent(facility);
 
     RFAuthorization authClone = rfAuthorization.createAdminClone();
-    // authClone.setDestinationAuthorizationList(new ArrayList<>());
     List<RFSegmentAuthorization> newList = new ArrayList<>();
 
     boolean atLeastOne = false;
     List<String> revokedSegmentList = new ArrayList<>();
 
-    // The destination authorization list will be null if already cleared previously: remember there
-    // are two ways in which a clear can happen and they can race to see who clears permissions
-    // first:
-    // (1) director's expiration vs (2) credited control expiration
     if (rfAuthorization.getRFSegmentAuthorizationList() != null) {
       for (RFSegmentAuthorization auth : rfAuthorization.getRFSegmentAuthorizationList()) {
         RFSegmentAuthorization destClone = auth.createAdminClone(authClone);
@@ -506,7 +492,8 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
       expiredAuthorizationList = checkForAuthorizedButExpired(auth);
       if (expiredAuthorizationList != null && !expiredAuthorizationList.isEmpty()) {
         LOGGER.log(Level.FINEST, "Expiration Check: Revoking expired authorization");
-        revokeExpiredAuthorizations(facility, expiredAuthorizationList);
+
+        clearDirectorPermissionBySegmentAuthorization(facility, expiredAuthorizationList);
       }
     }
 
@@ -517,6 +504,8 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
     if (expiredVerificationList != null && !expiredVerificationList.isEmpty()) {
       LOGGER.log(Level.FINEST, "Expiration Check: Revoking expired verifications...");
       revokeExpiredVerifications(facility, expiredVerificationList);
+
+      clearDirectorPermissionForExpired(facility, expiredVerificationList);
     }
 
     List<RFControlVerification> upcomingVerificationExpirationList = null;

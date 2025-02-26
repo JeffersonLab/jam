@@ -14,6 +14,7 @@ import javax.persistence.PersistenceContext;
 import org.jlab.jam.persistence.entity.*;
 import org.jlab.jam.persistence.enumeration.OperationsType;
 import org.jlab.jam.persistence.view.BeamExpirationEvent;
+import org.jlab.jam.persistence.view.FacilityExpirationEvent;
 import org.jlab.jam.persistence.view.RFExpirationEvent;
 import org.jlab.jam.persistence.view.TeamExpirationEvent;
 import org.jlab.smoothness.business.service.EmailService;
@@ -77,8 +78,11 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
   // AUTO_EXPIRE event
   @PermitAll
   @Asynchronous
-  public void sendAsyncExpirationEmails(
-      Facility facility, RFExpirationEvent rfEvent, BeamExpirationEvent beamEvent) {
+  public void sendAsyncExpirationEmails(FacilityExpirationEvent event) {
+    Facility facility = event.getFacility();
+    RFExpirationEvent rfEvent = event.getRfEvent();
+    BeamExpirationEvent beamEvent = event.getBeamEvent();
+
     boolean rfExpiredAuthorization =
         (rfEvent != null
             && rfEvent.getExpiredAuthorizationList() != null
