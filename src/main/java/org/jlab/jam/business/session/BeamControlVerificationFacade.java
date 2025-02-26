@@ -479,14 +479,14 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
 
     Date now = new Date();
     Calendar cal = Calendar.getInstance();
-    cal.add(Calendar.DATE, 3);
-    Date threeDaysFromNow = cal.getTime();
+    cal.add(Calendar.DATE, 7);
+    Date sevenDaysFromNow = cal.getTime();
 
     if (auth.getDestinationAuthorizationList() != null) {
       for (BeamDestinationAuthorization dest : auth.getDestinationAuthorizationList()) {
         if (!"None".equals(dest.getBeamMode())
             && dest.getExpirationDate().after(now)
-            && dest.getExpirationDate().before(threeDaysFromNow)) {
+            && dest.getExpirationDate().before(sevenDaysFromNow)) {
           upcomingExpirations.add(dest);
         }
       }
@@ -571,10 +571,14 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
   }
 
   @PermitAll
-  public void performExpirationCheckAll() {
+  public Map<Facility, BeamExpirationEvent> performExpirationCheckAll() {
     List<Facility> facilityList = facilityFacade.findAll();
+    Map<Facility, BeamExpirationEvent> eventMap = new HashMap<>();
     for (Facility facility : facilityList) {
-      performExpirationCheck(facility, true);
+      BeamExpirationEvent beamEvent = performExpirationCheck(facility, true);
+      eventMap.put(facility, beamEvent);
     }
+
+    return eventMap;
   }
 }

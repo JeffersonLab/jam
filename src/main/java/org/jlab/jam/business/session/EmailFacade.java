@@ -138,6 +138,11 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
     }
   }
 
+  @PermitAll
+  @Asynchronous
+  public void sendAsyncExpirationEmails(
+      Map<Facility, RFExpirationEvent> rfMap, Map<Facility, BeamExpirationEvent> beamMap) {}
+
   private void notifyVerificationTeams(
       Facility facility, RFExpirationEvent rfEvent, BeamExpirationEvent beamEvent) {
     try {

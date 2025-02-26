@@ -1,5 +1,6 @@
 package org.jlab.jam.business.session;
 
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -12,6 +13,9 @@ import javax.ejb.Timeout;
 import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
+import org.jlab.jam.persistence.entity.Facility;
+import org.jlab.jam.persistence.view.BeamExpirationEvent;
+import org.jlab.jam.persistence.view.RFExpirationEvent;
 
 @Singleton
 @Startup
@@ -23,6 +27,7 @@ public class DailyScheduledCheck {
   @Resource private TimerService timerService;
   @EJB RFControlVerificationFacade rfVerificationFacade;
   @EJB BeamControlVerificationFacade beamVerificationFacade;
+  @EJB EmailFacade emailFacade;
 
   @PostConstruct
   private void init() {
@@ -60,7 +65,11 @@ public class DailyScheduledCheck {
     LOGGER.log(
         Level.INFO,
         "handleTimeout: Checking for expired / upcoming expiration of authorization and verification...");
-    rfVerificationFacade.performExpirationCheckAll();
-    beamVerificationFacade.performExpirationCheckAll();
+    Map<Facility, RFExpirationEvent> rfMap = rfVerificationFacade.performExpirationCheckAll();
+    Map<Facility, BeamExpirationEvent> beamMap = beamVerificationFacade.performExpirationCheckAll();
+
+    if (!beamMap.isEmpty()) {
+      emailFacade.sendAsyncExpirationEmails(rfMap, beamMap);
+    }
   }
 }

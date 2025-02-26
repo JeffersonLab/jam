@@ -480,14 +480,14 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
 
     Date now = new Date();
     Calendar cal = Calendar.getInstance();
-    cal.add(Calendar.DATE, 3);
-    Date threeDaysFromNow = cal.getTime();
+    cal.add(Calendar.DATE, 7);
+    Date sevenDaysFromNow = cal.getTime();
 
     if (auth.getRFSegmentAuthorizationList() != null) {
       for (RFSegmentAuthorization dest : auth.getRFSegmentAuthorizationList()) {
         if (dest.isHighPowerRf()
             && dest.getExpirationDate().after(now)
-            && dest.getExpirationDate().before(threeDaysFromNow)) {
+            && dest.getExpirationDate().before(sevenDaysFromNow)) {
           upcomingExpirations.add(dest);
         }
       }
@@ -572,10 +572,14 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
   }
 
   @PermitAll
-  public void performExpirationCheckAll() {
+  public Map<Facility, RFExpirationEvent> performExpirationCheckAll() {
     List<Facility> facilityList = facilityFacade.findAll();
+    Map<Facility, RFExpirationEvent> eventMap = new HashMap<>();
     for (Facility facility : facilityList) {
-      performExpirationCheck(facility, true);
+      RFExpirationEvent event = performExpirationCheck(facility, true);
+      eventMap.put(facility, event);
     }
+
+    return eventMap;
   }
 }
