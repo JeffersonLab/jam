@@ -1,5 +1,8 @@
 package org.jlab.jam.business.session;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
@@ -22,6 +25,19 @@ public class ExpirationManager {
 
   @EJB RFControlVerificationFacade rfVerificationFacade;
   @EJB BeamControlVerificationFacade beamVerificationFacade;
+  @EJB FacilityFacade facilityFacade;
+
+  public Map<Facility, FacilityExpirationEvent> expireByFacilityAll() throws InterruptedException {
+    List<Facility> facilityList = facilityFacade.findAll();
+    Map<Facility, FacilityExpirationEvent> eventMap = new HashMap<>();
+    for (Facility facility : facilityList) {
+      FacilityExpirationEvent event = expireByFacility(facility);
+      // checkForUpcoming(event);
+      eventMap.put(facility, event);
+    }
+
+    return eventMap;
+  }
 
   public FacilityExpirationEvent expireByFacility(Facility facility) throws InterruptedException {
     FacilityExpirationEvent event;

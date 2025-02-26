@@ -31,8 +31,8 @@ public class FacilityAuthorization extends HttpServlet {
   @EJB BeamDestinationFacade beamDestinationFacade;
   @EJB FacilityFacade facilityFacade;
   @EJB RFSegmentFacade rfSegmentFacade;
-  @EJB EmailFacade emailFacade;
   @EJB ExpirationManager expirationManager;
+  @EJB NotificationManager notificationManager;
 
   /**
    * Handles the HTTP <code>GET</code> method.
@@ -126,10 +126,7 @@ public class FacilityAuthorization extends HttpServlet {
     try {
       FacilityExpirationEvent event = expirationManager.expireByFacility(facility);
 
-      if (event != null) {
-        emailFacade.sendAsyncExpirationEmails(event);
-      }
-
+      notificationManager.notifyFacilityExpiration(event);
     } catch (InterruptedException e) {
       throw new ServletException("Unable to expire", e);
     }

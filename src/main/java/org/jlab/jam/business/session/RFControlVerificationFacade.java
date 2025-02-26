@@ -14,7 +14,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import org.jlab.jam.persistence.entity.*;
-import org.jlab.jam.persistence.enumeration.OperationsType;
 import org.jlab.jam.persistence.view.RFExpirationEvent;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jlab.smoothness.business.service.UserAuthorizationService;
@@ -37,8 +36,7 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
   @EJB CreditedControlFacade controlFacade;
   @EJB RFSegmentFacade segmentFacade;
   @EJB RFAuthorizationFacade rfAuthorizationFacade;
-  @EJB LogbookFacade logbookFacade;
-  @EJB EmailFacade emailFacade;
+  @EJB NotificationManager notificationManager;
   @EJB FacilityFacade facilityFacade;
 
   @Override
@@ -217,8 +215,6 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
       for (Facility facility : downgradeMap.keySet()) {
         List<RFControlVerification> downgradeList = downgradeMap.get(facility);
         clearDirectorPermissionForDowngrade(facility, downgradeList);
-
-        emailFacade.sendAsyncRFVerifierDowngradeEmail(facility, downgradeList);
       }
     }
 
@@ -291,24 +287,8 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
   }
 
   @PermitAll
-  public void clearDirectorPermissionForExpired(
-      Facility facility, List<RFControlVerification> verificationList) {
-    clearDirectorPermissionByCreditedControl(facility, verificationList, true);
-  }
-
-  @PermitAll
   public void clearDirectorPermissionForDowngrade(
       Facility facility, List<RFControlVerification> verificationList) {
-    clearDirectorPermissionByCreditedControl(facility, verificationList, false);
-  }
-
-  private void clearDirectorPermissionByCreditedControl(
-      Facility facility, List<RFControlVerification> verificationList, Boolean expiration) {
-    String reason = "expiration";
-
-    if (!expiration) {
-      reason = "downgrade";
-    }
 
     RFAuthorization rfAuthorization = rfAuthorizationFacade.findCurrent(facility);
 
@@ -317,39 +297,52 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
       return;
     }
 
-    RFAuthorization authClone = rfAuthorization.createAdminClone();
-    // authClone.setDestinationAuthorizationList(new ArrayList<>());
-    List<RFSegmentAuthorization> newList = new ArrayList<>();
+    RFAuthorization authReduction = createClone(rfAuthorization);
+
+    boolean updated =
+        populateReducedPermissionsDueToVerification(
+            authReduction, facility, verificationList, false);
+
+    if (updated) {
+      saveClone(authReduction);
+
+      notificationManager.notifyRFVerificationDowngrade(facility, verificationList, authReduction);
+    }
+  }
+
+  private boolean populateReducedPermissionsDueToVerification(
+      RFAuthorization clone,
+      Facility facility,
+      List<RFControlVerification> verificationList,
+      Boolean expiration) {
+    String reason = "expiration";
+
+    if (!expiration) {
+      reason = "downgrade";
+    }
 
     boolean atLeastOne = false;
     List<String> revokedSegmentList = new ArrayList<>();
 
-    // The destination authorization list will be null if already cleared previously: remember there
-    // are two ways in which a clear can happen and they can race to see who clears permissions
-    // first:
-    // (1) director's expiration vs (2) credited control expiration
-    if (rfAuthorization.getRFSegmentAuthorizationList() != null) {
-      for (RFSegmentAuthorization auth : rfAuthorization.getRFSegmentAuthorizationList()) {
-        RFSegmentAuthorization destClone = auth.createAdminClone(authClone);
-        // authClone.getDestinationAuthorizationList().add(destClone);
-        newList.add(destClone);
+    if (clone.getRFSegmentAuthorizationList() != null) {
+      for (RFSegmentAuthorization operationAuth : clone.getRFSegmentAuthorizationList()) {
 
-        if (!auth.isHighPowerRf()) {
+        if (!operationAuth.isHighPowerRf()) {
           continue; // Already No High RF Auth so no need to revoke; move on to next
         }
-        BigInteger destinationId = auth.getSegmentAuthorizationPK().getRFSegmentId();
+        BigInteger destinationId = operationAuth.getSegmentAuthorizationPK().getRFSegmentId();
         for (RFControlVerification verification : verificationList) {
           if (destinationId.equals(verification.getRFSegment().getRFSegmentId())) {
-            destClone.setHighPowerRf(false);
-            destClone.setExpirationDate(null);
-            destClone.setComments(
+            operationAuth.setHighPowerRf(false);
+            operationAuth.setExpirationDate(null);
+            operationAuth.setComments(
                 "Permission automatically revoked due to credited control "
                     + verification.getCreditedControl().getName()
                     + " verification "
                     + reason);
             LOGGER.log(Level.FINEST, "Found something to downgrade");
             atLeastOne = true;
-            revokedSegmentList.add(destClone.getSegment().getName());
+            revokedSegmentList.add(operationAuth.getSegment().getName());
             break; // Found a match so revoke and then break out of loop
           }
         }
@@ -357,78 +350,82 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
     }
 
     if (atLeastOne) {
-      String comments = authClone.getComments();
+      String comments = clone.getComments();
       if (comments == null) {
         comments = "";
       }
       String csv = IOUtil.toCsv(revokedSegmentList.toArray());
       comments = comments + "\nCHANGE: Segment control verification revoked: " + csv;
-      authClone.setComments(comments);
-      em.persist(authClone);
-      for (RFSegmentAuthorization da : newList) {
-        SegmentAuthorizationPK pk = new SegmentAuthorizationPK();
-        pk.setRFSegmentId(da.getSegment().getRFSegmentId());
-        pk.setRFAuthorizationId(authClone.getRfAuthorizationId());
-        da.setSegmentAuthorizationPK(pk);
-        em.persist(da);
-      }
+      clone.setComments(comments);
+    }
 
-      logbookFacade.sendAsyncAuthorizationLogEntry(
-          facility, OperationsType.RF, authClone.getRfAuthorizationId());
+    return atLeastOne;
+  }
+
+  private RFAuthorization createClone(RFAuthorization auth) {
+    RFAuthorization authClone = auth.createAdminClone();
+    List<RFSegmentAuthorization> newList = new ArrayList<>();
+
+    if (auth.getRFSegmentAuthorizationList() != null) {
+      for (RFSegmentAuthorization operationAuth : auth.getRFSegmentAuthorizationList()) {
+        RFSegmentAuthorization operationClone = operationAuth.createAdminClone(authClone);
+        newList.add(operationClone);
+      }
+    }
+
+    authClone.setRFSegmentAuthorizationList(newList);
+
+    return authClone;
+  }
+
+  private void saveClone(RFAuthorization auth) {
+    em.persist(auth);
+    if (auth.getRFSegmentAuthorizationList() != null) {
+      for (RFSegmentAuthorization operationAuth : auth.getRFSegmentAuthorizationList()) {
+        SegmentAuthorizationPK pk = new SegmentAuthorizationPK();
+        pk.setRFSegmentId(operationAuth.getSegment().getRFSegmentId());
+        pk.setRFAuthorizationId(auth.getRfAuthorizationId());
+        operationAuth.setSegmentAuthorizationPK(pk);
+        em.persist(operationAuth);
+      }
     }
   }
 
-  private void clearDirectorPermissionBySegmentAuthorization(
-      Facility facility, List<RFSegmentAuthorization> segmentList) {
-    RFAuthorization rfAuthorization = rfAuthorizationFacade.findCurrent(facility);
-
-    RFAuthorization authClone = rfAuthorization.createAdminClone();
-    List<RFSegmentAuthorization> newList = new ArrayList<>();
+  private boolean populateReducedPermissionDueToAuthorizationExpiration(
+      RFAuthorization clone, Facility facility, List<RFSegmentAuthorization> segmentList) {
 
     boolean atLeastOne = false;
     List<String> revokedSegmentList = new ArrayList<>();
 
-    if (rfAuthorization.getRFSegmentAuthorizationList() != null) {
-      for (RFSegmentAuthorization auth : rfAuthorization.getRFSegmentAuthorizationList()) {
-        RFSegmentAuthorization destClone = auth.createAdminClone(authClone);
-        // authClone.getDestinationAuthorizationList().add(destClone);
-        newList.add(destClone);
+    if (clone.getRFSegmentAuthorizationList() != null) {
+      for (RFSegmentAuthorization operationAuth : clone.getRFSegmentAuthorizationList()) {
 
-        if (!auth.isHighPowerRf()) {
+        if (!operationAuth.isHighPowerRf()) {
           continue; // Already No High Power RF auth so no need to revoke; move on to next
         }
-        if (segmentList.contains(auth)) {
-          destClone.setHighPowerRf(false);
-          destClone.setExpirationDate(null);
-          destClone.setComments(
+        if (segmentList.contains(operationAuth)) {
+          operationAuth.setHighPowerRf(false);
+          operationAuth.setExpirationDate(null);
+          operationAuth.setComments(
               "Permission automatically revoked due to director's authorization expiration");
           LOGGER.log(Level.FINEST, "Found something to downgrade");
           atLeastOne = true;
-          revokedSegmentList.add(destClone.getSegment().getName());
+          revokedSegmentList.add(operationAuth.getSegment().getName());
         }
       }
     }
 
     if (atLeastOne) {
-      String comments = authClone.getComments();
+      String comments = clone.getComments();
       if (comments == null) {
         comments = "";
       }
       String csv = IOUtil.toCsv(revokedSegmentList.toArray());
       comments = comments + "\nCHANGE: Segment authorization revoked: " + csv;
-      authClone.setComments(comments);
-      em.persist(authClone);
-      for (RFSegmentAuthorization da : newList) {
-        SegmentAuthorizationPK pk = new SegmentAuthorizationPK();
-        pk.setRFSegmentId(da.getSegment().getRFSegmentId());
-        pk.setRFAuthorizationId(authClone.getRfAuthorizationId());
-        da.setSegmentAuthorizationPK(pk);
-        em.persist(da);
-      }
-
-      logbookFacade.sendAsyncAuthorizationLogEntry(
-          facility, OperationsType.RF, authClone.getRfAuthorizationId());
+      clone.setComments(comments);
     }
+
+    return atLeastOne;
   }
 
   @PermitAll
@@ -484,39 +481,45 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
 
   @PermitAll
   public RFExpirationEvent performExpirationCheck(Facility facility, boolean checkForUpcoming) {
-    LOGGER.log(Level.FINEST, "Expiration Check: Director's authorizations...");
     RFAuthorization auth = rfAuthorizationFacade.findCurrent(facility);
     List<RFSegmentAuthorization> expiredAuthorizationList = null;
 
-    if (auth != null) {
-      expiredAuthorizationList = checkForAuthorizedButExpired(auth);
-      if (expiredAuthorizationList != null && !expiredAuthorizationList.isEmpty()) {
-        LOGGER.log(Level.FINEST, "Expiration Check: Revoking expired authorization");
-
-        clearDirectorPermissionBySegmentAuthorization(facility, expiredAuthorizationList);
-      }
+    List<RFControlVerification> expiredVerificationList = checkForVerifiedButExpired(facility);
+    if (expiredVerificationList != null && !expiredVerificationList.isEmpty()) {
+      revokeExpiredVerifications(facility, expiredVerificationList);
     }
 
-    LOGGER.log(Level.FINEST, "Expiration Check: Checking for expired verifications...");
-    List<RFControlVerification> expiredVerificationList =
-        checkForVerifiedButExpired(facility); // only items which are "verified" or "provisionally
-    // verified", but need to be "not verified" due to expiration
-    if (expiredVerificationList != null && !expiredVerificationList.isEmpty()) {
-      LOGGER.log(Level.FINEST, "Expiration Check: Revoking expired verifications...");
-      revokeExpiredVerifications(facility, expiredVerificationList);
+    RFAuthorization authReduction = null;
+    if (auth != null) {
+      authReduction = createClone(auth);
+      boolean authorizerReduction = false;
+      boolean verifierReduction = false;
 
-      clearDirectorPermissionForExpired(facility, expiredVerificationList);
+      expiredAuthorizationList = checkForAuthorizedButExpired(auth);
+      if (expiredAuthorizationList != null && !expiredAuthorizationList.isEmpty()) {
+
+        authorizerReduction =
+            populateReducedPermissionDueToAuthorizationExpiration(
+                authReduction, facility, expiredAuthorizationList);
+      }
+
+      if (expiredVerificationList != null && !expiredVerificationList.isEmpty()) {
+        verifierReduction =
+            populateReducedPermissionsDueToVerification(
+                authReduction, facility, expiredVerificationList, true);
+      }
+
+      if (authorizerReduction || verifierReduction) {
+        saveClone(authReduction);
+      } else {
+        authReduction = null;
+      }
     }
 
     List<RFControlVerification> upcomingVerificationExpirationList = null;
     List<RFSegmentAuthorization> upcomingAuthorizationExpirationList = null;
     if (checkForUpcoming) {
-      LOGGER.log(
-          Level.FINEST, "Expiration Check: Checking for upcoming verification expirations...");
       upcomingVerificationExpirationList = checkForUpcomingVerificationExpirations(facility);
-
-      LOGGER.log(
-          Level.FINEST, "Expiration Check: Checking for upcoming authorization expirations...");
       if (auth != null) {
         upcomingAuthorizationExpirationList = checkForUpcomingAuthorizationExpirations(auth);
       }
@@ -530,6 +533,7 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
         || upcomingVerificationExpirationList != null) {
       event =
           new RFExpirationEvent(
+              authReduction,
               facility,
               expiredAuthorizationList,
               upcomingAuthorizationExpirationList,
@@ -558,17 +562,5 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
     }
 
     return verification;
-  }
-
-  @PermitAll
-  public Map<Facility, RFExpirationEvent> performExpirationCheckAll() {
-    List<Facility> facilityList = facilityFacade.findAll();
-    Map<Facility, RFExpirationEvent> eventMap = new HashMap<>();
-    for (Facility facility : facilityList) {
-      RFExpirationEvent event = performExpirationCheck(facility, true);
-      eventMap.put(facility, event);
-    }
-
-    return eventMap;
   }
 }

@@ -9,18 +9,29 @@ public class BeamExpirationEvent {
   private List<BeamDestinationAuthorization> upcomingAuthorizationExpirationList;
   private List<BeamControlVerification> expiredVerificationList;
   private List<BeamControlVerification> upcomingVerificationExpirationList;
+  private BeamAuthorization authorization;
 
   public BeamExpirationEvent(
+      BeamAuthorization authorization,
       Facility facility,
       List<BeamDestinationAuthorization> expiredAuthorizationList,
       List<BeamDestinationAuthorization> upcomingAuthorizationExpirationList,
       List<BeamControlVerification> expiredVerificationList,
       List<BeamControlVerification> upcomingVerificationExpirationList) {
+    this.authorization = authorization;
     this.facility = facility;
     this.expiredAuthorizationList = expiredAuthorizationList;
     this.upcomingAuthorizationExpirationList = upcomingAuthorizationExpirationList;
     this.expiredVerificationList = expiredVerificationList;
     this.upcomingVerificationExpirationList = upcomingVerificationExpirationList;
+  }
+
+  public BeamAuthorization getAuthorization() {
+    return authorization;
+  }
+
+  public void setAuthorization(BeamAuthorization authorization) {
+    this.authorization = authorization;
   }
 
   public Facility getFacility() {

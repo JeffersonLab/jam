@@ -1,9 +1,7 @@
 package org.jlab.jam.persistence.view;
 
 import java.util.List;
-import org.jlab.jam.persistence.entity.Facility;
-import org.jlab.jam.persistence.entity.RFControlVerification;
-import org.jlab.jam.persistence.entity.RFSegmentAuthorization;
+import org.jlab.jam.persistence.entity.*;
 
 public class RFExpirationEvent {
   private Facility facility;
@@ -11,18 +9,29 @@ public class RFExpirationEvent {
   private List<RFSegmentAuthorization> upcomingAuthorizationExpirationList;
   private List<RFControlVerification> expiredVerificationList;
   private List<RFControlVerification> upcomingVerificationExpirationList;
+  private RFAuthorization authorization;
 
   public RFExpirationEvent(
+      RFAuthorization authorization,
       Facility facility,
       List<RFSegmentAuthorization> expiredAuthorizationList,
       List<RFSegmentAuthorization> upcomingAuthorizationExpirationList,
       List<RFControlVerification> expiredVerificationList,
       List<RFControlVerification> upcomingVerificationExpirationList) {
+    this.authorization = authorization;
     this.facility = facility;
     this.expiredAuthorizationList = expiredAuthorizationList;
     this.upcomingAuthorizationExpirationList = upcomingAuthorizationExpirationList;
     this.expiredVerificationList = expiredVerificationList;
     this.upcomingVerificationExpirationList = upcomingVerificationExpirationList;
+  }
+
+  public RFAuthorization getAuthorization() {
+    return authorization;
+  }
+
+  public void setAuthorization(RFAuthorization authorization) {
+    this.authorization = authorization;
   }
 
   public Facility getFacility() {

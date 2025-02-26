@@ -14,8 +14,7 @@ import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
 import org.jlab.jam.persistence.entity.Facility;
-import org.jlab.jam.persistence.view.BeamExpirationEvent;
-import org.jlab.jam.persistence.view.RFExpirationEvent;
+import org.jlab.jam.persistence.view.FacilityExpirationEvent;
 
 @Singleton
 @Startup
@@ -25,9 +24,8 @@ public class DailyScheduledCheck {
 
   private Timer timer;
   @Resource private TimerService timerService;
-  @EJB RFControlVerificationFacade rfVerificationFacade;
-  @EJB BeamControlVerificationFacade beamVerificationFacade;
-  @EJB EmailFacade emailFacade;
+  @EJB ExpirationManager expirationManager;
+  @EJB NotificationManager notificationManager;
 
   @PostConstruct
   private void init() {
@@ -39,7 +37,7 @@ public class DailyScheduledCheck {
     LOGGER.log(Level.FINEST, "Clearing Daily Timer");
     for (Timer t : timerService.getTimers()) {
       LOGGER.log(Level.INFO, "Found timer: " + t);
-      if ("BAMDailyTimer".equals(t.getInfo())) {
+      if ("JAMDailyTimer".equals(t.getInfo())) {
         t.cancel();
       }
     }
@@ -55,7 +53,7 @@ public class DailyScheduledCheck {
 
     TimerConfig config =
         new TimerConfig(
-            "BAMDailyTimer",
+            "JAMDailyTimer",
             false); // redeploy --keepstate=true might be messing up persistent timers?
     timer = timerService.createCalendarTimer(schedExp, config);
   }
@@ -65,11 +63,13 @@ public class DailyScheduledCheck {
     LOGGER.log(
         Level.INFO,
         "handleTimeout: Checking for expired / upcoming expiration of authorization and verification...");
-    Map<Facility, RFExpirationEvent> rfMap = rfVerificationFacade.performExpirationCheckAll();
-    Map<Facility, BeamExpirationEvent> beamMap = beamVerificationFacade.performExpirationCheckAll();
+    Map<Facility, FacilityExpirationEvent> facilityMap = null;
+    try {
+      facilityMap = expirationManager.expireByFacilityAll();
 
-    if (!beamMap.isEmpty()) {
-      emailFacade.sendAsyncExpirationEmails(rfMap, beamMap);
+      notificationManager.notifyExpirationAndUpcoming(facilityMap);
+    } catch (InterruptedException e) {
+      LOGGER.log(Level.SEVERE, "handleTimeout: Interrupted", e);
     }
   }
 }

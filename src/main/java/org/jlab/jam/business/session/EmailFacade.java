@@ -75,6 +75,11 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
     }
   }
 
+  // Scheduled Nightly AUTO_EXPIRE event
+  @PermitAll
+  @Asynchronous
+  public void sendAsyncExpirationEmails(Map<Facility, FacilityExpirationEvent> facilityMap) {}
+
   // AUTO_EXPIRE event
   @PermitAll
   @Asynchronous
