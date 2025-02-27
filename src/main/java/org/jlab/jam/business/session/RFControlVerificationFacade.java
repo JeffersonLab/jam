@@ -306,7 +306,8 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
     if (updated) {
       saveClone(authReduction);
 
-      notificationManager.notifyRFVerificationDowngrade(facility, verificationList, authReduction);
+      notificationManager.asyncNotifyRFVerificationDowngrade(
+          facility, verificationList, authReduction);
     }
   }
 

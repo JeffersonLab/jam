@@ -23,7 +23,6 @@ import org.jlab.jam.business.session.*;
 import org.jlab.jam.persistence.entity.BeamDestinationAuthorization;
 import org.jlab.jam.persistence.entity.DestinationAuthorizationPK;
 import org.jlab.jam.persistence.entity.Facility;
-import org.jlab.jam.persistence.enumeration.OperationsType;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jlab.smoothness.business.util.TimeUtil;
 import org.jlab.smoothness.presentation.util.ParamConverter;
@@ -58,8 +57,6 @@ public class EditBeamAuthorization extends HttpServlet {
     Long logId = null;
     Facility facility = null;
     String comments = null;
-    Boolean sendNotifications = true;
-    BigInteger beamAuthorizationId = null;
 
     try {
       BigInteger facilityId = ParamConverter.convertBigInteger(request, "facilityId");
@@ -79,34 +76,14 @@ public class EditBeamAuthorization extends HttpServlet {
       List<BeamDestinationAuthorization> beamDestinationAuthorizationList =
           convertDestinationAuthorizationList(facility, request);
 
-      beamAuthorizationId =
-          beamAuthorizationFacade.saveAuthorization(
-              facility, comments, beamDestinationAuthorizationList);
+      beamAuthorizationFacade.saveAuthorization(
+          facility, comments, beamDestinationAuthorizationList);
     } catch (UserFriendlyException e) {
       errorReason = e.getUserMessage();
       LOGGER.log(Level.INFO, "Unable to save authorization: " + errorReason);
     } catch (Exception e) {
       errorReason = "Unable to save authorization";
       LOGGER.log(Level.SEVERE, errorReason, e);
-    }
-
-    if (errorReason == null && sendNotifications) {
-      String proxyServer = System.getenv("FRONTEND_SERVER_URL");
-
-      emailFacade.sendAsyncAuthorizerChangeEmail(OperationsType.BEAM, beamAuthorizationId);
-
-      try {
-        String logbookServer = System.getenv("LOGBOOK_SERVER_URL");
-
-        logId =
-            logbookFacade.sendAuthorizationLogEntry(
-                facility, OperationsType.BEAM, proxyServer, logbookServer);
-
-        beamAuthorizationFacade.setLogEntry(beamAuthorizationId, logId, logbookServer);
-      } catch (Exception e) {
-        errorReason = "Authorization was saved, but we were unable to send to eLog";
-        LOGGER.log(Level.SEVERE, errorReason, e);
-      }
     }
 
     response.setContentType("application/json");

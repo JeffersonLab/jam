@@ -45,6 +45,7 @@ public class RFAuthorizationFacade extends AbstractFacade<RFAuthorization> {
 
   @EJB AuthorizerFacade authorizerFacade;
   @EJB RFSegmentFacade segmentFacade;
+  @EJB NotificationManager notificationManager;
 
   @Override
   protected EntityManager getEntityManager() {
@@ -200,6 +201,9 @@ public class RFAuthorizationFacade extends AbstractFacade<RFAuthorization> {
     }
 
     LOGGER.log(Level.FINE, "Director's Authorization saved successfully");
+
+    notificationManager.asyncNotifyRFAuthorizerSave(authorization);
+
     return authorization.getRfAuthorizationId();
   }
 

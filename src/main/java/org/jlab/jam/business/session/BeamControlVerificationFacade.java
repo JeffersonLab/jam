@@ -310,7 +310,7 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
     if (updated) {
       saveClone(authReduction);
 
-      notificationManager.notifyBeamVerificationDowngrade(
+      notificationManager.asyncNotifyBeamVerificationDowngrade(
           facility, verificationList, authReduction);
     }
   }

@@ -1,5 +1,6 @@
 package org.jlab.jam.business.session;
 
+import java.io.File;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -64,14 +65,14 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
 
   // Authorizer update event
   @PermitAll
-  @Asynchronous
-  public void sendAsyncAuthorizerChangeEmail(OperationsType type, BigInteger authorizationId) {
+  public void sendAuthorizerChangeEmail(
+      OperationsType type, BigInteger authorizationId, File screenshot) {
     if (OperationsType.RF.equals(type)) {
       RFAuthorization auth = rfAuthorizationFacade.find(authorizationId);
-      sendRFAuthorizationUpdateEmail(auth);
+      sendRFAuthorizationUpdateEmail(auth, screenshot);
     } else {
       BeamAuthorization auth = beamAuthorizationFacade.find(authorizationId);
-      sendBeamAuthorizationUpdateEmail(auth);
+      sendBeamAuthorizationUpdateEmail(auth, screenshot);
     }
   }
 
@@ -353,7 +354,7 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
     }
   }
 
-  public void sendRFAuthorizationUpdateEmail(RFAuthorization auth) {
+  private void sendRFAuthorizationUpdateEmail(RFAuthorization auth, File screenshot) {
     try {
       Facility facility = auth.getFacility();
       OperationsType type = OperationsType.RF;
@@ -416,7 +417,7 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
     }
   }
 
-  public void sendBeamAuthorizationUpdateEmail(BeamAuthorization auth) {
+  public void sendBeamAuthorizationUpdateEmail(BeamAuthorization auth, File screenshot) {
     try {
       Facility facility = auth.getFacility();
       OperationsType type = OperationsType.BEAM;

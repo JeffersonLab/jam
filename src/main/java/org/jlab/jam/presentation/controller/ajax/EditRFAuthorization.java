@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jlab.jam.business.session.*;
 import org.jlab.jam.persistence.entity.*;
-import org.jlab.jam.persistence.enumeration.OperationsType;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jlab.smoothness.business.util.TimeUtil;
 import org.jlab.smoothness.presentation.util.ParamConverter;
@@ -55,8 +54,6 @@ public class EditRFAuthorization extends HttpServlet {
     Long logId = null;
     Facility facility = null;
     String comments = null;
-    Boolean sendNotifications = true;
-    BigInteger rfAuthorizationId = null;
 
     try {
       BigInteger facilityId = ParamConverter.convertBigInteger(request, "facilityId");
@@ -76,33 +73,13 @@ public class EditRFAuthorization extends HttpServlet {
       List<RFSegmentAuthorization> rfSegmentAuthorizationList =
           convertSegmentAuthorizationList(facility, request);
 
-      rfAuthorizationId =
-          rfAuthorizationFacade.saveAuthorization(facility, comments, rfSegmentAuthorizationList);
+      rfAuthorizationFacade.saveAuthorization(facility, comments, rfSegmentAuthorizationList);
     } catch (UserFriendlyException e) {
       errorReason = e.getUserMessage();
       LOGGER.log(Level.INFO, "Unable to save authorization: " + errorReason);
     } catch (Exception e) {
       errorReason = "Unable to save authorization";
       LOGGER.log(Level.SEVERE, errorReason, e);
-    }
-
-    if (errorReason == null && sendNotifications) {
-      String proxyServer = System.getenv("FRONTEND_SERVER_URL");
-
-      emailFacade.sendAsyncAuthorizerChangeEmail(OperationsType.RF, rfAuthorizationId);
-
-      try {
-        String logbookServer = System.getenv("LOGBOOK_SERVER_URL");
-
-        logId =
-            logbookFacade.sendAuthorizationLogEntry(
-                facility, OperationsType.RF, proxyServer, logbookServer);
-
-        rfAuthorizationFacade.setLogEntry(rfAuthorizationId, logId, logbookServer);
-      } catch (Exception e) {
-        errorReason = "Authorization was saved, but we were unable to send to eLog";
-        LOGGER.log(Level.SEVERE, errorReason, e);
-      }
     }
 
     response.setContentType("application/json");

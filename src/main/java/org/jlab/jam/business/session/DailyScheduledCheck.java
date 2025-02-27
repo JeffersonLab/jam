@@ -67,7 +67,7 @@ public class DailyScheduledCheck {
     try {
       facilityMap = expirationManager.expireByFacilityAll();
 
-      notificationManager.notifyExpirationAndUpcoming(facilityMap);
+      notificationManager.asyncNotifyExpirationAndUpcoming(facilityMap);
     } catch (InterruptedException e) {
       LOGGER.log(Level.SEVERE, "handleTimeout: Interrupted", e);
     }

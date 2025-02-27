@@ -37,6 +37,7 @@ public class BeamAuthorizationFacade extends AbstractFacade<BeamAuthorization> {
 
   @EJB AuthorizerFacade authorizerFacade;
   @EJB BeamDestinationFacade destinationFacade;
+  @EJB NotificationManager notificationManager;
 
   @Override
   protected EntityManager getEntityManager() {
@@ -196,6 +197,9 @@ public class BeamAuthorizationFacade extends AbstractFacade<BeamAuthorization> {
     }
 
     LOGGER.log(Level.FINE, "Director's Authorization saved successfully");
+
+    notificationManager.asyncNotifyBeamAuthorizerSave(beamAuthorization);
+
     return beamAuthorization.getBeamAuthorizationId();
   }
 
