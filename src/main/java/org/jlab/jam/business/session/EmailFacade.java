@@ -144,6 +144,7 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
   public void sendAsyncExpirationEmails(Map<Facility, FacilityExpirationEvent> facilityMap) {}
 
   // AUTO_EXPIRE event
+  @PermitAll
   public void sendExpirationEmails(FacilityExpirationEvent event, File screenshot) {
     if (event != null) {
       if (event.getRfEvent() != null && event.getRfEvent().getAuthorization() != null) {
@@ -379,6 +380,7 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
     }
   }
 
+  @PermitAll
   public void sendWatcherAuthorizationUpdateEmail(
       Facility facility, OperationsType type, File screenshot) {
     try {
