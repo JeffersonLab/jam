@@ -148,7 +148,7 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
       sendAuthorizationUpdateEmail(auth.getFacility(), type, screenshot);
     } else {
       BeamAuthorization auth = beamAuthorizationFacade.find(authorizationId);
-      sendBeamAuthorizationUpdateEmail(auth, screenshot);
+      sendAuthorizationUpdateEmail(auth.getFacility(), type, screenshot);
     }
   }
 
@@ -492,67 +492,6 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
       }
 
       sendEmailMultipart(sender, sender, toCsv, null, subject, multipart);
-    } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, e.getMessage(), e);
-    }
-  }
-
-  public void sendBeamAuthorizationUpdateEmail(BeamAuthorization auth, File screenshot) {
-    try {
-      Facility facility = auth.getFacility();
-      OperationsType type = OperationsType.BEAM;
-
-      List<Watcher> watcherList = watcherFacade.filterList(facility, type, null);
-
-      if (watcherList == null || watcherList.isEmpty()) {
-        LOGGER.log(
-            Level.WARNING,
-            "No Watchers configured for facility "
-                + facility.getName()
-                + " and OperationsType "
-                + type.name()
-                + ", aborting");
-        return;
-      }
-
-      String subject = System.getenv("JAM_PERMISSIONS_SUBJECT");
-
-      if (subject == null) {
-        subject = "New Authorization";
-        LOGGER.log(Level.WARNING, "No JAM_PERMISSIONS_SUBJECT configured");
-      }
-
-      String proxyServer = System.getenv("FRONTEND_SERVER_URL");
-
-      String body = "<a href=\"" + proxyServer + "/jam\">" + proxyServer + "/jam</a>";
-
-      body = body + "\n\n<p>Notes: " + auth.getComments() + "</p>";
-
-      String sender = System.getenv("JAM_EMAIL_SENDER");
-
-      if (sender == null) {
-        sender = "jam@jlab.org";
-      }
-
-      String toCsv = "";
-
-      if (watcherList.size() > 0) {
-        Watcher watcher = watcherList.get(0);
-        String username = watcher.getWatcherPK().getUsername();
-        String address = username + EMAIL_DOMAIN;
-        toCsv += address;
-      }
-
-      for (int i = 1; i < watcherList.size(); i++) {
-        Watcher watcher = watcherList.get(i);
-        String username = watcher.getWatcherPK().getUsername();
-        String address = username + EMAIL_DOMAIN;
-        toCsv += "," + address;
-      }
-
-      EmailService emailService = new EmailService();
-
-      emailService.sendEmail(sender, sender, toCsv, null, subject, body, true);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, e.getMessage(), e);
     }
