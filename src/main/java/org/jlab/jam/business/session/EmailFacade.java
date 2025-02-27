@@ -6,10 +6,17 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.annotation.security.PermitAll;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.mail.*;
+import javax.mail.internet.*;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.jlab.jam.persistence.entity.*;
@@ -18,6 +25,7 @@ import org.jlab.jam.persistence.view.BeamExpirationEvent;
 import org.jlab.jam.persistence.view.FacilityExpirationEvent;
 import org.jlab.jam.persistence.view.RFExpirationEvent;
 import org.jlab.jam.persistence.view.TeamExpirationEvent;
+import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jlab.smoothness.business.service.EmailService;
 import org.jlab.smoothness.business.service.UserAuthorizationService;
 import org.jlab.smoothness.business.util.IOUtil;
@@ -36,6 +44,8 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
   @PersistenceContext(unitName = "jamPU")
   private EntityManager em;
 
+  private final Session mailSession;
+
   @EJB WatcherFacade watcherFacade;
   @EJB RFAuthorizationFacade rfAuthorizationFacade;
   @EJB BeamAuthorizationFacade beamAuthorizationFacade;
@@ -47,6 +57,72 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
 
   public EmailFacade() {
     super(VerificationTeam.class);
+
+    try {
+      this.mailSession = (Session) (new InitialContext()).lookup("mail/jlab");
+    } catch (NamingException e) {
+      throw new RuntimeException("Unable to obtain email session", e);
+    }
+  }
+
+  public void sendEmailMultipart(
+      String sender, String from, String toCsv, String ccCsv, String subject, Multipart multipart)
+      throws UserFriendlyException {
+    try {
+      Address senderAddress = new InternetAddress(sender);
+      Address fromAddress = new InternetAddress(from);
+      if (sender != null && !sender.isEmpty()) {
+        if (from != null && !from.isEmpty()) {
+          if (toCsv != null && !toCsv.isEmpty()) {
+            if (subject != null && !subject.isEmpty()) {
+              if (multipart != null && multipart.getCount() > 0) {
+                Address[] toAddresses = EmailService.csvToAddressArray(toCsv);
+                Address[] ccAddresses = EmailService.csvToAddressArray(ccCsv);
+                this.doSendMultipart(
+                    senderAddress, fromAddress, toAddresses, ccAddresses, subject, multipart);
+              } else {
+                throw new UserFriendlyException("multipart content must not be empty");
+              }
+            } else {
+              throw new UserFriendlyException("subject must not be empty");
+            }
+          } else {
+            throw new UserFriendlyException("to email address must not be empty");
+          }
+        } else {
+          throw new UserFriendlyException("from email address must not be empty");
+        }
+      } else {
+        throw new UserFriendlyException("sender email address must not be empty");
+      }
+    } catch (AddressException e) {
+      throw new IllegalArgumentException("Invalid address", e);
+    } catch (MessagingException e) {
+      throw new IllegalArgumentException("Unable to send email", e);
+    }
+  }
+
+  private void doSendMultipart(
+      Address sender,
+      Address from,
+      Address[] toAddresses,
+      Address[] ccAddresses,
+      String subject,
+      Multipart multipart)
+      throws MessagingException {
+    MimeMessage message = new MimeMessage(this.mailSession);
+    message.setSender(sender);
+    message.setFrom(from);
+    message.setRecipients(Message.RecipientType.TO, toAddresses);
+    message.setRecipients(Message.RecipientType.CC, ccAddresses);
+    message.setSubject(subject);
+    message.setContent(multipart);
+
+    message.saveChanges();
+    Transport tr = this.mailSession.getTransport();
+    tr.connect();
+    tr.sendMessage(message, message.getAllRecipients());
+    tr.close();
   }
 
   public static final String EMAIL_DOMAIN = "@jlab.org";
@@ -158,8 +234,6 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
     try {
       List<TeamExpirationEvent> teamEventList = getTeamExpirationEventList(rfEvent, beamEvent);
 
-      EmailService emailService = new EmailService();
-
       String sender = System.getenv("JAM_EMAIL_SENDER");
 
       if (sender == null) {
@@ -195,6 +269,8 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
         }
 
         if (toCsv != null) {
+          EmailService emailService = new EmailService();
+
           emailService.sendEmail(sender, sender, toCsv, null, subject, body, true);
         } else {
           LOGGER.warning("Skipping verification team email: No addresses provided");
@@ -381,9 +457,25 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
 
       String proxyServer = System.getenv("FRONTEND_SERVER_URL");
 
-      String body = "<a href=\"" + proxyServer + "/jam\">" + proxyServer + "/jam</a>";
+      String body =
+          "<img src=\"cid:screenshot\"><br/><a href=\""
+              + proxyServer
+              + "/jam\">"
+              + proxyServer
+              + "/jam</a>";
 
-      body = body + "\n\n<p>Notes: " + auth.getComments() + "</p>";
+      Multipart multipart = new MimeMultipart("related");
+
+      MimeBodyPart htmlPart = new MimeBodyPart();
+      htmlPart.setContent(body, "text/html");
+      multipart.addBodyPart(htmlPart);
+
+      MimeBodyPart imagePart = new MimeBodyPart();
+      DataSource ds = new FileDataSource(screenshot);
+      imagePart.setDataHandler(new DataHandler(ds));
+      imagePart.addHeader("Content-ID", "screenshot");
+      imagePart.addHeader("Content-Type", "image/png");
+      multipart.addBodyPart(imagePart);
 
       String sender = System.getenv("JAM_EMAIL_SENDER");
 
@@ -409,9 +501,7 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
         toCsv += "," + address;
       }
 
-      EmailService emailService = new EmailService();
-
-      emailService.sendEmail(sender, sender, toCsv, null, subject, body, true);
+      sendEmailMultipart(sender, sender, toCsv, null, subject, multipart);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, e.getMessage(), e);
     }
