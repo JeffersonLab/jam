@@ -3,10 +3,7 @@ package org.jlab.jam.business.session;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-import org.jlab.jam.persistence.entity.Facility;
-import org.jlab.jam.persistence.entity.RFAuthorization;
-import org.jlab.jam.persistence.entity.RFControlVerification;
-import org.jlab.jam.persistence.entity.RFSegmentAuthorization;
+import org.jlab.jam.persistence.entity.*;
 import org.jlab.smoothness.business.util.IOUtil;
 
 public class ReducedRFAuthorizationBuilder {
@@ -21,9 +18,8 @@ public class ReducedRFAuthorizationBuilder {
     if (auth.getRFSegmentAuthorizationList() != null) {
       for (RFSegmentAuthorization operationAuth : auth.getRFSegmentAuthorizationList()) {
         RFSegmentAuthorization operationClone = operationAuth.createAdminClone(authClone);
-        operationClone.transientOperationId = operationAuth.getSegment().getRFSegmentId();
         newList.add(operationClone);
-        System.err.println("Created Segment PK:" + operationClone.getSegmentAuthorizationPK());
+        System.err.println("Has Segment:" + operationClone.getSegment());
       }
     }
 
@@ -56,7 +52,7 @@ public class ReducedRFAuthorizationBuilder {
           continue; // Already No High RF Auth so no need to revoke; move on to next
         }
 
-        BigInteger segmentId = operationAuth.transientOperationId;
+        BigInteger segmentId = operationAuth.getSegment().getRFSegmentId();
 
         System.err.println(
             "This one has RF ON so let's continue!  We're looking for segmentId=" + segmentId);

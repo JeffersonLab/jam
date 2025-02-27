@@ -60,8 +60,6 @@ public class RFSegmentAuthorization implements Serializable {
   @ManyToOne(optional = false, fetch = FetchType.LAZY)
   private RFAuthorization rfAuthorization;
 
-  @Transient public BigInteger transientOperationId;
-
   public RFSegmentAuthorization() {}
 
   public RFSegmentAuthorization(SegmentAuthorizationPK segmentAuthorizationPK) {
