@@ -21,7 +21,6 @@ import javax.persistence.PersistenceContext;
 import org.jlab.jam.persistence.entity.*;
 import org.jlab.jam.persistence.enumeration.OperationsType;
 import org.jlab.jam.persistence.view.BeamExpirationEvent;
-import org.jlab.jam.persistence.view.FacilityExpirationEvent;
 import org.jlab.jam.persistence.view.RFExpirationEvent;
 import org.jlab.jam.persistence.view.TeamExpirationEvent;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
@@ -129,19 +128,24 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
   // Verifier downgrade event (RF)
   @PermitAll
   @Asynchronous
-  public void sendAsyncRFVerifierDowngradeEmail(
-      Facility facility, List<RFControlVerification> downgradeList) {}
+  public void sendAsyncRFVerifierDowngradeEmail(RFAuthorization auth, File screenshot) {
+    if (auth != null) {
+      sendWatcherAuthorizationUpdateEmail(auth.getFacility(), OperationsType.RF, screenshot);
+
+      // notifyAdminsAndFacilityManager(facility, rfEvent, beamEvent);
+    }
+  }
 
   // Verifier downgrade event (Beam)
   @PermitAll
   @Asynchronous
-  public void sendAsyncBeamVerifierDowngradeEmail(
-      Facility facility, List<BeamControlVerification> downgradeList) {}
+  public void sendAsyncBeamVerifierDowngradeEmail(BeamAuthorization auth, File screenshot) {
+    if (auth != null) {
+      sendWatcherAuthorizationUpdateEmail(auth.getFacility(), OperationsType.BEAM, screenshot);
 
-  // Scheduled Nightly AUTO_EXPIRE event
-  @PermitAll
-  @Asynchronous
-  public void sendAsyncExpirationEmails(Map<Facility, FacilityExpirationEvent> facilityMap) {}
+      // notifyAdminsAndFacilityManager(facility, rfEvent, beamEvent);
+    }
+  }
 
   // AUTO_EXPIRE event
   @PermitAll
@@ -173,11 +177,6 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
       }
     }
   }
-
-  @PermitAll
-  @Asynchronous
-  public void sendAsyncExpirationEmails(
-      Map<Facility, RFExpirationEvent> rfMap, Map<Facility, BeamExpirationEvent> beamMap) {}
 
   private void notifyVerificationTeams(
       Facility facility, RFExpirationEvent rfEvent, BeamExpirationEvent beamEvent) {
@@ -290,48 +289,6 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
     }
 
     return new ArrayList<>(teamEventMap.values());
-  }
-
-  private void sendExpirationEmailsToWatchers(
-      Facility facility, RFExpirationEvent rfEvent, BeamExpirationEvent beamEvent) {
-    try {
-      EmailService emailService = new EmailService();
-
-      String sender = System.getenv("JAM_EMAIL_SENDER");
-
-      if (sender == null) {
-        sender = "jam@jlab.org";
-      }
-
-      String subject = facility.getName() + " Expiration Notice";
-
-      String body = getWatcherBody(facility, rfEvent, beamEvent);
-
-      List<String> addressList = new ArrayList<>();
-
-      // TODO: Some watchers only want a particular OperationsType
-      // Ideally we break this into three emails: JUST RF, JUST BEAM, BOTH.
-      // I suspect most watchers will be BOTH and they'll appreciate a combined email
-      List<Watcher> watcherList = watcherFacade.filterList(facility, null, null);
-
-      for (Watcher watcher : watcherList) {
-        addressList.add(watcher.getWatcherPK().getUsername() + EMAIL_DOMAIN);
-      }
-
-      String toCsv = null;
-
-      if (!addressList.isEmpty()) {
-        toCsv = IOUtil.toCsv(addressList.toArray());
-      }
-
-      if (toCsv != null) {
-        emailService.sendEmail(sender, sender, toCsv, null, subject, body, true);
-      } else {
-        LOGGER.warning("Skipping watcher email: No addresses provided");
-      }
-    } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, e.getMessage(), e);
-    }
   }
 
   private void notifyAdminsAndFacilityManager(

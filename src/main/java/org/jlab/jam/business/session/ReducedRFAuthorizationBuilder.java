@@ -138,11 +138,6 @@ public class ReducedRFAuthorizationBuilder {
     }
 
     if (!authorizerReduction && !verifierReduction) {
-      System.err.println(
-          "No modifications were made!: authorizer: "
-              + authorizerReduction
-              + ", verifier: "
-              + verifierReduction);
       authReduction = null;
     }
     return authReduction;
