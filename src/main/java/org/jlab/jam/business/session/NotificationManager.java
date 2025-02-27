@@ -1,6 +1,7 @@
 package org.jlab.jam.business.session;
 
 import java.io.*;
+import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -24,7 +25,7 @@ public class NotificationManager {
   @EJB LogbookFacade logbookFacade;
   @EJB EmailFacade emailFacade;
 
-  private File grabPermissionsScreenshot(Facility facility, OperationsType type)
+  private File grabPermissionsScreenshot(Facility facility, OperationsType type, BigInteger authId)
       throws IOException {
 
     String puppetServer = System.getenv("PUPPET_SHOW_SERVER_URL");
@@ -40,10 +41,14 @@ public class NotificationManager {
 
     internalServer = URLEncoder.encode(internalServer, StandardCharsets.UTF_8);
 
-    String typeStr = "";
+    String path;
+    String rfPath = "%2Frf-history%2Fsegments%3FrfAuthorizationId%3D" + authId.toString();
+    String beamPath = "%2Fbeam-history%2Fdestinations%3FbeamAuthorizationId%3D" + authId.toString();
 
-    if (type != null) {
-      typeStr = type.toString();
+    if (OperationsType.RF.equals(type)) {
+      path = rfPath;
+    } else {
+      path = beamPath;
     }
 
     URL url =
@@ -53,8 +58,7 @@ public class NotificationManager {
                 + internalServer
                 + "%2Fjam%2Fauthorizations%2F"
                 + facility.getPath().substring(1) // trim leading slash
-                + "%3Ffocus%3D"
-                + typeStr
+                + path
                 + "%26print%3DY&fullPage=true&filename=jam.png&ignoreHTTPSErrors=true&waitUntil=networkidle2");
 
     File tmpFile;
@@ -83,7 +87,7 @@ public class NotificationManager {
     OperationsType type = OperationsType.RF;
 
     try {
-      screenshot = grabPermissionsScreenshot(facility, type);
+      screenshot = grabPermissionsScreenshot(facility, type, auth.getRfAuthorizationId());
       logbookFacade.sendAuthorizationLogEntry(
           facility, type, auth.getRfAuthorizationId(), screenshot);
       emailFacade.sendAuthorizerChangeEmail(type, auth.getRfAuthorizationId(), screenshot);
@@ -110,7 +114,7 @@ public class NotificationManager {
     OperationsType type = OperationsType.BEAM;
 
     try {
-      screenshot = grabPermissionsScreenshot(facility, type);
+      screenshot = grabPermissionsScreenshot(facility, type, auth.getBeamAuthorizationId());
       logbookFacade.sendAuthorizationLogEntry(
           facility, type, auth.getBeamAuthorizationId(), screenshot);
       emailFacade.sendAuthorizerChangeEmail(type, auth.getBeamAuthorizationId(), screenshot);
@@ -140,11 +144,26 @@ public class NotificationManager {
       File screenshot = null;
 
       Facility facility = event.getFacility();
-      OperationsType type = null;
 
       try {
-        screenshot = grabPermissionsScreenshot(facility, type);
-        logbookFacade.sendAuthorizationLogEntries(event, screenshot);
+        if (event.getRfEvent().getExpirationCount() > 0) {
+          screenshot =
+              grabPermissionsScreenshot(
+                  facility,
+                  OperationsType.RF,
+                  event.getRfEvent().getAuthorization().getRfAuthorizationId());
+          logbookFacade.sendAuthorizationLogEntries(event, screenshot);
+        }
+
+        if (event.getBeamEvent().getExpirationCount() > 0) {
+          screenshot =
+              grabPermissionsScreenshot(
+                  facility,
+                  OperationsType.BEAM,
+                  event.getBeamEvent().getAuthorization().getBeamAuthorizationId());
+          logbookFacade.sendAuthorizationLogEntries(event, screenshot);
+        }
+
         emailFacade.sendAsyncExpirationEmails(event);
       } catch (IOException e) {
         LOGGER.log(Level.SEVERE, "Failed to grab permissions screenshot.", e);
@@ -171,7 +190,7 @@ public class NotificationManager {
     OperationsType type = OperationsType.RF;
 
     try {
-      screenshot = grabPermissionsScreenshot(facility, type);
+      screenshot = grabPermissionsScreenshot(facility, type, auth.getRfAuthorizationId());
       logbookFacade.sendAuthorizationLogEntry(
           facility, type, auth.getRfAuthorizationId(), screenshot);
 
@@ -199,7 +218,7 @@ public class NotificationManager {
     OperationsType type = OperationsType.BEAM;
 
     try {
-      screenshot = grabPermissionsScreenshot(facility, type);
+      screenshot = grabPermissionsScreenshot(facility, type, auth.getBeamAuthorizationId());
       logbookFacade.sendAuthorizationLogEntry(
           facility, type, auth.getBeamAuthorizationId(), screenshot);
 

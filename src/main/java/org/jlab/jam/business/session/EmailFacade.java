@@ -145,7 +145,7 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
       OperationsType type, BigInteger authorizationId, File screenshot) {
     if (OperationsType.RF.equals(type)) {
       RFAuthorization auth = rfAuthorizationFacade.find(authorizationId);
-      sendRFAuthorizationUpdateEmail(auth, screenshot);
+      sendAuthorizationUpdateEmail(auth.getFacility(), type, screenshot);
     } else {
       BeamAuthorization auth = beamAuthorizationFacade.find(authorizationId);
       sendBeamAuthorizationUpdateEmail(auth, screenshot);
@@ -430,11 +430,9 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
     }
   }
 
-  private void sendRFAuthorizationUpdateEmail(RFAuthorization auth, File screenshot) {
+  private void sendAuthorizationUpdateEmail(
+      Facility facility, OperationsType type, File screenshot) {
     try {
-      Facility facility = auth.getFacility();
-      OperationsType type = OperationsType.RF;
-
       List<Watcher> watcherList = watcherFacade.filterList(facility, type, null);
 
       if (watcherList == null || watcherList.isEmpty()) {
