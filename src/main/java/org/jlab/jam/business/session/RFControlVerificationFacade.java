@@ -38,7 +38,8 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
   @EJB NotificationManager notificationManager;
   @EJB FacilityFacade facilityFacade;
 
-  private final ReducedRFAuthorizationBuilder reducedAuthBuilder = new ReducedRFAuthorizationBuilder();
+  private final ReducedRFAuthorizationBuilder reducedAuthBuilder =
+      new ReducedRFAuthorizationBuilder();
 
   @Override
   protected EntityManager getEntityManager() {
