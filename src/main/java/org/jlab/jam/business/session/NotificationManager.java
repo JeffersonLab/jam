@@ -159,7 +159,7 @@ public class NotificationManager {
                   event.getRfEvent().getAuthorization().getRfAuthorizationId());
           logbookFacade.sendAuthorizationLogEntry(
               event.getFacility(),
-              OperationsType.BEAM,
+              OperationsType.RF,
               event.getRfEvent().getAuthorization().getRfAuthorizationId(),
               screenshot);
 
