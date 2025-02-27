@@ -145,20 +145,26 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
 
   // AUTO_EXPIRE event
   @PermitAll
-  public void sendExpirationEmails(FacilityExpirationEvent event, File screenshot) {
+  public void sendRFExpirationEmails(RFExpirationEvent event, File screenshot) {
     if (event != null) {
-      if (event.getRfEvent() != null && event.getRfEvent().getAuthorization() != null) {
-        RFAuthorization auth = event.getRfEvent().getAuthorization();
-        List<TeamExpirationEvent> teamEventList = getTeamExpirationEventList(event.getRfEvent());
+      if (event.getAuthorization() != null) {
+        RFAuthorization auth = event.getAuthorization();
+        List<TeamExpirationEvent> teamEventList = getTeamExpirationEventList(event);
         sendWatcherAuthorizationUpdateEmail(auth.getFacility(), OperationsType.RF, screenshot);
 
         // notifyAdminsAndFacilityManager(facility, rfEvent, beamEvent);
         // notifyVerificationTeams(facility, rfEvent, beamEvent);
 
       }
-      if (event.getBeamEvent() != null && event.getBeamEvent().getAuthorization() != null) {
-        BeamAuthorization auth = event.getBeamEvent().getAuthorization();
-        List<TeamExpirationEvent> teamEventList = getTeamExpirationEventList(event.getBeamEvent());
+    }
+  }
+
+  @PermitAll
+  public void sendBeamExpirationEmails(BeamExpirationEvent event, File screenshot) {
+    if (event != null) {
+      if (event.getAuthorization() != null) {
+        BeamAuthorization auth = event.getAuthorization();
+        List<TeamExpirationEvent> teamEventList = getTeamExpirationEventList(event);
         sendWatcherAuthorizationUpdateEmail(auth.getFacility(), OperationsType.BEAM, screenshot);
 
         // notifyAdminsAndFacilityManager(facility, rfEvent, beamEvent);

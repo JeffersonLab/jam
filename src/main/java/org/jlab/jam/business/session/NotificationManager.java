@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.security.PermitAll;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -79,6 +80,7 @@ public class NotificationManager {
     return tmpFile;
   }
 
+  @PermitAll
   @Asynchronous
   public void asyncNotifyRFAuthorizerSave(RFAuthorization auth) {
     File screenshot = null;
@@ -106,6 +108,7 @@ public class NotificationManager {
     }
   }
 
+  @PermitAll
   @Asynchronous
   public void asyncNotifyBeamAuthorizerSave(BeamAuthorization auth) {
     File screenshot = null;
@@ -133,10 +136,12 @@ public class NotificationManager {
     }
   }
 
+  @PermitAll
   @Asynchronous
   public void asyncNotifyExpirationAndUpcoming(
       Map<Facility, FacilityExpirationEvent> facilityMap) {}
 
+  @PermitAll
   @Asynchronous
   public void asyncNotifyFacilityExpiration(FacilityExpirationEvent event) {
     if (event != null && event.getExpirationCount() > 0) {
@@ -152,9 +157,13 @@ public class NotificationManager {
                   facility,
                   OperationsType.RF,
                   event.getRfEvent().getAuthorization().getRfAuthorizationId());
-          logbookFacade.sendAuthorizationLogEntries(event, screenshot);
+          logbookFacade.sendAuthorizationLogEntry(
+              event.getFacility(),
+              OperationsType.BEAM,
+              event.getRfEvent().getAuthorization().getRfAuthorizationId(),
+              screenshot);
 
-          emailFacade.sendExpirationEmails(event, screenshot);
+          emailFacade.sendRFExpirationEmails(event.getRfEvent(), screenshot);
         }
 
         if (event.getBeamEvent().getExpirationCount() > 0) {
@@ -163,9 +172,13 @@ public class NotificationManager {
                   facility,
                   OperationsType.BEAM,
                   event.getBeamEvent().getAuthorization().getBeamAuthorizationId());
-          logbookFacade.sendAuthorizationLogEntries(event, screenshot);
+          logbookFacade.sendAuthorizationLogEntry(
+              event.getFacility(),
+              OperationsType.BEAM,
+              event.getBeamEvent().getAuthorization().getBeamAuthorizationId(),
+              screenshot);
 
-          emailFacade.sendExpirationEmails(event, screenshot);
+          emailFacade.sendBeamExpirationEmails(event.getBeamEvent(), screenshot);
         }
       } catch (IOException e) {
         LOGGER.log(Level.SEVERE, "Failed to grab permissions screenshot.", e);
@@ -183,6 +196,7 @@ public class NotificationManager {
     }
   }
 
+  @PermitAll
   @Asynchronous
   public void asyncNotifyRFVerificationDowngrade(
       Facility facility, List<RFControlVerification> verificationList, RFAuthorization auth) {
@@ -212,6 +226,7 @@ public class NotificationManager {
     }
   }
 
+  @PermitAll
   @Asynchronous
   public void asyncNotifyBeamVerificationDowngrade(
       Facility facility, List<BeamControlVerification> verificationList, BeamAuthorization auth) {

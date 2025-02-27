@@ -10,12 +10,9 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import org.jlab.jam.persistence.entity.BeamAuthorization;
 import org.jlab.jam.persistence.entity.Facility;
-import org.jlab.jam.persistence.entity.RFAuthorization;
 import org.jlab.jam.persistence.entity.VerificationTeam;
 import org.jlab.jam.persistence.enumeration.OperationsType;
-import org.jlab.jam.persistence.view.FacilityExpirationEvent;
 import org.jlab.jlog.Body;
 import org.jlab.jlog.Library;
 import org.jlab.jlog.LogEntry;
@@ -47,22 +44,6 @@ public class LogbookFacade extends AbstractFacade<VerificationTeam> {
 
   public LogbookFacade() {
     super(VerificationTeam.class);
-  }
-
-  @PermitAll
-  public void sendAuthorizationLogEntries(FacilityExpirationEvent event, File screenshot) {
-    if (event != null) {
-      if (event.getRfEvent() != null && event.getRfEvent().getAuthorization() != null) {
-        RFAuthorization auth = event.getRfEvent().getAuthorization();
-        sendAuthorizationLogEntry(
-            event.getFacility(), OperationsType.RF, auth.getRfAuthorizationId(), screenshot);
-      }
-      if (event.getBeamEvent() != null && event.getBeamEvent().getAuthorization() != null) {
-        BeamAuthorization auth = event.getBeamEvent().getAuthorization();
-        sendAuthorizationLogEntry(
-            event.getFacility(), OperationsType.BEAM, auth.getBeamAuthorizationId(), screenshot);
-      }
-    }
   }
 
   @PermitAll
