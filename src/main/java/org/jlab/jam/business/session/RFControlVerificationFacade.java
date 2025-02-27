@@ -400,9 +400,10 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
 
       System.err.println("Attempting to create new authorization");
       authReduction =
-          reducedAuthBuilder.build(auth, facility, expiredAuthorizationList, expiredVerificationList, true);
+          reducedAuthBuilder.build(
+              auth, facility, expiredAuthorizationList, expiredVerificationList, true);
 
-      if(authReduction != null) {
+      if (authReduction != null) {
         saveReducedAuth(authReduction);
       }
     }

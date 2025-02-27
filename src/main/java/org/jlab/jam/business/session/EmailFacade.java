@@ -448,21 +448,15 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
         return;
       }
 
-      String subject = System.getenv("JAM_PERMISSIONS_SUBJECT");
-
-      if (subject == null) {
-        subject = "New Authorization";
-        LOGGER.log(Level.WARNING, "No JAM_PERMISSIONS_SUBJECT configured");
-      }
+      String subject = facility.getName() + " " + type.getLabel() + " Authorization Updated";
 
       String proxyServer = System.getenv("FRONTEND_SERVER_URL");
 
       String body =
-          "<img src=\"cid:screenshot\"><br/><a href=\""
+          "<img src=\"cid:screenshot\"><br/><b><span style=\"color: red;\">Always check the Authorization web application for the latest status:</span></b> <a href=\""
               + proxyServer
               + "/jam\">"
-              + proxyServer
-              + "/jam</a>";
+              + "JLab Authorization Manager</a>";
 
       Multipart multipart = new MimeMultipart("related");
 
@@ -473,7 +467,7 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
       MimeBodyPart imagePart = new MimeBodyPart();
       DataSource ds = new FileDataSource(screenshot);
       imagePart.setDataHandler(new DataHandler(ds));
-      imagePart.addHeader("Content-ID", "screenshot");
+      imagePart.addHeader("Content-ID", "<screenshot>");
       imagePart.addHeader("Content-Type", "image/png");
       multipart.addBodyPart(imagePart);
 

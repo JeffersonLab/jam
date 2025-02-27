@@ -141,7 +141,7 @@ public class LogbookFacade extends AbstractFacade<VerificationTeam> {
     StringBuilder builder = new StringBuilder();
 
     builder.append(
-        "[figure:1]<div>\n\n<b><span style=\"color: red;\">Always check the Beam Authorization web application for the latest credited controls status:</span></b> ");
+        "[figure:1]<div>\n\n<b><span style=\"color: red;\">Always check the Authorization web application for the latest status:</span></b> ");
     builder.append("<a href=\"");
     builder.append(server);
     builder.append("/jam/\">JLab Authorization Manager</a></div>\n");
