@@ -76,4 +76,18 @@ public class BeamExpirationEvent {
       List<BeamControlVerification> upcomingVerificationExpirationList) {
     this.upcomingVerificationExpirationList = upcomingVerificationExpirationList;
   }
+
+  public int getExpirationCount() {
+    int count = 0;
+
+    if (expiredAuthorizationList != null) {
+      count += expiredAuthorizationList.size();
+    }
+
+    if (expiredVerificationList != null) {
+      count += expiredVerificationList.size();
+    }
+
+    return count;
+  }
 }

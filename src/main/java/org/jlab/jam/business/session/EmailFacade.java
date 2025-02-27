@@ -479,25 +479,23 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
 
       String sender = System.getenv("JAM_EMAIL_SENDER");
 
-      if (sender == null || sender.isEmpty()) {
-        LOGGER.log(Level.WARNING, "Environment variable 'JAM_EMAIL_SENDER' not found, aborting");
-        return;
+      if (sender == null) {
+        sender = "jam@jlab.org";
       }
 
-      final String JLAB_EMAIL_DOMAIN = "@jlab.org";
       String toCsv = "";
 
       if (watcherList.size() > 0) {
         Watcher watcher = watcherList.get(0);
         String username = watcher.getWatcherPK().getUsername();
-        String address = username + JLAB_EMAIL_DOMAIN;
+        String address = username + EMAIL_DOMAIN;
         toCsv += address;
       }
 
       for (int i = 1; i < watcherList.size(); i++) {
         Watcher watcher = watcherList.get(i);
         String username = watcher.getWatcherPK().getUsername();
-        String address = username + JLAB_EMAIL_DOMAIN;
+        String address = username + EMAIL_DOMAIN;
         toCsv += "," + address;
       }
 
@@ -540,25 +538,23 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
 
       String sender = System.getenv("JAM_EMAIL_SENDER");
 
-      if (sender == null || sender.isEmpty()) {
-        LOGGER.log(Level.WARNING, "Environment variable 'JAM_EMAIL_SENDER' not found, aborting");
-        return;
+      if (sender == null) {
+        sender = "jam@jlab.org";
       }
 
-      final String JLAB_EMAIL_DOMAIN = "@jlab.org";
       String toCsv = "";
 
       if (watcherList.size() > 0) {
         Watcher watcher = watcherList.get(0);
         String username = watcher.getWatcherPK().getUsername();
-        String address = username + JLAB_EMAIL_DOMAIN;
+        String address = username + EMAIL_DOMAIN;
         toCsv += address;
       }
 
       for (int i = 1; i < watcherList.size(); i++) {
         Watcher watcher = watcherList.get(i);
         String username = watcher.getWatcherPK().getUsername();
-        String address = username + JLAB_EMAIL_DOMAIN;
+        String address = username + EMAIL_DOMAIN;
         toCsv += "," + address;
       }
 

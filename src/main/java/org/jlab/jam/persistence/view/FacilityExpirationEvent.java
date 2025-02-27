@@ -37,4 +37,20 @@ public class FacilityExpirationEvent {
   public void setBeamEvent(BeamExpirationEvent beamEvent) {
     this.beamEvent = beamEvent;
   }
+
+  @Override
+  public String toString() {
+    return "FacilityExpirationEvent{"
+        + "facility="
+        + facility.getName()
+        + ", rfEvent="
+        + rfEvent.getExpirationCount()
+        + ", beamEvent="
+        + beamEvent.getExpirationCount()
+        + '}';
+  }
+
+  public int getExpirationCount() {
+    return rfEvent.getExpirationCount() + beamEvent.getExpirationCount();
+  }
 }
