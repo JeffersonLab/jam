@@ -90,7 +90,7 @@ public class NotificationManager {
       screenshot = grabPermissionsScreenshot(facility, type, auth.getRfAuthorizationId());
       logbookFacade.sendAuthorizationLogEntry(
           facility, type, auth.getRfAuthorizationId(), screenshot);
-      emailFacade.sendAuthorizerChangeEmail(type, auth.getRfAuthorizationId(), screenshot);
+      emailFacade.sendWatcherAuthorizationUpdateEmail(facility, type, screenshot);
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Failed to grab permissions screenshot.", e);
     } finally {
@@ -117,7 +117,7 @@ public class NotificationManager {
       screenshot = grabPermissionsScreenshot(facility, type, auth.getBeamAuthorizationId());
       logbookFacade.sendAuthorizationLogEntry(
           facility, type, auth.getBeamAuthorizationId(), screenshot);
-      emailFacade.sendAuthorizerChangeEmail(type, auth.getBeamAuthorizationId(), screenshot);
+      emailFacade.sendWatcherAuthorizationUpdateEmail(facility, type, screenshot);
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Failed to grab permissions screenshot.", e);
     } finally {
@@ -153,6 +153,8 @@ public class NotificationManager {
                   OperationsType.RF,
                   event.getRfEvent().getAuthorization().getRfAuthorizationId());
           logbookFacade.sendAuthorizationLogEntries(event, screenshot);
+
+          emailFacade.sendExpirationEmails(event, screenshot);
         }
 
         if (event.getBeamEvent().getExpirationCount() > 0) {
@@ -162,9 +164,9 @@ public class NotificationManager {
                   OperationsType.BEAM,
                   event.getBeamEvent().getAuthorization().getBeamAuthorizationId());
           logbookFacade.sendAuthorizationLogEntries(event, screenshot);
-        }
 
-        emailFacade.sendAsyncExpirationEmails(event);
+          emailFacade.sendExpirationEmails(event, screenshot);
+        }
       } catch (IOException e) {
         LOGGER.log(Level.SEVERE, "Failed to grab permissions screenshot.", e);
       } finally {

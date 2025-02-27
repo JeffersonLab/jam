@@ -1,7 +1,6 @@
 package org.jlab.jam.business.session;
 
 import java.io.File;
-import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
@@ -139,87 +138,31 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
   public void sendAsyncBeamVerifierDowngradeEmail(
       Facility facility, List<BeamControlVerification> downgradeList) {}
 
-  // Authorizer update event
-  @PermitAll
-  public void sendAuthorizerChangeEmail(
-      OperationsType type, BigInteger authorizationId, File screenshot) {
-    if (OperationsType.RF.equals(type)) {
-      RFAuthorization auth = rfAuthorizationFacade.find(authorizationId);
-      sendAuthorizationUpdateEmail(auth.getFacility(), type, screenshot);
-    } else {
-      BeamAuthorization auth = beamAuthorizationFacade.find(authorizationId);
-      sendAuthorizationUpdateEmail(auth.getFacility(), type, screenshot);
-    }
-  }
-
   // Scheduled Nightly AUTO_EXPIRE event
   @PermitAll
   @Asynchronous
   public void sendAsyncExpirationEmails(Map<Facility, FacilityExpirationEvent> facilityMap) {}
 
   // AUTO_EXPIRE event
-  @PermitAll
-  @Asynchronous
-  public void sendAsyncExpirationEmails(FacilityExpirationEvent event) {
-    Facility facility = event.getFacility();
-    RFExpirationEvent rfEvent = event.getRfEvent();
-    BeamExpirationEvent beamEvent = event.getBeamEvent();
+  public void sendExpirationEmails(FacilityExpirationEvent event, File screenshot) {
+    if (event != null) {
+      if (event.getRfEvent() != null && event.getRfEvent().getAuthorization() != null) {
+        RFAuthorization auth = event.getRfEvent().getAuthorization();
+        List<TeamExpirationEvent> teamEventList = getTeamExpirationEventList(event.getRfEvent());
+        sendWatcherAuthorizationUpdateEmail(auth.getFacility(), OperationsType.RF, screenshot);
 
-    boolean rfExpiredAuthorization =
-        (rfEvent != null
-            && rfEvent.getExpiredAuthorizationList() != null
-            && !rfEvent.getExpiredAuthorizationList().isEmpty());
-    boolean rfExpiredVerification =
-        (rfEvent != null
-            && rfEvent.getExpiredVerificationList() != null
-            && !rfEvent.getExpiredVerificationList().isEmpty());
-    boolean rfUpcomingAuthorization =
-        (rfEvent != null
-            && rfEvent.getUpcomingAuthorizationExpirationList() != null
-            && !rfEvent.getUpcomingAuthorizationExpirationList().isEmpty());
-    boolean rfUpcomingVerification =
-        (rfEvent != null
-            && rfEvent.getUpcomingVerificationExpirationList() != null
-            && !rfEvent.getUpcomingVerificationExpirationList().isEmpty());
+        // notifyAdminsAndFacilityManager(facility, rfEvent, beamEvent);
+        // notifyVerificationTeams(facility, rfEvent, beamEvent);
 
-    boolean beamExpiredAuthorization =
-        (beamEvent != null
-            && beamEvent.getExpiredAuthorizationList() != null
-            && !beamEvent.getExpiredAuthorizationList().isEmpty());
-    boolean beamExpiredVerification =
-        (beamEvent != null
-            && beamEvent.getExpiredVerificationList() != null
-            && !beamEvent.getExpiredVerificationList().isEmpty());
-    boolean beamUpcomingAuthorization =
-        (beamEvent != null
-            && beamEvent.getUpcomingAuthorizationExpirationList() != null
-            && !beamEvent.getUpcomingAuthorizationExpirationList().isEmpty());
-    boolean beamUpcomingVerification =
-        (beamEvent != null
-            && beamEvent.getUpcomingVerificationExpirationList() != null
-            && !beamEvent.getUpcomingVerificationExpirationList().isEmpty());
-
-    if (rfExpiredAuthorization
-        || rfUpcomingAuthorization
-        || rfExpiredVerification
-        || rfUpcomingVerification
-        || beamExpiredAuthorization
-        || beamUpcomingAuthorization
-        || beamExpiredVerification
-        || beamUpcomingVerification) {
-      notifyAdminsAndFacilityManager(facility, rfEvent, beamEvent);
-
-      // Watchers don't get upcoming and don't get verification events
-      if (rfExpiredAuthorization || beamExpiredAuthorization) {
-        notifyWatchers(facility, rfEvent, beamEvent);
       }
+      if (event.getBeamEvent() != null && event.getBeamEvent().getAuthorization() != null) {
+        BeamAuthorization auth = event.getBeamEvent().getAuthorization();
+        List<TeamExpirationEvent> teamEventList = getTeamExpirationEventList(event.getBeamEvent());
+        sendWatcherAuthorizationUpdateEmail(auth.getFacility(), OperationsType.BEAM, screenshot);
 
-      // Verification Teams are notified of their own verification expirations and upcoming
-      if (rfExpiredVerification
-          || beamExpiredVerification
-          || rfUpcomingVerification
-          || beamUpcomingVerification) {
-        notifyVerificationTeams(facility, rfEvent, beamEvent);
+        // notifyAdminsAndFacilityManager(facility, rfEvent, beamEvent);
+        // notifyVerificationTeams(facility, rfEvent, beamEvent);
+
       }
     }
   }
@@ -232,7 +175,8 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
   private void notifyVerificationTeams(
       Facility facility, RFExpirationEvent rfEvent, BeamExpirationEvent beamEvent) {
     try {
-      List<TeamExpirationEvent> teamEventList = getTeamExpirationEventList(rfEvent, beamEvent);
+      List<TeamExpirationEvent> teamEventList =
+          null; // getTeamExpirationEventList(rfEvent, beamEvent);
 
       String sender = System.getenv("JAM_EMAIL_SENDER");
 
@@ -281,8 +225,7 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
     }
   }
 
-  private List<TeamExpirationEvent> getTeamExpirationEventList(
-      RFExpirationEvent rfEvent, BeamExpirationEvent beamEvent) {
+  private List<TeamExpirationEvent> getTeamExpirationEventList(RFExpirationEvent rfEvent) {
     Map<VerificationTeam, TeamExpirationEvent> teamEventMap = new HashMap<>();
 
     if (rfEvent != null && rfEvent.getExpiredVerificationList() != null) {
@@ -308,6 +251,12 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
         event.getRfUpcomingVerificationExpirationList().add(c);
       }
     }
+
+    return new ArrayList<>(teamEventMap.values());
+  }
+
+  private List<TeamExpirationEvent> getTeamExpirationEventList(BeamExpirationEvent beamEvent) {
+    Map<VerificationTeam, TeamExpirationEvent> teamEventMap = new HashMap<>();
 
     if (beamEvent != null && beamEvent.getExpiredVerificationList() != null) {
       for (BeamControlVerification c : beamEvent.getExpiredVerificationList()) {
@@ -336,7 +285,7 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
     return new ArrayList<>(teamEventMap.values());
   }
 
-  private void notifyWatchers(
+  private void sendExpirationEmailsToWatchers(
       Facility facility, RFExpirationEvent rfEvent, BeamExpirationEvent beamEvent) {
     try {
       EmailService emailService = new EmailService();
@@ -430,7 +379,7 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
     }
   }
 
-  private void sendAuthorizationUpdateEmail(
+  public void sendWatcherAuthorizationUpdateEmail(
       Facility facility, OperationsType type, File screenshot) {
     try {
       List<Watcher> watcherList = watcherFacade.filterList(facility, type, null);
