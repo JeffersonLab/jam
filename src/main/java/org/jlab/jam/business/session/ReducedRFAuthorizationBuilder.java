@@ -11,15 +11,12 @@ public class ReducedRFAuthorizationBuilder {
   private RFAuthorization createClone(RFAuthorization auth) {
     RFAuthorization authClone = auth.createAdminClone();
 
-    System.err.println("Created auth clone:" + authClone);
-
     List<RFSegmentAuthorization> newList = new ArrayList<>();
 
     if (auth.getRFSegmentAuthorizationList() != null) {
       for (RFSegmentAuthorization operationAuth : auth.getRFSegmentAuthorizationList()) {
         RFSegmentAuthorization operationClone = operationAuth.createAdminClone(authClone);
         newList.add(operationClone);
-        System.err.println("Has Segment:" + operationClone.getSegment());
       }
     }
 
@@ -43,10 +40,7 @@ public class ReducedRFAuthorizationBuilder {
     List<String> revokedSegmentList = new ArrayList<>();
 
     if (clone.getRFSegmentAuthorizationList() != null) {
-      System.err.println("Looping over operations");
       for (RFSegmentAuthorization operationAuth : clone.getRFSegmentAuthorizationList()) {
-
-        System.err.println("operationAuth = " + operationAuth.getSegment().getName());
 
         if (!operationAuth.isHighPowerRf()) {
           continue; // Already No High RF Auth so no need to revoke; move on to next
@@ -54,14 +48,8 @@ public class ReducedRFAuthorizationBuilder {
 
         BigInteger segmentId = operationAuth.getSegment().getRFSegmentId();
 
-        System.err.println(
-            "This one has RF ON so let's continue!  We're looking for segmentId=" + segmentId);
-
         for (RFControlVerification verification : verificationList) {
-          System.err.println(
-              "Does it match known expiration? " + verification.getRFSegment().getRFSegmentId());
           if (segmentId.equals(verification.getRFSegment().getRFSegmentId())) {
-            System.err.println("Found RF Segment with expiration!");
             operationAuth.setHighPowerRf(false);
             operationAuth.setExpirationDate(null);
             operationAuth.setComments(
@@ -136,29 +124,18 @@ public class ReducedRFAuthorizationBuilder {
     boolean authorizerReduction = false;
     boolean verifierReduction = false;
 
-    System.err.println("Made it to B");
-
     if (expiredAuthorizationList != null && !expiredAuthorizationList.isEmpty()) {
 
       authorizerReduction =
           populateReducedPermissionDueToAuthorizationExpiration(
               authReduction, facility, expiredAuthorizationList);
-
-      System.err.println("Made it to C1");
     }
 
-    System.err.println("Made it to C2");
-
     if (expiredVerificationList != null && !expiredVerificationList.isEmpty()) {
-      System.err.println("Attempting to populate with verification reduction");
       verifierReduction =
           populateReducedPermissionsDueToVerification(
               authReduction, facility, expiredVerificationList, isExpirationEvent);
-
-      System.err.println("Made it to D1");
     }
-
-    System.err.println("Made it to D2");
 
     if (!authorizerReduction && !verifierReduction) {
       System.err.println(

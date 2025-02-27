@@ -397,7 +397,6 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
     if (auth != null) {
       expiredAuthorizationList = checkForAuthorizedButExpired(auth);
 
-      System.err.println("Attempting to create new authorization");
       authReduction =
           reducedAuthBuilder.build(
               auth, facility, expiredAuthorizationList, expiredVerificationList, true);

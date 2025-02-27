@@ -325,7 +325,6 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
         pk.setRFSegmentId(operationAuth.getSegment().getRFSegmentId());
         operationAuth.setSegmentAuthorizationPK(pk);
         pk.setRFAuthorizationId(auth.getRfAuthorizationId());
-        System.err.println(pk);
         em.persist(operationAuth);
       }
     }
@@ -389,17 +388,13 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
 
     List<RFControlVerification> expiredVerificationList = checkForVerifiedButExpired(facility);
     if (expiredVerificationList != null && !expiredVerificationList.isEmpty()) {
-      System.err.println("Found expired RFControlVerification, revoking");
       revokeExpiredVerifications(facility, expiredVerificationList);
     }
 
     RFAuthorization authReduction = null;
     if (auth != null) {
-      System.err.println("Made it to A");
-
       expiredAuthorizationList = checkForAuthorizedButExpired(auth);
 
-      System.err.println("Attempting to create new authorization");
       authReduction =
           reducedAuthBuilder.build(
               auth, facility, expiredAuthorizationList, expiredVerificationList, true);

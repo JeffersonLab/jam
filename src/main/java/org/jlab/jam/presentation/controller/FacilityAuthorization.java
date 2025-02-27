@@ -126,8 +126,6 @@ public class FacilityAuthorization extends HttpServlet {
     try {
       FacilityExpirationEvent event = expirationManager.expireByFacility(facility);
 
-      System.err.println(event);
-
       notificationManager.asyncNotifyFacilityExpiration(event);
     } catch (InterruptedException e) {
       throw new ServletException("Unable to expire", e);

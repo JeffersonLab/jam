@@ -145,7 +145,6 @@ public class NotificationManager {
   @Asynchronous
   public void asyncNotifyFacilityExpiration(FacilityExpirationEvent event) {
     if (event != null && event.getExpirationCount() > 0) {
-      System.err.println("Sending facility expiration notifications!");
       File screenshot = null;
 
       Facility facility = event.getFacility();

@@ -2,16 +2,11 @@ package org.jlab.jam.business.session;
 
 import java.io.*;
 import java.math.BigInteger;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -20,16 +15,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import org.jlab.jam.persistence.entity.*;
 import org.jlab.jam.persistence.enumeration.OperationsType;
-import org.jlab.jlog.Body;
-import org.jlab.jlog.Library;
-import org.jlab.jlog.LogEntry;
-import org.jlab.jlog.LogEntryAdminExtension;
-import org.jlab.jlog.exception.AttachmentSizeException;
-import org.jlab.jlog.exception.LogCertificateException;
-import org.jlab.jlog.exception.LogIOException;
-import org.jlab.jlog.exception.LogRuntimeException;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
-import org.jlab.smoothness.business.util.IOUtil;
 
 /**
  * @author ryans
@@ -205,126 +191,6 @@ public class RFAuthorizationFacade extends AbstractFacade<RFAuthorization> {
     notificationManager.asyncNotifyRFAuthorizerSave(authorization);
 
     return authorization.getRfAuthorizationId();
-  }
-
-  @RolesAllowed("jam-admin")
-  public long sendELog(Facility facility, String proxyServer, String logbookServer)
-      throws UserFriendlyException {
-    String username = checkAuthenticated();
-
-    RFAuthorization rfAuthorization = findCurrent(facility);
-
-    if (rfAuthorization == null) {
-      throw new UserFriendlyException("No authorizations found");
-    }
-
-    // String body = getELogHTMLBody(authorization);
-    String body = getAlternateELogHTMLBody(proxyServer);
-
-    String subject = System.getenv("JAM_PERMISSIONS_SUBJECT");
-
-    String logbooks = System.getenv("JAM_BOOKS_CSV");
-
-    if (logbooks == null || logbooks.isEmpty()) {
-      logbooks = "TLOG";
-      LOGGER.log(
-          Level.WARNING, "Environment variable 'JAM_BOOKS_CSV' not found, using default TLOG");
-    }
-
-    Properties config = Library.getConfiguration();
-
-    config.setProperty("SUBMIT_URL", logbookServer + "/incoming");
-    config.setProperty("FETCH_URL", logbookServer + "/entry");
-
-    LogEntry entry = new LogEntry(subject, logbooks);
-
-    entry.setBody(body, Body.ContentType.HTML);
-    entry.setTags("Readme");
-
-    LogEntryAdminExtension extension = new LogEntryAdminExtension(entry);
-    extension.setAuthor(username);
-
-    long logId;
-
-    // System.out.println(entry.getXML());
-    File tmpFile = null;
-
-    try {
-      tmpFile = grabPermissionsScreenshot();
-      entry.addAttachment(tmpFile.getAbsolutePath());
-      logId = entry.submitNow();
-
-    } catch (IOException
-        | AttachmentSizeException
-        | LogIOException
-        | LogRuntimeException
-        | LogCertificateException e) {
-      throw new UserFriendlyException("Unable to send elog", e);
-    } finally {
-      if (tmpFile != null) {
-        boolean deleted = tmpFile.delete();
-        if (!deleted) {
-          LOGGER.log(
-              Level.WARNING, "Temporary image file was not deleted {0}", tmpFile.getAbsolutePath());
-        }
-      }
-    }
-
-    return logId;
-  }
-
-  private File grabPermissionsScreenshot() throws IOException {
-
-    String puppetServer = System.getenv("PUPPET_SHOW_SERVER_URL");
-    String internalServer = System.getenv("BACKEND_SERVER_URL");
-
-    if (puppetServer == null) {
-      puppetServer = "http://localhost";
-    }
-
-    if (internalServer == null) {
-      internalServer = "http://localhost";
-    }
-
-    internalServer = URLEncoder.encode(internalServer, StandardCharsets.UTF_8);
-
-    URL url =
-        new URL(
-            puppetServer
-                + "/puppet-show/screenshot?url="
-                + internalServer
-                + "%2Fjam%2Fpermissions%3Fprint%3DY&fullPage=true&filename=jam.png&ignoreHTTPSErrors=true");
-
-    LOGGER.log(Level.FINEST, "Fetching URL: {0}", url.toString());
-
-    File tmpFile = null;
-    InputStream in = null;
-    OutputStream out = null;
-
-    try {
-      URLConnection con = url.openConnection();
-      in = con.getInputStream();
-
-      tmpFile = File.createTempFile("jam", ".png");
-      out = new FileOutputStream(tmpFile);
-      IOUtil.copy(in, out);
-
-    } finally {
-      IOUtil.close(in, out);
-    }
-    return tmpFile;
-  }
-
-  private String getAlternateELogHTMLBody(String server) {
-    StringBuilder builder = new StringBuilder();
-
-    builder.append(
-        "[figure:1]<div>\n\n<b><span style=\"color: red;\">Always check the Beam Authorization web application for the latest credited controls status:</span></b> ");
-    builder.append("<a href=\"");
-    builder.append(server);
-    builder.append("/jam/\">JLab Authorization Manager</a></div>\n");
-
-    return builder.toString();
   }
 
   @PermitAll

@@ -142,7 +142,6 @@ public class ReducedBeamAuthorizationBuilder {
     }
 
     if (expiredVerificationList != null && !expiredVerificationList.isEmpty()) {
-      System.err.println("Attempting to populate with verification reduction");
       verifierReduction =
           populateReducedPermissionsDueToVerification(
               authReduction, facility, expiredVerificationList, isExpirationEvent);
