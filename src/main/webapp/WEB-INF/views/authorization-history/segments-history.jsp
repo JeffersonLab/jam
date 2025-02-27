@@ -36,6 +36,9 @@
         <section>
             <c:choose>
                 <c:when test="${rfAuthorization ne null}">
+                    <c:if test="${rfAuthorization.modifiedBy ne rfAuthorization.authorizedBy}">
+                        <div class="message-box">This is an automated authorization reduction</div>
+                    </c:if>
                     <t:rf-operations-panel rfList="${rfList}" isHistory="${true}"/>
                 </c:when>
                 <c:otherwise>

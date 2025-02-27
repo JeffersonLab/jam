@@ -36,6 +36,9 @@
         <section>
             <c:choose>
                 <c:when test="${beamAuthorization ne null}">
+                    <c:if test="${beamAuthorization.modifiedBy ne beamAuthorization.authorizedBy}">
+                        <div class="message-box">This is an automated authorization reduction</div>
+                    </c:if>
                     <t:beam-operations-panel beamList="${beamList}" isHistory="${true}"/>
                 </c:when>
                 <c:otherwise>
