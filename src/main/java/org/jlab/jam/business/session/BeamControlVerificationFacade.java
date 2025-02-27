@@ -18,7 +18,6 @@ import org.jlab.jam.persistence.entity.BeamAuthorization;
 import org.jlab.jam.persistence.view.BeamExpirationEvent;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jlab.smoothness.business.service.UserAuthorizationService;
-import org.jlab.smoothness.business.util.IOUtil;
 import org.jlab.smoothness.persistence.view.User;
 
 /**
@@ -39,6 +38,9 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
   @EJB BeamAuthorizationFacade beamAuthorizationFacade;
   @EJB LogbookFacade logbookFacade;
   @EJB NotificationManager notificationManager;
+
+  private final ReducedBeamAuthorizationBuilder reducedAuthBuilder =
+      new ReducedBeamAuthorizationBuilder();
 
   @Override
   protected EntityManager getEntityManager() {
@@ -301,140 +303,35 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
       return;
     }
 
-    BeamAuthorization authReduction = createClone(beamAuthorization);
+    BeamAuthorization authReduction =
+        reducedAuthBuilder.build(beamAuthorization, facility, null, verificationList, false);
 
-    boolean updated =
-        populateReducedPermissionsDueToVerification(
-            authReduction, facility, verificationList, false);
-
-    if (updated) {
-      saveClone(authReduction);
+    if (authReduction != null) {
+      saveReducedAuth(authReduction);
 
       notificationManager.asyncNotifyBeamVerificationDowngrade(
           facility, verificationList, authReduction);
     }
   }
 
-  private BeamAuthorization createClone(BeamAuthorization auth) {
-    BeamAuthorization authClone = auth.createAdminClone();
-    List<BeamDestinationAuthorization> newList = new ArrayList<>();
+  public void saveReducedAuth(BeamAuthorization auth) {
 
-    if (auth.getDestinationAuthorizationList() != null) {
-      for (BeamDestinationAuthorization operationAuth : auth.getDestinationAuthorizationList()) {
-        BeamDestinationAuthorization operationClone = operationAuth.createAdminClone(authClone);
-        newList.add(operationClone);
-      }
-    }
+    // Stash list in temporary variable as auth must be persisted BEFORE list is set
+    List<BeamDestinationAuthorization> operationsList = auth.getDestinationAuthorizationList();
 
-    authClone.setDestinationAuthorizationList(newList);
+    auth.setDestinationAuthorizationList(null);
 
-    return authClone;
-  }
-
-  private void saveClone(BeamAuthorization auth) {
     em.persist(auth);
-    if (auth.getDestinationAuthorizationList() != null) {
-      for (BeamDestinationAuthorization operationAuth : auth.getDestinationAuthorizationList()) {
+
+    if (operationsList != null) {
+      for (BeamDestinationAuthorization operationAuth : operationsList) {
         DestinationAuthorizationPK pk = new DestinationAuthorizationPK();
         pk.setBeamDestinationId(operationAuth.getDestination().getBeamDestinationId());
-        pk.setAuthorizationId(auth.getBeamAuthorizationId());
         operationAuth.setDestinationAuthorizationPK(pk);
+        pk.setAuthorizationId(auth.getBeamAuthorizationId());
         em.persist(operationAuth);
       }
     }
-  }
-
-  private boolean populateReducedPermissionsDueToVerification(
-      BeamAuthorization clone,
-      Facility facility,
-      List<BeamControlVerification> verificationList,
-      Boolean expiration) {
-    String reason = "expiration";
-
-    if (!expiration) {
-      reason = "downgrade";
-    }
-
-    boolean atLeastOne = false;
-    List<String> revokedDestinationList = new ArrayList<>();
-
-    if (clone.getDestinationAuthorizationList() != null) {
-      for (BeamDestinationAuthorization operationAuth : clone.getDestinationAuthorizationList()) {
-
-        if ("None".equals(operationAuth.getBeamMode())) {
-          continue; // Already None so no need to revoke; move on to next
-        }
-        BigInteger destinationId =
-            operationAuth.getDestinationAuthorizationPK().getBeamDestinationId();
-        for (BeamControlVerification verification : verificationList) {
-          if (destinationId.equals(verification.getBeamDestination().getBeamDestinationId())) {
-            operationAuth.setBeamMode("None");
-            operationAuth.setCwLimit(null);
-            operationAuth.setExpirationDate(null);
-            operationAuth.setComments(
-                "Permission automatically revoked due to credited control "
-                    + verification.getCreditedControl().getName()
-                    + " verification "
-                    + reason);
-            LOGGER.log(Level.FINEST, "Found something to downgrade");
-            atLeastOne = true;
-            revokedDestinationList.add(operationAuth.getDestination().getName());
-            break; // Found a match so revoke and then break out of loop
-          }
-        }
-      }
-    }
-
-    if (atLeastOne) {
-      String comments = clone.getComments();
-      if (comments == null) {
-        comments = "";
-      }
-      String csv = IOUtil.toCsv(revokedDestinationList.toArray());
-      comments = comments + "\nCHANGE: Destination control verification revoked: " + csv;
-      clone.setComments(comments);
-    }
-
-    return atLeastOne;
-  }
-
-  private boolean populateReducedPermissionDueToAuthorizationExpiration(
-      BeamAuthorization clone,
-      Facility facility,
-      List<BeamDestinationAuthorization> destinationList) {
-
-    boolean atLeastOne = false;
-    List<String> revokedDestinationList = new ArrayList<>();
-
-    if (clone.getDestinationAuthorizationList() != null) {
-      for (BeamDestinationAuthorization operationAuth : clone.getDestinationAuthorizationList()) {
-
-        if ("None".equals(operationAuth.getBeamMode())) {
-          continue; // Already None so no need to revoke; move on to next
-        }
-        if (destinationList.contains(operationAuth)) {
-          operationAuth.setBeamMode("None");
-          operationAuth.setCwLimit(null);
-          operationAuth.setExpirationDate(null);
-          operationAuth.setComments(
-              "Permission automatically revoked due to director's authorization expiration");
-          atLeastOne = true;
-          revokedDestinationList.add(operationAuth.getDestination().getName());
-        }
-      }
-    }
-
-    if (atLeastOne) {
-      String comments = clone.getComments();
-      if (comments == null) {
-        comments = "";
-      }
-      String csv = IOUtil.toCsv(revokedDestinationList.toArray());
-      comments = comments + "\nCHANGE: Destination authorization revoked: " + csv;
-      clone.setComments(comments);
-    }
-
-    return atLeastOne;
   }
 
   @PermitAll
@@ -498,35 +395,21 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
 
     BeamAuthorization authReduction = null;
     if (auth != null) {
-      authReduction = createClone(auth);
-      boolean authorizerReduction = false;
-      boolean verifierReduction = false;
-
       expiredAuthorizationList = checkForAuthorizedButExpired(auth);
-      if (expiredAuthorizationList != null && !expiredAuthorizationList.isEmpty()) {
 
-        authorizerReduction =
-            populateReducedPermissionDueToAuthorizationExpiration(
-                authReduction, facility, expiredAuthorizationList);
-      }
+      System.err.println("Attempting to create new authorization");
+      authReduction =
+          reducedAuthBuilder.build(
+              auth, facility, expiredAuthorizationList, expiredVerificationList, true);
 
-      if (expiredVerificationList != null && !expiredVerificationList.isEmpty()) {
-        verifierReduction =
-            populateReducedPermissionsDueToVerification(
-                authReduction, facility, expiredVerificationList, true);
-      }
-
-      if (authorizerReduction || verifierReduction) {
-        saveClone(authReduction);
-      } else {
-        authReduction = null;
+      if (authReduction != null) {
+        saveReducedAuth(authReduction);
       }
     }
 
     List<BeamControlVerification> upcomingVerificationExpirationList = null;
     List<BeamDestinationAuthorization> upcomingAuthorizationExpirationList = null;
     if (checkForUpcoming) {
-      ;
       upcomingVerificationExpirationList = checkForUpcomingVerificationExpirations();
       if (auth != null) {
         upcomingAuthorizationExpirationList = checkForUpcomingAuthorizationExpirations(auth);
