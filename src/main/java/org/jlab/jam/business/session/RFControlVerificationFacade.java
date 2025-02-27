@@ -17,7 +17,6 @@ import org.jlab.jam.persistence.entity.*;
 import org.jlab.jam.persistence.view.RFExpirationEvent;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jlab.smoothness.business.service.UserAuthorizationService;
-import org.jlab.smoothness.business.util.IOUtil;
 import org.jlab.smoothness.persistence.view.User;
 
 /**
@@ -38,6 +37,8 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
   @EJB RFAuthorizationFacade rfAuthorizationFacade;
   @EJB NotificationManager notificationManager;
   @EJB FacilityFacade facilityFacade;
+
+  private final ReducedAuthorizationBuilder reducedAuthBuilder = new ReducedAuthorizationBuilder();
 
   @Override
   protected EntityManager getEntityManager() {
@@ -297,136 +298,36 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
       return;
     }
 
-    RFAuthorization authReduction = createClone(rfAuthorization);
+    RFAuthorization authReduction =
+        reducedAuthBuilder.build(rfAuthorization, facility, null, verificationList, false);
 
-    boolean updated =
-        populateReducedPermissionsDueToVerification(
-            authReduction, facility, verificationList, false);
-
-    if (updated) {
-      saveClone(authReduction);
+    if (authReduction != null) {
+      saveReducedAuth(authReduction);
 
       notificationManager.asyncNotifyRFVerificationDowngrade(
           facility, verificationList, authReduction);
     }
   }
 
-  private boolean populateReducedPermissionsDueToVerification(
-      RFAuthorization clone,
-      Facility facility,
-      List<RFControlVerification> verificationList,
-      Boolean expiration) {
-    String reason = "expiration";
+  public void saveReducedAuth(RFAuthorization auth) {
 
-    if (!expiration) {
-      reason = "downgrade";
-    }
+    // Stash list in temporary variable as auth must be persisted BEFORE list is set
+    List<RFSegmentAuthorization> operationsList = auth.getRFSegmentAuthorizationList();
 
-    boolean atLeastOne = false;
-    List<String> revokedSegmentList = new ArrayList<>();
+    auth.setRFSegmentAuthorizationList(null);
 
-    if (clone.getRFSegmentAuthorizationList() != null) {
-      for (RFSegmentAuthorization operationAuth : clone.getRFSegmentAuthorizationList()) {
-
-        if (!operationAuth.isHighPowerRf()) {
-          continue; // Already No High RF Auth so no need to revoke; move on to next
-        }
-        BigInteger destinationId = operationAuth.getSegmentAuthorizationPK().getRFSegmentId();
-        for (RFControlVerification verification : verificationList) {
-          if (destinationId.equals(verification.getRFSegment().getRFSegmentId())) {
-            operationAuth.setHighPowerRf(false);
-            operationAuth.setExpirationDate(null);
-            operationAuth.setComments(
-                "Permission automatically revoked due to credited control "
-                    + verification.getCreditedControl().getName()
-                    + " verification "
-                    + reason);
-            LOGGER.log(Level.FINEST, "Found something to downgrade");
-            atLeastOne = true;
-            revokedSegmentList.add(operationAuth.getSegment().getName());
-            break; // Found a match so revoke and then break out of loop
-          }
-        }
-      }
-    }
-
-    if (atLeastOne) {
-      String comments = clone.getComments();
-      if (comments == null) {
-        comments = "";
-      }
-      String csv = IOUtil.toCsv(revokedSegmentList.toArray());
-      comments = comments + "\nCHANGE: Segment control verification revoked: " + csv;
-      clone.setComments(comments);
-    }
-
-    return atLeastOne;
-  }
-
-  private RFAuthorization createClone(RFAuthorization auth) {
-    RFAuthorization authClone = auth.createAdminClone();
-    List<RFSegmentAuthorization> newList = new ArrayList<>();
-
-    if (auth.getRFSegmentAuthorizationList() != null) {
-      for (RFSegmentAuthorization operationAuth : auth.getRFSegmentAuthorizationList()) {
-        RFSegmentAuthorization operationClone = operationAuth.createAdminClone(authClone);
-        newList.add(operationClone);
-      }
-    }
-
-    authClone.setRFSegmentAuthorizationList(newList);
-
-    return authClone;
-  }
-
-  private void saveClone(RFAuthorization auth) {
     em.persist(auth);
-    if (auth.getRFSegmentAuthorizationList() != null) {
-      for (RFSegmentAuthorization operationAuth : auth.getRFSegmentAuthorizationList()) {
+
+    if (operationsList != null) {
+      for (RFSegmentAuthorization operationAuth : operationsList) {
         SegmentAuthorizationPK pk = new SegmentAuthorizationPK();
         pk.setRFSegmentId(operationAuth.getSegment().getRFSegmentId());
-        pk.setRFAuthorizationId(auth.getRfAuthorizationId());
         operationAuth.setSegmentAuthorizationPK(pk);
+        pk.setRFAuthorizationId(auth.getRfAuthorizationId());
+        System.err.println(pk);
         em.persist(operationAuth);
       }
     }
-  }
-
-  private boolean populateReducedPermissionDueToAuthorizationExpiration(
-      RFAuthorization clone, Facility facility, List<RFSegmentAuthorization> segmentList) {
-
-    boolean atLeastOne = false;
-    List<String> revokedSegmentList = new ArrayList<>();
-
-    if (clone.getRFSegmentAuthorizationList() != null) {
-      for (RFSegmentAuthorization operationAuth : clone.getRFSegmentAuthorizationList()) {
-
-        if (!operationAuth.isHighPowerRf()) {
-          continue; // Already No High Power RF auth so no need to revoke; move on to next
-        }
-        if (segmentList.contains(operationAuth)) {
-          operationAuth.setHighPowerRf(false);
-          operationAuth.setExpirationDate(null);
-          operationAuth.setComments(
-              "Permission automatically revoked due to director's authorization expiration");
-          LOGGER.log(Level.FINEST, "Found something to downgrade");
-          atLeastOne = true;
-          revokedSegmentList.add(operationAuth.getSegment().getName());
-        }
-      }
-    }
-
-    if (atLeastOne) {
-      String comments = clone.getComments();
-      if (comments == null) {
-        comments = "";
-      }
-      String csv = IOUtil.toCsv(revokedSegmentList.toArray());
-      comments = comments + "\nCHANGE: Segment authorization revoked: " + csv;
-      clone.setComments(comments);
-    }
-
-    return atLeastOne;
   }
 
   @PermitAll
@@ -487,33 +388,22 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
 
     List<RFControlVerification> expiredVerificationList = checkForVerifiedButExpired(facility);
     if (expiredVerificationList != null && !expiredVerificationList.isEmpty()) {
+      System.err.println("Found expired RFControlVerification, revoking");
       revokeExpiredVerifications(facility, expiredVerificationList);
     }
 
     RFAuthorization authReduction = null;
     if (auth != null) {
-      authReduction = createClone(auth);
-      boolean authorizerReduction = false;
-      boolean verifierReduction = false;
+      System.err.println("Made it to A");
 
       expiredAuthorizationList = checkForAuthorizedButExpired(auth);
-      if (expiredAuthorizationList != null && !expiredAuthorizationList.isEmpty()) {
 
-        authorizerReduction =
-            populateReducedPermissionDueToAuthorizationExpiration(
-                authReduction, facility, expiredAuthorizationList);
-      }
+      System.err.println("Attempting to create new authorization");
+      authReduction =
+          reducedAuthBuilder.build(auth, facility, expiredAuthorizationList, expiredVerificationList, true);
 
-      if (expiredVerificationList != null && !expiredVerificationList.isEmpty()) {
-        verifierReduction =
-            populateReducedPermissionsDueToVerification(
-                authReduction, facility, expiredVerificationList, true);
-      }
-
-      if (authorizerReduction || verifierReduction) {
-        saveClone(authReduction);
-      } else {
-        authReduction = null;
+      if(authReduction != null) {
+        saveReducedAuth(authReduction);
       }
     }
 

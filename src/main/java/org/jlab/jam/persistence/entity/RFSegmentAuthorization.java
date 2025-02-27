@@ -60,6 +60,8 @@ public class RFSegmentAuthorization implements Serializable {
   @ManyToOne(optional = false, fetch = FetchType.LAZY)
   private RFAuthorization rfAuthorization;
 
+  @Transient public BigInteger transientOperationId;
+
   public RFSegmentAuthorization() {}
 
   public RFSegmentAuthorization(SegmentAuthorizationPK segmentAuthorizationPK) {
@@ -151,6 +153,7 @@ public class RFSegmentAuthorization implements Serializable {
   public RFSegmentAuthorization createAdminClone(RFAuthorization authClone) {
     RFSegmentAuthorization other = new RFSegmentAuthorization();
     other.rfAuthorization = authClone;
+    other.highPowerRf = highPowerRf;
     other.facility = facility;
     other.comments = this.comments;
     other.expirationDate = this.expirationDate;
