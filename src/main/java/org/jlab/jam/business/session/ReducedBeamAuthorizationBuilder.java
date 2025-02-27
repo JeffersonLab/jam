@@ -9,7 +9,7 @@ import org.jlab.jam.persistence.entity.RFControlVerification;
 import org.jlab.jam.persistence.entity.RFSegmentAuthorization;
 import org.jlab.smoothness.business.util.IOUtil;
 
-public class ReducedAuthorizationBuilder {
+public class ReducedBeamAuthorizationBuilder {
 
   private RFAuthorization createClone(RFAuthorization auth) {
     RFAuthorization authClone = auth.createAdminClone();
