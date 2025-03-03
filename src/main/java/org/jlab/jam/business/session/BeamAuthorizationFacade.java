@@ -96,7 +96,7 @@ public class BeamAuthorizationFacade extends AbstractFacade<BeamAuthorization> {
   public List<BeamAuthorization> findHistory(int offset, int maxPerPage) {
     Query q =
         em.createNativeQuery(
-            "select * from beam_authorization order by authorization_date desc, modified_date desc",
+            "select * from beam_authorization order by modified_date desc",
             BeamAuthorization.class);
 
     return q.setFirstResult(offset).setMaxResults(maxPerPage).getResultList();
