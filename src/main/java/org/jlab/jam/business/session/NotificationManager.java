@@ -143,9 +143,19 @@ public class NotificationManager {
       Map<Facility, FacilityUpcomingExpiration> upcomingMap) {
     for (Facility facility : expiredMap.keySet()) {
       FacilityExpirationEvent event = expiredMap.get(facility);
-
       asyncNotifyFacilityExpiration(event);
     }
+
+    for (Facility facility : upcomingMap.keySet()) {
+      FacilityUpcomingExpiration upcoming = upcomingMap.get(facility);
+      asyncNotifyFacilityUpcomingExpiration(upcoming);
+    }
+  }
+
+  @PermitAll
+  @Asynchronous
+  public void asyncNotifyFacilityUpcomingExpiration(FacilityUpcomingExpiration upcoming) {
+    emailFacade.sendUpcomingEmails(upcoming);
   }
 
   @PermitAll

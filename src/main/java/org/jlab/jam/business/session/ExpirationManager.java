@@ -104,7 +104,6 @@ public class ExpirationManager {
   }
 
   private FacilityExpirationEvent expireByFacilitySingleThreaded(Facility facility) {
-    System.err.println("Facility Expiration check: " + facility.getName());
     RFExpirationEvent rfEvent = rfVerificationFacade.performExpirationCheck(facility);
     BeamExpirationEvent beamEvent = beamVerificationFacade.performExpirationCheck(facility);
 

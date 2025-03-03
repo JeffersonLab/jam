@@ -20,6 +20,7 @@ import javax.persistence.PersistenceContext;
 import org.jlab.jam.persistence.entity.*;
 import org.jlab.jam.persistence.enumeration.OperationsType;
 import org.jlab.jam.persistence.view.BeamExpirationEvent;
+import org.jlab.jam.persistence.view.FacilityUpcomingExpiration;
 import org.jlab.jam.persistence.view.RFExpirationEvent;
 import org.jlab.jam.persistence.view.TeamExpirationEvent;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
@@ -407,6 +408,9 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
       LOGGER.log(Level.SEVERE, e.getMessage(), e);
     }
   }
+
+  @PermitAll
+  public void sendUpcomingEmails(FacilityUpcomingExpiration upcoming) {}
 
   public String getRFVerificationDowngradeBody(List<RFControlVerification> downgradeList) {
     String proxyServer = System.getenv("FRONTEND_SERVER_URL");
