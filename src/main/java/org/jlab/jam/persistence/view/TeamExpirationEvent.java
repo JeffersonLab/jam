@@ -10,9 +10,7 @@ public class TeamExpirationEvent {
   private VerificationTeam team;
   private List<RFControlVerification> rfExpiredVerificationList =
       new ArrayList<RFControlVerification>();
-  private List<RFControlVerification> rfUpcomingVerificationExpirationList = new ArrayList<>();
   private List<BeamControlVerification> beamExpiredVerificationList = new ArrayList<>();
-  private List<BeamControlVerification> beamUpcomingVerificationExpirationList = new ArrayList<>();
 
   public TeamExpirationEvent(VerificationTeam team) {
     this.team = team;
@@ -34,15 +32,6 @@ public class TeamExpirationEvent {
     this.rfExpiredVerificationList = rfExpiredVerificationList;
   }
 
-  public List<RFControlVerification> getRfUpcomingVerificationExpirationList() {
-    return rfUpcomingVerificationExpirationList;
-  }
-
-  public void setRfUpcomingVerificationExpirationList(
-      List<RFControlVerification> rfUpcomingVerificationExpirationList) {
-    this.rfUpcomingVerificationExpirationList = rfUpcomingVerificationExpirationList;
-  }
-
   public List<BeamControlVerification> getBeamExpiredVerificationList() {
     return beamExpiredVerificationList;
   }
@@ -50,14 +39,5 @@ public class TeamExpirationEvent {
   public void setBeamExpiredVerificationList(
       List<BeamControlVerification> beamExpiredVerificationList) {
     this.beamExpiredVerificationList = beamExpiredVerificationList;
-  }
-
-  public List<BeamControlVerification> getBeamUpcomingVerificationExpirationList() {
-    return beamUpcomingVerificationExpirationList;
-  }
-
-  public void setBeamUpcomingVerificationExpirationList(
-      List<BeamControlVerification> beamUpcomingVerificationExpirationList) {
-    this.beamUpcomingVerificationExpirationList = beamUpcomingVerificationExpirationList;
   }
 }

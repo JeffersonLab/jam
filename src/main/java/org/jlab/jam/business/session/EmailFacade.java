@@ -19,17 +19,13 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.jlab.jam.persistence.entity.*;
 import org.jlab.jam.persistence.enumeration.OperationsType;
-import org.jlab.jam.persistence.view.BeamExpirationEvent;
-import org.jlab.jam.persistence.view.FacilityUpcomingExpiration;
-import org.jlab.jam.persistence.view.RFExpirationEvent;
-import org.jlab.jam.persistence.view.TeamExpirationEvent;
+import org.jlab.jam.persistence.view.*;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jlab.smoothness.business.service.EmailService;
 import org.jlab.smoothness.business.service.UserAuthorizationService;
 import org.jlab.smoothness.business.util.IOUtil;
 import org.jlab.smoothness.business.util.TimeUtil;
 import org.jlab.smoothness.persistence.view.User;
-import org.jlab.smoothness.presentation.util.Functions;
 
 /**
  * @author ryans
@@ -169,8 +165,10 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
             auth.getFacility(), OperationsType.RF, screenshot);
 
         List<TeamExpirationEvent> teamEventList = getTeamExpirationEventList(event);
-        // notifyVerificationTeams(facility, rfEvent, beamEvent);
-
+        for (TeamExpirationEvent teamEvent : teamEventList) {
+          sendVerificationTeamsUpdateDueExpirationEmail(
+              auth.getFacility(), OperationsType.RF, screenshot, teamEvent);
+        }
       }
     }
   }
@@ -186,61 +184,11 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
             auth.getFacility(), OperationsType.BEAM, screenshot);
 
         List<TeamExpirationEvent> teamEventList = getTeamExpirationEventList(event);
-        // notifyVerificationTeams(facility, rfEvent, beamEvent);
-      }
-    }
-  }
-
-  private void notifyVerificationTeams(
-      Facility facility, RFExpirationEvent rfEvent, BeamExpirationEvent beamEvent) {
-    try {
-      List<TeamExpirationEvent> teamEventList =
-          null; // getTeamExpirationEventList(rfEvent, beamEvent);
-
-      String sender = System.getenv("JAM_EMAIL_SENDER");
-
-      if (sender == null) {
-        sender = "jam@jlab.org";
-      }
-
-      String subject = facility.getName() + " Expiration Notice";
-
-      UserAuthorizationService auth = UserAuthorizationService.getInstance();
-
-      for (TeamExpirationEvent event : teamEventList) {
-        VerificationTeam team = event.getTeam();
-        String role = team.getDirectoryRoleName();
-
-        List<User> members = auth.getUsersInRole(role);
-
-        List<String> addressList = new ArrayList<>();
-
-        if (members != null) {
-          for (User s : members) {
-            if (s.getUsername() != null) {
-              addressList.add((s.getUsername() + EMAIL_DOMAIN));
-            }
-          }
-        }
-
-        String body = getVerificationTeamBody(event);
-
-        String toCsv = null;
-
-        if (!addressList.isEmpty()) {
-          toCsv = IOUtil.toCsv(addressList.toArray());
-        }
-
-        if (toCsv != null) {
-          EmailService emailService = new EmailService();
-
-          emailService.sendEmail(sender, sender, toCsv, null, subject, body, true);
-        } else {
-          LOGGER.warning("Skipping verification team email: No addresses provided");
+        for (TeamExpirationEvent teamEvent : teamEventList) {
+          sendVerificationTeamsUpdateDueExpirationEmail(
+              auth.getFacility(), OperationsType.RF, screenshot, teamEvent);
         }
       }
-    } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, e.getMessage(), e);
     }
   }
 
@@ -258,18 +206,6 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
         event.getRfExpiredVerificationList().add(c);
       }
     }
-
-    /*if (rfEvent != null && rfEvent.getUpcomingVerificationExpirationList() != null) {
-      for (RFControlVerification c : rfEvent.getExpiredVerificationList()) {
-        VerificationTeam team = c.getCreditedControl().getVerificationTeam();
-        TeamExpirationEvent event = teamEventMap.get(team);
-        if (event == null) {
-          event = new TeamExpirationEvent(team);
-          teamEventMap.put(team, event);
-        }
-        event.getRfUpcomingVerificationExpirationList().add(c);
-      }
-    }*/
 
     return new ArrayList<>(teamEventMap.values());
   }
@@ -289,19 +225,41 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
       }
     }
 
-    /*if (beamEvent != null && beamEvent.getUpcomingVerificationExpirationList() != null) {
-      for (BeamControlVerification c : beamEvent.getExpiredVerificationList()) {
-        VerificationTeam team = c.getCreditedControl().getVerificationTeam();
-        TeamExpirationEvent event = teamEventMap.get(team);
-        if (event == null) {
-          event = new TeamExpirationEvent(team);
-          teamEventMap.put(team, event);
-        }
-        event.getBeamUpcomingVerificationExpirationList().add(c);
-      }
-    }*/
-
     return new ArrayList<>(teamEventMap.values());
+  }
+
+  private List<TeamUpcoming> getTeamUpcoming(FacilityUpcomingExpiration upcoming) {
+    Map<VerificationTeam, TeamUpcoming> teamMap = new HashMap<>();
+
+    if (upcoming != null) {
+      if (upcoming.getUpcomingRFVerificationExpirationList() != null) {
+        for (RFControlVerification verification :
+            upcoming.getUpcomingRFVerificationExpirationList()) {
+          VerificationTeam team = verification.getCreditedControl().getVerificationTeam();
+          TeamUpcoming tup = teamMap.get(team);
+          if (tup == null) {
+            tup = new TeamUpcoming(team);
+            teamMap.put(team, tup);
+          }
+          tup.getRfUpcomingVerificationExpirationList().add(verification);
+        }
+      }
+
+      if (upcoming.getUpcomingBeamVerificationExpirationList() != null) {
+        for (BeamControlVerification verification :
+            upcoming.getUpcomingBeamVerificationExpirationList()) {
+          VerificationTeam team = verification.getCreditedControl().getVerificationTeam();
+          TeamUpcoming tup = teamMap.get(team);
+          if (tup == null) {
+            tup = new TeamUpcoming(team);
+            teamMap.put(team, tup);
+          }
+          tup.getBeamUpcomingVerificationExpirationList().add(verification);
+        }
+      }
+    }
+
+    return new ArrayList<>(teamMap.values());
   }
 
   private void sendUpcomingToAdminsAndFacilityManager(FacilityUpcomingExpiration upcoming) {
@@ -458,7 +416,70 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
         return;
       }
 
-      String subject = facility.getName() + " " + type.getLabel() + " Authorization Updated";
+      String subject =
+          "JAM: " + facility.getName() + " " + type.getLabel() + " Authorization Updated";
+
+      String body = "<img src=\"cid:screenshot\"/>" + LINK_FOOTER;
+
+      Multipart multipart = new MimeMultipart("related");
+
+      MimeBodyPart htmlPart = new MimeBodyPart();
+      htmlPart.setContent(body, "text/html");
+      multipart.addBodyPart(htmlPart);
+
+      MimeBodyPart imagePart = new MimeBodyPart();
+      DataSource ds = new FileDataSource(screenshot);
+      imagePart.setDataHandler(new DataHandler(ds));
+      imagePart.addHeader("Content-ID", "<screenshot>");
+      imagePart.addHeader("Content-Type", "image/png");
+      multipart.addBodyPart(imagePart);
+
+      String sender = System.getenv("JAM_EMAIL_SENDER");
+
+      if (sender == null) {
+        sender = "jam@jlab.org";
+      }
+
+      String toCsv = IOUtil.toCsv(addressList.toArray());
+
+      sendEmailMultipart(sender, sender, toCsv, null, subject, multipart);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, e.getMessage(), e);
+    }
+  }
+
+  @PermitAll
+  public void sendVerificationTeamsUpdateDueExpirationEmail(
+      Facility facility,
+      OperationsType type,
+      File screenshot,
+      TeamExpirationEvent teamExpirationEvent) {
+    try {
+      Set<String> addressList = new HashSet<>();
+
+      List<User> userList = teamExpirationEvent.getTeam().getUserList();
+
+      if (userList != null) {
+        for (User user : userList) {
+          addressList.add(user.getEmail());
+        }
+      }
+
+      if (addressList == null || addressList.isEmpty()) {
+        LOGGER.log(
+            Level.WARNING,
+            "No members configured for verification team "
+                + teamExpirationEvent.getTeam().getName()
+                + ", aborting");
+        return;
+      }
+
+      String subject =
+          "JAM: "
+              + facility.getName()
+              + " "
+              + type.getLabel()
+              + " Authorization Reduced due to Expiration";
 
       String body = "<img src=\"cid:screenshot\"/>" + LINK_FOOTER;
 
@@ -493,47 +514,62 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
   public void sendUpcomingEmails(FacilityUpcomingExpiration upcoming) {
     sendUpcomingToAdminsAndFacilityManager(upcoming);
 
-    sendUpcomingToVerificationTeam(upcoming);
+    List<TeamUpcoming> teamUpcomingList = getTeamUpcoming(upcoming);
+    for (TeamUpcoming teamUpcoming : teamUpcomingList) {
+      sendUpcomingToVerificationTeam(upcoming.getFacility(), teamUpcoming);
+    }
   }
 
-  private void sendUpcomingToVerificationTeam(FacilityUpcomingExpiration upcoming) {}
+  private void sendUpcomingToVerificationTeam(Facility facility, TeamUpcoming upcoming) {
+    try {
+      EmailService emailService = new EmailService();
 
-  public String getRFVerificationDowngradeBody(List<RFControlVerification> downgradeList) {
-    String proxyServer = System.getenv("FRONTEND_SERVER_URL");
+      String sender = System.getenv("JAM_EMAIL_SENDER");
 
-    StringBuilder builder = new StringBuilder();
+      if (sender == null) {
+        sender = "jam@jlab.org";
+      }
 
-    SimpleDateFormat formatter = new SimpleDateFormat(TimeUtil.getFriendlyDateTimePattern());
+      String subject = facility.getName() + " Upcoming Expiration Notice";
 
-    RFControlVerification verification = downgradeList.get(0);
+      String body = getUpcomingTeamBody(upcoming);
 
-    builder.append("<div><b>Credited Control:</b> ");
-    builder.append(verification.getCreditedControl().getName());
-    builder.append("</div>\n<div><b>RF Segments:</b> ");
-    for (RFControlVerification v : downgradeList) {
-      builder.append("<div>");
-      builder.append(v.getRFSegment().getName());
-      builder.append("</div>");
+      if (body == null) {
+        System.err.println("Skipping team email because nothing to report");
+        return;
+      }
+
+      Set<String> addressList = new HashSet<>();
+
+      UserAuthorizationService auth = UserAuthorizationService.getInstance();
+
+      VerificationTeam team = upcoming.getTeam();
+      String role = team.getDirectoryRoleName();
+
+      List<User> members = auth.getUsersInRole(role);
+
+      if (members != null) {
+        for (User s : members) {
+          if (s.getUsername() != null) {
+            addressList.add((s.getUsername() + EMAIL_DOMAIN));
+          }
+        }
+      }
+
+      String toCsv = null;
+
+      if (!addressList.isEmpty()) {
+        toCsv = IOUtil.toCsv(addressList.toArray());
+      }
+
+      if (toCsv != null) {
+        emailService.sendEmail(sender, sender, toCsv, null, subject, body, true);
+      } else {
+        LOGGER.warning("Skipping team email: No addresses provided");
+      }
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, e.getMessage(), e);
     }
-    builder.append("</div>\n<div><b>Modified On:</b> ");
-    builder.append(formatter.format(verification.getVerificationDate()));
-    builder.append("</div>\n<div><b>Modified By:</b> ");
-    builder.append(Functions.formatUsername(verification.getVerifiedBy()));
-    builder.append("</div>\n<div><b>Verification:</b> ");
-    builder.append(
-        verification.getVerificationStatusId() == 1
-            ? "Verified"
-            : (verification.getVerificationStatusId() == 50
-                ? "Provisionally Verified"
-                : "Not Verified"));
-    builder.append("</div>\n<div><b>Comments:</b> ");
-    builder.append(IOUtil.escapeXml(verification.getComments()));
-    builder
-        .append("</div><div>\n\n<b>See:</b> <a href=\"")
-        .append(proxyServer)
-        .append("/jam/\">JLab Authorization Manager</a></div>\n");
-
-    return builder.toString();
   }
 
   private String getUpcomingAdminAndFacilityManagerBody(FacilityUpcomingExpiration upcoming) {
@@ -621,14 +657,52 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
     return body;
   }
 
-  private String getVerificationTeamBody(TeamExpirationEvent event) {
-    String proxyServer = System.getenv("FRONTEND_SERVER_URL");
+  private String getUpcomingTeamBody(TeamUpcoming upcoming) {
 
-    if (proxyServer == null) {
-      proxyServer = "localhost";
+    SimpleDateFormat formatter = new SimpleDateFormat(TimeUtil.getFriendlyDateTimePattern());
+
+    boolean somethingToReport = false;
+    String body = "";
+
+    if (upcoming.getRfUpcomingVerificationExpirationList() != null
+        && !upcoming.getRfUpcomingVerificationExpirationList().isEmpty()) {
+      somethingToReport = true;
+      body = body + "<h2>RF Control Verifications</h2>\n";
+      body = body + "<ul>\n";
+      for (RFControlVerification v : upcoming.getRfUpcomingVerificationExpirationList()) {
+        body =
+            body
+                + "<li>"
+                + IOUtil.escapeXml(v.getRFSegment().getName())
+                + " - "
+                + formatter.format(v.getExpirationDate())
+                + "</li>\n";
+      }
+      body = body + "</ul>\n";
     }
 
-    String body = "Testing";
+    if (upcoming.getBeamUpcomingVerificationExpirationList() != null
+        && !upcoming.getBeamUpcomingVerificationExpirationList().isEmpty()) {
+      somethingToReport = true;
+      body = body + "<h2>Beam Control Verifications</h2>\n";
+      body = body + "<ul>\n";
+      for (BeamControlVerification v : upcoming.getBeamUpcomingVerificationExpirationList()) {
+        body =
+            body
+                + "<li>"
+                + IOUtil.escapeXml(v.getBeamDestination().getName())
+                + " - "
+                + formatter.format(v.getExpirationDate())
+                + "</li>\n";
+      }
+      body = body + "</ul>\n";
+    }
+
+    if (somethingToReport) {
+      body = body + LINK_FOOTER;
+    } else {
+      body = null;
+    }
 
     return body;
   }
