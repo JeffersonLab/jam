@@ -278,12 +278,11 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
         testing = true;
       }
 
-      String subject = upcoming.getFacility().getName() + " Upcoming Expiration Notice";
+      String subject = "JAM: " + upcoming.getFacility().getName() + " Upcoming Expiration Notice";
 
       String body = getUpcomingAdminAndFacilityManagerBody(upcoming);
 
       if (body == null) {
-        System.err.println("Skipping admin/manager emails because nothing to report");
         return;
       }
 
@@ -530,7 +529,7 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
         sender = "jam@jlab.org";
       }
 
-      String subject = facility.getName() + " Upcoming Expiration Notice";
+      String subject = "JAM: " + facility.getName() + " Upcoming Expiration Notice";
 
       String body = getUpcomingTeamBody(upcoming);
 
