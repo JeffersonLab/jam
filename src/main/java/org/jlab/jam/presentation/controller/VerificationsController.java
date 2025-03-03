@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.jlab.jam.business.session.*;
 import org.jlab.jam.business.session.AbstractFacade.OrderDirective;
 import org.jlab.jam.persistence.entity.*;
+import org.jlab.jam.persistence.view.FacilityUpcomingExpiration;
 import org.jlab.smoothness.presentation.util.ParamConverter;
 
 /**
@@ -29,6 +31,7 @@ public class VerificationsController extends HttpServlet {
   @EJB BeamDestinationFacade destinationFacade;
   @EJB FacilityFacade facilityFacade;
   @EJB VerificationTeamFacade verificationTeamFacade;
+  @EJB ExpirationManager expirationManager;
 
   /**
    * Handles the HTTP <code>GET</code> method.
@@ -65,12 +68,10 @@ public class VerificationsController extends HttpServlet {
       }
     }
 
-    List<BeamControlVerification> expiredList = null;
-    List<BeamControlVerification> expiringList = null;
-    boolean adminOrLeader = false;
+    Map<Facility, FacilityUpcomingExpiration> upcomingExpirationMap =
+        expirationManager.getUpcomingExpirationMap(false);
 
-    expiredList = verificationFacade.checkForExpired();
-    expiringList = verificationFacade.checkForUpcomingVerificationExpirations();
+    boolean adminOrLeader = false;
 
     List<CreditedControl> ccList = ccFacade.findWithFacilityVerification(facility, team);
 
@@ -90,8 +91,7 @@ public class VerificationsController extends HttpServlet {
     request.setAttribute("destinationList", destinationList);
     request.setAttribute("adminOrLeader", adminOrLeader);
     request.setAttribute("ccList", ccList);
-    request.setAttribute("expiredList", expiredList);
-    request.setAttribute("expiringList", expiringList);
+    request.setAttribute("upcomingExpirationMap", upcomingExpirationMap);
 
     request.getRequestDispatcher("WEB-INF/views/verifications.jsp").forward(request, response);
   }

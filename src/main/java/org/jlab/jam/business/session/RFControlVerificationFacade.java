@@ -238,16 +238,6 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
   }
 
   @PermitAll
-  public List<RFControlVerification> checkForExpired() {
-    TypedQuery<RFControlVerification> q =
-        em.createQuery(
-            "select a from RFControlVerification a join fetch a.creditedControl where a.expirationDate < sysdate and a.rfSegment.active = true order by a.creditedControl.weight asc",
-            RFControlVerification.class);
-
-    return q.getResultList();
-  }
-
-  @PermitAll
   public List<RFControlVerification> checkForVerifiedButExpired(Facility facility) {
     TypedQuery<RFControlVerification> q =
         em.createQuery(
@@ -348,32 +338,75 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
   }
 
   @PermitAll
-  public List<RFControlVerification> checkForUpcomingVerificationExpirations(Facility facility) {
+  public List<RFControlVerification> checkForUpcomingVerificationExpirations(
+      Facility facility, boolean boundary) {
+    String dateRangeConstraint =
+        "(sysdate) <= a.expirationDate and (sysdate + 7) > a.expirationDate";
+
+    if (boundary) {
+      dateRangeConstraint =
+          "(sysdate + 6) <= a.expirationDate and (sysdate + 7) > a.expirationDate";
+    }
+
     TypedQuery<RFControlVerification> q =
         em.createQuery(
-            "select a from RFControlVerification a join fetch a.creditedControl where a.expirationDate >= sysdate and (a.expirationDate - 7) <= sysdate and a.verificationStatusId in (1, 50) and a.rfSegment.active = true and a.rfSegment.facility = :facility order by a.creditedControl.weight asc",
+            "select a from RFControlVerification a join fetch a.creditedControl where "
+                + dateRangeConstraint
+                + " and a.verificationStatusId in (1, 50) and a.rfSegment.active = true and a.rfSegment.facility = :facility order by a.creditedControl.weight asc",
             RFControlVerification.class);
 
     q.setParameter("facility", facility);
 
-    return q.getResultList();
+    List<RFControlVerification> list = q.getResultList();
+
+    /*for (RFControlVerification verification : list) {
+      System.err.println(
+          "Found upcoming RF operations verification expiration: "
+              + verification.getRFSegment().getName());
+    }*/
+
+    return list;
+
+    // return q.getResultList();
   }
 
-  private List<RFSegmentAuthorization> checkForUpcomingAuthorizationExpirations(
-      RFAuthorization auth) {
+  @PermitAll
+  public List<RFSegmentAuthorization> checkForUpcomingAuthorizationExpirations(
+      RFAuthorization auth, boolean boundary) {
     List<RFSegmentAuthorization> upcomingExpirations = new ArrayList<>();
 
     Date now = new Date();
     Calendar cal = Calendar.getInstance();
     cal.add(Calendar.DATE, 7);
     Date sevenDaysFromNow = cal.getTime();
+    cal.add(Calendar.DATE, -1);
+    Date sixDaysFromNow = cal.getTime();
 
     if (auth.getRFSegmentAuthorizationList() != null) {
       for (RFSegmentAuthorization dest : auth.getRFSegmentAuthorizationList()) {
-        if (dest.isHighPowerRf()
-            && dest.getExpirationDate().after(now)
-            && dest.getExpirationDate().before(sevenDaysFromNow)) {
-          upcomingExpirations.add(dest);
+        if (dest.isHighPowerRf() && dest.getExpirationDate() != null) {
+          boolean include = false;
+          if (boundary) {
+            if (sixDaysFromNow.before(dest.getExpirationDate())
+                || sixDaysFromNow.equals(dest.getExpirationDate())
+                    && sevenDaysFromNow.after(dest.getExpirationDate())) {
+              include = true;
+            }
+          } else {
+            if (now.before(dest.getExpirationDate())
+                || now.equals(dest.getExpirationDate())
+                    && sevenDaysFromNow.after(dest.getExpirationDate())) {
+              include = true;
+            }
+          }
+
+          if (include) {
+            upcomingExpirations.add(dest);
+
+            /*System.err.println(
+            "Found upcoming RF operations authorization expiration: "
+                + dest.getSegment().getName());*/
+          }
         }
       }
     }
@@ -382,7 +415,7 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
   }
 
   @PermitAll
-  public RFExpirationEvent performExpirationCheck(Facility facility, boolean checkForUpcoming) {
+  public RFExpirationEvent performExpirationCheck(Facility facility) {
     RFAuthorization auth = rfAuthorizationFacade.findCurrent(facility);
     List<RFSegmentAuthorization> expiredAuthorizationList = null;
 
@@ -404,29 +437,12 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
       }
     }
 
-    List<RFControlVerification> upcomingVerificationExpirationList = null;
-    List<RFSegmentAuthorization> upcomingAuthorizationExpirationList = null;
-    if (checkForUpcoming) {
-      upcomingVerificationExpirationList = checkForUpcomingVerificationExpirations(facility);
-      if (auth != null) {
-        upcomingAuthorizationExpirationList = checkForUpcomingAuthorizationExpirations(auth);
-      }
-    }
-
     RFExpirationEvent event = null;
 
-    if (expiredAuthorizationList != null
-        || upcomingAuthorizationExpirationList != null
-        || expiredVerificationList != null
-        || upcomingVerificationExpirationList != null) {
+    if (expiredAuthorizationList != null || expiredVerificationList != null) {
       event =
           new RFExpirationEvent(
-              authReduction,
-              facility,
-              expiredAuthorizationList,
-              upcomingAuthorizationExpirationList,
-              expiredVerificationList,
-              upcomingVerificationExpirationList);
+              authReduction, facility, expiredAuthorizationList, expiredVerificationList);
     }
 
     return event;

@@ -238,16 +238,6 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
   }
 
   @PermitAll
-  public List<BeamControlVerification> checkForExpired() {
-    TypedQuery<BeamControlVerification> q =
-        em.createQuery(
-            "select a from BeamControlVerification a join fetch a.creditedControl where a.expirationDate < sysdate and a.beamDestination.active = true order by a.creditedControl.weight asc",
-            BeamControlVerification.class);
-
-    return q.getResultList();
-  }
-
-  @PermitAll
   public List<BeamControlVerification> checkForVerifiedButExpired(Facility facility) {
     TypedQuery<BeamControlVerification> q =
         em.createQuery(
@@ -352,30 +342,78 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
   }
 
   @PermitAll
-  public List<BeamControlVerification> checkForUpcomingVerificationExpirations() {
+  public List<BeamControlVerification> checkForUpcomingVerificationExpirations(
+      Facility facility, boolean boundary) {
+    String dateRangeConstraint =
+        "(sysdate) <= a.expirationDate and (sysdate + 7) > a.expirationDate";
+
+    if (boundary) {
+      dateRangeConstraint =
+          "(sysdate + 6) <= a.expirationDate and (sysdate + 7) > a.expirationDate";
+    }
+
     TypedQuery<BeamControlVerification> q =
         em.createQuery(
-            "select a from BeamControlVerification a join fetch a.creditedControl where a.expirationDate >= sysdate and (a.expirationDate - 7) <= sysdate and a.verificationStatusId in (1, 50) and a.beamDestination.active = true order by a.creditedControl.weight asc",
+            "select a from BeamControlVerification a join fetch a.creditedControl where "
+                + dateRangeConstraint
+                + " and a.verificationStatusId in (1, 50) and a.beamDestination.active = true and a.beamDestination.facility = :facility order by a.creditedControl.weight asc",
             BeamControlVerification.class);
 
-    return q.getResultList();
+    q.setParameter("facility", facility);
+
+    // sysdate >= (a.expirationDate - 7) and sysdate < (a.expirationDate - 6)
+    // (sysdate + 6) <= a.expirationDate and (sysdate + 7) > a.expirationDate
+
+    List<BeamControlVerification> list = q.getResultList();
+
+    /*for (BeamControlVerification verification : list) {
+      System.err.println(
+          "Found upcoming Beam operations verification expiration: "
+              + verification.getBeamDestination().getName());
+    }*/
+
+    return list;
+
+    // return q.getResultList();
   }
 
-  private List<BeamDestinationAuthorization> checkForUpcomingAuthorizationExpirations(
-      BeamAuthorization auth) {
+  @PermitAll
+  public List<BeamDestinationAuthorization> checkForUpcomingAuthorizationExpirations(
+      BeamAuthorization auth, boolean boundary) {
     List<BeamDestinationAuthorization> upcomingExpirations = new ArrayList<>();
 
     Date now = new Date();
     Calendar cal = Calendar.getInstance();
     cal.add(Calendar.DATE, 7);
     Date sevenDaysFromNow = cal.getTime();
+    cal.add(Calendar.DATE, -1);
+    Date sixDaysFromNow = cal.getTime();
 
     if (auth.getDestinationAuthorizationList() != null) {
       for (BeamDestinationAuthorization dest : auth.getDestinationAuthorizationList()) {
-        if (!"None".equals(dest.getBeamMode())
-            && dest.getExpirationDate().after(now)
-            && dest.getExpirationDate().before(sevenDaysFromNow)) {
-          upcomingExpirations.add(dest);
+        if (!"None".equals(dest.getBeamMode()) && dest.getExpirationDate() != null) {
+          boolean include = false;
+          if (boundary) {
+            if (sixDaysFromNow.before(dest.getExpirationDate())
+                || sixDaysFromNow.equals(dest.getExpirationDate())
+                    && sevenDaysFromNow.after(dest.getExpirationDate())) {
+              include = true;
+            }
+          } else {
+            if (now.before(dest.getExpirationDate())
+                || now.equals(dest.getExpirationDate())
+                    && sevenDaysFromNow.after(dest.getExpirationDate())) {
+              include = true;
+            }
+          }
+
+          if (include) {
+            upcomingExpirations.add(dest);
+
+            /*System.err.println(
+            "Found upcoming Beam operations authorization expiration: "
+                + dest.getDestination().getName());*/
+          }
         }
       }
     }
@@ -384,7 +422,7 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
   }
 
   @PermitAll
-  public BeamExpirationEvent performExpirationCheck(Facility facility, boolean checkForUpcoming) {
+  public BeamExpirationEvent performExpirationCheck(Facility facility) {
     BeamAuthorization auth = beamAuthorizationFacade.findCurrent(facility);
     List<BeamDestinationAuthorization> expiredAuthorizationList = null;
 
@@ -406,29 +444,12 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
       }
     }
 
-    List<BeamControlVerification> upcomingVerificationExpirationList = null;
-    List<BeamDestinationAuthorization> upcomingAuthorizationExpirationList = null;
-    if (checkForUpcoming) {
-      upcomingVerificationExpirationList = checkForUpcomingVerificationExpirations();
-      if (auth != null) {
-        upcomingAuthorizationExpirationList = checkForUpcomingAuthorizationExpirations(auth);
-      }
-    }
-
     BeamExpirationEvent event = null;
 
-    if (expiredAuthorizationList != null
-        || upcomingAuthorizationExpirationList != null
-        || expiredVerificationList != null
-        || upcomingVerificationExpirationList != null) {
+    if (expiredAuthorizationList != null || expiredVerificationList != null) {
       event =
           new BeamExpirationEvent(
-              authReduction,
-              facility,
-              expiredAuthorizationList,
-              upcomingAuthorizationExpirationList,
-              expiredVerificationList,
-              upcomingVerificationExpirationList);
+              authReduction, facility, expiredAuthorizationList, expiredVerificationList);
     }
 
     return event;

@@ -6,24 +6,18 @@ import org.jlab.jam.persistence.entity.*;
 public class RFExpirationEvent {
   private Facility facility;
   private List<RFSegmentAuthorization> expiredAuthorizationList;
-  private List<RFSegmentAuthorization> upcomingAuthorizationExpirationList;
   private List<RFControlVerification> expiredVerificationList;
-  private List<RFControlVerification> upcomingVerificationExpirationList;
   private RFAuthorization authorization;
 
   public RFExpirationEvent(
       RFAuthorization authorization,
       Facility facility,
       List<RFSegmentAuthorization> expiredAuthorizationList,
-      List<RFSegmentAuthorization> upcomingAuthorizationExpirationList,
-      List<RFControlVerification> expiredVerificationList,
-      List<RFControlVerification> upcomingVerificationExpirationList) {
+      List<RFControlVerification> expiredVerificationList) {
     this.authorization = authorization;
     this.facility = facility;
     this.expiredAuthorizationList = expiredAuthorizationList;
-    this.upcomingAuthorizationExpirationList = upcomingAuthorizationExpirationList;
     this.expiredVerificationList = expiredVerificationList;
-    this.upcomingVerificationExpirationList = upcomingVerificationExpirationList;
   }
 
   public RFAuthorization getAuthorization() {
@@ -50,30 +44,12 @@ public class RFExpirationEvent {
     this.expiredAuthorizationList = expiredAuthorizationList;
   }
 
-  public List<RFSegmentAuthorization> getUpcomingAuthorizationExpirationList() {
-    return upcomingAuthorizationExpirationList;
-  }
-
-  public void setUpcomingAuthorizationExpirationList(
-      List<RFSegmentAuthorization> upcomingAuthorizationExpirationList) {
-    this.upcomingAuthorizationExpirationList = upcomingAuthorizationExpirationList;
-  }
-
   public List<RFControlVerification> getExpiredVerificationList() {
     return expiredVerificationList;
   }
 
   public void setExpiredVerificationList(List<RFControlVerification> expiredVerificationList) {
     this.expiredVerificationList = expiredVerificationList;
-  }
-
-  public List<RFControlVerification> getUpcomingVerificationExpirationList() {
-    return upcomingVerificationExpirationList;
-  }
-
-  public void setUpcomingVerificationExpirationList(
-      List<RFControlVerification> upcomingVerificationExpirationList) {
-    this.upcomingVerificationExpirationList = upcomingVerificationExpirationList;
   }
 
   public int getExpirationCount() {

@@ -5,6 +5,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.ScheduleExpression;
 import javax.ejb.Singleton;
@@ -15,6 +16,7 @@ import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
 import org.jlab.jam.persistence.entity.Facility;
 import org.jlab.jam.persistence.view.FacilityExpirationEvent;
+import org.jlab.jam.persistence.view.FacilityUpcomingExpiration;
 
 @Singleton
 @Startup
@@ -63,13 +65,25 @@ public class DailyScheduledCheck {
     LOGGER.log(
         Level.INFO,
         "handleTimeout: Checking for expired / upcoming expiration of authorization and verification...");
-    Map<Facility, FacilityExpirationEvent> facilityMap = null;
-    try {
-      facilityMap = expirationManager.expireByFacilityAll();
+    doExpirationCheckAll();
+  }
 
-      notificationManager.asyncNotifyExpirationAndUpcoming(facilityMap);
+  private void doExpirationCheckAll() {
+    Map<Facility, FacilityExpirationEvent> expiredMap = null;
+    Map<Facility, FacilityUpcomingExpiration> upcomingMap = null;
+    try {
+      expiredMap = expirationManager.expireByFacilityAll();
+
+      upcomingMap = expirationManager.getUpcomingExpirationMap(true);
+
+      notificationManager.asyncNotifyExpirationAndUpcoming(expiredMap, upcomingMap);
     } catch (InterruptedException e) {
       LOGGER.log(Level.SEVERE, "handleTimeout: Interrupted", e);
     }
+  }
+
+  @RolesAllowed("jam-admin")
+  public void doExpirationNow() {
+    doExpirationCheckAll();
   }
 }

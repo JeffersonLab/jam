@@ -243,7 +243,7 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
       }
     }
 
-    if (rfEvent != null && rfEvent.getUpcomingVerificationExpirationList() != null) {
+    /*if (rfEvent != null && rfEvent.getUpcomingVerificationExpirationList() != null) {
       for (RFControlVerification c : rfEvent.getExpiredVerificationList()) {
         VerificationTeam team = c.getCreditedControl().getVerificationTeam();
         TeamExpirationEvent event = teamEventMap.get(team);
@@ -253,7 +253,7 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
         }
         event.getRfUpcomingVerificationExpirationList().add(c);
       }
-    }
+    }*/
 
     return new ArrayList<>(teamEventMap.values());
   }
@@ -273,7 +273,7 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
       }
     }
 
-    if (beamEvent != null && beamEvent.getUpcomingVerificationExpirationList() != null) {
+    /*if (beamEvent != null && beamEvent.getUpcomingVerificationExpirationList() != null) {
       for (BeamControlVerification c : beamEvent.getExpiredVerificationList()) {
         VerificationTeam team = c.getCreditedControl().getVerificationTeam();
         TeamExpirationEvent event = teamEventMap.get(team);
@@ -283,7 +283,7 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
         }
         event.getBeamUpcomingVerificationExpirationList().add(c);
       }
-    }
+    }*/
 
     return new ArrayList<>(teamEventMap.values());
   }

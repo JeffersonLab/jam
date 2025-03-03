@@ -1,8 +1,4 @@
 var jlab = jlab || {};
-$(document).on("click", "#expired-link", function () {
-    $("#expired-dialog").dialog("open");
-    return false;
-});
 $(document).on("click", "#expiring-link", function () {
     $("#expiring-dialog").dialog("open");
     return false;
@@ -16,4 +12,10 @@ $( ".accordion" ).accordion({
     collapsible: true,
     heightStyle: "content",
     active: 0
+});
+$(function() {
+   $("#expiring-dialog").dialog({
+       width: 900,
+       height: 800
+   });
 });

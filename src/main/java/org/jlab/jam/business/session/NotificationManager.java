@@ -17,6 +17,7 @@ import javax.ejb.Stateless;
 import org.jlab.jam.persistence.entity.*;
 import org.jlab.jam.persistence.enumeration.OperationsType;
 import org.jlab.jam.persistence.view.FacilityExpirationEvent;
+import org.jlab.jam.persistence.view.FacilityUpcomingExpiration;
 import org.jlab.smoothness.business.util.IOUtil;
 
 @Stateless
@@ -137,9 +138,15 @@ public class NotificationManager {
   }
 
   @PermitAll
-  @Asynchronous
   public void asyncNotifyExpirationAndUpcoming(
-      Map<Facility, FacilityExpirationEvent> facilityMap) {}
+      Map<Facility, FacilityExpirationEvent> expiredMap,
+      Map<Facility, FacilityUpcomingExpiration> upcomingMap) {
+    for (Facility facility : expiredMap.keySet()) {
+      FacilityExpirationEvent event = expiredMap.get(facility);
+
+      asyncNotifyFacilityExpiration(event);
+    }
+  }
 
   @PermitAll
   @Asynchronous

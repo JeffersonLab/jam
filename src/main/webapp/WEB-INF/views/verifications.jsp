@@ -17,7 +17,7 @@
     </jsp:attribute>
     <jsp:body>
         <section>
-        <div class="top-right-box"><a id="expired-link" href="#">Expired</a> | <a id="expiring-link"
+        <div class="top-right-box"><a id="expiring-link"
                                                                                  href="#">Expiring</a></div>
         <s:filter-flyout-widget ribbon="true" clearButton="true">
             <form id="filter-form" method="get" action="verifications">
@@ -249,61 +249,66 @@
                 </c:choose>
             </div>
         </div>
-        <div id="expired-dialog" class="dialog" title="Expired Controls">
-            <c:choose>
-                <c:when test="${fn:length(expiredList) > 0}">
-                    <table class="data-table stripped-table">
-                        <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Beam Destination</th>
-                            <th>Expiration Date</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <c:forEach items="${expiredList}" var="verification">
+        <div id="expiring-dialog" class="dialog" title="Verifications Expiring within Seven Days">
+            <c:forEach items="${upcomingExpirationMap.keySet()}" var="facility">
+                <c:set value="${upcomingExpirationMap[facility]}" var="upcoming"/>
+                <h3><c:out value="${facility.name}"/></h3>
+                <h4>RF</h4>
+                <c:choose>
+                    <c:when test="${fn:length(upcoming.getUpcomingRFVerificationExpirationList()) > 0}">
+                        <table class="data-table stripped-table">
+                            <thead>
                             <tr>
-                                <td><c:out value="${verification.creditedControl.name}"/></td>
-                                <td><c:out value="${verification.beamDestination.name}"/></td>
-                                <td><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}"
-                                                    value="${verification.expirationDate}"/></td>
+                                <th>Control</th>
+                                <th>RF Segment</th>
+                                <th>Expiration Date</th>
                             </tr>
-                        </c:forEach>
-                        </tbody>
-                    </table>
-                </c:when>
-                <c:otherwise>
-                    <div>No expired controls</div>
-                </c:otherwise>
-            </c:choose>
-        </div>
-        <div id="expiring-dialog" class="dialog" title="Controls Expiring within Seven Days">
-            <c:choose>
-                <c:when test="${fn:length(expiringList) > 0}">
-                    <table class="data-table stripped-table">
-                        <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Beam Destination</th>
-                            <th>Expiration Date</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <c:forEach items="${expiringList}" var="verification">
+                            </thead>
+                            <tbody>
+                            <c:forEach items="${upcoming.getUpcomingRFVerificationExpirationList()}" var="verification">
+                                <tr>
+                                    <td><c:out value="${verification.creditedControl.name}"/></td>
+                                    <td><c:out value="${verification.getRFSegment().name}"/></td>
+                                    <td><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}"
+                                                        value="${verification.expirationDate}"/></td>
+                                </tr>
+                            </c:forEach>
+                            </tbody>
+                        </table>
+                    </c:when>
+                    <c:otherwise>
+                        <div>No RF verifications expiring within seven days</div>
+                    </c:otherwise>
+                </c:choose>
+                <h4>Beam</h4>
+                <c:choose>
+                    <c:when test="${fn:length(upcoming.getUpcomingBeamVerificationExpirationList()) > 0}">
+                        <table class="data-table stripped-table">
+                            <thead>
                             <tr>
-                                <td><c:out value="${verification.creditedControl.name}"/></td>
-                                <td><c:out value="${verification.beamDestination.name}"/></td>
-                                <td><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}"
-                                                    value="${verification.expirationDate}"/></td>
+                                <th>Control</th>
+                                <th>Beam Destination</th>
+                                <th>Expiration Date</th>
                             </tr>
-                        </c:forEach>
-                        </tbody>
-                    </table>
-                </c:when>
-                <c:otherwise>
-                    <div>No controls expiring within seven days</div>
-                </c:otherwise>
-            </c:choose>
+                            </thead>
+                            <tbody>
+                            <c:forEach items="${upcoming.getUpcomingBeamVerificationExpirationList()}" var="verification">
+                                <tr>
+                                    <td><c:out value="${verification.creditedControl.name}"/></td>
+                                    <td><c:out value="${verification.beamDestination.name}"/></td>
+                                    <td><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}"
+                                                        value="${verification.expirationDate}"/></td>
+                                </tr>
+                            </c:forEach>
+                            </tbody>
+                        </table>
+                    </c:when>
+                    <c:otherwise>
+                        <div>No Beam verifications expiring within seven days</div>
+                    </c:otherwise>
+                </c:choose>
+                <hr/>
+            </c:forEach>
         </div>
     </jsp:body>
 </t:page>
