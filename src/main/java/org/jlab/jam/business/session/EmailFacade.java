@@ -45,8 +45,6 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
   private final Session mailSession;
 
   @EJB WatcherFacade watcherFacade;
-  @EJB RFAuthorizationFacade rfAuthorizationFacade;
-  @EJB BeamAuthorizationFacade beamAuthorizationFacade;
 
   public static final String LINK_FOOTER;
 
@@ -143,7 +141,8 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
     if (auth != null) {
       sendWatcherAuthorizationUpdateEmail(auth.getFacility(), OperationsType.RF, screenshot);
 
-      // notifyAdminsAndFacilityManager(facility, rfEvent, beamEvent);
+      sendAdminAndManagerAuthorizationUpdateEmail(
+          auth.getFacility(), OperationsType.RF, screenshot);
     }
   }
 
@@ -153,7 +152,8 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
     if (auth != null) {
       sendWatcherAuthorizationUpdateEmail(auth.getFacility(), OperationsType.BEAM, screenshot);
 
-      // notifyAdminsAndFacilityManager(facility, rfEvent, beamEvent);
+      sendAdminAndManagerAuthorizationUpdateEmail(
+          auth.getFacility(), OperationsType.BEAM, screenshot);
     }
   }
 
@@ -163,10 +163,12 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
     if (event != null) {
       if (event.getAuthorization() != null) {
         RFAuthorization auth = event.getAuthorization();
-        List<TeamExpirationEvent> teamEventList = getTeamExpirationEventList(event);
         sendWatcherAuthorizationUpdateEmail(auth.getFacility(), OperationsType.RF, screenshot);
 
-        // notifyAdminsAndFacilityManager(facility, rfEvent, beamEvent);
+        sendAdminAndManagerAuthorizationUpdateEmail(
+            auth.getFacility(), OperationsType.RF, screenshot);
+
+        List<TeamExpirationEvent> teamEventList = getTeamExpirationEventList(event);
         // notifyVerificationTeams(facility, rfEvent, beamEvent);
 
       }
@@ -178,12 +180,13 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
     if (event != null) {
       if (event.getAuthorization() != null) {
         BeamAuthorization auth = event.getAuthorization();
-        List<TeamExpirationEvent> teamEventList = getTeamExpirationEventList(event);
         sendWatcherAuthorizationUpdateEmail(auth.getFacility(), OperationsType.BEAM, screenshot);
 
-        // notifyAdminsAndFacilityManager(facility, rfEvent, beamEvent);
-        // notifyVerificationTeams(facility, rfEvent, beamEvent);
+        sendAdminAndManagerAuthorizationUpdateEmail(
+            auth.getFacility(), OperationsType.BEAM, screenshot);
 
+        List<TeamExpirationEvent> teamEventList = getTeamExpirationEventList(event);
+        // notifyVerificationTeams(facility, rfEvent, beamEvent);
       }
     }
   }
@@ -420,12 +423,80 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
   }
 
   @PermitAll
+  public void sendAdminAndManagerAuthorizationUpdateEmail(
+      Facility facility, OperationsType type, File screenshot) {
+    try {
+      boolean testing = false;
+      String testingStr = System.getenv("JAM_EMAIL_TESTING");
+      if (testingStr != null && testingStr.equals("true")) {
+        testing = true;
+      }
+
+      Set<String> addressList = new HashSet<>();
+
+      if (facility.getManagerUsername() != null && !testing) {
+        addressList.add(facility.getManagerUsername() + EMAIL_DOMAIN);
+      }
+
+      UserAuthorizationService auth = UserAuthorizationService.getInstance();
+      List<User> userList = auth.getUsersInRole("jam-admin");
+
+      if (userList != null) {
+        for (User user : userList) {
+          addressList.add(user.getEmail());
+        }
+      }
+
+      if (addressList == null || addressList.isEmpty()) {
+        LOGGER.log(
+            Level.WARNING,
+            "No Admins or Managers configured for facility "
+                + facility.getName()
+                + " and OperationsType "
+                + type.name()
+                + ", aborting");
+        return;
+      }
+
+      String subject = facility.getName() + " " + type.getLabel() + " Authorization Updated";
+
+      String body = "<img src=\"cid:screenshot\"/>" + LINK_FOOTER;
+
+      Multipart multipart = new MimeMultipart("related");
+
+      MimeBodyPart htmlPart = new MimeBodyPart();
+      htmlPart.setContent(body, "text/html");
+      multipart.addBodyPart(htmlPart);
+
+      MimeBodyPart imagePart = new MimeBodyPart();
+      DataSource ds = new FileDataSource(screenshot);
+      imagePart.setDataHandler(new DataHandler(ds));
+      imagePart.addHeader("Content-ID", "<screenshot>");
+      imagePart.addHeader("Content-Type", "image/png");
+      multipart.addBodyPart(imagePart);
+
+      String sender = System.getenv("JAM_EMAIL_SENDER");
+
+      if (sender == null) {
+        sender = "jam@jlab.org";
+      }
+
+      String toCsv = IOUtil.toCsv(addressList.toArray());
+
+      sendEmailMultipart(sender, sender, toCsv, null, subject, multipart);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, e.getMessage(), e);
+    }
+  }
+
+  @PermitAll
   public void sendUpcomingEmails(FacilityUpcomingExpiration upcoming) {
-    System.err.println("Sending upcoming emails to admins and facility managers");
     sendUpcomingToAdminsAndFacilityManager(upcoming);
 
-    // TODO: Send upcoming to Verifiers
+    sendUpcomingToVerificationTeam(upcoming);
   }
+
+  private void sendUpcomingToVerificationTeam(FacilityUpcomingExpiration upcoming) {}
 
   public String getRFVerificationDowngradeBody(List<RFControlVerification> downgradeList) {
     String proxyServer = System.getenv("FRONTEND_SERVER_URL");
@@ -442,44 +513,6 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
     for (RFControlVerification v : downgradeList) {
       builder.append("<div>");
       builder.append(v.getRFSegment().getName());
-      builder.append("</div>");
-    }
-    builder.append("</div>\n<div><b>Modified On:</b> ");
-    builder.append(formatter.format(verification.getVerificationDate()));
-    builder.append("</div>\n<div><b>Modified By:</b> ");
-    builder.append(Functions.formatUsername(verification.getVerifiedBy()));
-    builder.append("</div>\n<div><b>Verification:</b> ");
-    builder.append(
-        verification.getVerificationStatusId() == 1
-            ? "Verified"
-            : (verification.getVerificationStatusId() == 50
-                ? "Provisionally Verified"
-                : "Not Verified"));
-    builder.append("</div>\n<div><b>Comments:</b> ");
-    builder.append(IOUtil.escapeXml(verification.getComments()));
-    builder
-        .append("</div><div>\n\n<b>See:</b> <a href=\"")
-        .append(proxyServer)
-        .append("/jam/\">JLab Authorization Manager</a></div>\n");
-
-    return builder.toString();
-  }
-
-  public String getBeamVerificationDowngradedMessageBody(
-      List<BeamControlVerification> downgradeList) {
-    String proxyServer = System.getenv("FRONTEND_SERVER_URL");
-    StringBuilder builder = new StringBuilder();
-
-    SimpleDateFormat formatter = new SimpleDateFormat(TimeUtil.getFriendlyDateTimePattern());
-
-    BeamControlVerification verification = downgradeList.get(0);
-
-    builder.append("<div><b>Credited Control:</b> ");
-    builder.append(verification.getCreditedControl().getName());
-    builder.append("</div>\n<div><b>Beam Destinations:</b> ");
-    for (BeamControlVerification v : downgradeList) {
-      builder.append("<div>");
-      builder.append(v.getBeamDestination().getName());
       builder.append("</div>");
     }
     builder.append("</div>\n<div><b>Modified On:</b> ");
@@ -588,19 +621,6 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
     return body;
   }
 
-  private String getWatcherBody(
-      Facility facility, RFExpirationEvent rfEvent, BeamExpirationEvent beamEvent) {
-    String proxyServer = System.getenv("FRONTEND_SERVER_URL");
-
-    if (proxyServer == null) {
-      proxyServer = "localhost";
-    }
-
-    String body = "Testing";
-
-    return body;
-  }
-
   private String getVerificationTeamBody(TeamExpirationEvent event) {
     String proxyServer = System.getenv("FRONTEND_SERVER_URL");
 
@@ -611,204 +631,5 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
     String body = "Testing";
 
     return body;
-  }
-
-  @PermitAll
-  public String getRFExpiredMessageBody(
-      List<RFSegmentAuthorization> expiredAuthorizationList,
-      List<RFControlVerification> expiredVerificationList,
-      List<RFSegmentAuthorization> upcomingAuthorizationExpirationList,
-      List<RFControlVerification> upcomingVerificationExpirationList) {
-    String proxyServer = System.getenv("FRONTEND_SERVER_URL");
-    StringBuilder builder = new StringBuilder();
-
-    SimpleDateFormat formatter = new SimpleDateFormat(TimeUtil.getFriendlyDateTimePattern());
-
-    if (expiredAuthorizationList != null && !expiredAuthorizationList.isEmpty()) {
-      builder.append("<h1>--- Expired Director's Authorizations ---</h1>\n");
-      for (RFSegmentAuthorization authorization : expiredAuthorizationList) {
-        builder.append("</div>\n<div><b>RF Segment:</b> ");
-        builder.append(authorization.getSegment().getName());
-        builder.append("</div>\n<div><b>Expired On:</b> ");
-        builder.append(formatter.format(authorization.getExpirationDate()));
-        builder.append("</div>\n<div><b>Comments:</b> ");
-        builder.append(
-            IOUtil.escapeXml(
-                authorization.getComments() == null ? "" : authorization.getComments()));
-        builder.append("<br/><br/>\n");
-      }
-    }
-
-    if (expiredVerificationList != null && !expiredVerificationList.isEmpty()) {
-      builder.append("<h1>--- Expired Credited Control Verifications ---</h1>\n");
-
-      for (RFControlVerification v : expiredVerificationList) {
-
-        builder.append("<div><b>Credited Control:</b> ");
-        builder.append(v.getCreditedControl().getName());
-        builder.append("</div>\n<div><b>RF Segment:</b> ");
-        builder.append(v.getRFSegment().getName());
-        builder.append("</div>\n<div><b>Verified On:</b> ");
-        builder.append(formatter.format(v.getVerificationDate()));
-        builder.append("</div>\n<div><b>Verified By:</b> ");
-        builder.append(Functions.formatUsername(v.getVerifiedBy()));
-        builder.append("</div>\n<div><b>Expired On:</b> ");
-        builder.append(formatter.format(v.getExpirationDate()));
-        builder.append("</div>\n<div><b>Comments:</b> ");
-        builder.append(IOUtil.escapeXml(v.getComments() == null ? "" : v.getComments()));
-        builder.append("<br/><br/>\n");
-      }
-
-      builder.append("<br/><br/>\n");
-    }
-
-    if (upcomingAuthorizationExpirationList != null
-        && !upcomingAuthorizationExpirationList.isEmpty()) {
-      builder.append("<h1>--- Director's Authorizations Expiring Soon ---</h1>\n");
-
-      for (RFSegmentAuthorization authorization : upcomingAuthorizationExpirationList) {
-
-        builder.append("<div><b>RF Segment:</b> ");
-        builder.append(authorization.getSegment().getName());
-        builder.append("</div>\n<div><b>Expires On:</b> ");
-        builder.append(formatter.format(authorization.getExpirationDate()));
-        builder.append("</div>\n<div><b>Comments:</b> ");
-        builder.append(
-            IOUtil.escapeXml(
-                authorization.getComments() == null ? "" : authorization.getComments()));
-        builder.append("<br/><br/>\n");
-      }
-
-      builder.append("<br/><br/>\n");
-    }
-
-    if (upcomingVerificationExpirationList != null
-        && !upcomingVerificationExpirationList.isEmpty()) {
-      builder.append("<h1>--- Credited Control Verifications Expiring Soon ---</h1>\n");
-
-      for (RFControlVerification v : upcomingVerificationExpirationList) {
-
-        builder.append("<div><b>Credited Control:</b> ");
-        builder.append(v.getCreditedControl().getName());
-        builder.append("</div>\n<div><b>RF Segment:</b> ");
-        builder.append(v.getRFSegment().getName());
-        builder.append("</div>\n<div><b>Verified On:</b> ");
-        builder.append(formatter.format(v.getVerificationDate()));
-        builder.append("</div>\n<div><b>Verified By:</b> ");
-        builder.append(Functions.formatUsername(v.getVerifiedBy()));
-        builder.append("</div>\n<div><b>Expiring On:</b> ");
-        builder.append(formatter.format(v.getExpirationDate()));
-        builder.append("</div>\n<div><b>Comments:</b> ");
-        builder.append(IOUtil.escapeXml(v.getComments() == null ? "" : v.getComments()));
-        builder.append("<br/><br/>\n");
-      }
-    }
-
-    builder.append("<br/><br/>\n");
-    builder
-        .append("</div><div>\n\n<b>See:</b> <a href=\"")
-        .append(proxyServer)
-        .append("/jam/\">JLab Authorization Manager</a></div>\n");
-
-    return builder.toString();
-  }
-
-  public String getBeamExpiredMessageBody(
-      String proxyServer,
-      List<BeamDestinationAuthorization> expiredAuthorizationList,
-      List<BeamControlVerification> expiredVerificationList,
-      List<BeamDestinationAuthorization> upcomingAuthorizationExpirationList,
-      List<BeamControlVerification> upcomingVerificationExpirationList) {
-    StringBuilder builder = new StringBuilder();
-
-    SimpleDateFormat formatter = new SimpleDateFormat(TimeUtil.getFriendlyDateTimePattern());
-
-    if (expiredAuthorizationList != null && !expiredAuthorizationList.isEmpty()) {
-      builder.append("<h1>--- Expired Director's Authorizations ---</h1>\n");
-      for (BeamDestinationAuthorization authorization : expiredAuthorizationList) {
-        builder.append("</div>\n<div><b>Beam Destination:</b> ");
-        builder.append(authorization.getDestination().getName());
-        builder.append("</div>\n<div><b>Expired On:</b> ");
-        builder.append(formatter.format(authorization.getExpirationDate()));
-        builder.append("</div>\n<div><b>Comments:</b> ");
-        builder.append(
-            IOUtil.escapeXml(
-                authorization.getComments() == null ? "" : authorization.getComments()));
-        builder.append("<br/><br/>\n");
-      }
-    }
-
-    if (expiredVerificationList != null && !expiredVerificationList.isEmpty()) {
-      builder.append("<h1>--- Expired Credited Control Verifications ---</h1>\n");
-
-      for (BeamControlVerification v : expiredVerificationList) {
-
-        builder.append("<div><b>Credited Control:</b> ");
-        builder.append(v.getCreditedControl().getName());
-        builder.append("</div>\n<div><b>Beam Destination:</b> ");
-        builder.append(v.getBeamDestination().getName());
-        builder.append("</div>\n<div><b>Verified On:</b> ");
-        builder.append(formatter.format(v.getVerificationDate()));
-        builder.append("</div>\n<div><b>Verified By:</b> ");
-        builder.append(Functions.formatUsername(v.getVerifiedBy()));
-        builder.append("</div>\n<div><b>Expired On:</b> ");
-        builder.append(formatter.format(v.getExpirationDate()));
-        builder.append("</div>\n<div><b>Comments:</b> ");
-        builder.append(IOUtil.escapeXml(v.getComments() == null ? "" : v.getComments()));
-        builder.append("<br/><br/>\n");
-      }
-
-      builder.append("<br/><br/>\n");
-    }
-
-    if (upcomingAuthorizationExpirationList != null
-        && !upcomingAuthorizationExpirationList.isEmpty()) {
-      builder.append("<h1>--- Director's Authorizations Expiring Soon ---</h1>\n");
-
-      for (BeamDestinationAuthorization authorization : upcomingAuthorizationExpirationList) {
-
-        builder.append("<div><b>Beam Destination:</b> ");
-        builder.append(authorization.getDestination().getName());
-        builder.append("</div>\n<div><b>Expires On:</b> ");
-        builder.append(formatter.format(authorization.getExpirationDate()));
-        builder.append("</div>\n<div><b>Comments:</b> ");
-        builder.append(
-            IOUtil.escapeXml(
-                authorization.getComments() == null ? "" : authorization.getComments()));
-        builder.append("<br/><br/>\n");
-      }
-
-      builder.append("<br/><br/>\n");
-    }
-
-    if (upcomingVerificationExpirationList != null
-        && !upcomingVerificationExpirationList.isEmpty()) {
-      builder.append("<h1>--- Credited Control Verifications Expiring Soon ---</h1>\n");
-
-      for (BeamControlVerification v : upcomingVerificationExpirationList) {
-
-        builder.append("<div><b>Credited Control:</b> ");
-        builder.append(v.getCreditedControl().getName());
-        builder.append("</div>\n<div><b>Beam Destination:</b> ");
-        builder.append(v.getBeamDestination().getName());
-        builder.append("</div>\n<div><b>Verified On:</b> ");
-        builder.append(formatter.format(v.getVerificationDate()));
-        builder.append("</div>\n<div><b>Verified By:</b> ");
-        builder.append(Functions.formatUsername(v.getVerifiedBy()));
-        builder.append("</div>\n<div><b>Expiring On:</b> ");
-        builder.append(formatter.format(v.getExpirationDate()));
-        builder.append("</div>\n<div><b>Comments:</b> ");
-        builder.append(IOUtil.escapeXml(v.getComments() == null ? "" : v.getComments()));
-        builder.append("<br/><br/>\n");
-      }
-    }
-
-    builder.append("<br/><br/>\n");
-    builder
-        .append("</div><div>\n\n<b>See:</b> <a href=\"")
-        .append(proxyServer)
-        .append("/jam/\">JLab Authorization Manager</a></div>\n");
-
-    return builder.toString();
   }
 }
