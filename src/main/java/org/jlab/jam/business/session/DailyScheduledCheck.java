@@ -1,9 +1,11 @@
 package org.jlab.jam.business.session;
 
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.ScheduleExpression;
 import javax.ejb.Singleton;
@@ -12,6 +14,9 @@ import javax.ejb.Timeout;
 import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
+import org.jlab.jam.persistence.entity.Facility;
+import org.jlab.jam.persistence.view.FacilityExpirationEvent;
+import org.jlab.jam.persistence.view.FacilityUpcomingExpiration;
 
 @Singleton
 @Startup
@@ -21,7 +26,8 @@ public class DailyScheduledCheck {
 
   private Timer timer;
   @Resource private TimerService timerService;
-  @EJB BeamControlVerificationFacade verificationFacade;
+  @EJB ExpirationManager expirationManager;
+  @EJB NotificationManager notificationManager;
 
   @PostConstruct
   private void init() {
@@ -33,7 +39,7 @@ public class DailyScheduledCheck {
     LOGGER.log(Level.FINEST, "Clearing Daily Timer");
     for (Timer t : timerService.getTimers()) {
       LOGGER.log(Level.INFO, "Found timer: " + t);
-      if ("BAMDailyTimer".equals(t.getInfo())) {
+      if ("JAMDailyTimer".equals(t.getInfo())) {
         t.cancel();
       }
     }
@@ -49,7 +55,7 @@ public class DailyScheduledCheck {
 
     TimerConfig config =
         new TimerConfig(
-            "BAMDailyTimer",
+            "JAMDailyTimer",
             false); // redeploy --keepstate=true might be messing up persistent timers?
     timer = timerService.createCalendarTimer(schedExp, config);
   }
@@ -59,6 +65,25 @@ public class DailyScheduledCheck {
     LOGGER.log(
         Level.INFO,
         "handleTimeout: Checking for expired / upcoming expiration of authorization and verification...");
-    verificationFacade.performExpirationCheck(true);
+    doExpirationCheckAll();
+  }
+
+  private void doExpirationCheckAll() {
+    Map<Facility, FacilityExpirationEvent> expiredMap = null;
+    Map<Facility, FacilityUpcomingExpiration> upcomingMap = null;
+    try {
+      expiredMap = expirationManager.expireByFacilityAll();
+
+      upcomingMap = expirationManager.getUpcomingExpirationMap(true);
+
+      notificationManager.asyncNotifyExpirationAndUpcoming(expiredMap, upcomingMap);
+    } catch (InterruptedException e) {
+      LOGGER.log(Level.SEVERE, "handleTimeout: Interrupted", e);
+    }
+  }
+
+  @RolesAllowed("jam-admin")
+  public void doExpirationNow() {
+    doExpirationCheckAll();
   }
 }

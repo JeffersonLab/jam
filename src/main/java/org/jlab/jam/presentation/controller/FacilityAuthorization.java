@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jlab.jam.business.session.*;
 import org.jlab.jam.persistence.entity.*;
+import org.jlab.jam.persistence.view.FacilityExpirationEvent;
 
 /**
  * @author ryans
@@ -28,10 +29,10 @@ public class FacilityAuthorization extends HttpServlet {
   @EJB RFAuthorizationFacade rfAuthorizationFacade;
   @EJB BeamAuthorizationFacade beamAuthorizationFacade;
   @EJB BeamDestinationFacade beamDestinationFacade;
-  @EJB RFControlVerificationFacade rfVerificationFacade;
-  @EJB BeamControlVerificationFacade beamVerificationFacade;
   @EJB FacilityFacade facilityFacade;
   @EJB RFSegmentFacade rfSegmentFacade;
+  @EJB ExpirationManager expirationManager;
+  @EJB NotificationManager notificationManager;
 
   /**
    * Handles the HTTP <code>GET</code> method.
@@ -121,11 +122,17 @@ public class FacilityAuthorization extends HttpServlet {
   private void handleFacility(
       HttpServletRequest request, HttpServletResponse response, Facility facility)
       throws ServletException, IOException {
-    rfVerificationFacade.performExpirationCheck(false);
-    beamVerificationFacade.performExpirationCheck(false);
 
-    RFAuthorization rfAuthorization = rfAuthorizationFacade.findCurrent();
-    BeamAuthorization beamAuthorization = beamAuthorizationFacade.findCurrent();
+    try {
+      FacilityExpirationEvent event = expirationManager.expireByFacility(facility);
+
+      notificationManager.asyncNotifyFacilityExpiration(event);
+    } catch (InterruptedException e) {
+      throw new ServletException("Unable to expire", e);
+    }
+
+    RFAuthorization rfAuthorization = rfAuthorizationFacade.findCurrent(facility);
+    BeamAuthorization beamAuthorization = beamAuthorizationFacade.findCurrent(facility);
 
     List<RFSegment> rfList = rfSegmentFacade.filterList(true, facility, null);
     List<BeamDestination> beamList = beamDestinationFacade.filterList(true, facility, null);

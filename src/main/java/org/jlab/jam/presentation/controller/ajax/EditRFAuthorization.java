@@ -18,12 +18,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.jlab.jam.business.session.FacilityFacade;
-import org.jlab.jam.business.session.LogbookFacade;
-import org.jlab.jam.business.session.RFAuthorizationFacade;
-import org.jlab.jam.business.session.WatcherFacade;
+import org.jlab.jam.business.session.*;
 import org.jlab.jam.persistence.entity.*;
-import org.jlab.jam.persistence.enumeration.OperationsType;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jlab.smoothness.business.util.TimeUtil;
 import org.jlab.smoothness.presentation.util.ParamConverter;
@@ -41,7 +37,7 @@ public class EditRFAuthorization extends HttpServlet {
   @EJB RFAuthorizationFacade rfAuthorizationFacade;
   @EJB FacilityFacade facilityFacade;
   @EJB LogbookFacade logbookFacade;
-  @EJB WatcherFacade watcherFacade;
+  @EJB EmailFacade emailFacade;
 
   /**
    * Handles the HTTP <code>POST</code> method.
@@ -58,7 +54,6 @@ public class EditRFAuthorization extends HttpServlet {
     Long logId = null;
     Facility facility = null;
     String comments = null;
-    Boolean sendNotifications = true;
 
     try {
       BigInteger facilityId = ParamConverter.convertBigInteger(request, "facilityId");
@@ -85,28 +80,6 @@ public class EditRFAuthorization extends HttpServlet {
     } catch (Exception e) {
       errorReason = "Unable to save authorization";
       LOGGER.log(Level.SEVERE, errorReason, e);
-    }
-
-    if (errorReason == null && sendNotifications) {
-      String proxyServer = System.getenv("FRONTEND_SERVER_URL");
-
-      try {
-        watcherFacade.sendNewAuthorizationEmail(facility, OperationsType.RF, proxyServer, comments);
-      } catch (UserFriendlyException e) {
-        errorReason = "Authorization was saved, but we were unable to send to ops an email.  ";
-        LOGGER.log(Level.SEVERE, errorReason, e);
-      }
-
-      try {
-        String logbookServer = System.getenv("LOGBOOK_SERVER_URL");
-
-        logId = logbookFacade.sendELog(facility, OperationsType.RF, proxyServer, logbookServer);
-
-        rfAuthorizationFacade.setLogEntry(logId, logbookServer);
-      } catch (Exception e) {
-        errorReason = "Authorization was saved, but we were unable to send to eLog";
-        LOGGER.log(Level.SEVERE, errorReason, e);
-      }
     }
 
     response.setContentType("application/json");

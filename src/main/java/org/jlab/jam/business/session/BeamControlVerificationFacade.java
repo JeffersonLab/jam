@@ -1,7 +1,6 @@
 package org.jlab.jam.business.session;
 
 import java.math.BigInteger;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -10,24 +9,16 @@ import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.mail.MessagingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import org.jlab.jam.persistence.entity.*;
 import org.jlab.jam.persistence.entity.BeamAuthorization;
-import org.jlab.jlog.Body;
-import org.jlab.jlog.Library;
-import org.jlab.jlog.LogEntry;
-import org.jlab.jlog.LogEntryAdminExtension;
+import org.jlab.jam.persistence.view.BeamExpirationEvent;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
-import org.jlab.smoothness.business.service.EmailService;
 import org.jlab.smoothness.business.service.UserAuthorizationService;
-import org.jlab.smoothness.business.util.IOUtil;
-import org.jlab.smoothness.business.util.TimeUtil;
 import org.jlab.smoothness.persistence.view.User;
-import org.jlab.smoothness.presentation.util.Functions;
 
 /**
  * @author ryans
@@ -45,6 +36,11 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
   @EJB CreditedControlFacade controlFacade;
   @EJB BeamDestinationFacade destinationFacade;
   @EJB BeamAuthorizationFacade beamAuthorizationFacade;
+  @EJB LogbookFacade logbookFacade;
+  @EJB NotificationManager notificationManager;
+
+  private final ReducedBeamAuthorizationBuilder reducedAuthBuilder =
+      new ReducedBeamAuthorizationBuilder();
 
   @Override
   protected EntityManager getEntityManager() {
@@ -110,7 +106,7 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
   }
 
   @PermitAll
-  public List<BeamControlVerification> edit(
+  public void edit(
       BigInteger[] controlVerificationIdArray,
       Integer verificationId,
       Date verificationDate,
@@ -156,7 +152,7 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
       throw new UserFriendlyException("expiration date required when status is Verified");
     }
 
-    List<BeamControlVerification> downgradeList = new ArrayList<>();
+    Map<Facility, List<BeamControlVerification>> downgradeMap = new HashMap<>();
 
     UserAuthorizationService auth = UserAuthorizationService.getInstance();
 
@@ -196,6 +192,12 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
       verification.setExternalUrl(externalUrl);
 
       if (downgrade) {
+        Facility facility = verification.getBeamDestination().getFacility();
+        List<BeamControlVerification> downgradeList = downgradeMap.get(facility);
+        if (downgradeList == null) {
+          downgradeList = new ArrayList<>();
+          downgradeMap.put(facility, downgradeList);
+        }
         downgradeList.add(verification);
       }
 
@@ -212,201 +214,12 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
       em.persist(history);
     }
 
-    if (!downgradeList.isEmpty()) {
-      clearDirectorPermissionForDowngrade(downgradeList);
-    }
-
-    return downgradeList;
-  }
-
-  @PermitAll
-  public String getExpiredMessageBody(
-      String proxyServer,
-      List<BeamDestinationAuthorization> expiredAuthorizationList,
-      List<BeamControlVerification> expiredVerificationList,
-      List<BeamDestinationAuthorization> upcomingAuthorizationExpirationList,
-      List<BeamControlVerification> upcomingVerificationExpirationList) {
-    StringBuilder builder = new StringBuilder();
-
-    SimpleDateFormat formatter = new SimpleDateFormat(TimeUtil.getFriendlyDateTimePattern());
-
-    if (expiredAuthorizationList != null && !expiredAuthorizationList.isEmpty()) {
-      builder.append("<h1>--- Expired Director's Authorizations ---</h1>\n");
-      for (BeamDestinationAuthorization authorization : expiredAuthorizationList) {
-        builder.append("</div>\n<div><b>Beam Destination:</b> ");
-        builder.append(authorization.getDestination().getName());
-        builder.append("</div>\n<div><b>Expired On:</b> ");
-        builder.append(formatter.format(authorization.getExpirationDate()));
-        builder.append("</div>\n<div><b>Comments:</b> ");
-        builder.append(
-            IOUtil.escapeXml(
-                authorization.getComments() == null ? "" : authorization.getComments()));
-        builder.append("<br/><br/>\n");
+    if (!downgradeMap.isEmpty()) {
+      for (Facility facility : downgradeMap.keySet()) {
+        List<BeamControlVerification> downgradeList = downgradeMap.get(facility);
+        clearDirectorPermissionForDowngrade(facility, downgradeList);
       }
     }
-
-    if (expiredVerificationList != null && !expiredVerificationList.isEmpty()) {
-      builder.append("<h1>--- Expired Credited Control Verifications ---</h1>\n");
-
-      for (BeamControlVerification v : expiredVerificationList) {
-
-        builder.append("<div><b>Credited Control:</b> ");
-        builder.append(v.getCreditedControl().getName());
-        builder.append("</div>\n<div><b>Beam Destination:</b> ");
-        builder.append(v.getBeamDestination().getName());
-        builder.append("</div>\n<div><b>Verified On:</b> ");
-        builder.append(formatter.format(v.getVerificationDate()));
-        builder.append("</div>\n<div><b>Verified By:</b> ");
-        builder.append(Functions.formatUsername(v.getVerifiedBy()));
-        builder.append("</div>\n<div><b>Expired On:</b> ");
-        builder.append(formatter.format(v.getExpirationDate()));
-        builder.append("</div>\n<div><b>Comments:</b> ");
-        builder.append(IOUtil.escapeXml(v.getComments() == null ? "" : v.getComments()));
-        builder.append("<br/><br/>\n");
-      }
-
-      builder.append("<br/><br/>\n");
-    }
-
-    if (upcomingAuthorizationExpirationList != null
-        && !upcomingAuthorizationExpirationList.isEmpty()) {
-      builder.append("<h1>--- Director's Authorizations Expiring Soon ---</h1>\n");
-
-      for (BeamDestinationAuthorization authorization : upcomingAuthorizationExpirationList) {
-
-        builder.append("<div><b>Beam Destination:</b> ");
-        builder.append(authorization.getDestination().getName());
-        builder.append("</div>\n<div><b>Expires On:</b> ");
-        builder.append(formatter.format(authorization.getExpirationDate()));
-        builder.append("</div>\n<div><b>Comments:</b> ");
-        builder.append(
-            IOUtil.escapeXml(
-                authorization.getComments() == null ? "" : authorization.getComments()));
-        builder.append("<br/><br/>\n");
-      }
-
-      builder.append("<br/><br/>\n");
-    }
-
-    if (upcomingVerificationExpirationList != null
-        && !upcomingVerificationExpirationList.isEmpty()) {
-      builder.append("<h1>--- Credited Control Verifications Expiring Soon ---</h1>\n");
-
-      for (BeamControlVerification v : upcomingVerificationExpirationList) {
-
-        builder.append("<div><b>Credited Control:</b> ");
-        builder.append(v.getCreditedControl().getName());
-        builder.append("</div>\n<div><b>Beam Destination:</b> ");
-        builder.append(v.getBeamDestination().getName());
-        builder.append("</div>\n<div><b>Verified On:</b> ");
-        builder.append(formatter.format(v.getVerificationDate()));
-        builder.append("</div>\n<div><b>Verified By:</b> ");
-        builder.append(Functions.formatUsername(v.getVerifiedBy()));
-        builder.append("</div>\n<div><b>Expiring On:</b> ");
-        builder.append(formatter.format(v.getExpirationDate()));
-        builder.append("</div>\n<div><b>Comments:</b> ");
-        builder.append(IOUtil.escapeXml(v.getComments() == null ? "" : v.getComments()));
-        builder.append("<br/><br/>\n");
-      }
-    }
-
-    builder.append("<br/><br/>\n");
-    builder
-        .append("</div><div>\n\n<b>See:</b> <a href=\"")
-        .append(proxyServer)
-        .append("/jam/\">JLab Authorization Manager</a></div>\n");
-
-    return builder.toString();
-  }
-
-  @PermitAll
-  public String getVerificationDowngradedMessageBody(
-      String proxyServer, List<BeamControlVerification> downgradeList) {
-    StringBuilder builder = new StringBuilder();
-
-    SimpleDateFormat formatter = new SimpleDateFormat(TimeUtil.getFriendlyDateTimePattern());
-
-    BeamControlVerification verification = downgradeList.get(0);
-
-    builder.append("<div><b>Credited Control:</b> ");
-    builder.append(verification.getCreditedControl().getName());
-    builder.append("</div>\n<div><b>Beam Destinations:</b> ");
-    for (BeamControlVerification v : downgradeList) {
-      builder.append("<div>");
-      builder.append(v.getBeamDestination().getName());
-      builder.append("</div>");
-    }
-    builder.append("</div>\n<div><b>Modified On:</b> ");
-    builder.append(formatter.format(verification.getVerificationDate()));
-    builder.append("</div>\n<div><b>Modified By:</b> ");
-    builder.append(Functions.formatUsername(verification.getVerifiedBy()));
-    builder.append("</div>\n<div><b>Verification:</b> ");
-    builder.append(
-        verification.getVerificationStatusId() == 1
-            ? "Verified"
-            : (verification.getVerificationStatusId() == 50
-                ? "Provisionally Verified"
-                : "Not Verified"));
-    builder.append("</div>\n<div><b>Comments:</b> ");
-    builder.append(IOUtil.escapeXml(verification.getComments()));
-    builder
-        .append("</div><div>\n\n<b>See:</b> <a href=\"")
-        .append(proxyServer)
-        .append("/jam/\">JLab Authorization Manager</a></div>\n");
-
-    return builder.toString();
-  }
-
-  @PermitAll
-  public long sendVerificationDowngradedELog(String body, String logbookServer)
-      throws UserFriendlyException {
-    String username = checkAuthenticated();
-
-    String subject = System.getenv("JAM_DOWNGRADED_SUBJECT");
-
-    String logbooks = System.getenv("JAM_BOOKS_CSV");
-
-    if (logbooks == null || logbooks.isEmpty()) {
-      logbooks = "TLOG";
-      LOGGER.log(
-          Level.WARNING, "Environment variable 'JAM_BOOKS_CSV' not found, using default TLOG");
-    }
-
-    Properties config = Library.getConfiguration();
-
-    config.setProperty("SUBMIT_URL", logbookServer + "/incoming");
-    config.setProperty("FETCH_URL", logbookServer + "/entry");
-
-    LogEntry entry = new LogEntry(subject, logbooks);
-
-    entry.setBody(body, Body.ContentType.HTML);
-    entry.setTags("Readme");
-
-    LogEntryAdminExtension extension = new LogEntryAdminExtension(entry);
-    extension.setAuthor(username);
-
-    long logId;
-
-    try {
-      logId = entry.submitNow();
-    } catch (Exception e) {
-      throw new UserFriendlyException("Unable to send elog", e);
-    }
-
-    return logId;
-  }
-
-  @PermitAll
-  public void sendVerificationDowngradedEmail(String body) throws UserFriendlyException {
-    String toCsv = System.getenv("JAM_DOWNGRADED_EMAIL_CSV");
-
-    String subject = System.getenv("JAM_DOWNGRADED_SUBJECT");
-
-    EmailService emailService = new EmailService();
-
-    String sender = System.getenv("JAM_EMAIL_SENDER");
-
-    emailService.sendEmail(sender, sender, toCsv, null, subject, body, true);
   }
 
   @PermitAll
@@ -425,36 +238,29 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
   }
 
   @PermitAll
-  public List<BeamControlVerification> checkForExpired() {
+  public List<BeamControlVerification> checkForVerifiedButExpired(Facility facility) {
     TypedQuery<BeamControlVerification> q =
         em.createQuery(
-            "select a from BeamControlVerification a join fetch a.creditedControl where a.expirationDate < sysdate and a.beamDestination.active = true order by a.creditedControl.weight asc",
+            "select a from BeamControlVerification a join fetch a.creditedControl where a.expirationDate < sysdate and a.beamDestination.active = true and a.verificationStatusId in (1, 50) and a.beamDestination.facility = :facility order by a.creditedControl.weight asc",
             BeamControlVerification.class);
+
+    q.setParameter("facility", facility);
 
     return q.getResultList();
   }
 
   @PermitAll
-  public List<BeamControlVerification> checkForVerifiedButExpired() {
-    TypedQuery<BeamControlVerification> q =
-        em.createQuery(
-            "select a from BeamControlVerification a join fetch a.creditedControl where a.expirationDate < sysdate and a.beamDestination.active = true and a.verificationStatusId in (1, 50) order by a.creditedControl.weight asc",
-            BeamControlVerification.class);
+  public void revokeExpiredVerifications(
+      Facility facility, List<BeamControlVerification> expiredList) {
 
-    return q.getResultList();
-  }
+    // Prob should be doing select for update or whatever to ensure concurrent calls to this method
+    // don't result in duplicate history records.
 
-  @PermitAll
-  public void revokeExpiredAuthorizations(List<BeamDestinationAuthorization> authorizationList) {
-    LOGGER.log(Level.FINEST, "I think I've got something authorization-wise to downgrade");
-    this.clearDirectorPermissionByDestinationAuthorization(authorizationList);
-  }
-
-  @PermitAll
-  public void revokeExpiredVerifications(List<BeamControlVerification> expiredList) {
     Query q =
         em.createQuery(
-            "update BeamControlVerification a set a.verificationStatusId = 100, a.comments = 'Expired', a.verifiedBy = null, a.verificationDate = :vDate, a.modifiedDate = :vDate, a.modifiedBy = 'authadm' where a.beamControlVerificationId in :list");
+            "update BeamControlVerification a set a.verificationStatusId = 100, a.comments = 'Expired', a.verifiedBy = null, a.verificationDate = :vDate, a.modifiedDate = :vDate, a.modifiedBy = '"
+                + AUTO_REVOKE_USERNAME
+                + "' where a.beamControlVerificationId in :list");
 
     List<BigInteger> expiredIdList = new ArrayList<>();
 
@@ -474,120 +280,46 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
     insertExpiredHistory(expiredList, modifiedDate);
 
     em.flush();
-
-    clearDirectorPermissionForExpired(expiredList);
   }
 
   @PermitAll
-  public void clearDirectorPermissionForExpired(List<BeamControlVerification> verificationList) {
-    clearDirectorPermissionByCreditedControl(verificationList, true);
-  }
+  public void clearDirectorPermissionForDowngrade(
+      Facility facility, List<BeamControlVerification> verificationList) {
 
-  @PermitAll
-  public void clearDirectorPermissionForDowngrade(List<BeamControlVerification> verificationList) {
-    clearDirectorPermissionByCreditedControl(verificationList, false);
-  }
+    BeamAuthorization beamAuthorization = beamAuthorizationFacade.findCurrent(facility);
 
-  private void clearDirectorPermissionByCreditedControl(
-      List<BeamControlVerification> verificationList, Boolean expiration) {
-    String reason = "expiration";
-
-    if (!expiration) {
-      reason = "downgrade";
+    if (beamAuthorization == null) {
+      LOGGER.log(Level.INFO, "No current BeamAuthorization, so nothing to downgrade");
+      return;
     }
 
-    BeamAuthorization beamAuthorization = beamAuthorizationFacade.findCurrent();
+    BeamAuthorization authReduction =
+        reducedAuthBuilder.build(beamAuthorization, facility, null, verificationList, false);
 
-    BeamAuthorization authClone = beamAuthorization.createAdminClone();
-    // authClone.setDestinationAuthorizationList(new ArrayList<>());
-    List<BeamDestinationAuthorization> newList = new ArrayList<>();
+    if (authReduction != null) {
+      saveReducedAuth(authReduction);
 
-    boolean atLeastOne = false;
-
-    // The destination authorization list will be null if already cleared previously: remember there
-    // are two ways in which a clear can happen and they can race to see who clears permissions
-    // first:
-    // (1) director's expiration vs (2) credited control expiration
-    if (beamAuthorization.getDestinationAuthorizationList() != null) {
-      for (BeamDestinationAuthorization auth :
-          beamAuthorization.getDestinationAuthorizationList()) {
-        BeamDestinationAuthorization destClone = auth.createAdminClone(authClone);
-        // authClone.getDestinationAuthorizationList().add(destClone);
-        newList.add(destClone);
-
-        if ("None".equals(auth.getBeamMode())) {
-          continue; // Already None so no need to revoke; move on to next
-        }
-        BigInteger destinationId = auth.getDestinationAuthorizationPK().getBeamDestinationId();
-        for (BeamControlVerification verification : verificationList) {
-          if (destinationId.equals(verification.getBeamDestination().getBeamDestinationId())) {
-            destClone.setBeamMode("None");
-            destClone.setCwLimit(null);
-            destClone.setComments(
-                "Permission automatically revoked due to credited control verification " + reason);
-            LOGGER.log(Level.FINEST, "Found something to downgrade");
-            atLeastOne = true;
-            break; // Found a match so revoke and then break out of loop
-          }
-        }
-      }
+      notificationManager.asyncNotifyBeamVerificationDowngrade(
+          facility, verificationList, authReduction);
     }
+  }
 
-    if (atLeastOne) {
-      em.persist(authClone);
-      for (BeamDestinationAuthorization da : newList) {
+  public void saveReducedAuth(BeamAuthorization auth) {
+
+    // Stash list in temporary variable as auth must be persisted BEFORE list is set
+    List<BeamDestinationAuthorization> operationsList = auth.getDestinationAuthorizationList();
+
+    auth.setDestinationAuthorizationList(null);
+
+    em.persist(auth);
+
+    if (operationsList != null) {
+      for (BeamDestinationAuthorization operationAuth : operationsList) {
         DestinationAuthorizationPK pk = new DestinationAuthorizationPK();
-        pk.setBeamDestinationId(da.getDestination().getBeamDestinationId());
-        pk.setAuthorizationId(authClone.getBeamAuthorizationId());
-        da.setDestinationAuthorizationPK(pk);
-        em.persist(da);
-      }
-    }
-  }
-
-  private void clearDirectorPermissionByDestinationAuthorization(
-      List<BeamDestinationAuthorization> destinationList) {
-    BeamAuthorization beamAuthorization = beamAuthorizationFacade.findCurrent();
-
-    BeamAuthorization authClone = beamAuthorization.createAdminClone();
-    // authClone.setDestinationAuthorizationList(new ArrayList<>());
-    List<BeamDestinationAuthorization> newList = new ArrayList<>();
-
-    boolean atLeastOne = false;
-
-    // The destination authorization list will be null if already cleared previously: remember there
-    // are two ways in which a clear can happen and they can race to see who clears permissions
-    // first:
-    // (1) director's expiration vs (2) credited control expiration
-    if (beamAuthorization.getDestinationAuthorizationList() != null) {
-      for (BeamDestinationAuthorization auth :
-          beamAuthorization.getDestinationAuthorizationList()) {
-        BeamDestinationAuthorization destClone = auth.createAdminClone(authClone);
-        // authClone.getDestinationAuthorizationList().add(destClone);
-        newList.add(destClone);
-
-        if ("None".equals(auth.getBeamMode())) {
-          continue; // Already None so no need to revoke; move on to next
-        }
-        if (destinationList.contains(auth)) {
-          destClone.setBeamMode("None");
-          destClone.setCwLimit(null);
-          destClone.setComments(
-              "Permission automatically revoked due to director's authorization expiration");
-          LOGGER.log(Level.FINEST, "Found something to downgrade");
-          atLeastOne = true;
-        }
-      }
-    }
-
-    if (atLeastOne) {
-      em.persist(authClone);
-      for (BeamDestinationAuthorization da : newList) {
-        DestinationAuthorizationPK pk = new DestinationAuthorizationPK();
-        pk.setBeamDestinationId(da.getDestination().getBeamDestinationId());
-        pk.setAuthorizationId(authClone.getBeamAuthorizationId());
-        da.setDestinationAuthorizationPK(pk);
-        em.persist(da);
+        pk.setBeamDestinationId(operationAuth.getDestination().getBeamDestinationId());
+        operationAuth.setDestinationAuthorizationPK(pk);
+        pk.setAuthorizationId(auth.getBeamAuthorizationId());
+        em.persist(operationAuth);
       }
     }
   }
@@ -597,7 +329,7 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
       List<BeamControlVerification> verificationList, Date modifiedDate) {
     for (BeamControlVerification v : verificationList) {
       BeamControlVerificationHistory history = new BeamControlVerificationHistory();
-      history.setModifiedBy("jam-admin");
+      history.setModifiedBy(AUTO_REVOKE_USERNAME);
       history.setModifiedDate(modifiedDate);
       history.setVerificationStatusId(100);
       history.setVerificationDate(modifiedDate);
@@ -610,30 +342,78 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
   }
 
   @PermitAll
-  public List<BeamControlVerification> checkForUpcomingVerificationExpirations() {
+  public List<BeamControlVerification> checkForUpcomingVerificationExpirations(
+      Facility facility, boolean boundary) {
+    String dateRangeConstraint =
+        "(sysdate) <= a.expirationDate and (sysdate + 7) > a.expirationDate";
+
+    if (boundary) {
+      dateRangeConstraint =
+          "(sysdate + 6) <= a.expirationDate and (sysdate + 7) > a.expirationDate";
+    }
+
     TypedQuery<BeamControlVerification> q =
         em.createQuery(
-            "select a from BeamControlVerification a join fetch a.creditedControl where a.expirationDate >= sysdate and (a.expirationDate - 7) <= sysdate and a.verificationStatusId in (1, 50) and a.beamDestination.active = true order by a.creditedControl.weight asc",
+            "select a from BeamControlVerification a join fetch a.creditedControl where "
+                + dateRangeConstraint
+                + " and a.verificationStatusId in (1, 50) and a.beamDestination.active = true and a.beamDestination.facility = :facility order by a.creditedControl.weight asc",
             BeamControlVerification.class);
 
-    return q.getResultList();
+    q.setParameter("facility", facility);
+
+    // sysdate >= (a.expirationDate - 7) and sysdate < (a.expirationDate - 6)
+    // (sysdate + 6) <= a.expirationDate and (sysdate + 7) > a.expirationDate
+
+    List<BeamControlVerification> list = q.getResultList();
+
+    /*for (BeamControlVerification verification : list) {
+      System.err.println(
+          "Found upcoming Beam operations verification expiration: "
+              + verification.getBeamDestination().getName());
+    }*/
+
+    return list;
+
+    // return q.getResultList();
   }
 
-  private List<BeamDestinationAuthorization> checkForUpcomingAuthorizationExpirations(
-      BeamAuthorization auth) {
+  @PermitAll
+  public List<BeamDestinationAuthorization> checkForUpcomingAuthorizationExpirations(
+      BeamAuthorization auth, boolean boundary) {
     List<BeamDestinationAuthorization> upcomingExpirations = new ArrayList<>();
 
     Date now = new Date();
     Calendar cal = Calendar.getInstance();
-    cal.add(Calendar.DATE, 3);
-    Date threeDaysFromNow = cal.getTime();
+    cal.add(Calendar.DATE, 7);
+    Date sevenDaysFromNow = cal.getTime();
+    cal.add(Calendar.DATE, -1);
+    Date sixDaysFromNow = cal.getTime();
 
     if (auth.getDestinationAuthorizationList() != null) {
       for (BeamDestinationAuthorization dest : auth.getDestinationAuthorizationList()) {
-        if (!"None".equals(dest.getBeamMode())
-            && dest.getExpirationDate().after(now)
-            && dest.getExpirationDate().before(threeDaysFromNow)) {
-          upcomingExpirations.add(dest);
+        if (!"None".equals(dest.getBeamMode()) && dest.getExpirationDate() != null) {
+          boolean include = false;
+          if (boundary) {
+            if (sixDaysFromNow.before(dest.getExpirationDate())
+                || sixDaysFromNow.equals(dest.getExpirationDate())
+                    && sevenDaysFromNow.after(dest.getExpirationDate())) {
+              include = true;
+            }
+          } else {
+            if (now.before(dest.getExpirationDate())
+                || now.equals(dest.getExpirationDate())
+                    && sevenDaysFromNow.after(dest.getExpirationDate())) {
+              include = true;
+            }
+          }
+
+          if (include) {
+            upcomingExpirations.add(dest);
+
+            /*System.err.println(
+            "Found upcoming Beam operations authorization expiration: "
+                + dest.getDestination().getName());*/
+          }
         }
       }
     }
@@ -642,235 +422,37 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
   }
 
   @PermitAll
-  public void notifyAdmins(
-      List<BeamDestinationAuthorization> expiredAuthorizationList,
-      List<BeamControlVerification> expiredVerificationList,
-      List<BeamDestinationAuthorization> upcomingAuthorizationExpirationList,
-      List<BeamControlVerification> upcomingVerificationExpirationList,
-      String proxyServer)
-      throws MessagingException, UserFriendlyException {
-    String toCsv = System.getenv("JAM_UPCOMING_EXPIRATION_EMAIL_CSV");
-
-    String subject = System.getenv("JAM_UPCOMING_EXPIRATION_SUBJECT");
-
-    String body =
-        getExpiredMessageBody(
-            proxyServer,
-            expiredAuthorizationList,
-            expiredVerificationList,
-            upcomingAuthorizationExpirationList,
-            upcomingVerificationExpirationList);
-
-    EmailService emailService = new EmailService();
-
-    String sender = System.getenv("JAM_EMAIL_SENDER");
-
-    emailService.sendEmail(sender, sender, toCsv, null, subject, body, true);
-  }
-
-  @PermitAll
-  public void notifyOps(
-      List<BeamDestinationAuthorization> expiredAuthorizationList,
-      List<BeamControlVerification> expiredVerificationList,
-      String proxyServer)
-      throws MessagingException, UserFriendlyException {
-    String toCsv = System.getenv("JAM_EXPIRED_EMAIL_CSV");
-
-    String subject = System.getenv("JAM_EXPIRED_SUBJECT");
-
-    String body =
-        getExpiredMessageBody(
-            proxyServer, expiredAuthorizationList, expiredVerificationList, null, null);
-
-    EmailService emailService = new EmailService();
-
-    String sender = System.getenv("JAM_EMAIL_SENDER");
-
-    emailService.sendEmail(sender, sender, toCsv, null, subject, body, true);
-    LOGGER.log(Level.FINEST, "notifyOps, toCsv: {0], body: {1}", new Object[] {toCsv, body});
-  }
-
-  @PermitAll
-  public void notifyGroups(
-      List<BeamControlVerification> expiredList,
-      List<BeamControlVerification> upcomingExpirationsList,
-      String proxyServer)
-      throws MessagingException, UserFriendlyException {
-    Map<VerificationTeam, List<BeamControlVerification>> expiredGroupMap = new HashMap<>();
-    Map<VerificationTeam, List<BeamControlVerification>> upcomingExpirationGroupMap =
-        new HashMap<>();
-
-    String subject = System.getenv("JAM_UPCOMING_EXPIRATION_SUBJECT");
-
-    LOGGER.log(Level.FINEST, "Expirations:");
-    if (expiredList != null) {
-      for (BeamControlVerification c : expiredList) {
-        LOGGER.log(Level.FINEST, c.toString());
-        VerificationTeam verificationTeam = c.getCreditedControl().getVerificationTeam();
-        List<BeamControlVerification> groupList = expiredGroupMap.get(verificationTeam);
-        if (groupList == null) {
-          groupList = new ArrayList<>();
-          expiredGroupMap.put(verificationTeam, groupList);
-        }
-        groupList.add(c);
-      }
-    } else {
-      LOGGER.log(Level.FINEST, "No expirations");
-    }
-
-    LOGGER.log(Level.FINEST, "Upcoming Expirations:");
-    if (upcomingExpirationsList != null) {
-      for (BeamControlVerification c : upcomingExpirationsList) {
-        LOGGER.log(Level.FINEST, c.toString());
-        VerificationTeam verificationTeam = c.getCreditedControl().getVerificationTeam();
-        List<BeamControlVerification> groupList = upcomingExpirationGroupMap.get(verificationTeam);
-        if (groupList == null) {
-          groupList = new ArrayList<>();
-          upcomingExpirationGroupMap.put(verificationTeam, groupList);
-        }
-        groupList.add(c);
-      }
-    } else {
-      LOGGER.log(Level.FINEST, "No upcoming expirations");
-    }
-
-    Set<VerificationTeam> allGroups = new HashSet<>(expiredGroupMap.keySet());
-    allGroups.addAll(upcomingExpirationGroupMap.keySet());
-
-    for (VerificationTeam w : allGroups) {
-
-      List<String> toAddresses = new ArrayList<>();
-
-      UserAuthorizationService auth = UserAuthorizationService.getInstance();
-
-      String role = w.getDirectoryRoleName();
-
-      List<User> leaders = auth.getUsersInRole(role);
-
-      if (leaders != null) {
-        for (User s : leaders) {
-          if (s.getUsername() != null) {
-            toAddresses.add((s.getUsername() + "@jlab.org"));
-          }
-        }
-      }
-
-      List<BeamControlVerification> groupExpiredList = expiredGroupMap.get(w);
-      List<BeamControlVerification> groupUpcomingExpirationsList =
-          upcomingExpirationGroupMap.get(w);
-
-      String sender = System.getenv("JAM_EMAIL_SENDER");
-
-      String body =
-          getExpiredMessageBody(
-              proxyServer, null, groupExpiredList, null, groupUpcomingExpirationsList);
-
-      if (!toAddresses.isEmpty()) {
-        EmailService emailService = new EmailService();
-
-        String toCsv = toAddresses.get(0);
-
-        for (int i = 1; i < toAddresses.size(); i++) {
-          toCsv = toCsv + "," + toAddresses.get(i);
-        }
-
-        // Ensure in test env database records JAM_OWNER.WORKGROUP.LEADER_ROLE_NAME point to bogus
-        // group else real people will be notified.
-        emailService.sendEmail(sender, sender, toCsv, null, subject, body, true);
-      }
-    }
-  }
-
-  @PermitAll
-  public void notifyUsersOfExpirationsAndUpcomingExpirations(
-      List<BeamDestinationAuthorization> expiredAuthorizationList,
-      List<BeamControlVerification> expiredVerificationList,
-      List<BeamDestinationAuthorization> upcomingAuthorizationExpirationList,
-      List<BeamControlVerification> upcomingVerificationExpirationList) {
-
-    boolean expiredAuth = (expiredAuthorizationList != null && !expiredAuthorizationList.isEmpty());
-    boolean expiredVer = (expiredVerificationList != null && !expiredVerificationList.isEmpty());
-    boolean upcomingAuth =
-        (upcomingAuthorizationExpirationList != null
-            && !upcomingAuthorizationExpirationList.isEmpty());
-    boolean upcomingVer =
-        (upcomingVerificationExpirationList != null
-            && !upcomingVerificationExpirationList.isEmpty());
-
-    if (expiredAuth || expiredVer || upcomingAuth || upcomingVer) {
-
-      LOGGER.log(Level.FINEST, "Notifying users");
-      String proxyServer = System.getenv("FRONTEND_SERVER_URL");
-
-      try {
-        // Admins
-        notifyAdmins(
-            expiredAuthorizationList,
-            expiredVerificationList,
-            upcomingAuthorizationExpirationList,
-            upcomingVerificationExpirationList,
-            proxyServer);
-
-        // Ops
-        if (expiredAuth || expiredVer) {
-          notifyOps(expiredAuthorizationList, expiredVerificationList, proxyServer);
-        }
-
-        // Groups
-        if (expiredVer || upcomingVer) {
-          notifyGroups(expiredVerificationList, upcomingVerificationExpirationList, proxyServer);
-        }
-
-      } catch (MessagingException | NullPointerException | UserFriendlyException e) {
-        LOGGER.log(Level.WARNING, "Unable to send email", e);
-      }
-    } else {
-      LOGGER.log(Level.FINEST, "Nothing to notify users about");
-    }
-  }
-
-  @PermitAll
-  public void performExpirationCheck(boolean checkForUpcoming) {
-    LOGGER.log(Level.FINEST, "Expiration Check: Director's authorizations...");
-    BeamAuthorization auth = beamAuthorizationFacade.findCurrent();
+  public BeamExpirationEvent performExpirationCheck(Facility facility) {
+    BeamAuthorization auth = beamAuthorizationFacade.findCurrent(facility);
     List<BeamDestinationAuthorization> expiredAuthorizationList = null;
 
+    List<BeamControlVerification> expiredVerificationList = checkForVerifiedButExpired(facility);
+    if (expiredVerificationList != null && !expiredVerificationList.isEmpty()) {
+      revokeExpiredVerifications(facility, expiredVerificationList);
+    }
+
+    BeamAuthorization authReduction = null;
     if (auth != null) {
       expiredAuthorizationList = checkForAuthorizedButExpired(auth);
-      if (expiredAuthorizationList != null && !expiredAuthorizationList.isEmpty()) {
-        LOGGER.log(Level.FINEST, "Expiration Check: Revoking expired authorization");
-        revokeExpiredAuthorizations(expiredAuthorizationList);
+
+      authReduction =
+          reducedAuthBuilder.build(
+              auth, facility, expiredAuthorizationList, expiredVerificationList, true);
+
+      if (authReduction != null) {
+        saveReducedAuth(authReduction);
       }
     }
 
-    LOGGER.log(Level.FINEST, "Expiration Check: Checking for expired verifications...");
-    List<BeamControlVerification> expiredVerificationList =
-        checkForVerifiedButExpired(); // only items which are "verified" or "provisionally
-    // verified", but need to be "not verified" due to expiration
-    if (expiredVerificationList != null && !expiredVerificationList.isEmpty()) {
-      LOGGER.log(Level.FINEST, "Expiration Check: Revoking expired verifications...");
-      revokeExpiredVerifications(expiredVerificationList);
+    BeamExpirationEvent event = null;
+
+    if (expiredAuthorizationList != null || expiredVerificationList != null) {
+      event =
+          new BeamExpirationEvent(
+              authReduction, facility, expiredAuthorizationList, expiredVerificationList);
     }
 
-    List<BeamControlVerification> upcomingVerificationExpirationList = null;
-    List<BeamDestinationAuthorization> upcomingAuthorizationExpirationList = null;
-    if (checkForUpcoming) {
-      LOGGER.log(
-          Level.FINEST, "Expiration Check: Checking for upcoming verification expirations...");
-      upcomingVerificationExpirationList = checkForUpcomingVerificationExpirations();
-
-      LOGGER.log(
-          Level.FINEST, "Expiration Check: Checking for upcoming authorization expirations...");
-      if (auth != null) {
-        upcomingAuthorizationExpirationList = checkForUpcomingAuthorizationExpirations(auth);
-      }
-    }
-
-    notifyUsersOfExpirationsAndUpcomingExpirations(
-        expiredAuthorizationList,
-        expiredVerificationList,
-        upcomingAuthorizationExpirationList,
-        upcomingVerificationExpirationList);
+    return event;
   }
 
   @PermitAll

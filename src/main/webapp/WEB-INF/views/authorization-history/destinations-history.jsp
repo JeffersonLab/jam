@@ -8,6 +8,14 @@
 <t:facility-authorizations-page title="Destination Authorization History">
     <jsp:attribute name="stylesheets">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/css/authorizations.css"/>
+        <style>
+            .print #right-column {
+                border: 1px solid black;
+                background-color: white;
+                box-shadow: 8px 8px 8px #979797;
+                border-radius: 0 0 8px 8px;
+            }
+        </style>
     </jsp:attribute>
     <jsp:attribute name="scripts">
     </jsp:attribute>        
@@ -21,13 +29,16 @@
                     <a href="${pageContext.request.contextPath}/authorizations${facility.path}/beam-history">Beam History</a>
                 </li>
                 <li>
-                    <span><fmt:formatDate value="${beamAuthorization.modifiedDate}" pattern="${s:getFriendlyDateTimePattern()}"/></span>
+                    <span>#<c:out value="${param.beamAuthorizationId}"/> (Created: <fmt:formatDate value="${beamAuthorization.modifiedDate}" pattern="${s:getFriendlyDateTimePattern()}"/>)</span>
                 </li>
             </ul>
         </div>        
         <section>
             <c:choose>
                 <c:when test="${beamAuthorization ne null}">
+                    <c:if test="${beamAuthorization.modifiedBy ne beamAuthorization.authorizedBy}">
+                        <div class="message-box">This is an automated authorization reduction</div>
+                    </c:if>
                     <t:beam-operations-panel beamList="${beamList}" isHistory="${true}"/>
                 </c:when>
                 <c:otherwise>

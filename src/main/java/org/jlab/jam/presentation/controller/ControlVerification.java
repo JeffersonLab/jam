@@ -80,9 +80,6 @@ public class ControlVerification extends HttpServlet {
             ccFacade.isAdminOrGroupLeader(
                 username, creditedControl.getVerificationTeam().getVerificationTeamId());
       }
-    } else {
-      expiredList = verificationFacade.checkForExpired();
-      expiringList = verificationFacade.checkForUpcomingVerificationExpirations();
     }
 
     List<CreditedControl> ccList = ccFacade.findAll(new OrderDirective("weight"));
@@ -96,8 +93,6 @@ public class ControlVerification extends HttpServlet {
     request.setAttribute("creditedControl", creditedControl);
     request.setAttribute("ccList", ccList);
     request.setAttribute("facilityList", facilityList);
-    request.setAttribute("expiredList", expiredList);
-    request.setAttribute("expiringList", expiringList);
 
     request
         .getRequestDispatcher("/WEB-INF/views/control-verification.jsp")
