@@ -9,7 +9,6 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 import javax.annotation.security.PermitAll;
-import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.mail.*;
@@ -127,8 +126,7 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
 
   // Verifier downgrade event (RF)
   @PermitAll
-  @Asynchronous
-  public void sendAsyncRFVerifierDowngradeEmail(RFAuthorization auth, File screenshot) {
+  public void sendRFVerifierDowngradeEmail(RFAuthorization auth, File screenshot) {
     if (auth != null) {
       sendWatcherAuthorizationUpdateEmail(auth.getFacility(), OperationsType.RF, screenshot);
 
@@ -138,8 +136,7 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
 
   // Verifier downgrade event (Beam)
   @PermitAll
-  @Asynchronous
-  public void sendAsyncBeamVerifierDowngradeEmail(BeamAuthorization auth, File screenshot) {
+  public void sendBeamVerifierDowngradeEmail(BeamAuthorization auth, File screenshot) {
     if (auth != null) {
       sendWatcherAuthorizationUpdateEmail(auth.getFacility(), OperationsType.BEAM, screenshot);
 
