@@ -48,6 +48,18 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
   @EJB RFAuthorizationFacade rfAuthorizationFacade;
   @EJB BeamAuthorizationFacade beamAuthorizationFacade;
 
+  public static final String LINK_FOOTER;
+
+  static {
+    String proxyServer = System.getenv("FRONTEND_SERVER_URL");
+
+    LINK_FOOTER =
+        "<br/><b><span style=\"color: red;\">Always check the Authorization web application for the latest status:</span></b> <a href=\""
+            + proxyServer
+            + "/jam\">"
+            + "JLab Authorization Manager</a>";
+  }
+
   @Override
   protected EntityManager getEntityManager() {
     return em;
@@ -289,8 +301,7 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
     return new ArrayList<>(teamEventMap.values());
   }
 
-  private void notifyAdminsAndFacilityManager(
-      Facility facility, RFExpirationEvent rfEvent, BeamExpirationEvent beamEvent) {
+  private void sendUpcomingToAdminsAndFacilityManager(FacilityUpcomingExpiration upcoming) {
     try {
       EmailService emailService = new EmailService();
 
@@ -306,14 +317,19 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
         testing = true;
       }
 
-      String subject = facility.getName() + " Expiration Notice";
+      String subject = upcoming.getFacility().getName() + " Upcoming Expiration Notice";
 
-      String body = getAdminAndFacilityManagerBody(facility, rfEvent, beamEvent);
+      String body = getUpcomingAdminAndFacilityManagerBody(upcoming);
 
-      List<String> addressList = new ArrayList<>();
+      if (body == null) {
+        System.err.println("Skipping admin/manager emails because nothing to report");
+        return;
+      }
 
-      if (facility.getManagerUsername() != null && !testing) {
-        addressList.add(facility.getManagerUsername() + EMAIL_DOMAIN);
+      Set<String> addressList = new HashSet<>();
+
+      if (upcoming.getFacility().getManagerUsername() != null && !testing) {
+        addressList.add(upcoming.getFacility().getManagerUsername() + EMAIL_DOMAIN);
       }
 
       UserAuthorizationService auth = UserAuthorizationService.getInstance();
@@ -360,13 +376,7 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
 
       String subject = facility.getName() + " " + type.getLabel() + " Authorization Updated";
 
-      String proxyServer = System.getenv("FRONTEND_SERVER_URL");
-
-      String body =
-          "<img src=\"cid:screenshot\"><br/><b><span style=\"color: red;\">Always check the Authorization web application for the latest status:</span></b> <a href=\""
-              + proxyServer
-              + "/jam\">"
-              + "JLab Authorization Manager</a>";
+      String body = "<img src=\"cid:screenshot\"/>" + LINK_FOOTER;
 
       Multipart multipart = new MimeMultipart("related");
 
@@ -410,7 +420,12 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
   }
 
   @PermitAll
-  public void sendUpcomingEmails(FacilityUpcomingExpiration upcoming) {}
+  public void sendUpcomingEmails(FacilityUpcomingExpiration upcoming) {
+    System.err.println("Sending upcoming emails to admins and facility managers");
+    sendUpcomingToAdminsAndFacilityManager(upcoming);
+
+    // TODO: Send upcoming to Verifiers
+  }
 
   public String getRFVerificationDowngradeBody(List<RFControlVerification> downgradeList) {
     String proxyServer = System.getenv("FRONTEND_SERVER_URL");
@@ -488,15 +503,87 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
     return builder.toString();
   }
 
-  private String getAdminAndFacilityManagerBody(
-      Facility facility, RFExpirationEvent rfEvent, BeamExpirationEvent beamEvent) {
-    String proxyServer = System.getenv("FRONTEND_SERVER_URL");
+  private String getUpcomingAdminAndFacilityManagerBody(FacilityUpcomingExpiration upcoming) {
 
-    if (proxyServer == null) {
-      proxyServer = "localhost";
+    SimpleDateFormat formatter = new SimpleDateFormat(TimeUtil.getFriendlyDateTimePattern());
+
+    boolean somethingToReport = false;
+    String body = "";
+
+    if (upcoming.getUpcomingRFAuthorizationExpirationList() != null
+        && !upcoming.getUpcomingRFAuthorizationExpirationList().isEmpty()) {
+      somethingToReport = true;
+      body = body + "<h2>RF Operations Authorizations</h2>\n";
+      body = body + "<ul>\n";
+      for (RFSegmentAuthorization auth : upcoming.getUpcomingRFAuthorizationExpirationList()) {
+        body =
+            body
+                + "<li>"
+                + IOUtil.escapeXml(auth.getSegment().getName())
+                + " - "
+                + formatter.format(auth.getExpirationDate())
+                + "</li>\n";
+      }
+      body = body + "</ul>\n";
     }
 
-    String body = "Testing";
+    if (upcoming.getUpcomingRFVerificationExpirationList() != null
+        && !upcoming.getUpcomingRFVerificationExpirationList().isEmpty()) {
+      somethingToReport = true;
+      body = body + "<h2>RF Control Verifications</h2>\n";
+      body = body + "<ul>\n";
+      for (RFControlVerification v : upcoming.getUpcomingRFVerificationExpirationList()) {
+        body =
+            body
+                + "<li>"
+                + IOUtil.escapeXml(v.getRFSegment().getName())
+                + " - "
+                + formatter.format(v.getExpirationDate())
+                + "</li>\n";
+      }
+      body = body + "</ul>\n";
+    }
+
+    if (upcoming.getUpcomingBeamAuthorizationExpirationList() != null
+        && !upcoming.getUpcomingBeamAuthorizationExpirationList().isEmpty()) {
+      somethingToReport = true;
+      body = body + "<h2>Beam Operations Authorizations</h2>\n";
+      body = body + "<ul>\n";
+      for (BeamDestinationAuthorization auth :
+          upcoming.getUpcomingBeamAuthorizationExpirationList()) {
+        body =
+            body
+                + "<li>"
+                + IOUtil.escapeXml(auth.getDestination().getName())
+                + " - "
+                + formatter.format(auth.getExpirationDate())
+                + "</li>\n";
+      }
+      body = body + "</ul>\n";
+    }
+
+    if (upcoming.getUpcomingBeamVerificationExpirationList() != null
+        && !upcoming.getUpcomingBeamVerificationExpirationList().isEmpty()) {
+      somethingToReport = true;
+      body = body + "<h2>Beam Control Verifications</h2>\n";
+      body = body + "<ul>\n";
+      for (BeamControlVerification v : upcoming.getUpcomingBeamVerificationExpirationList()) {
+        body =
+            body
+                + "<li>"
+                + IOUtil.escapeXml(v.getBeamDestination().getName())
+                + " - "
+                + formatter.format(v.getExpirationDate())
+                + "</li>\n";
+      }
+      body = body + "</ul>\n";
+    }
+
+    if (somethingToReport) {
+      body = body + LINK_FOOTER;
+    } else {
+      body = null;
+    }
 
     return body;
   }
