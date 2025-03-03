@@ -90,8 +90,7 @@ public class RFAuthorizationFacade extends AbstractFacade<RFAuthorization> {
   public List<RFSegment> findHistory(int offset, int maxPerPage) {
     Query q =
         em.createNativeQuery(
-            "select * from rf_authorization order by modified_date desc",
-            RFAuthorization.class);
+            "select * from rf_authorization order by modified_date desc", RFAuthorization.class);
 
     return q.setFirstResult(offset).setMaxResults(maxPerPage).getResultList();
   }
