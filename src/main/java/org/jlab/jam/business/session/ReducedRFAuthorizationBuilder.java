@@ -78,6 +78,16 @@ public class ReducedRFAuthorizationBuilder {
     return atLeastOne;
   }
 
+  private boolean containsName(
+      List<RFSegmentAuthorization> segmentList, RFSegmentAuthorization segment) {
+    for (RFSegmentAuthorization operationAuth : segmentList) {
+      if (operationAuth.getSegment().getName().equals(segment.getSegment().getName())) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   private boolean populateReducedPermissionDueToAuthorizationExpiration(
       RFAuthorization clone, Facility facility, List<RFSegmentAuthorization> segmentList) {
 
@@ -90,7 +100,8 @@ public class ReducedRFAuthorizationBuilder {
         if (!operationAuth.isHighPowerRf()) {
           continue; // Already No High Power RF auth so no need to revoke; move on to next
         }
-        if (segmentList.contains(operationAuth)) {
+
+        if (containsName(segmentList, operationAuth)) {
           operationAuth.setHighPowerRf(false);
           operationAuth.setExpirationDate(null);
           operationAuth.setComments(

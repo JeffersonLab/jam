@@ -446,7 +446,7 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
 
     BeamExpirationEvent event = null;
 
-    if (expiredAuthorizationList != null || expiredVerificationList != null) {
+    if (authReduction != null) {
       event =
           new BeamExpirationEvent(
               authReduction, facility, expiredAuthorizationList, expiredVerificationList);

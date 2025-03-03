@@ -85,6 +85,17 @@ public class ReducedBeamAuthorizationBuilder {
     return atLeastOne;
   }
 
+  private boolean containsName(
+      List<BeamDestinationAuthorization> destinationList,
+      BeamDestinationAuthorization destination) {
+    for (BeamDestinationAuthorization operationAuth : destinationList) {
+      if (operationAuth.getDestination().getName().equals(destination.getDestination().getName())) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   private boolean populateReducedPermissionDueToAuthorizationExpiration(
       BeamAuthorization clone,
       Facility facility,
@@ -99,7 +110,7 @@ public class ReducedBeamAuthorizationBuilder {
         if ("None".equals(operationAuth.getBeamMode())) {
           continue; // Already None so no need to revoke; move on to next
         }
-        if (destinationList.contains(operationAuth)) {
+        if (containsName(destinationList, operationAuth)) {
           operationAuth.setBeamMode("None");
           operationAuth.setCwLimit(null);
           operationAuth.setExpirationDate(null);

@@ -437,9 +437,14 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
       }
     }
 
+    // System.err.println("expiredAuthorizationList.size() = " + (expiredAuthorizationList == null ?
+    // 0 : expiredAuthorizationList.size()));
+    // System.err.println("expiredVerificationList.size() = " + (expiredVerificationList == null ? 0
+    // : expiredVerificationList.size()));
+
     RFExpirationEvent event = null;
 
-    if (expiredAuthorizationList != null || expiredVerificationList != null) {
+    if (authReduction != null) {
       event =
           new RFExpirationEvent(
               authReduction, facility, expiredAuthorizationList, expiredVerificationList);
