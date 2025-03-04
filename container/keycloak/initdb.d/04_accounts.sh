@@ -10,6 +10,8 @@ create_role
 KEYCLOAK_ROLE_NAME=${KEYCLOAK_RESOURCE}-admin
 create_role
 
+KEYCLOAK_ROLE_NAME=testlead
+create_role
 KEYCLOAK_ROLE_NAME=group1Leaders
 create_role
 KEYCLOAK_ROLE_NAME=group2Leaders
@@ -27,6 +29,8 @@ KEYCLOAK_EMAIL=jadams@example.com
 KEYCLOAK_PASSWORD=password
 KEYCLOAK_ROLE_NAME=${KEYCLOAK_RESOURCE}-user
 create_user
+assign_role
+KEYCLOAK_ROLE_NAME=testlead
 assign_role
 
 KEYCLOAK_USERNAME=jsmith
