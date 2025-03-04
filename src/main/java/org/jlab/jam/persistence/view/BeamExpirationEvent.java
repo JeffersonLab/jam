@@ -9,6 +9,10 @@ public class BeamExpirationEvent {
   private List<BeamControlVerification> expiredVerificationList;
   private BeamAuthorization authorization;
 
+  public BeamExpirationEvent(Facility facility) {
+    this(null, facility, null, null);
+  }
+
   public BeamExpirationEvent(
       BeamAuthorization authorization,
       Facility facility,

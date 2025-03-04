@@ -9,6 +9,10 @@ public class RFExpirationEvent {
   private List<RFControlVerification> expiredVerificationList;
   private RFAuthorization authorization;
 
+  public RFExpirationEvent(Facility facility) {
+    this(null, facility, null, null);
+  }
+
   public RFExpirationEvent(
       RFAuthorization authorization,
       Facility facility,

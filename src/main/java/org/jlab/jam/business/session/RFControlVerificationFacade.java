@@ -448,6 +448,8 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
       event =
           new RFExpirationEvent(
               authReduction, facility, expiredAuthorizationList, expiredVerificationList);
+    } else {
+      event = new RFExpirationEvent(facility);
     }
 
     return event;

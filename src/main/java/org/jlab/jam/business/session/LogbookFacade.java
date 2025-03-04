@@ -78,7 +78,8 @@ public class LogbookFacade extends AbstractFacade<VerificationTeam> {
     // String body = getELogHTMLBody(authorization);
     String body = getAlternateELogHTMLBody(proxyServer);
 
-    String subject = "JAM: " + facility.getName() + " " + type.getLabel() + " Authorization Updated";
+    String subject =
+        "JAM: " + facility.getName() + " " + type.getLabel() + " Authorization Updated";
 
     String logbooks = facility.getLogbooksCsv();
 
