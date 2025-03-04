@@ -273,9 +273,12 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
       }
 
       boolean testing = false;
+      String adminRole = "jam-admin";
       String testingStr = System.getenv("JAM_EMAIL_TESTING");
       if (testingStr != null && testingStr.equals("true")) {
         testing = true;
+        LOGGER.log(Level.INFO, "JAM_EMAIL_TESTING=true (using testlead role)");
+        adminRole = "testlead";
       }
 
       String subject = "JAM: " + upcoming.getFacility().getName() + " Upcoming Expiration Notice";
@@ -293,7 +296,7 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
       }
 
       UserAuthorizationService auth = UserAuthorizationService.getInstance();
-      List<User> userList = auth.getUsersInRole("jam-admin");
+      List<User> userList = auth.getUsersInRole(adminRole);
 
       if (userList != null) {
         for (User user : userList) {
