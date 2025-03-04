@@ -334,7 +334,7 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
         return;
       }
 
-      String subject = facility.getName() + " " + type.getLabel() + " Authorization Updated";
+      String subject = "JAM: " + facility.getName() + " " + type.getLabel() + " Authorization Updated";
 
       String body = "<img src=\"cid:screenshot\"/>" + LINK_FOOTER;
 
