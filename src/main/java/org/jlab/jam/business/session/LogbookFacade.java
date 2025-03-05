@@ -48,13 +48,18 @@ public class LogbookFacade extends AbstractFacade<VerificationTeam> {
 
   @PermitAll
   public void sendAuthorizationLogEntry(
-      Facility facility, OperationsType type, BigInteger authorizationId, File screenshot) {
+      String username,
+      Facility facility,
+      OperationsType type,
+      BigInteger authorizationId,
+      File screenshot) {
     try {
       String proxyServer = System.getenv("FRONTEND_SERVER_URL");
       String logbookServer = System.getenv("LOGBOOK_SERVER_URL");
 
       long logId =
-          sendAuthorizationLogEntry(facility, type, proxyServer, logbookServer, screenshot);
+          sendAuthorizationLogEntry(
+              username, facility, type, proxyServer, logbookServer, screenshot);
 
       if (OperationsType.RF.equals(type)) {
         rfAuthorizationFacade.setLogEntry(authorizationId, logId, logbookServer);
@@ -67,6 +72,7 @@ public class LogbookFacade extends AbstractFacade<VerificationTeam> {
   }
 
   private long sendAuthorizationLogEntry(
+      String username,
       Facility facility,
       OperationsType type,
       String proxyServer,
@@ -74,7 +80,11 @@ public class LogbookFacade extends AbstractFacade<VerificationTeam> {
       File screenshot)
       throws UserFriendlyException {
 
-    final String username = "alarms";
+    final String DEFAULT_USERNAME = "jamgr";
+
+    if (username == null) {
+      username = DEFAULT_USERNAME;
+    }
 
     // String body = getELogHTMLBody(authorization);
     String body = getAlternateELogHTMLBody(proxyServer);
