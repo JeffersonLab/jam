@@ -74,7 +74,7 @@ public class LogbookFacade extends AbstractFacade<VerificationTeam> {
       File screenshot)
       throws UserFriendlyException {
 
-    String username = "jam";
+    final String username = "alarms";
 
     // String body = getELogHTMLBody(authorization);
     String body = getAlternateELogHTMLBody(proxyServer);
