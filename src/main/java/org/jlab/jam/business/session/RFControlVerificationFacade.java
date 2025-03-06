@@ -387,8 +387,8 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
         if (dest.isHighPowerRf() && dest.getExpirationDate() != null) {
           boolean include = false;
           if (boundary) {
-            if (sixDaysFromNow.before(dest.getExpirationDate())
-                || sixDaysFromNow.equals(dest.getExpirationDate())
+            if ((sixDaysFromNow.before(dest.getExpirationDate())
+                || sixDaysFromNow.equals(dest.getExpirationDate()))
                     && sevenDaysFromNow.after(dest.getExpirationDate())) {
               include = true;
             }
