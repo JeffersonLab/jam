@@ -388,8 +388,8 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
           boolean include = false;
           if (boundary) {
             if ((sixDaysFromNow.before(dest.getExpirationDate())
-                || sixDaysFromNow.equals(dest.getExpirationDate()))
-                    && sevenDaysFromNow.after(dest.getExpirationDate())) {
+                    || sixDaysFromNow.equals(dest.getExpirationDate()))
+                && sevenDaysFromNow.after(dest.getExpirationDate())) {
               include = true;
             }
           } else {

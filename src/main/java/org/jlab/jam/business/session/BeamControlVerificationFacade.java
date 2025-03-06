@@ -395,8 +395,8 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
           boolean include = false;
           if (boundary) {
             if ((sixDaysFromNow.before(dest.getExpirationDate())
-                || sixDaysFromNow.equals(dest.getExpirationDate()))
-                    && sevenDaysFromNow.after(dest.getExpirationDate())) {
+                    || sixDaysFromNow.equals(dest.getExpirationDate()))
+                && sevenDaysFromNow.after(dest.getExpirationDate())) {
               include = true;
             }
           } else {
