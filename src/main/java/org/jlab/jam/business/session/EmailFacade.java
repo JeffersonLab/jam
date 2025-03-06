@@ -340,7 +340,10 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
       String subject =
           "JAM: " + facility.getName() + " " + type.getLabel() + " Authorization Updated";
 
-      String body = "<img src=\"cid:screenshot\"/>" + LINK_FOOTER;
+      String body =
+          "<img src=\"cid:screenshot\"/>"
+              + LINK_FOOTER
+              + "<br/><i>You are receiving this email because you are configured as a JAM Watcher</i>";
 
       Multipart multipart = new MimeMultipart("related");
 
@@ -426,7 +429,10 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
       String subject =
           "JAM: " + facility.getName() + " " + type.getLabel() + " Authorization Updated";
 
-      String body = "<img src=\"cid:screenshot\"/>" + LINK_FOOTER;
+      String body =
+          "<img src=\"cid:screenshot\"/>"
+              + LINK_FOOTER
+              + "<br/><i>You are receiving this email because you are configured as a JAM Admin/Manager</i>";
 
       Multipart multipart = new MimeMultipart("related");
 
@@ -488,7 +494,10 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
               + type.getLabel()
               + " Authorization Reduced due to Expiration";
 
-      String body = "<img src=\"cid:screenshot\"/>" + LINK_FOOTER;
+      String body =
+          "<img src=\"cid:screenshot\"/>"
+              + LINK_FOOTER
+              + "<br/><i>You are receiving this email because you are configured as a JAM Control Verifier</i>";
 
       Multipart multipart = new MimeMultipart("related");
 
@@ -656,7 +665,10 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
     }
 
     if (somethingToReport) {
-      body = body + LINK_FOOTER;
+      body =
+          body
+              + LINK_FOOTER
+              + "<br/><i>You are receiving this email because you are configured as a JAM Admin/Manager</i>";
     } else {
       body = null;
     }
@@ -706,7 +718,10 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
     }
 
     if (somethingToReport) {
-      body = body + LINK_FOOTER;
+      body =
+          body
+              + LINK_FOOTER
+              + "<br/><i>You are receiving this email because you are configured as a JAM Control Verifier</i>";
     } else {
       body = null;
     }
