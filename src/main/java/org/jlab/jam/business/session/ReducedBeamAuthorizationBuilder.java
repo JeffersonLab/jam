@@ -47,10 +47,6 @@ public class ReducedBeamAuthorizationBuilder {
 
         BigInteger destinationId = operationAuth.getDestination().getBeamDestinationId();
 
-        System.err.println(
-            "This one has non-None mode so let's continue!  We're looking for destinationId="
-                + destinationId);
-
         for (BeamControlVerification verification : verificationList) {
           if (destinationId.equals(verification.getBeamDestination().getBeamDestinationId())) {
             operationAuth.setBeamMode("None");
