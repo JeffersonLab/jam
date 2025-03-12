@@ -469,8 +469,16 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
       TeamExpirationEvent teamExpirationEvent) {
     try {
       Set<String> addressList = new HashSet<>();
+      List<User> userList;
 
-      List<User> userList = teamExpirationEvent.getTeam().getUserList();
+      String testingStr = System.getenv("JAM_EMAIL_TESTING");
+      if (testingStr != null && testingStr.equals("true")) {
+        LOGGER.log(Level.INFO, "JAM_EMAIL_TESTING=true (using testlead role)");
+        UserAuthorizationService auth = UserAuthorizationService.getInstance();
+        userList = auth.getUsersInRole("testlead");
+      } else {
+        userList = teamExpirationEvent.getTeam().getUserList();
+      }
 
       if (userList != null) {
         for (User user : userList) {
@@ -559,13 +567,19 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
 
       UserAuthorizationService auth = UserAuthorizationService.getInstance();
 
-      VerificationTeam team = upcoming.getTeam();
-      String role = team.getDirectoryRoleName();
+      List<User> userList;
 
-      List<User> members = auth.getUsersInRole(role);
+      String testingStr = System.getenv("JAM_EMAIL_TESTING");
+      if (testingStr != null && testingStr.equals("true")) {
+        LOGGER.log(Level.INFO, "JAM_EMAIL_TESTING=true (using testlead role)");
+        userList = auth.getUsersInRole("testlead");
+      } else {
+        VerificationTeam team = upcoming.getTeam();
+        userList = auth.getUsersInRole(team.getDirectoryRoleName());
+      }
 
-      if (members != null) {
-        for (User s : members) {
+      if (userList != null) {
+        for (User s : userList) {
           if (s.getUsername() != null) {
             addressList.add((s.getUsername() + EMAIL_DOMAIN));
           }
