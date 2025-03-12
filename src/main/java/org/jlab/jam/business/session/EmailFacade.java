@@ -471,13 +471,14 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
       Set<String> addressList = new HashSet<>();
       List<User> userList;
 
+      UserAuthorizationService auth = UserAuthorizationService.getInstance();
+
       String testingStr = System.getenv("JAM_EMAIL_TESTING");
       if (testingStr != null && testingStr.equals("true")) {
         LOGGER.log(Level.INFO, "JAM_EMAIL_TESTING=true (using testlead role)");
-        UserAuthorizationService auth = UserAuthorizationService.getInstance();
         userList = auth.getUsersInRole("testlead");
       } else {
-        userList = teamExpirationEvent.getTeam().getUserList();
+        userList = auth.getUsersInRole(teamExpirationEvent.getTeam().getDirectoryRoleName());
       }
 
       if (userList != null) {
