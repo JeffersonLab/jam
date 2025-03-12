@@ -560,7 +560,7 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
       String body = getUpcomingTeamBody(upcoming);
 
       if (body == null) {
-        System.err.println("Skipping team email because nothing to report");
+        LOGGER.log(Level.FINE, "Skipping team email because nothing to report");
         return;
       }
 

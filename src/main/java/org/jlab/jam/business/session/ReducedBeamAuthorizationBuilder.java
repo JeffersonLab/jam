@@ -52,9 +52,6 @@ public class ReducedBeamAuthorizationBuilder {
                 + destinationId);
 
         for (BeamControlVerification verification : verificationList) {
-          System.err.println(
-              "Does it match known expiration? "
-                  + verification.getBeamDestination().getBeamDestinationId());
           if (destinationId.equals(verification.getBeamDestination().getBeamDestinationId())) {
             operationAuth.setBeamMode("None");
             operationAuth.setCwLimit(null);
