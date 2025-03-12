@@ -186,7 +186,7 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
         List<TeamExpirationEvent> teamEventList = getTeamExpirationEventList(event);
         for (TeamExpirationEvent teamEvent : teamEventList) {
           sendVerificationTeamsUpdateDueExpirationEmail(
-              auth.getFacility(), OperationsType.RF, screenshot, teamEvent);
+              auth.getFacility(), OperationsType.BEAM, screenshot, teamEvent);
         }
       }
     }
