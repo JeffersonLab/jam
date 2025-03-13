@@ -133,23 +133,43 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
 
   // Verifier downgrade event (RF)
   @PermitAll
-  public void sendRFVerifierDowngradeEmail(RFAuthorization auth, File screenshot) {
+  public void sendRFVerifierDowngradeEmail(
+      RFAuthorization auth, List<RFControlVerification> verificationList, File screenshot) {
     if (auth != null) {
       sendWatcherAuthorizationUpdateEmail(auth.getFacility(), OperationsType.RF, screenshot);
 
       sendAdminAndManagerAuthorizationUpdateEmail(
           auth.getFacility(), OperationsType.RF, screenshot);
+
+      // This is always a single Team unless admin does downgrade as only they can downgrade
+      // multiple teams at once
+      // and only if done by Destination or Segment (as by Control is always 1 team).
+      List<VerificationTeam> teamList = getRFDowngradeTeamList(verificationList);
+      for (VerificationTeam team : teamList) {
+        sendVerificationTeamsAuthorizationUpdateEmail(
+            auth.getFacility(), OperationsType.RF, team, false, screenshot);
+      }
     }
   }
 
   // Verifier downgrade event (Beam)
   @PermitAll
-  public void sendBeamVerifierDowngradeEmail(BeamAuthorization auth, File screenshot) {
+  public void sendBeamVerifierDowngradeEmail(
+      BeamAuthorization auth, List<BeamControlVerification> verificationList, File screenshot) {
     if (auth != null) {
       sendWatcherAuthorizationUpdateEmail(auth.getFacility(), OperationsType.BEAM, screenshot);
 
       sendAdminAndManagerAuthorizationUpdateEmail(
           auth.getFacility(), OperationsType.BEAM, screenshot);
+
+      // This is always a single Team unless admin does downgrade as only they can downgrade
+      // multiple teams at once
+      // and only if done by Destination or Segment (as by Control is always 1 team).
+      List<VerificationTeam> teamList = getBeamDowngradeTeamList(verificationList);
+      for (VerificationTeam team : teamList) {
+        sendVerificationTeamsAuthorizationUpdateEmail(
+            auth.getFacility(), OperationsType.BEAM, team, false, screenshot);
+      }
     }
   }
 
@@ -166,8 +186,8 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
 
         List<TeamExpirationEvent> teamEventList = getTeamExpirationEventList(event);
         for (TeamExpirationEvent teamEvent : teamEventList) {
-          sendVerificationTeamsUpdateDueExpirationEmail(
-              auth.getFacility(), OperationsType.RF, screenshot, teamEvent);
+          sendVerificationTeamsAuthorizationUpdateEmail(
+              auth.getFacility(), OperationsType.RF, teamEvent.getTeam(), true, screenshot);
         }
       }
     }
@@ -185,11 +205,39 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
 
         List<TeamExpirationEvent> teamEventList = getTeamExpirationEventList(event);
         for (TeamExpirationEvent teamEvent : teamEventList) {
-          sendVerificationTeamsUpdateDueExpirationEmail(
-              auth.getFacility(), OperationsType.BEAM, screenshot, teamEvent);
+          sendVerificationTeamsAuthorizationUpdateEmail(
+              auth.getFacility(), OperationsType.BEAM, teamEvent.getTeam(), true, screenshot);
         }
       }
     }
+  }
+
+  private List<VerificationTeam> getRFDowngradeTeamList(
+      List<RFControlVerification> verificationList) {
+    Set<VerificationTeam> teamSet = new HashSet<>();
+
+    if (verificationList != null) {
+      for (RFControlVerification c : verificationList) {
+        VerificationTeam team = c.getCreditedControl().getVerificationTeam();
+        teamSet.add(team);
+      }
+    }
+
+    return new ArrayList<>(teamSet);
+  }
+
+  private List<VerificationTeam> getBeamDowngradeTeamList(
+      List<BeamControlVerification> verificationList) {
+    Set<VerificationTeam> teamSet = new HashSet<>();
+
+    if (verificationList != null) {
+      for (BeamControlVerification c : verificationList) {
+        VerificationTeam team = c.getCreditedControl().getVerificationTeam();
+        teamSet.add(team);
+      }
+    }
+
+    return new ArrayList<>(teamSet);
   }
 
   private List<TeamExpirationEvent> getTeamExpirationEventList(RFExpirationEvent rfEvent) {
@@ -462,11 +510,12 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
   }
 
   @PermitAll
-  public void sendVerificationTeamsUpdateDueExpirationEmail(
+  public void sendVerificationTeamsAuthorizationUpdateEmail(
       Facility facility,
       OperationsType type,
-      File screenshot,
-      TeamExpirationEvent teamExpirationEvent) {
+      VerificationTeam team,
+      boolean expiration,
+      File screenshot) {
     try {
       Set<String> addressList = new HashSet<>();
       List<User> userList;
@@ -478,7 +527,7 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
         LOGGER.log(Level.INFO, "JAM_EMAIL_TESTING=true (using testlead role)");
         userList = auth.getUsersInRole("testlead");
       } else {
-        userList = auth.getUsersInRole(teamExpirationEvent.getTeam().getDirectoryRoleName());
+        userList = auth.getUsersInRole(team.getDirectoryRoleName());
       }
 
       if (userList != null) {
@@ -490,18 +539,17 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
       if (addressList == null || addressList.isEmpty()) {
         LOGGER.log(
             Level.WARNING,
-            "No members configured for verification team "
-                + teamExpirationEvent.getTeam().getName()
-                + ", aborting");
+            "No members configured for verification team " + team.getName() + ", aborting");
         return;
       }
 
-      String subject =
-          "JAM: "
-              + facility.getName()
-              + " "
-              + type.getLabel()
-              + " Authorization Reduced due to Expiration";
+      String reason = " Authorization Reduced due to Control Verification Downgrade";
+
+      if (expiration) {
+        reason = " Authorization Reduced due to Control Verification Expiration";
+      }
+
+      String subject = "JAM: " + facility.getName() + " " + type.getLabel() + reason;
 
       String body =
           "<img src=\"cid:screenshot\"/>"
