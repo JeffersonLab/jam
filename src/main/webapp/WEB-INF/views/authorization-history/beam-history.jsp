@@ -15,9 +15,9 @@
     </jsp:attribute>
     <jsp:attribute name="scripts">
         <script type="text/javascript">
-            $(document).on("click", "#next-button, #previous-button", function () {
-                $("#offset-input").val($(this).attr("data-offset"));
-                $("#filter-form").submit();
+            $(document).on("click", ".next-button, .previous-button", function () {
+                $(".offset-input").val($(this).attr("data-offset"));
+                $(".filter-form").submit();
             });
         </script>
     </jsp:attribute>        
@@ -65,10 +65,10 @@
                             </tbody>
                         </table>
                         <form class="filter-form" action="" method="get">
-                            <input type="hidden" id="offset-input" name="offset" value="0"/>
+                            <input type="hidden" class="offset-input" name="offset" value="0"/>
                         </form>
-                        <button id="previous-button" type="button" data-offset="${paginator.previousOffset}" value="Previous"${paginator.previous ? '' : ' disabled="disabled"'}>Previous</button>                        
-                        <button id="next-button" type="button" data-offset="${paginator.nextOffset}" value="Next"${paginator.next ? '' : ' disabled="disabled"'}>Next</button> 
+                        <button class="previous-button" type="button" data-offset="${paginator.previousOffset}" value="Previous"${paginator.previous ? '' : ' disabled="disabled"'}>Previous</button>
+                        <button class="next-button" type="button" data-offset="${paginator.nextOffset}" value="Next"${paginator.next ? '' : ' disabled="disabled"'}>Next</button>
                     </c:otherwise>
                 </c:choose>
             </div>

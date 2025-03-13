@@ -58,7 +58,7 @@
                             </ul>
                         </fieldset>
                     </div>
-                    <input type="hidden" id="offset-input" name="offset" value="0"/>
+                    <input type="hidden" class="offset-input" name="offset" value="0"/>
                     <input class="filter-form-submit-button" type="submit" value="Apply"/>
                 </form>
             </s:filter-flyout-widget>
