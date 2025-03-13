@@ -67,13 +67,6 @@ Uses the [Smoothness Environment Variables](https://github.com/JeffersonLab/smoo
 
 | Name                              | Description                                                                                                                                 |
 |-----------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
-| JAM_UPCOMING_EXPIRATION_EMAIL_CSV | Comma separated list of email recipients of both expired and upcoming expirations (admin heads-up email)                                    |
-| JAM_EXPIRED_EMAIL_CSV             | Comma separated list of email recipients of expired permissions and control verifications (ops semi-synchronous notification of expiration) |
-| JAM_DOWNGRADED_EMAIL_CSV          | Comma separated list of email recipients for control verifications downgrades                                                               |
-| JAM_PERMISSIONS_SUBJECT           | Subject of log entries and emails indicating permissions updated                                                                            |
-| JAM_UPCOMING_EXPIRATION_SUBJECT   | Subject of emails indicating both expired and upcoming expiration of permissions and control verifications (admin heads-up email)           |
-| JAM_EXPIRED_SUBJECT               | Subject of emails indicating expiration of permissions and control verifications (ops semi-synchrounous notification of expiration)         |
-| JAM_DOWNGRADED_SUBJECT            | Subject of emails indicating downgrade of control verifications                                                                             |
 | JAM_EMAIL_SENDER                  | Sender (and from address) of emails                                                                                                         |
 | JAM_COMPONENT_DETAIL_URL          | URL for Component detail linking. Example: https://ace.jlab.org/srm/reports/component?name=                                                 |
 | JAM_COMPONENT_QUERY_URL           | URL for Component search. Proxied. Example: https://ace.jlab.org/srm/data/components                                                        |
