@@ -18,15 +18,18 @@
                 $("#facility-select").val('');
                 return false;
             });
+            $(function () {
+                jlab.verificationPanelInit();
+            });
         </script>
     </jsp:attribute>
     <jsp:body>
         <section>
-            <div class="ribbon-breadbox">
+            <div class="ribbon-breadbox hide-in-dialog">
                 <ul>
                     <li>
                         <s:filter-flyout-widget clearButton="true">
-                            <form id="filter-form" method="get" action="control">
+                            <form class="filter-form" method="get" action="control">
                                 <div id="filter-form-panel">
                                     <fieldset>
                                         <legend>Filter</legend>
@@ -62,7 +65,7 @@
                                     </fieldset>
                                 </div>
                                 <input type="hidden" name="creditedControlId" value="${fn:escapeXml(param.creditedControlId)}"/>
-                                <input id="filter-form-submit-button" type="submit" value="Apply"/>
+                                <input class="filter-form-submit-button" type="submit" value="Apply"/>
                             </form>
                         </s:filter-flyout-widget>
                     </li>
@@ -72,13 +75,20 @@
                 </ul>
             </div>
             <c:if test="${not empty creditedControl}">
-                <div class="top-right-box"><a href="${pageContext.request.contextPath}/inventory/controls?controlId=${creditedControl.creditedControlId}&notEditable=" class="dialog-ready" data-dialog-title="${creditedControl.name}">Info</a></div>
+                <div class="top-right-box">
+                    <a href="${pageContext.request.contextPath}/inventory/controls?controlId=${creditedControl.creditedControlId}&notEditable=" class="dialog-opener">Info</a>
+                    <span class="dialog-only-inline-block">|</span>
+                    <c:url value="/verifications/control" var="url">
+                        <c:param name="creditedControlId" value="${param.creditedControlId}"/>
+                    </c:url>
+                    <a class="dialog-only-inline-block" href="${url}" target="_blank">Open in new tab</a>
+                </div>
             </c:if>
-            <h2 id="page-header-title"><c:out value="${title}"/></h2>
+            <h2 class="page-header-title"><c:out value="${title}"/></h2>
             <div class="message-box"><c:out value="${selectionMessage}"/></div>
             <c:choose>
                 <c:when test="${creditedControl ne null}">
-                    <div class="dialog-content">
+                    <div>
                         <h3>Facility Verifications</h3>
                         <ul id="facility-control-verification-list">
                             <c:forEach items="${creditedControl.facilityControlVerificationList}" var="fv">

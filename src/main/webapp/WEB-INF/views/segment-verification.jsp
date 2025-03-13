@@ -19,15 +19,19 @@
         </style>
     </jsp:attribute>
     <jsp:attribute name="scripts">
+        <script type="text/javascript" src="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/js/verification-panel.js"></script>
         <script type="text/javascript">
             jlab = jlab || {};
             jlab.verificationType = 'Control-Group';
+
+            $(function () {
+                jlab.verificationPanelInit();
+            });
         </script>
-        <script type="text/javascript" src="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/js/verification-panel.js"></script>
     </jsp:attribute>        
     <jsp:body>
         <c:if test="${segment ne null}">
-            <div class="banner-breadbox">
+            <div class="banner-breadbox hide-in-dialog">
                 <ul>
                     <li>
                         <a href="${pageContext.request.contextPath}/verifications">Verifications</a>
@@ -45,10 +49,16 @@
             </div>
         </c:if>
         <section>
-            <h2 id="page-header-title"><c:out value="${title}"/></h2>
+            <div class="top-right-box">
+                <c:url value="/verifications/segment" var="url">
+                    <c:param name="segmentId" value="${param.segmentId}"/>
+                </c:url>
+                <a class="dialog-only-inline-block" href="${url}" target="_blank">Open in new tab</a>
+            </div>
+            <h2 class="page-header-title"><c:out value="${title}"/></h2>
             <c:choose>
                 <c:when test="${segment ne null}">
-                    <div class="dialog-content">
+                    <div>
                         <h3>
                             <c:choose>
                                 <c:when test="${segment.verification.verificationStatusId eq 1}">

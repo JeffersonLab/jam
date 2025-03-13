@@ -65,7 +65,7 @@
                                 <c:param name="creditedControlId" value="${verification.creditedControl.creditedControlId}"/>
                                 <c:param name="notEditable" value="1"/>
                             </c:url>
-                            <c:out value="${verification.creditedControl.verificationTeam.name}"/> / <a href="${url}" class="dialog-ready" data-dialog-title="${fn:escapeXml(verification.creditedControl.name)}"><c:out value="${verification.creditedControl.name}"/></a>
+                            <c:out value="${verification.creditedControl.verificationTeam.name}"/> / <a href="${url}" class="dialog-opener"><c:out value="${verification.creditedControl.name}"/></a>
                         </c:when>
                         <c:otherwise>
                             <c:out value="${verification[operationsEntity].facility.name}"/> / <c:out value="${verification[operationsEntity].name}"/>
@@ -102,7 +102,7 @@
                     </c:if>
                 </td>
                 <td><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}" value="${verification.expirationDate}"/></td>
-                <td><a class="${groupByOperation ? 'dialog-ready' : ''}" data-dialog-title="Verification History" href="${pageContext.request.contextPath}/verifications/control/${historyPathSuffix}=${verification[operationsId]}" title="Click for verification history">History</a></td>
+                <td><a class="${groupByOperation ? 'dialog-opener' : 'partial-support'}" href="${pageContext.request.contextPath}/verifications/control/${historyPathSuffix}=${verification[operationsId]}" title="Click for verification history">History</a></td>
             </tr>
         </c:forEach>
         </tbody>

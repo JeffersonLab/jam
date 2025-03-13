@@ -403,28 +403,29 @@ jlab.editableRowTable.updateSelectionCount = function ($panel) {
     //$panel.find(".selected-count").text(numSelected);
     return numSelected;
 };
-$(function () {
+jlab.verificationPanelInit = function() {
+    console.log('verficationPanelInit');
     /*Custom time picker*/
     var myControl = {
         create: function (tp_inst, obj, unit, val, min, max, step) {
             $('<input class="ui-timepicker-input" value="' + val + '" style="width:50%">')
-                    .appendTo(obj)
-                    .spinner({
-                        min: min,
-                        max: max,
-                        step: step,
-                        change: function (e, ui) { // key events
-                            // don't call if api was used and not key press
-                            if (e.originalEvent !== undefined)
-                                tp_inst._onTimeChange();
-                            tp_inst._onSelectHandler();
-                        },
-                        spin: function (e, ui) { // spin events
-                            tp_inst.control.value(tp_inst, obj, unit, ui.value);
+                .appendTo(obj)
+                .spinner({
+                    min: min,
+                    max: max,
+                    step: step,
+                    change: function (e, ui) { // key events
+                        // don't call if api was used and not key press
+                        if (e.originalEvent !== undefined)
                             tp_inst._onTimeChange();
-                            tp_inst._onSelectHandler();
-                        }
-                    });
+                        tp_inst._onSelectHandler();
+                    },
+                    spin: function (e, ui) { // spin events
+                        tp_inst.control.value(tp_inst, obj, unit, ui.value);
+                        tp_inst._onTimeChange();
+                        tp_inst._onSelectHandler();
+                    }
+                });
             return obj;
         },
         options: function (tp_inst, obj, unit, opts, val) {
@@ -447,12 +448,14 @@ $(function () {
     }).mask("99-aaa-9999 99:99", {placeholder: " "});
 
     $("#verify-dialog").dialog({
+        autoOpen: false,
         width: 700,
         height: 600,
         resizable: false
     });
 
     $("#component-edit-dialog").dialog({
+        autoOpen: false,
         width: 800,
         height: 300,
         resizable: false
@@ -528,8 +531,7 @@ $(function () {
         heightStyle: "content",
         active: 0
     });
-
-});
+};
 /*Now Button Support 1 of 2*/
 $(document).on("click", ".now-button", function () {
     $(this).prevAll(".date-time-field").first().val(jlab.dateTimeToJLabString(new Date()));

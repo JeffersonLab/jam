@@ -11,7 +11,7 @@
     <jsp:attribute name="scripts">
     </jsp:attribute>        
     <jsp:body>
-        <div class="banner-breadbox">
+        <div class="banner-breadbox hide-in-dialog">
             <ul>
                 <li>
                     <a href="${pageContext.request.contextPath}/verifications">Verifications</a>
@@ -25,7 +25,7 @@
             </ul>
         </div>        
         <section>
-            <div class="dialog-content">
+            <div>
                 <h3>Credited Control</h3>
                 <c:out value="${verification.creditedControl.name}"/>
                 <h3>RF Segment</h3>
@@ -73,7 +73,7 @@
                                 </c:forEach>
                             </tbody>
                         </table>
-                        <form id="filter-form" action="${pageContext.request.contextPath}/verifications/control/segment-history" method="get">
+                        <form class="filter-form" action="${pageContext.request.contextPath}/verifications/control/segment-history" method="get">
                             <input type="hidden" name="rfControlVerificationId" value="${fn:escapeXml(param.rfControlVerificationId)}"/>
                             <input type="hidden" id="offset-input" name="offset" value="0"/>
                         </form>

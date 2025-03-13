@@ -7,8 +7,6 @@
 <t:inventory-page title="${title}">
     <jsp:attribute name="stylesheets">
         <link rel="stylesheet" type="text/css"
-              href="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/css/control-verification.css"/>
-        <link rel="stylesheet" type="text/css"
               href="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/css/control-participation.css"/>
     </jsp:attribute>
     <jsp:attribute name="scripts">              
@@ -62,8 +60,8 @@
                                             <tbody>
                                             <c:forEach items="${ccList}" var="cc">
                                                 <tr data-cc-id="${cc.creditedControlId}">
-                                                    <th><a data-dialog-title="${fn:escapeXml(cc.name)} Verification"
-                                                           class="dialog-ready"
+                                                    <th><a
+                                                           class="dialog-opener"
                                                            href="${pageContext.request.contextPath}/verifications/control?creditedControlId=${cc.creditedControlId}&amp;notEditable=1"><c:out
                                                             value="${cc.name}"/></a></th>
                                                     <c:forEach items="${segmentList}" var="segment">
@@ -108,8 +106,8 @@
                                             <tbody>
                                             <c:forEach items="${ccList}" var="cc">
                                                 <tr data-cc-id="${cc.creditedControlId}">
-                                                    <th><a data-dialog-title="${fn:escapeXml(cc.name)} Verification"
-                                                           class="dialog-ready"
+                                                    <th><a
+                                                           class="dialog-opener"
                                                            href="${pageContext.request.contextPath}/verifications/control?creditedControlId=${cc.creditedControlId}&amp;notEditable=1"><c:out
                                                             value="${cc.name}"/></a></th>
                                                     <c:forEach items="${destinationList}" var="destination">

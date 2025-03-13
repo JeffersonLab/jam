@@ -20,7 +20,7 @@
         <div class="top-right-box"><a id="expiring-link"
                                                                                  href="#">Expiring</a></div>
         <s:filter-flyout-widget ribbon="true" clearButton="true">
-            <form id="filter-form" method="get" action="verifications">
+            <form class="filter-form" method="get" action="verifications">
                 <div id="filter-form-panel">
                     <fieldset>
                         <legend>Filter</legend>
@@ -56,10 +56,10 @@
                         </ul>
                     </fieldset>
                 </div>
-                <input id="filter-form-submit-button" type="submit" value="Apply"/>
+                <input class="filter-form-submit-button" type="submit" value="Apply"/>
             </form>
         </s:filter-flyout-widget>
-        <h2 id="page-header-title"><c:out value="${title}"/></h2>
+        <h2 class="page-header-title"><c:out value="${title}"/></h2>
         <div class="message-box"><c:out value="${selectionMessage}"/></div>
         <div class="accordion">
             <h3>Credited Controls</h3>
