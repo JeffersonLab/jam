@@ -72,7 +72,7 @@
                 </ul>
             </div>
             <c:if test="${not empty creditedControl}">
-                <div class="top-right-box"><a href="${pageContext.request.contextPath}/inventory/controls?controlId=${creditedControl.creditedControlId}&notEditable=" class="dialog-ready" data-dialog-title="${creditedControl.name}">Info</a></div>
+                <div class="top-right-box"><a href="${pageContext.request.contextPath}/inventory/controls?controlId=${creditedControl.creditedControlId}&notEditable=" class="dialog-opener">Info</a></div>
             </c:if>
             <h2 class="page-header-title"><c:out value="${title}"/></h2>
             <div class="message-box"><c:out value="${selectionMessage}"/></div>

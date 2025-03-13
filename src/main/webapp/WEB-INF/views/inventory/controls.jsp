@@ -61,7 +61,7 @@
                                     <c:url var="url" value="/inventory/verifiers">
                                         <c:param name="name" value="${control.verificationTeam.name}"/>
                                     </c:url>
-                                    <a href="${url}" class="dialog-ready" data-dialog-title="${control.verificationTeam.name}"><c:out value="${control.verificationTeam.name}"/></a>
+                                    <a href="${url}" class="dialog-opener"><c:out value="${control.verificationTeam.name}"/></a>
                                 </td>
                                 <td><c:out value="${empty control.verificationFrequency ? 'As Needed' : control.verificationFrequency}"/></td>
                             </tr>

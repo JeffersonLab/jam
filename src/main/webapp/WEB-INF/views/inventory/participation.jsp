@@ -62,8 +62,8 @@
                                             <tbody>
                                             <c:forEach items="${ccList}" var="cc">
                                                 <tr data-cc-id="${cc.creditedControlId}">
-                                                    <th><a data-dialog-title="${fn:escapeXml(cc.name)} Verification"
-                                                           class="dialog-ready"
+                                                    <th><a
+                                                           class="dialog-opener"
                                                            href="${pageContext.request.contextPath}/verifications/control?creditedControlId=${cc.creditedControlId}&amp;notEditable=1"><c:out
                                                             value="${cc.name}"/></a></th>
                                                     <c:forEach items="${segmentList}" var="segment">
@@ -108,8 +108,8 @@
                                             <tbody>
                                             <c:forEach items="${ccList}" var="cc">
                                                 <tr data-cc-id="${cc.creditedControlId}">
-                                                    <th><a data-dialog-title="${fn:escapeXml(cc.name)} Verification"
-                                                           class="dialog-ready"
+                                                    <th><a
+                                                           class="dialog-opener"
                                                            href="${pageContext.request.contextPath}/verifications/control?creditedControlId=${cc.creditedControlId}&amp;notEditable=1"><c:out
                                                             value="${cc.name}"/></a></th>
                                                     <c:forEach items="${destinationList}" var="destination">
