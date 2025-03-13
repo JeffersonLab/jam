@@ -230,7 +230,7 @@ public class NotificationManager {
       logbookFacade.sendAuthorizationLogEntry(
           auth.getAuthorizedBy(), facility, type, auth.getRfAuthorizationId(), screenshot);
 
-      emailFacade.sendRFVerifierDowngradeEmail(auth, screenshot);
+      emailFacade.sendRFVerifierDowngradeEmail(auth, verificationList, screenshot);
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Failed to grab permissions screenshot.", e);
     } finally {
@@ -259,7 +259,7 @@ public class NotificationManager {
       logbookFacade.sendAuthorizationLogEntry(
           auth.getAuthorizedBy(), facility, type, auth.getBeamAuthorizationId(), screenshot);
 
-      emailFacade.sendBeamVerifierDowngradeEmail(auth, screenshot);
+      emailFacade.sendBeamVerifierDowngradeEmail(auth, verificationList, screenshot);
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Failed to grab permissions screenshot.", e);
     } finally {
