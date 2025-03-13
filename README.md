@@ -67,7 +67,7 @@ Uses the [Smoothness Environment Variables](https://github.com/JeffersonLab/smoo
 
 | Name                              | Description                                                                                                                                 |
 |-----------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
-| JAM_EMAIL_SENDER                  | Sender (and from address) of emails                                                                                                         |
+| JAM_EMAIL_SENDER                  | Sender (and from address) of emails. Defaults to `jam@jlab.org`                                                                                                         |
 | JAM_COMPONENT_DETAIL_URL          | URL for Component detail linking. Example: https://ace.jlab.org/srm/reports/component?name=                                                 |
 | JAM_COMPONENT_QUERY_URL           | URL for Component search. Proxied. Example: https://ace.jlab.org/srm/data/components                                                        |
 | JAM_USER_QUERY_URL                | URL for User search.  Proxied. Example: https://ace.jlab.org/srm/ajax/search-user                                                           |
