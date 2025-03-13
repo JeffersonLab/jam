@@ -42,3 +42,10 @@ $(function() {
         modal: true
     });    
 });
+
+// Should be in upstream smoothness weblib instead
+$(document).on("click", ".next-button, .previous-button", function () {
+    let $widget = $(this).closest("section");
+    $widget.find(".offset-input").val($(this).attr("data-offset"));
+    $widget.find(".filter-form").submit();
+});
