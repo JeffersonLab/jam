@@ -94,6 +94,8 @@ public class NotificationManager {
       logbookFacade.sendAuthorizationLogEntry(
           auth.getAuthorizedBy(), facility, type, auth.getRfAuthorizationId(), screenshot);
       emailFacade.sendWatcherAuthorizationUpdateEmail(facility, type, screenshot);
+
+      emailFacade.sendAdminAndManagerAuthorizationUpdateEmail(facility, type, screenshot);
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Failed to grab permissions screenshot.", e);
     } finally {
