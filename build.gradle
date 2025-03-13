@@ -23,7 +23,7 @@ repositories {
 
 dependencies {
     // No matter what smoothness weblib MUST be included in WAR (https://github.com/JeffersonLab/smoothness/issues/4)
-    implementation 'org.jlab:smoothness-weblib:4.9.0'
+    implementation 'org.jlab:smoothness-weblib:4.10.3'
 
     // Smoothness setup should install these into Wildfly
     providedCompile 'org.tuckey:urlrewritefilter:4.0.4',
