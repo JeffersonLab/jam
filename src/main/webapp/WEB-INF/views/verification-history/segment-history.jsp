@@ -73,7 +73,7 @@
                                 </c:forEach>
                             </tbody>
                         </table>
-                        <form id="filter-form" action="${pageContext.request.contextPath}/verifications/control/segment-history" method="get">
+                        <form class="filter-form" action="${pageContext.request.contextPath}/verifications/control/segment-history" method="get">
                             <input type="hidden" name="rfControlVerificationId" value="${fn:escapeXml(param.rfControlVerificationId)}"/>
                             <input type="hidden" id="offset-input" name="offset" value="0"/>
                         </form>

@@ -64,7 +64,7 @@
                                 </c:forEach>
                             </tbody>
                         </table>
-                        <form id="filter-form" action="" method="get">
+                        <form class="filter-form" action="" method="get">
                             <input type="hidden" id="offset-input" name="offset" value="0"/>
                         </form>
                         <button id="previous-button" type="button" data-offset="${paginator.previousOffset}" value="Previous"${paginator.previous ? '' : ' disabled="disabled"'}>Previous</button>                        

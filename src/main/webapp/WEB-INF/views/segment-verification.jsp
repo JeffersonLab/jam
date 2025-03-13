@@ -45,7 +45,7 @@
             </div>
         </c:if>
         <section>
-            <h2 id="page-header-title"><c:out value="${title}"/></h2>
+            <h2 class="page-header-title"><c:out value="${title}"/></h2>
             <c:choose>
                 <c:when test="${segment ne null}">
                     <div class="dialog-content">

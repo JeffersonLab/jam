@@ -26,7 +26,7 @@
                 <ul>
                     <li>
                         <s:filter-flyout-widget clearButton="true">
-                            <form id="filter-form" method="get" action="control">
+                            <form class="filter-form" method="get" action="control">
                                 <div id="filter-form-panel">
                                     <fieldset>
                                         <legend>Filter</legend>
@@ -62,7 +62,7 @@
                                     </fieldset>
                                 </div>
                                 <input type="hidden" name="creditedControlId" value="${fn:escapeXml(param.creditedControlId)}"/>
-                                <input id="filter-form-submit-button" type="submit" value="Apply"/>
+                                <input class="filter-form-submit-button" type="submit" value="Apply"/>
                             </form>
                         </s:filter-flyout-widget>
                     </li>
@@ -74,7 +74,7 @@
             <c:if test="${not empty creditedControl}">
                 <div class="top-right-box"><a href="${pageContext.request.contextPath}/inventory/controls?controlId=${creditedControl.creditedControlId}&notEditable=" class="dialog-ready" data-dialog-title="${creditedControl.name}">Info</a></div>
             </c:if>
-            <h2 id="page-header-title"><c:out value="${title}"/></h2>
+            <h2 class="page-header-title"><c:out value="${title}"/></h2>
             <div class="message-box"><c:out value="${selectionMessage}"/></div>
             <c:choose>
                 <c:when test="${creditedControl ne null}">
