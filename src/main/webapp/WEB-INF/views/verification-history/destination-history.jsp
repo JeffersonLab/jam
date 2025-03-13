@@ -11,7 +11,7 @@
     <jsp:attribute name="scripts">
     </jsp:attribute>        
     <jsp:body>
-        <div class="banner-breadbox">
+        <div class="banner-breadbox hide-in-dialog">
             <ul>
                 <li>
                     <a href="${pageContext.request.contextPath}/verifications">Verifications</a>
@@ -25,7 +25,7 @@
             </ul>
         </div>        
         <section>
-            <div class="dialog-content">
+            <div>
                 <h3>Credited Control</h3>
                 <c:out value="${verification.creditedControl.name}"/>
                 <h3>Beam Destination</h3>

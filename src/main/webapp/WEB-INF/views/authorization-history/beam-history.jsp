@@ -22,7 +22,7 @@
         </script>
     </jsp:attribute>        
     <jsp:body>
-        <div class="banner-breadbox">
+        <div class="banner-breadbox hide-in-dialog">
             <ul>
                 <li>
                     <a href="${pageContext.request.contextPath}/authorizations${facility.path}"><c:out value="${facility.name}"/></a>
@@ -33,7 +33,7 @@
             </ul>
         </div>        
         <section>
-            <div class="dialog-content">
+            <div>
                 <c:choose>
                     <c:when test="${fn:length(historyList) < 1}">
                         <div class="message-box">None</div>

@@ -102,7 +102,7 @@
                     </c:if>
                 </td>
                 <td><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}" value="${verification.expirationDate}"/></td>
-                <td><a class="${groupByOperation ? 'dialog-opener' : ''}" href="${pageContext.request.contextPath}/verifications/control/${historyPathSuffix}=${verification[operationsId]}" title="Click for verification history">History</a></td>
+                <td><a class="${groupByOperation ? 'dialog-opener' : 'partial-support'}" href="${pageContext.request.contextPath}/verifications/control/${historyPathSuffix}=${verification[operationsId]}" title="Click for verification history">History</a></td>
             </tr>
         </c:forEach>
         </tbody>

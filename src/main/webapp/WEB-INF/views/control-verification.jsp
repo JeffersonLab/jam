@@ -18,11 +18,14 @@
                 $("#facility-select").val('');
                 return false;
             });
+            $(function () {
+                jlab.verificationPanelInit();
+            });
         </script>
     </jsp:attribute>
     <jsp:body>
         <section>
-            <div class="ribbon-breadbox">
+            <div class="ribbon-breadbox hide-in-dialog">
                 <ul>
                     <li>
                         <s:filter-flyout-widget clearButton="true">
@@ -78,7 +81,7 @@
             <div class="message-box"><c:out value="${selectionMessage}"/></div>
             <c:choose>
                 <c:when test="${creditedControl ne null}">
-                    <div class="dialog-content">
+                    <div>
                         <h3>Facility Verifications</h3>
                         <ul id="facility-control-verification-list">
                             <c:forEach items="${creditedControl.facilityControlVerificationList}" var="fv">

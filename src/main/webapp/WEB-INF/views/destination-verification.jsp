@@ -19,15 +19,19 @@
         </style>
     </jsp:attribute>
     <jsp:attribute name="scripts">
+        <script type="text/javascript" src="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/js/verification-panel.js"></script>
         <script type="text/javascript">
             jlab = jlab || {};
             jlab.verificationType = 'Control-Group';
+
+            $(function () {
+                jlab.verificationPanelInit();
+            });
         </script>
-        <script type="text/javascript" src="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/js/verification-panel.js"></script>
     </jsp:attribute>        
     <jsp:body>
         <c:if test="${destination ne null}">
-            <div class="banner-breadbox">
+            <div class="banner-breadbox hide-in-dialog">
                 <ul>
                     <li>
                         <a href="${pageContext.request.contextPath}/verifications">Verifications</a>
@@ -48,7 +52,7 @@
             <h2 class="page-header-title"><c:out value="${title}"/></h2>
             <c:choose>
                 <c:when test="${destination ne null}">
-                    <div class="dialog-content">
+                    <div>
                         <h3>
                             <c:choose>
                                 <c:when test="${destination.verification.verificationStatusId eq 1}">

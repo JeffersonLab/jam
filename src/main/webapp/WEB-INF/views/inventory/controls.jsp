@@ -15,13 +15,13 @@
         <section>
             <h2 class="page-header-title"><c:out value="${title}"/></h2>
             <div class="message-box"><c:out value="${selectionMessage}"/></div>
-            <div id="chart-wrap" class="chart-wrap-backdrop">
+            <div>
                 <c:set var="readonly" value="${!pageContext.request.isUserInRole('jam-admin') || param.notEditable ne null}"/>
                 <c:if test="${not readonly}">
                     <s:editable-row-table-controls>
                     </s:editable-row-table-controls>
                 </c:if>
-                <div class="dialog-content">
+                <div>
                     <table class="data-table stripped-table ${readonly ? '' : 'uniselect-table editable-row-table'}">
                         <thead>
                         <tr>
