@@ -75,7 +75,14 @@
                 </ul>
             </div>
             <c:if test="${not empty creditedControl}">
-                <div class="top-right-box"><a href="${pageContext.request.contextPath}/inventory/controls?controlId=${creditedControl.creditedControlId}&notEditable=" class="dialog-opener">Info</a></div>
+                <div class="top-right-box">
+                    <a href="${pageContext.request.contextPath}/inventory/controls?controlId=${creditedControl.creditedControlId}&notEditable=" class="dialog-opener">Info</a>
+                    <span class="dialog-only-inline-block">|</span>
+                    <c:url value="/verifications/control" var="url">
+                        <c:param name="creditedControlId" value="${param.creditedControlId}"/>
+                    </c:url>
+                    <a class="dialog-only-inline-block" href="${url}" target="_blank">Open in new tab</a>
+                </div>
             </c:if>
             <h2 class="page-header-title"><c:out value="${title}"/></h2>
             <div class="message-box"><c:out value="${selectionMessage}"/></div>

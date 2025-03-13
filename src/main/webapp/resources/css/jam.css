@@ -86,3 +86,9 @@ ul.jam-cell-list li {
 .comments-div {
     word-break: break-word;
 }
+.dialog-only-inline-block {
+    display: none;
+}
+.page-dialog .dialog-only-inline-block {
+    display: inline-block;
+}

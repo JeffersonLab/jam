@@ -49,6 +49,12 @@
             </div>
         </c:if>
         <section>
+            <div class="top-right-box">
+                <c:url value="/verifications/segment" var="url">
+                    <c:param name="segmentId" value="${param.segmentId}"/>
+                </c:url>
+                <a class="dialog-only-inline-block" href="${url}" target="_blank">Open in new tab</a>
+            </div>
             <h2 class="page-header-title"><c:out value="${title}"/></h2>
             <c:choose>
                 <c:when test="${segment ne null}">
