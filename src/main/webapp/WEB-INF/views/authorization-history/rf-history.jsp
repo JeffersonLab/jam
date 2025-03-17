@@ -14,12 +14,6 @@
         </style>
     </jsp:attribute>
     <jsp:attribute name="scripts">
-        <script type="text/javascript">
-            $(document).on("click", ".next-button, .previous-button", function () {
-                $(".offset-input").val($(this).attr("data-offset"));
-                $(".filter-form").submit();
-            });
-        </script>
     </jsp:attribute>        
     <jsp:body>
         <div class="banner-breadbox hide-in-dialog">
