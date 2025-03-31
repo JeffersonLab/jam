@@ -54,3 +54,6 @@ body .now-button, body .me-button {
     float: left;
     color: red;
 }
+td {
+    word-break: break-word;
+}

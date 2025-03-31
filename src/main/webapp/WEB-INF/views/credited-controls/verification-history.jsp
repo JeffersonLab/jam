@@ -7,6 +7,11 @@
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%> 
 <t:page title="Credited Controls > Verification History"> 
     <jsp:attribute name="stylesheets">
+        <style>
+            td {
+                word-break: break-word;
+            }
+        </style>
     </jsp:attribute>
     <jsp:attribute name="scripts">
     </jsp:attribute>        
