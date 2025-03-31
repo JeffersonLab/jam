@@ -142,9 +142,9 @@
                         <thead>
                             <tr>
                                 <th>Select</th>
-                                <th>Name</th>
+                                <th style="width: 200px">Name</th>
                                 <th>Description</th>
-                                <th>Group</th>
+                                <th style="width: 100px">Group</th>
                             </tr>
                         </thead>
                         <tbody>
