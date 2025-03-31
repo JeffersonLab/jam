@@ -6,10 +6,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.ConcurrencyManagementType;
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
+import javax.ejb.*;
 import org.jlab.jam.persistence.entity.*;
 import org.jlab.jam.persistence.view.BeamExpirationEvent;
 import org.jlab.jam.persistence.view.FacilityExpirationEvent;
@@ -77,6 +74,11 @@ public class ExpirationManager {
     return upcoming;
   }
 
+  // We want Container Managed Transaction to commit at end of this method call because caller
+  // immediately afterward
+  // launches async threads to read DB (via taking screenshot of page) and notify users
+  // If this happens before commit then new auth records won't exist yet
+  @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
   public Map<Facility, FacilityExpirationEvent> expireByFacilityAll() throws InterruptedException {
     List<Facility> facilityList = facilityFacade.findAll();
     Map<Facility, FacilityExpirationEvent> eventMap = new HashMap<>();
