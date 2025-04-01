@@ -15,7 +15,7 @@ import org.jlab.jam.persistence.entity.Facility;
  */
 @Stateless
 public class FacilityFacade extends AbstractFacade<Facility> {
-  @PersistenceContext(unitName = "jamPU")
+  @PersistenceContext(unitName = "webappPU")
   private EntityManager em;
 
   @Override

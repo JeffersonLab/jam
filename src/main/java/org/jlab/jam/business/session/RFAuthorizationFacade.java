@@ -26,7 +26,7 @@ public class RFAuthorizationFacade extends AbstractFacade<RFAuthorization> {
 
   private static final Logger LOGGER = Logger.getLogger(RFAuthorizationFacade.class.getName());
 
-  @PersistenceContext(unitName = "jamPU")
+  @PersistenceContext(unitName = "webappPU")
   private EntityManager em;
 
   @EJB AuthorizerFacade authorizerFacade;

@@ -34,7 +34,7 @@ public class LogbookFacade extends AbstractFacade<VerificationTeam> {
   @EJB RFAuthorizationFacade rfAuthorizationFacade;
   @EJB BeamAuthorizationFacade beamAuthorizationFacade;
 
-  @PersistenceContext(unitName = "jamPU")
+  @PersistenceContext(unitName = "webappPU")
   private EntityManager em;
 
   @Override

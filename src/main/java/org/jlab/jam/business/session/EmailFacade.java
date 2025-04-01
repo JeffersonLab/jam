@@ -35,7 +35,7 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
 
   private static final Logger LOGGER = Logger.getLogger(EmailFacade.class.getName());
 
-  @PersistenceContext(unitName = "jamPU")
+  @PersistenceContext(unitName = "webappPU")
   private EntityManager em;
 
   private final Session mailSession;

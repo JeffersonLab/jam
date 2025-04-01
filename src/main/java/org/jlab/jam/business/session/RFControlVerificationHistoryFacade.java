@@ -15,7 +15,7 @@ import org.jlab.jam.persistence.entity.RFControlVerificationHistory;
 @Stateless
 public class RFControlVerificationHistoryFacade
     extends AbstractFacade<RFControlVerificationHistory> {
-  @PersistenceContext(unitName = "jamPU")
+  @PersistenceContext(unitName = "webappPU")
   private EntityManager em;
 
   @Override

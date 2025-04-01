@@ -17,7 +17,7 @@ import org.jlab.smoothness.business.exception.UserFriendlyException;
  */
 @Stateless
 public class ComponentFacade extends AbstractFacade<Component> {
-  @PersistenceContext(unitName = "jamPU")
+  @PersistenceContext(unitName = "webappPU")
   private EntityManager em;
 
   @Override

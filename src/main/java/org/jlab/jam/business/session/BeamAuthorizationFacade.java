@@ -32,7 +32,7 @@ public class BeamAuthorizationFacade extends AbstractFacade<BeamAuthorization> {
 
   private static final Logger LOGGER = Logger.getLogger(BeamAuthorizationFacade.class.getName());
 
-  @PersistenceContext(unitName = "jamPU")
+  @PersistenceContext(unitName = "webappPU")
   private EntityManager em;
 
   @EJB AuthorizerFacade authorizerFacade;

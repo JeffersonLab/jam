@@ -25,7 +25,7 @@ import org.jlab.smoothness.persistence.util.JPAUtil;
 @Stateless
 public class CreditedControlFacade extends AbstractFacade<CreditedControl> {
 
-  @PersistenceContext(unitName = "jamPU")
+  @PersistenceContext(unitName = "webappPU")
   private EntityManager em;
 
   @Override

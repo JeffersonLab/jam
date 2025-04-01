@@ -27,7 +27,7 @@ public class WatcherFacade extends AbstractFacade<Watcher> {
 
   @EJB FacilityFacade facilityFacade;
 
-  @PersistenceContext(unitName = "jamPU")
+  @PersistenceContext(unitName = "webappPU")
   private EntityManager em;
 
   @Override

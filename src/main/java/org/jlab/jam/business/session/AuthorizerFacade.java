@@ -24,7 +24,7 @@ import org.jlab.smoothness.business.exception.UserFriendlyException;
 public class AuthorizerFacade extends AbstractFacade<Authorizer> {
   @EJB FacilityFacade facilityFacade;
 
-  @PersistenceContext(unitName = "jamPU")
+  @PersistenceContext(unitName = "webappPU")
   private EntityManager em;
 
   @Override
