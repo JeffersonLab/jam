@@ -18,7 +18,7 @@ import org.jlab.jam.persistence.entity.*;
  */
 @Stateless
 public class BeamDestinationFacade extends AbstractFacade<BeamDestination> {
-  @PersistenceContext(unitName = "jamPU")
+  @PersistenceContext(unitName = "webappPU")
   private EntityManager em;
 
   @Override

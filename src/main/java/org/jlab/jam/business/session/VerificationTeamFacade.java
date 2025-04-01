@@ -18,7 +18,7 @@ import org.jlab.smoothness.persistence.view.User;
  */
 @Stateless
 public class VerificationTeamFacade extends AbstractFacade<VerificationTeam> {
-  @PersistenceContext(unitName = "jamPU")
+  @PersistenceContext(unitName = "webappPU")
   private EntityManager em;
 
   @Override

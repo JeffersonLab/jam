@@ -11,7 +11,7 @@ import org.jlab.jam.persistence.entity.BeamDestinationAuthorization;
 @Stateless
 public class BeamDestinationAuthorizationFacade
     extends AbstractFacade<BeamDestinationAuthorization> {
-  @PersistenceContext(unitName = "jamPU")
+  @PersistenceContext(unitName = "webappPU")
   private EntityManager em;
 
   @Override

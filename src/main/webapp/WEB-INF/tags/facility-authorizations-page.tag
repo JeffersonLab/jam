@@ -1,11 +1,11 @@
 <%@tag description="The Authorization Page Template Tag" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="s" uri="http://jlab.org/jsp/smoothness"%>
 <%@attribute name="title" %>
 <%@attribute name="stylesheets" fragment="true" %>
 <%@attribute name="scripts" fragment="true" %>
-<t:page title="Auth - ${title}">
+<s:page title="Auth - ${title}">
     <jsp:attribute name="stylesheets">       
         <jsp:invoke fragment="stylesheets"/>
     </jsp:attribute>
@@ -34,4 +34,4 @@
             </div>
         </div>
     </jsp:body>
-</t:page>
+</s:page>

@@ -15,7 +15,7 @@ import org.jlab.jam.persistence.entity.BeamControlVerificationHistory;
 @Stateless
 public class BeamControlVerificationHistoryFacade
     extends AbstractFacade<BeamControlVerificationHistory> {
-  @PersistenceContext(unitName = "jamPU")
+  @PersistenceContext(unitName = "webappPU")
   private EntityManager em;
 
   @Override

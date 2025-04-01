@@ -4,9 +4,8 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@taglib prefix="s" uri="http://jlab.org/jsp/smoothness" %>
 <%@taglib prefix="jam" uri="http://jlab.org/jam/functions"%>
-<%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
 <c:set var="title" value="Control Verification"/>
-<t:page title="${title}">
+<s:page title="${title}">
     <jsp:attribute name="stylesheets">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/css/verification-panel.css"/>
     </jsp:attribute>
@@ -149,4 +148,4 @@
             </c:choose>
         </section>
     </jsp:body>         
-</t:page>
+</s:page>

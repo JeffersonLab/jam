@@ -30,7 +30,7 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
   private static final Logger LOGGER =
       Logger.getLogger(BeamControlVerificationFacade.class.getName());
 
-  @PersistenceContext(unitName = "jamPU")
+  @PersistenceContext(unitName = "webappPU")
   private EntityManager em;
 
   @EJB CreditedControlFacade controlFacade;

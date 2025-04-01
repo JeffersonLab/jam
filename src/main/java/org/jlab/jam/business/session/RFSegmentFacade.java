@@ -18,7 +18,7 @@ import org.jlab.jam.persistence.entity.*;
  */
 @Stateless
 public class RFSegmentFacade extends AbstractFacade<RFSegment> {
-  @PersistenceContext(unitName = "jamPU")
+  @PersistenceContext(unitName = "webappPU")
   private EntityManager em;
 
   @Override

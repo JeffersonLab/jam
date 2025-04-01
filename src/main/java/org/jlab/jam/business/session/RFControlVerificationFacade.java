@@ -29,7 +29,7 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
   private static final Logger LOGGER =
       Logger.getLogger(RFControlVerificationFacade.class.getName());
 
-  @PersistenceContext(unitName = "jamPU")
+  @PersistenceContext(unitName = "webappPU")
   private EntityManager em;
 
   @EJB CreditedControlFacade controlFacade;
