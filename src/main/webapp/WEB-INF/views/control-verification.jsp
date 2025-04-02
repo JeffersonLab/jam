@@ -4,6 +4,7 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@taglib prefix="s" uri="http://jlab.org/jsp/smoothness" %>
 <%@taglib prefix="jam" uri="http://jlab.org/jam/functions"%>
+<%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
 <c:set var="title" value="Control Verification"/>
 <s:page title="${title}">
     <jsp:attribute name="stylesheets">

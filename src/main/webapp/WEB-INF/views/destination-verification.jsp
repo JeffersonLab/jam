@@ -5,6 +5,7 @@
 <%@taglib prefix="s" uri="http://jlab.org/jsp/smoothness" %>
 <%@taglib prefix="jam" uri="http://jlab.org/jam/functions"%>
 <c:set var="title" value="Destination Verification"/>
+<%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
 <s:page title="${title}">
     <jsp:attribute name="stylesheets">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/css/verification-panel.css"/>
