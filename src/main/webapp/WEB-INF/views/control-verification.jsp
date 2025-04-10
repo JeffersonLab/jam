@@ -116,7 +116,7 @@
                         </ul>
                         <h3>Operations Verifications</h3>
                         <div class="accordion">
-                            <h3>RF Operations</h3>
+                            <h3>SRF Operations</h3>
                             <div class="content">
                                 <c:choose>
                                     <c:when test="${fn:length(creditedControl.getRFControlVerificationList()) < 1}">

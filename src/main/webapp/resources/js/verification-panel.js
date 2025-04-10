@@ -152,7 +152,7 @@ $(document).on("click", ".verify-button", function () {
         verificationType = "BEAM";
 
     if($panel.hasClass("rf")) {
-        verificationLabel = "RF Segment";
+        verificationLabel = "SRF Segment";
         verificationType = "RF";
     }
 

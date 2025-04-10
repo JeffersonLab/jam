@@ -40,7 +40,7 @@
                                     <div class="li-value">
                                         <select id="type-select" name="type">
                                             <option value="">&nbsp;</option>
-                                            <option value="RF"${param.type eq 'RF' ? ' selected="selected"' : ''}>RF</option>
+                                            <option value="RF"${param.type eq 'RF' ? ' selected="selected"' : ''}>SRF</option>
                                             <option value="BEAM"${param.type eq 'BEAM' ? ' selected="selected"' : ''}>BEAM</option>
                                         </select>
                                     </div>
@@ -82,7 +82,7 @@
                     <c:forEach items="${watcherList}" var="watcher">
                         <tr data-username="${fn:escapeXml(watcher.watcherPK.username)}" data-facility-id="${watcher.watcherPK.facility.facilityId}">
                             <td><c:out value="${watcher.watcherPK.facility.name}"/></td>
-                            <td><c:out value="${watcher.watcherPK.operationsType}"/></td>
+                            <td><c:out value="${watcher.watcherPK.operationsType.label}"/></td>
                             <td><c:out value="${s:formatUsername(watcher.watcherPK.username)}"/></td>
                         </tr>
                     </c:forEach>
@@ -115,7 +115,7 @@
                         <div class="li-value">
                             <select id="row-type" required="required">
                                 <option value="">&nbsp;</option>
-                                <option value="RF">RF</option>
+                                <option value="RF">SRF</option>
                                 <option value="BEAM">BEAM</option>
                             </select>
                         </div>

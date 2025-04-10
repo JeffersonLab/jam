@@ -28,7 +28,7 @@
             <div>
                 <h3>Credited Control</h3>
                 <c:out value="${verification.creditedControl.name}"/>
-                <h3>RF Segment</h3>
+                <h3>SRF Segment</h3>
                 <c:out value="${verification.getRFSegment().name}"/>
                 <h3>Verification Team</h3>
                 <c:out value="${verification.creditedControl.verificationTeam.name}"/>

@@ -128,7 +128,7 @@
             </div>
         </div>
         <div class="accordion">
-            <h3>RF Segments</h3>
+            <h3>SRF Segments</h3>
             <div class="content">
                 <c:choose>
                     <c:when test="${not empty segmentList}">
@@ -253,14 +253,14 @@
             <c:forEach items="${upcomingExpirationMap.keySet()}" var="facility">
                 <c:set value="${upcomingExpirationMap[facility]}" var="upcoming"/>
                 <h3><c:out value="${facility.name}"/></h3>
-                <h4>RF</h4>
+                <h4>SRF</h4>
                 <c:choose>
                     <c:when test="${fn:length(upcoming.getUpcomingRFVerificationExpirationList()) > 0}">
                         <table class="data-table stripped-table">
                             <thead>
                             <tr>
                                 <th>Control</th>
-                                <th>RF Segment</th>
+                                <th>SRF Segment</th>
                                 <th>Expiration Date</th>
                             </tr>
                             </thead>
@@ -277,7 +277,7 @@
                         </table>
                     </c:when>
                     <c:otherwise>
-                        <div>No RF verifications expiring within seven days</div>
+                        <div>No SRF verifications expiring within seven days</div>
                     </c:otherwise>
                 </c:choose>
                 <h4>Beam</h4>

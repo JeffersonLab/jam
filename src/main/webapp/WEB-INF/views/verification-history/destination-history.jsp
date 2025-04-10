@@ -5,7 +5,7 @@
 <%@taglib prefix="s" uri="http://jlab.org/jsp/smoothness" %>
 <%@taglib prefix="jam" uri="http://jlab.org/jam/functions"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%> 
-<t:page title="Destination Verification History">
+<s:page title="Destination Verification History">
     <jsp:attribute name="stylesheets">
     </jsp:attribute>
     <jsp:attribute name="scripts">
@@ -84,4 +84,4 @@
             </div>
         </section>          
     </jsp:body>         
-</t:page>
+</s:page>

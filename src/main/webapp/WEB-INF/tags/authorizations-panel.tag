@@ -13,14 +13,14 @@
     <div class="chart-wrap-backdrop">
         <c:if test="${not empty rfList}">
             <div id="rf-accordion" class="accordion">
-                <h3>RF Operations</h3>
+                <h3>SRF Operations</h3>
                 <div class="content">
                     <form id="rf-authorization-form" method="post" action="${pageContext.request.contextPath}/ajax/edit-rf-auth">
                         <input type="hidden" name="facilityId" value="${facility.facilityId}">
                         <div class="control-panel">
                             <div class="control-item edit-button-panel">
                                 <c:if test="${isEditable}">
-                                    <span class="readonly-field"><button id="rf-edit-button" type="button">Edit RF Operations</button></span>
+                                    <span class="readonly-field"><button id="rf-edit-button" type="button">Edit SRF Operations</button></span>
                                 </c:if>
                                 <div class="editable-field">
                                     <div>
