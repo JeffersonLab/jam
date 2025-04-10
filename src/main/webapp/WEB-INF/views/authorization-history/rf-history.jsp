@@ -22,7 +22,7 @@
                     <a href="${pageContext.request.contextPath}/authorizations${facility.path}"><c:out value="${facility.name}"/></a>
                 </li>
                 <li>
-                    <span>RF History</span>
+                    <span>SRF History</span>
                 </li>
             </ul>
         </div>        

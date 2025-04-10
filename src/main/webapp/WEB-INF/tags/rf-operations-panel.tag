@@ -10,7 +10,7 @@
 <table class="destinations-table data-table stripped-table">
     <thead>
         <tr>
-            <th rowspan="2" class="destination-header">RF Segment</th>
+            <th rowspan="2" class="destination-header">SRF Segment</th>
                 <c:if test="${not isHistory}">
                 <th rowspan="2" class="approval-header">Auth</th>
                 </c:if>
