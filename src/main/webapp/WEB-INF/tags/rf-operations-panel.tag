@@ -1,4 +1,4 @@
-<%@tag description="RF Operations Table Tag" pageEncoding="UTF-8"%>
+<%@tag description="SRF Operations Table Tag" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
@@ -20,7 +20,7 @@
                 </c:if>
         </tr>
         <tr>
-            <th>High Power RF</th>
+            <th>High Power SRF</th>
             <th>Comment</th>
             <th class="expiration-header">Expiration</th>
         </tr>

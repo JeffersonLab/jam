@@ -5,7 +5,7 @@
 <%@taglib prefix="s" uri="http://jlab.org/jsp/smoothness" %>
 <%@taglib prefix="jam" uri="http://jlab.org/jam/functions"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%> 
-<t:facility-authorizations-page title="RF Authorization History">
+<t:facility-authorizations-page title="SRF Authorization History">
     <jsp:attribute name="stylesheets">
         <style>
             .auth-notes-span {
