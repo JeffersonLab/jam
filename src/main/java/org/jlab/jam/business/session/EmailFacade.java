@@ -661,7 +661,7 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
     if (upcoming.getUpcomingRFAuthorizationExpirationList() != null
         && !upcoming.getUpcomingRFAuthorizationExpirationList().isEmpty()) {
       somethingToReport = true;
-      body = body + "<h2>SRF Operations Authorizations</h2>\n";
+      body = body + "<h2>RF Operations Authorizations</h2>\n";
       body = body + "<ul>\n";
       for (RFSegmentAuthorization auth : upcoming.getUpcomingRFAuthorizationExpirationList()) {
         body =

@@ -90,7 +90,7 @@
                     </div>
                 </c:when>
                 <c:otherwise>                   
-                    Choose an SRF Segment to continue
+                    Choose an RF Segment to continue
                 </c:otherwise>
             </c:choose>
         </section>

@@ -1,7 +1,7 @@
 package org.jlab.jam.persistence.enumeration;
 
 public enum OperationsType {
-  RF("SRF"),
+  RF("RF"),
   BEAM("Beam");
 
   final String label;

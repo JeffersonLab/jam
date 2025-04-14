@@ -13,7 +13,7 @@
 <c:set var="operationsEntity" value="beamDestination"/>
 <c:set var="historyPathSuffix" value="destination-history?beamControlVerificationId"/>
 <c:if test="${'rf' eq operationsType}">
-    <c:set var="operationsName" value="SRF Segment"/>
+    <c:set var="operationsName" value="RF Segment"/>
     <c:set var="operationsId" value="RFControlVerificationId"/>
     <c:set var="operationsEntity" value="RFSegment"/>
     <c:set var="historyPathSuffix" value="segment-history?rfControlVerificationId"/>

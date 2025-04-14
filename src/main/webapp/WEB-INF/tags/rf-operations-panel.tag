@@ -1,4 +1,4 @@
-<%@tag description="SRF Operations Table Tag" pageEncoding="UTF-8"%>
+<%@tag description="RF Operations Table Tag" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
@@ -10,7 +10,7 @@
 <table class="destinations-table data-table stripped-table">
     <thead>
         <tr>
-            <th rowspan="2" class="destination-header">SRF Segment</th>
+            <th rowspan="2" class="destination-header">RF Segment</th>
                 <c:if test="${not isHistory}">
                 <th rowspan="2" class="approval-header">Auth</th>
                 </c:if>
@@ -20,7 +20,7 @@
                 </c:if>
         </tr>
         <tr>
-            <th>High Power SRF</th>
+            <th>High Power RF</th>
             <th>Comment</th>
             <th class="expiration-header">Expiration</th>
         </tr>

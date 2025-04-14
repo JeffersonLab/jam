@@ -38,7 +38,7 @@
                 </c:when>
                 <c:otherwise>
                     <div class="accordion">
-                        <h3>SRF Operations</h3>
+                        <h3>RF Operations</h3>
                         <div class="content rf-content">
                             <c:choose>
                                 <c:when test="${not empty segmentList}">
@@ -47,7 +47,7 @@
                                             <thead>
                                             <tr>
                                                 <th rowspan="2" class="control-header">Credited Control</th>
-                                                <th colspan="${fn:length(segmentList)}">SRF Segment</th>
+                                                <th colspan="${fn:length(segmentList)}">RF Segment</th>
                                             </tr>
                                             <tr>
                                                 <c:forEach items="${segmentList}" var="segment">

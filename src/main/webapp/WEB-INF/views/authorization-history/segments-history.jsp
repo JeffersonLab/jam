@@ -26,7 +26,7 @@
                     <a href="${pageContext.request.contextPath}/authorizations${facility.path}"><c:out value="${facility.name}"/></a>
                 </li>
                 <li>
-                    <a href="${pageContext.request.contextPath}/authorizations${facility.path}/rf-history">SRF History</a>
+                    <a href="${pageContext.request.contextPath}/authorizations${facility.path}/rf-history">RF History</a>
                 </li>
                 <li>
                     <span>#<c:out value="${param.rfAuthorizationId}"/> (Created: <fmt:formatDate value="${rfAuthorization.modifiedDate}" pattern="${s:getFriendlyDateTimePattern()}"/>)</span>
