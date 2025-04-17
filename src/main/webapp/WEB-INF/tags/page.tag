@@ -14,6 +14,12 @@
     </jsp:attribute>
     <jsp:attribute name="scripts">
         <script type="text/javascript" src="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/js/jam.js"></script>
+        <script>
+            $(function() {
+                $("#notification-bar").remove();
+                $("body").prepend('<div id="notification-bar">This is the 420.2c version.  420.2d coming Wed. April 23 (<a href="https://tasklists.jlab.org/swlist/tasks/115635">swlist 115635</a>) </div>');
+            });
+        </script>
         <jsp:invoke fragment="scripts"/>
     </jsp:attribute>
     <jsp:attribute name="primaryNavigation">
