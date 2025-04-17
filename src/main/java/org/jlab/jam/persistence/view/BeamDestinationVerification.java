@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
  * @author ryans
  */
 @Entity
-@Table(name = "BEAM_DESTINATION_VERIFICATION", schema = "JAM_OWNER")
+@Table(name = "BEAM_DESTINATION_VERIFICATION", schema = "JAM_4202C_OWNER")
 public class BeamDestinationVerification implements Serializable {
 
   private static final long serialVersionUID = 1L;

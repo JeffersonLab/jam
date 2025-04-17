@@ -50,7 +50,7 @@ services:
       LOGBOOK_SERVER_URL: 'https://logbooks.jlab.org'
       ORACLE_DATASOURCE: 'jam'
       ORACLE_SERVER: 'oracle:1521'
-      ORACLE_USER: 'JAM_OWNER'
+      ORACLE_USER: 'JAM_4202C_OWNER'
       ORACLE_PASS: 'password'
       ORACLE_SERVICE: 'xepdb1'
       PUPPET_SHOW_SERVER_URL: 'http://puppet:3000'
