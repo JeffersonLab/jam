@@ -6,6 +6,12 @@ insert into JAM_OWNER.SETTING (KEY, VALUE, TYPE, DESCRIPTION, TAG, WEIGHT) value
 insert into JAM_OWNER.SETTING (KEY, VALUE, TYPE, DESCRIPTION, TAG, WEIGHT) values ('SMOOTHNESS_SERVER', 'ace.jlab.org/cdn', 'STRING', 'Host name and port of content delivery network host for shared smoothness resources. Only used if SMOOTHNESS_LOCATION=CDN', 'CDN', 2);
 insert into JAM_OWNER.SETTING (KEY, VALUE, TYPE, DESCRIPTION, TAG, WEIGHT) values ('SMOOTHNESS_VERSION', '4.11.0', 'STRING', 'Version of smoothness lib on CDN.  Only used if SMOOTHNESS_LOCATION=CDN', 'CDN', 3);
 
+insert into JAM_OWNER.SETTING (KEY, VALUE, TYPE, DESCRIPTION, TAG, WEIGHT) values ('NOTIFICATION_ENABLED', 'Y', 'BOOLEAN', 'Notification banner enabled', 'NOTIFICATION', 1);
+insert into JAM_OWNER.SETTING (KEY, VALUE, TYPE, DESCRIPTION, TAG, WEIGHT) values ('NOTIFICATION_MESSAGE', 'This is the upcoming 420.2d version.  Will be live on Wed. April 23', 'STRING', 'Notification message', 'NOTIFICATION', 2);
+insert into JAM_OWNER.SETTING (KEY, VALUE, TYPE, DESCRIPTION, TAG, WEIGHT) values ('NOTIFICATION_LINK_NAME', 'swlist 115635', 'STRING', 'Notification link name', 'NOTIFICATION', 3);
+insert into JAM_OWNER.SETTING (KEY, VALUE, TYPE, DESCRIPTION, TAG, WEIGHT) values ('NOTIFICATION_LINK_URL', 'https://tasklists.jlab.org/swlist/tasks/115635', 'STRING', 'Notification link URL', 'NOTIFICATION', 4);
+
+
 -- Populate Verification Statuses
 insert into JAM_OWNER.VERIFICATION_STATUS (VERIFICATION_STATUS_ID, NAME) values (1, 'Verified');
 insert into JAM_OWNER.VERIFICATION_STATUS (VERIFICATION_STATUS_ID, NAME) values (50, 'Provisionally Verified');
