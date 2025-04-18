@@ -1,4 +1,5 @@
 var jlab = jlab || {};
+jlab.pageDialog.width = 950;
 jlab.rfSave = function () {
 
     var $actionButton = $("#rf-save-button"),
