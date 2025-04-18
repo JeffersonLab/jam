@@ -4,7 +4,7 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@taglib prefix="s" uri="http://jlab.org/jsp/smoothness" %>
 <%@taglib prefix="jam" uri="http://jlab.org/jam/functions"%>
-<c:set var="title" value="Destination Verification"/>
+<c:set var="title" value="${fn:escapeXml(destination.name)} Destination Verification"/>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
 <s:page title="${title}">
     <jsp:attribute name="stylesheets">
