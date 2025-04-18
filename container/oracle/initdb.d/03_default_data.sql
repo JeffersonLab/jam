@@ -11,6 +11,8 @@ insert into JAM_OWNER.SETTING (KEY, VALUE, TYPE, DESCRIPTION, TAG, WEIGHT) value
 insert into JAM_OWNER.SETTING (KEY, VALUE, TYPE, DESCRIPTION, TAG, WEIGHT) values ('NOTIFICATION_LINK_NAME', 'swlist 115635', 'STRING', 'Notification link name', 'NOTIFICATION', 3);
 insert into JAM_OWNER.SETTING (KEY, VALUE, TYPE, DESCRIPTION, TAG, WEIGHT) values ('NOTIFICATION_LINK_URL', 'https://tasklists.jlab.org/swlist/tasks/115635', 'STRING', 'Notification link URL', 'NOTIFICATION', 4);
 
+insert into DTM_OWNER.SETTING (KEY, VALUE, TYPE, DESCRIPTION, TAG, WEIGHT) values ('EMAIL_TESTING_ENABLED', 'Y', 'BOOLEAN', 'Send all emails to testlead user group', 'EMAIL', 1);
+
 --insert into JAM_OWNER.SETTING (KEY, VALUE, TYPE, DESCRIPTION, TAG, WEIGHT) values ('FRONTEND_SERVER_URL_OVERRIDE', 'https://localhost:8080/jam', 'STRING', 'Override the env var FRONTEND_SERVER_URL, which is the front-most proxy URL to include in login redirects, emails, and logentries.  Delete this record to stop the override.', 'NAMESPACE', 1);
 
 -- Populate Verification Statuses

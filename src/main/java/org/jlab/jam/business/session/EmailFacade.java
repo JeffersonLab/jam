@@ -22,6 +22,7 @@ import org.jlab.jam.persistence.enumeration.OperationsType;
 import org.jlab.jam.persistence.view.*;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jlab.smoothness.business.service.EmailService;
+import org.jlab.smoothness.business.service.SettingsService;
 import org.jlab.smoothness.business.service.UserAuthorizationService;
 import org.jlab.smoothness.business.util.IOUtil;
 import org.jlab.smoothness.business.util.TimeUtil;
@@ -322,10 +323,9 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
 
       boolean testing = false;
       String adminRole = "jam-admin";
-      String testingStr = System.getenv("JAM_EMAIL_TESTING");
-      if (testingStr != null && testingStr.equals("true")) {
+      if (SettingsService.cachedSettings.is("EMAIL_TESTING_ENABLED")) {
         testing = true;
-        LOGGER.log(Level.INFO, "JAM_EMAIL_TESTING=true (using testlead role)");
+        LOGGER.log(Level.INFO, "EMAIL_TESTING_ENABLED=true (using testlead role)");
         adminRole = "testlead";
       }
 
@@ -440,10 +440,9 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
     try {
       boolean testing = false;
       String adminRole = "jam-admin";
-      String testingStr = System.getenv("JAM_EMAIL_TESTING");
-      if (testingStr != null && testingStr.equals("true")) {
+      if (SettingsService.cachedSettings.is("EMAIL_TESTING_ENABLED")) {
         testing = true;
-        LOGGER.log(Level.INFO, "JAM_EMAIL_TESTING=true (using testlead role)");
+        LOGGER.log(Level.INFO, "EMAIL_TESTING_ENABLED=true (using testlead role)");
         adminRole = "testlead";
       }
 
@@ -522,9 +521,8 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
 
       UserAuthorizationService auth = UserAuthorizationService.getInstance();
 
-      String testingStr = System.getenv("JAM_EMAIL_TESTING");
-      if (testingStr != null && testingStr.equals("true")) {
-        LOGGER.log(Level.INFO, "JAM_EMAIL_TESTING=true (using testlead role)");
+      if (SettingsService.cachedSettings.is("EMAIL_TESTING_ENABLED")) {
+        LOGGER.log(Level.INFO, "EMAIL_TESTING_ENABLED=true (using testlead role)");
         userList = auth.getUsersInRole("testlead");
       } else {
         userList = auth.getUsersInRole(team.getDirectoryRoleName());
@@ -618,9 +616,8 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
 
       List<User> userList;
 
-      String testingStr = System.getenv("JAM_EMAIL_TESTING");
-      if (testingStr != null && testingStr.equals("true")) {
-        LOGGER.log(Level.INFO, "JAM_EMAIL_TESTING=true (using testlead role)");
+      if (SettingsService.cachedSettings.is("EMAIL_TESTING_ENABLED")) {
+        LOGGER.log(Level.INFO, "EMAIL_TESTING_ENABLED=true (using testlead role)");
         userList = auth.getUsersInRole("testlead");
       } else {
         VerificationTeam team = upcoming.getTeam();
