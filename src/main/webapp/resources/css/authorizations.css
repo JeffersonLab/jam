@@ -47,13 +47,16 @@ h2 button {
     width: 80px;
 }
 .expiration-header {
-    width: 170px;
+    width: 110px;
 }
-.mode-header {
-    width: 120px;
+th.mode-header {
+    width: 75px;
 }
 .comment-input {
     width: 95%;
+}
+th.approval-header {
+    width: 50px;
 }
 input[readonly],
 textarea[readonly] {

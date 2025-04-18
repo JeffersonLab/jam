@@ -20,7 +20,7 @@
                 </c:if>
         </tr>
         <tr>
-            <th>High Power RF</th>
+            <th class="mode-header">High Power RF</th>
             <th>Comment</th>
             <th class="expiration-header">Expiration</th>
         </tr>
