@@ -82,7 +82,7 @@
                     <c:forEach items="${watcherList}" var="watcher">
                         <tr data-username="${fn:escapeXml(watcher.watcherPK.username)}" data-facility-id="${watcher.watcherPK.facility.facilityId}">
                             <td><c:out value="${watcher.watcherPK.facility.name}"/></td>
-                            <td><c:out value="${watcher.watcherPK.operationsType.label}"/></td>
+                            <td><c:out value="${watcher.watcherPK.operationsType}"/></td>
                             <td><c:out value="${s:formatUsername(watcher.watcherPK.username)}"/></td>
                         </tr>
                     </c:forEach>
