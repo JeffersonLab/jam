@@ -93,18 +93,25 @@ public class BeamAuthorizationFacade extends AbstractFacade<BeamAuthorization> {
 
   @SuppressWarnings("unchecked")
   @PermitAll
-  public List<BeamAuthorization> findHistory(int offset, int maxPerPage) {
+  public List<BeamAuthorization> findHistory(Facility facility, int offset, int maxPerPage) {
     Query q =
         em.createNativeQuery(
-            "select * from beam_authorization order by modified_date desc",
+            "select * from beam_authorization where facility_id = :facilityId order by modified_date desc",
             BeamAuthorization.class);
+
+    q.setParameter("facilityId", facility.getFacilityId());
 
     return q.setFirstResult(offset).setMaxResults(maxPerPage).getResultList();
   }
 
   @PermitAll
-  public Long countHistory() {
-    TypedQuery<Long> q = em.createQuery("select count(a) from BeamAuthorization a", Long.class);
+  public Long countHistory(Facility facility) {
+    TypedQuery<Long> q =
+        em.createQuery(
+            "select count(a) from BeamAuthorization a where a.facility.facilityId = :facilityId",
+            Long.class);
+
+    q.setParameter("facilityId", facility.getFacilityId());
 
     return q.getSingleResult();
   }
