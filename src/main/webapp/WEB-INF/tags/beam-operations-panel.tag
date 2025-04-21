@@ -100,6 +100,7 @@
                 </td>
                 <c:if test="${not isHistory}">
                     <td class="icon-cell">
+                        <a class="dialog-opener" href="${pageContext.request.contextPath}/verifications/destination?destinationId=${destination.beamDestinationId}&notEditable=Y&simple=Y">
                         <c:choose>
                             <c:when test="${destination.verification.verificationStatusId eq 1}">
                                 <span title="Verified" class="small-icon verified-icon"></span>
@@ -111,6 +112,7 @@
                                 <span title="Not Verified" class="small-icon not-verified-icon"></span>
                             </c:otherwise>
                         </c:choose>
+                        </a>
                         <c:if test="${destination.verification.verificationStatusId ne 100}">
                             <span class="expiring-soon" style="<c:out value="${jam:isExpiringSoon(destination.verification.expirationDate) ? 'display: inline-block;' : 'display: none;'}"/>">(Expiring Soon)</span>
                         </c:if>

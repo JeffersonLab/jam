@@ -44,10 +44,12 @@
             </c:if>
             <th><c:out value="${rowKey}"/></th>
             <th>Verified</th>
-            <th>Components</th>
-            <th>Comments</th>
             <th>Expiration Date</th>
-            <th class="audit-header">Audit</th>
+            <c:if test="${param.simple ne 'Y'}">
+                <th>Components</th>
+                <th>Comments</th>
+                <th class="audit-header">Audit</th>
+            </c:if>
         </tr>
         </thead>
         <tbody>
@@ -77,6 +79,8 @@
                     <div class="verified-date"><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}" value="${verification.verificationDate}"/></div>
                     <div class="verified-by"><c:out value="${s:formatUsername(verification.verifiedBy)}"/></div>
                 </td>
+                <td><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}" value="${verification.expirationDate}"/></td>
+                <c:if test="${param.simple ne 'Y'}">
                 <td>
                     <c:forEach items="${verification.componentList}" var="component">
                         <div class="component-status" data-id="${component.componentId}">
@@ -101,8 +105,8 @@
                         </div>
                     </c:if>
                 </td>
-                <td><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}" value="${verification.expirationDate}"/></td>
                 <td><a class="${groupByOperation ? 'dialog-opener' : 'partial-support'}" href="${pageContext.request.contextPath}/verifications/control/${historyPathSuffix}=${verification[operationsId]}" title="Click for verification history">History</a></td>
+                </c:if>
             </tr>
         </c:forEach>
         </tbody>

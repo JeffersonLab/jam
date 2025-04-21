@@ -4,7 +4,7 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@taglib prefix="s" uri="http://jlab.org/jsp/smoothness" %>
 <%@taglib prefix="jam" uri="http://jlab.org/jam/functions"%>
-<c:set var="title" value="${fn:escapeXml(destination.name)} Destination Verification"/>
+<c:set var="title" value="Destination Verification"/>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
 <s:page title="${title}">
     <jsp:attribute name="stylesheets">
@@ -38,6 +38,7 @@
                     </li>
                     <li>
                         <form method="get" action="destination">
+                            <label>Destination</label>
                             <select name="destinationId" class="change-submit">
                                 <c:forEach items="${destinationList}" var="destination">
                                     <option value="${destination.beamDestinationId}"${param.destinationId eq destination.beamDestinationId ? ' selected="selected"' : ''}><c:out value="${destination.facility.name} / ${destination.name}"/></option>
@@ -55,11 +56,10 @@
                 </c:url>
                 <a class="dialog-only-inline-block" href="${url}" target="_blank">Open in new tab</a>
             </div>
-            <h2 class="page-header-title"><c:out value="${title}"/></h2>
             <c:choose>
                 <c:when test="${destination ne null}">
                     <div>
-                        <h3>
+                        <h2 class="page-header-title">
                             <c:choose>
                                 <c:when test="${destination.verification.verificationStatusId eq 1}">
                                     <span title="Verified" class="small-icon baseline-small-icon verified-icon"></span>
@@ -71,14 +71,15 @@
                                     <span title="Not Verified" class="small-icon baseline-small-icon not-verified-icon"></span>
                                 </c:otherwise>
                             </c:choose>
-                            Credited Control Verifications
+                            <c:out value="${fn:escapeXml(destination.name)}"/>
                             <c:if test="${destination.verification.verificationStatusId ne 100}">
-                                <span title="Earliest Control Expiration">
-                                    <fmt:formatDate value="${destination.verification.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
+                                <span class="title-expiration" title="Earliest Control Expiration">
+                                    {Expires: <fmt:formatDate value="${destination.verification.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>}
                                 </span>
                                 <span class="expiring-soon" style="<c:out value="${jam:isExpiringSoon(destination.verification.expirationDate) ? 'display: inline-block;' : 'display: none;'}"/>">(Expiring Soon)</span>
                             </c:if>
-                        </h3>
+                        </h2>
+                        <div class="verification-wrap">
                         <c:choose>
                             <c:when test="${fn:length(destination.beamControlVerificationList) < 1}">
                                 None
@@ -87,6 +88,7 @@
                                 <t:verification-panel operationsType="beam" operationsList="${destination.beamControlVerificationList}" groupByOperation="true"/>
                             </c:otherwise>
                         </c:choose>
+                        </div>
                     </div>
                 </c:when>
                 <c:otherwise>                   
