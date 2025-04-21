@@ -25,6 +25,12 @@
             </ul>
         </div>        
         <section>
+            <div class="top-right-box">
+                <c:url value="/verifications/control/destination-history" var="url">
+                    <c:param name="beamControlVerificationId" value="${param.beamControlVerificationId}"/>
+                </c:url>
+                <a class="dialog-only-inline-block" href="${url}" target="_blank">Open in new tab</a>
+            </div>
             <div>
                 <h3>Credited Control</h3>
                 <c:out value="${verification.creditedControl.name}"/>
