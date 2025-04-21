@@ -78,6 +78,7 @@
                 </td>
                 <c:if test="${not isHistory}">
                     <td class="icon-cell">
+                        <a class="dialog-opener" href="${pageContext.request.contextPath}/verifications/segment?segmentId=${segment.getRFSegmentId()}&notEditable=Y&simple=Y">
                             <c:choose>
                                 <c:when test="${segment.verification.verificationStatusId eq 1}">
                                     <span title="Verified" class="small-icon verified-icon"></span>
@@ -89,6 +90,7 @@
                                     <span title="Not Verified" class="small-icon not-verified-icon"></span>
                                 </c:otherwise>
                             </c:choose>
+                        </a>
                         <c:if test="${segment.verification.verificationStatusId ne 100}">
                             <span class="expiring-soon" style="<c:out value="${jam:isExpiringSoon(segment.verification.expirationDate) ? 'display: inline-block;' : 'display: none;'}"/>">(Expiring Soon)</span>
                         </c:if>
