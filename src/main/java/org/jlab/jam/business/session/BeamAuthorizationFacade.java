@@ -195,6 +195,9 @@ public class BeamAuthorizationFacade extends AbstractFacade<BeamAuthorization> {
                   + destination.getName()
                   + "\" must have a future expiration date and minimum expiration is 1 hour from now");
         }
+      } else { // mode = NONE (OFF)
+        // We force expiration to empty
+        da.setExpirationDate(null);
       }
 
       da.setAuthorization(beamAuthorization);

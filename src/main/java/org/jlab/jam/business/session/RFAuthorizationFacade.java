@@ -186,6 +186,9 @@ public class RFAuthorizationFacade extends AbstractFacade<RFAuthorization> {
                   + segment.getName()
                   + "\" must have a future expiration date and minimum expiration is 1 hour from now");
         }
+      } else { // High Power = OFF
+        // We force expiration to empty
+        da.setExpirationDate(null);
       }
 
       da.setRFAuthorization(authorization);
