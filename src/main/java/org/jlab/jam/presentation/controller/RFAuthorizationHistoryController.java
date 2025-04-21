@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jlab.jam.business.session.RFAuthorizationFacade;
+import org.jlab.jam.persistence.entity.Facility;
 import org.jlab.jam.persistence.entity.RFSegment;
 import org.jlab.smoothness.presentation.util.Paginator;
 import org.jlab.smoothness.presentation.util.ParamUtil;
@@ -34,11 +35,13 @@ public class RFAuthorizationHistoryController extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
+    Facility facility = (Facility) request.getAttribute("facility");
+
     int offset = ParamUtil.convertAndValidateNonNegativeInt(request, "offset", 0);
     int maxPerPage = 10;
 
-    List<RFSegment> historyList = historyFacade.findHistory(offset, maxPerPage);
-    Long totalRecords = historyFacade.countHistory();
+    List<RFSegment> historyList = historyFacade.findHistory(facility, offset, maxPerPage);
+    Long totalRecords = historyFacade.countHistory(facility);
 
     Paginator paginator = new Paginator(totalRecords.intValue(), offset, maxPerPage);
 

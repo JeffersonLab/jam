@@ -87,17 +87,25 @@ public class RFAuthorizationFacade extends AbstractFacade<RFAuthorization> {
 
   @SuppressWarnings("unchecked")
   @PermitAll
-  public List<RFSegment> findHistory(int offset, int maxPerPage) {
+  public List<RFSegment> findHistory(Facility facility, int offset, int maxPerPage) {
     Query q =
         em.createNativeQuery(
-            "select * from rf_authorization order by modified_date desc", RFAuthorization.class);
+            "select * from rf_authorization where facility_id = :facilityId order by modified_date desc",
+            RFAuthorization.class);
+
+    q.setParameter("facilityId", facility.getFacilityId());
 
     return q.setFirstResult(offset).setMaxResults(maxPerPage).getResultList();
   }
 
   @PermitAll
-  public Long countHistory() {
-    TypedQuery<Long> q = em.createQuery("select count(a) from RFAuthorization a", Long.class);
+  public Long countHistory(Facility facility) {
+    TypedQuery<Long> q =
+        em.createQuery(
+            "select count(a) from RFAuthorization a where a.facility.facilityId = :facilityId",
+            Long.class);
+
+    q.setParameter("facilityId", facility.getFacilityId());
 
     return q.getSingleResult();
   }
