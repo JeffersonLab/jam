@@ -5,7 +5,7 @@
 <%@taglib prefix="s" uri="http://jlab.org/jsp/smoothness" %>
 <%@taglib prefix="jam" uri="http://jlab.org/jam/functions"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
-<c:set var="title" value="${fn:escapeXml(segment.name)} Segment Verification"/>
+<c:set var="title" value="Segment Verification"/>
 <s:page title="${title}">
     <jsp:attribute name="stylesheets">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/css/verification-panel.css"/>
@@ -38,6 +38,7 @@
                     </li>
                     <li>
                         <form method="get" action="segment">
+                            <label>Segment</label>
                             <select name="segmentId" class="change-submit">
                                 <c:forEach items="${segmentList}" var="segment">
                                     <option value="${segment.getRFSegmentId()}"${param.segmentId eq segment.getRFSegmentId() ? ' selected="selected"' : ''}><c:out value="${segment.facility.name} / ${segment.name}"/></option>
@@ -55,11 +56,10 @@
                 </c:url>
                 <a class="dialog-only-inline-block" href="${url}" target="_blank">Open in new tab</a>
             </div>
-            <h2 class="page-header-title"><c:out value="${title}"/></h2>
             <c:choose>
                 <c:when test="${segment ne null}">
                     <div>
-                        <h3>
+                        <h2 class="page-header-title">
                             <c:choose>
                                 <c:when test="${segment.verification.verificationStatusId eq 1}">
                                     <span title="Verified" class="small-icon baseline-small-icon verified-icon"></span>
@@ -71,14 +71,14 @@
                                     <span title="Not Verified" class="small-icon baseline-small-icon not-verified-icon"></span>
                                 </c:otherwise>
                             </c:choose>
-                            Credited Control Verifications
+                            <c:out value="${fn:escapeXml(segment.name)}"/>
                             <c:if test="${segment.verification.verificationStatusId ne 100}">
                                 <span title="Earliest Control Expiration">
                                     <fmt:formatDate value="${segment.verification.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
                                 </span>
                                 <span class="expiring-soon" style="<c:out value="${jam:isExpiringSoon(segment.verification.expirationDate) ? 'display: inline-block;' : 'display: none;'}"/>">(Expiring Soon)</span>
                             </c:if>
-                        </h3>
+                        </h2>
                         <c:choose>
                             <c:when test="${fn:length(segment.getRFControlVerificationList()) < 1}">
                                 None
