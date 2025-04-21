@@ -34,7 +34,7 @@ public class BeamControlVerificationHistoryFacade
       int maxPerPage) { // join fetch a.controlVerification b join fetch b.creditedControl
     TypedQuery<BeamControlVerificationHistory> q =
         em.createQuery(
-            "select a from BeamControlVerificationHistory a where a.beamControlVerification.beamControlVerificationId = :id order by a.beamControlVerificationHistoryId desc",
+            "select a from BeamControlVerificationHistory a where a.beamControlVerification.beamControlVerificationId = :id order by a.modifiedDate desc, a.beamControlVerificationHistoryId desc",
             BeamControlVerificationHistory.class);
 
     q.setParameter("id", controlVerificationId);
