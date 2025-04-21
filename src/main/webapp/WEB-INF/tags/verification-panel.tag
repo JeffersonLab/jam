@@ -112,6 +112,7 @@
     </c:if>
 </div>
 <div id="verify-dialog" class="dialog" title="Edit Credited Control Verification">
+    <section>
     <form>
         <ul class="key-value-list">
             <li>
@@ -173,14 +174,18 @@
         </div>
         <input type="hidden" id="verificationType" name="verificationType"/>
     </form>
+    </section>
 </div>
 <div id="success-dialog" class="dialog" title="Verification Saved Successfully">
+    <section>
     <span class="logentry-success">Verification contained downgrade so a new log entry was created: <a id="new-entry-url" href="#"></a></span>
     <div class="dialog-button-panel">
         <button class="dialog-close-button" type="button">OK</button>
     </div>
+    </section>
 </div>
 <div id="component-edit-dialog" class="dialog" title="Components">
+    <section>
     <div class="row">
         <div class="column">
             <fieldset>
@@ -203,4 +208,5 @@
         <input type="hidden" id="component-edit-verification-id" name="verificationId"/>
         <button class="dialog-close-button" type="button">OK</button>
     </div>
+    </section>
 </div>

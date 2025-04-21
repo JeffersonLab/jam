@@ -450,7 +450,7 @@ jlab.verificationPanelInit = function() {
     $("#verify-dialog").dialog({
         autoOpen: false,
         width: 700,
-        height: 600,
+        height: 650,
         resizable: false
     });
 
