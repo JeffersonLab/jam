@@ -189,7 +189,7 @@ $(document).on("click", ".verify-button", function () {
             statusArray.push($(this).attr("data-status-id"));
             verificationDateArray.push($(".verified-date", value).text());
             verifiedByArray.push($(this).attr("data-verified-username"));
-            expirationDateArray.push($("td:nth-child(6)", value).text());
+            expirationDateArray.push($("td:nth-child(4)", value).text());
             commentsArray.push($(".comments-div", value).text());
             linkArray.push($(".doc-anchor", value).attr("href"));
         }

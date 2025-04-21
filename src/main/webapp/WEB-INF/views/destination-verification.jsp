@@ -73,12 +73,13 @@
                             </c:choose>
                             <c:out value="${fn:escapeXml(destination.name)}"/>
                             <c:if test="${destination.verification.verificationStatusId ne 100}">
-                                <span title="Earliest Control Expiration">
-                                    <fmt:formatDate value="${destination.verification.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
+                                <span class="title-expiration" title="Earliest Control Expiration">
+                                    {Expires: <fmt:formatDate value="${destination.verification.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>}
                                 </span>
                                 <span class="expiring-soon" style="<c:out value="${jam:isExpiringSoon(destination.verification.expirationDate) ? 'display: inline-block;' : 'display: none;'}"/>">(Expiring Soon)</span>
                             </c:if>
                         </h2>
+                        <div class="verification-wrap">
                         <c:choose>
                             <c:when test="${fn:length(destination.beamControlVerificationList) < 1}">
                                 None
@@ -87,6 +88,7 @@
                                 <t:verification-panel operationsType="beam" operationsList="${destination.beamControlVerificationList}" groupByOperation="true"/>
                             </c:otherwise>
                         </c:choose>
+                        </div>
                     </div>
                 </c:when>
                 <c:otherwise>                   
