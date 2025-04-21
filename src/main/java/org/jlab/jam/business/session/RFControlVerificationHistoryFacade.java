@@ -34,7 +34,7 @@ public class RFControlVerificationHistoryFacade
       int maxPerPage) { // join fetch a.controlVerification b join fetch b.creditedControl
     TypedQuery<RFControlVerificationHistory> q =
         em.createQuery(
-            "select a from RFControlVerificationHistory a where a.rfControlVerification.rfControlVerificationId = :id order by a.rfControlVerificationHistoryId desc",
+            "select a from RFControlVerificationHistory a where a.rfControlVerification.rfControlVerificationId = :id order by a.modifiedDate desc, a.rfControlVerificationHistoryId desc",
             RFControlVerificationHistory.class);
 
     q.setParameter("id", controlVerificationId);
