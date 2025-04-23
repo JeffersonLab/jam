@@ -82,7 +82,7 @@
                     <c:forEach items="${authorizerList}" var="authorizer">
                         <tr data-username="${fn:escapeXml(authorizer.authorizerPK.username)}" data-facility-id="${authorizer.authorizerPK.facility.facilityId}">
                             <td><c:out value="${authorizer.authorizerPK.facility.name}"/></td>
-                            <td><c:out value="${authorizer.authorizerPK.operationsType.label}"/></td>
+                            <td><c:out value="${authorizer.authorizerPK.operationsType}"/></td>
                             <td><c:out value="${s:formatUsername(authorizer.authorizerPK.username)}"/></td>
                         </tr>
                     </c:forEach>
