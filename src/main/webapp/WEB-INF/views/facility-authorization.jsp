@@ -14,7 +14,7 @@
     <jsp:body>
         <section>
             <h2><c:out value="${facility.name}"/></h2>
-            <t:authorizations-panel rfList="${rfList}" beamList="${beamList}" isEditable="${pageContext.request.isUserInRole('jam-admin')}" isHistory="${false}"/>
+            <t:authorizations-panel rfList="${rfList}" beamList="${beamList}" isRfEditable="${isRfEditable}" isBeamEditable="${isBeamEditable}" isHistory="${false}"/>
         </section>
         <div id="success-dialog" class="dialog" title="Authorization Saved Successfully">
             <span class="logentry-success">A new log entry was created: <a id="new-entry-url" href="#"></a></span>

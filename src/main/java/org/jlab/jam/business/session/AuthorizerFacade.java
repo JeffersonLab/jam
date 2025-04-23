@@ -148,10 +148,23 @@ public class AuthorizerFacade extends AbstractFacade<Authorizer> {
   @PermitAll
   public void isAuthorizer(Facility facility, OperationsType type, String username)
       throws UserFriendlyException {
-    List<Authorizer> authorizerList = filterList(facility, type, username);
+    boolean authorizer = isAuthorizerBool(facility, type, username);
 
-    if (authorizerList == null || authorizerList.isEmpty()) {
+    if (!authorizer) {
       throw new UserFriendlyException("Not Authorized to Authorize!");
     }
+  }
+
+  @PermitAll
+  public boolean isAuthorizerBool(Facility facility, OperationsType type, String username) {
+    List<Authorizer> authorizerList = filterList(facility, type, username);
+
+    boolean authorizer = true;
+
+    if (authorizerList == null || authorizerList.isEmpty()) {
+      authorizer = false;
+    }
+
+    return authorizer;
   }
 }
