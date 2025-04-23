@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jlab.jam.business.session.*;
 import org.jlab.jam.persistence.entity.*;
+import org.jlab.jam.persistence.enumeration.OperationsType;
 import org.jlab.jam.persistence.view.FacilityExpirationEvent;
 
 /**
@@ -33,6 +34,7 @@ public class FacilityAuthorization extends HttpServlet {
   @EJB RFSegmentFacade rfSegmentFacade;
   @EJB ExpirationManager expirationManager;
   @EJB NotificationManager notificationManager;
+  @EJB AuthorizerFacade authorizerFacade;
 
   /**
    * Handles the HTTP <code>GET</code> method.
@@ -143,7 +145,24 @@ public class FacilityAuthorization extends HttpServlet {
     Map<BigInteger, RFSegmentAuthorization> segmentAuthorizationMap =
         rfAuthorizationFacade.createSegmentAuthorizationMap(rfAuthorization);
 
+    String username = request.getRemoteUser();
+
+    boolean isRfEditable = false;
+    boolean isBeamEditable = false;
+
+    if (username != null) {
+      if (request.isUserInRole("jam-admin")) {
+        isRfEditable = true;
+        isBeamEditable = true;
+      } else {
+        isRfEditable = authorizerFacade.isAuthorizerBool(facility, OperationsType.RF, username);
+        isBeamEditable = authorizerFacade.isAuthorizerBool(facility, OperationsType.BEAM, username);
+      }
+    }
+
     request.setAttribute("unitsMap", beamAuthorizationFacade.getUnitsMap());
+    request.setAttribute("isRfEditable", isRfEditable);
+    request.setAttribute("isBeamEditable", isBeamEditable);
     request.setAttribute("rfAuthorization", rfAuthorization);
     request.setAttribute("beamAuthorization", beamAuthorization);
     request.setAttribute("rfList", rfList);

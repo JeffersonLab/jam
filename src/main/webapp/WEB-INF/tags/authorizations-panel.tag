@@ -7,7 +7,8 @@
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
 <%@attribute name="rfList" required="true" type="java.util.List"%>
 <%@attribute name="beamList" required="true" type="java.util.List"%>
-<%@attribute name="isEditable" required="true" type="java.lang.Boolean"%>
+<%@attribute name="isRfEditable" required="true" type="java.lang.Boolean"%>
+<%@attribute name="isBeamEditable" required="true" type="java.lang.Boolean"%>
 <%@attribute name="isHistory" required="true" type="java.lang.Boolean"%>
 <div id="authorization-panel">
     <div class="chart-wrap-backdrop">
@@ -19,7 +20,7 @@
                         <input type="hidden" name="facilityId" value="${facility.facilityId}">
                         <div class="control-panel">
                             <div class="control-item edit-button-panel">
-                                <c:if test="${isEditable}">
+                                <c:if test="${isRfEditable}">
                                     <span class="readonly-field"><button id="rf-edit-button" type="button">Edit RF Operations</button></span>
                                 </c:if>
                                 <div class="editable-field">
@@ -48,7 +49,7 @@
                         <input type="hidden" name="facilityId" value="${facility.facilityId}">
                         <div class="control-panel">
                             <div class="control-item edit-button-panel">
-                                <c:if test="${isEditable}">
+                                <c:if test="${isBeamEditable}">
                                     <span class="readonly-field"><button id="beam-edit-button" type="button">Edit Beam Operations</button></span>
                                 </c:if>
                                 <div class="editable-field">
