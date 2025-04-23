@@ -147,8 +147,6 @@ public class FacilityAuthorization extends HttpServlet {
 
     String username = request.getRemoteUser();
 
-    System.err.println("REMOTE USER: " + username);
-
     boolean isRfEditable = false;
     boolean isBeamEditable = false;
 
