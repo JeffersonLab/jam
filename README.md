@@ -63,14 +63,13 @@ This application requires a Java 11+ JVM and standard library to run, plus a Jav
 Wildfly must be pre-configured before the first deployment of the app.  The [wildfly bash scripts](https://github.com/JeffersonLab/wildfly#configure) can be used to accomplish this.  See the [Dockerfile](https://github.com/JeffersonLab/jam/blob/main/Dockerfile) for an example.
 
 ### Runtime
-Uses the [Smoothness Environment Variables](https://github.com/JeffersonLab/smoothness#global-runtime) plus the following application specific:
+Uses the [Smoothness Environment Variables](https://github.com/JeffersonLab/smoothness#global-runtime) plus the following application specific Settings:
 
 | Name                              | Description                                                                                                                                 |
 |-----------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
-| JAM_EMAIL_SENDER                  | Sender (and from address) of emails. Defaults to `jam@jlab.org`                                                                                                         |
-| JAM_COMPONENT_DETAIL_URL          | URL for Component detail linking. Example: https://ace.jlab.org/srm/reports/component?name=                                                 |
-| JAM_COMPONENT_QUERY_URL           | URL for Component search. Proxied. Example: https://ace.jlab.org/srm/data/components                                                        |
-| JAM_USER_QUERY_URL                | URL for User search.  Proxied. Example: https://ace.jlab.org/srm/ajax/search-user                                                           |
+| COMPONENT_DETAIL_URL          | URL for Component detail linking. Example: https://ace.jlab.org/srm/reports/component?name=                                                 |
+| COMPONENT_QUERY_URL           | URL for Component search. Proxied. Example: https://ace.jlab.org/srm/data/components                                                        |
+| USER_QUERY_URL                | URL for User search.  Proxied. Example: https://ace.jlab.org/srm/ajax/search-user                                                           |
 
 ### Database
 This application requires an Oracle 18+ database with the following [schema](https://github.com/JeffersonLab/jam/tree/main/container/oracle/initdb.d) installed.   The application server hosting this app must also be configured with a JNDI datasource.
