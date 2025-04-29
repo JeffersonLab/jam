@@ -92,7 +92,7 @@
                                     <span class="small-icon baseline-small-icon not-verified-icon"></span>
                                 </c:otherwise>
                             </c:choose>
-                            <a href="${env['JAM_COMPONENT_DETAIL_URL']}${fn:escapeXml(component.name)}"><c:out value="${component.name}"/></a>
+                            <a href="${settings.get('COMPONENT_DETAIL_URL')}${fn:escapeXml(component.name)}"><c:out value="${component.name}"/></a>
                         </div>
                     </c:forEach>
                 </td>

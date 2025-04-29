@@ -315,10 +315,10 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
     try {
       EmailService emailService = new EmailService();
 
-      String sender = System.getenv("JAM_EMAIL_SENDER");
+      String sender = SettingsService.cachedSettings.get("EMAIL_SENDER_ADDRESS");
 
       if (sender == null) {
-        sender = "jam@jlab.org";
+        throw new RuntimeException("Configure EMAIL_SENDER_ADDRESS Setting in DB");
       }
 
       boolean testing = false;
@@ -406,10 +406,10 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
       imagePart.addHeader("Content-Type", "image/png");
       multipart.addBodyPart(imagePart);
 
-      String sender = System.getenv("JAM_EMAIL_SENDER");
+      String sender = SettingsService.cachedSettings.get("EMAIL_SENDER_ADDRESS");
 
       if (sender == null) {
-        sender = "jam@jlab.org";
+        throw new RuntimeException("Configure EMAIL_SENDER_ADDRESS Setting in DB");
       }
 
       String toCsv = "";
@@ -494,10 +494,10 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
       imagePart.addHeader("Content-Type", "image/png");
       multipart.addBodyPart(imagePart);
 
-      String sender = System.getenv("JAM_EMAIL_SENDER");
+      String sender = SettingsService.cachedSettings.get("EMAIL_SENDER_ADDRESS");
 
       if (sender == null) {
-        sender = "jam@jlab.org";
+        throw new RuntimeException("Configure EMAIL_SENDER_ADDRESS Setting in DB");
       }
 
       String toCsv = IOUtil.toCsv(addressList.toArray());
@@ -567,10 +567,10 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
       imagePart.addHeader("Content-Type", "image/png");
       multipart.addBodyPart(imagePart);
 
-      String sender = System.getenv("JAM_EMAIL_SENDER");
+      String sender = SettingsService.cachedSettings.get("EMAIL_SENDER_ADDRESS");
 
       if (sender == null) {
-        sender = "jam@jlab.org";
+        throw new RuntimeException("Configure EMAIL_SENDER_ADDRESS Setting in DB");
       }
 
       String toCsv = IOUtil.toCsv(addressList.toArray());
@@ -595,10 +595,10 @@ public class EmailFacade extends AbstractFacade<VerificationTeam> {
     try {
       EmailService emailService = new EmailService();
 
-      String sender = System.getenv("JAM_EMAIL_SENDER");
+      String sender = SettingsService.cachedSettings.get("EMAIL_SENDER_ADDRESS");
 
       if (sender == null) {
-        sender = "jam@jlab.org";
+        throw new RuntimeException("Configure EMAIL_SENDER_ADDRESS Setting in DB");
       }
 
       String subject = "JAM: " + facility.getName() + " Upcoming Expiration Notice";

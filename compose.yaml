@@ -40,7 +40,6 @@ services:
       JAM_UPCOMING_EXPIRATION_SUBJECT: '[TESTING] Authorization Expired / Expiring Soon'
       JAM_EXPIRED_SUBJECT: '[TESTING] Authorization Expired'
       JAM_DOWNGRADED_SUBJECT: '[TESTING] Authorization Downgraded'
-      JAM_EMAIL_SENDER: 'jam@example.com'
       KEYCLOAK_REALM: 'test-realm'
       KEYCLOAK_RESOURCE: 'jam'
       KEYCLOAK_SECRET: 'yHi6W2raPmLvPXoxqMA7VWbLAA2WN0eB'
