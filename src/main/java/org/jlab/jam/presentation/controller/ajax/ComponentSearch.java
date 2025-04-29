@@ -13,6 +13,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.jlab.smoothness.business.service.SettingsService;
 import org.jlab.smoothness.presentation.util.ParamBuilder;
 import org.jlab.smoothness.presentation.util.ServletUtil;
 
@@ -44,10 +45,10 @@ public class ComponentSearch extends HttpServlet {
     String q = request.getParameter("q");
 
     // https://ace.jlab.org/srm/data/components
-    String COMPONENT_QUERY_URL = System.getenv("JAM_COMPONENT_QUERY_URL");
+    String COMPONENT_QUERY_URL = SettingsService.cachedSettings.get("COMPONENT_QUERY_URL");
 
     if (COMPONENT_QUERY_URL == null) {
-      throw new ServletException("JAM_COMPONENT_QUERY_URL not set");
+      throw new ServletException("COMPONENT_QUERY_URL not set");
     }
 
     ParamBuilder builder = new ParamBuilder();
