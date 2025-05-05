@@ -69,7 +69,7 @@ public class ReducedBeamAuthorizationBuilder {
     if (atLeastOne) {
       String comments = ""; // We replace Change Notes completely with changes
       String csv = IOUtil.toCsv(revokedDestinationList.toArray());
-      comments = comments + "\nDestination control verification revoked: " + csv;
+      comments = comments + "Destination control verification revoked: " + csv;
       clone.setComments(comments);
     }
 
@@ -117,7 +117,7 @@ public class ReducedBeamAuthorizationBuilder {
     if (atLeastOne) {
       String comments = ""; // We replace Change Notes completely with changes
       String csv = IOUtil.toCsv(revokedDestinationList.toArray());
-      comments = comments + "\nDestination authorization revoked: " + csv;
+      comments = comments + "Destination authorization revoked: " + csv;
       clone.setComments(comments);
     }
 

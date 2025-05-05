@@ -2,11 +2,8 @@ h3 {
     margin-bottom: 0;
 }
 .notes-field,
-.signature-field {
-    margin-top: 0.25em;
-}
 .signature-panel {
-    margin-top: 0.5em;
+    margin-top: 0.25em;
 }
 .auth-notes-span {
     white-space: pre-line;
