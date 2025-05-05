@@ -13,6 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import org.jlab.jam.business.util.EqualityHelper;
 import org.jlab.jam.persistence.entity.*;
 import org.jlab.jam.persistence.enumeration.OperationsType;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
@@ -137,6 +138,8 @@ public class RFAuthorizationFacade extends AbstractFacade<RFAuthorization> {
       authorizerFacade.isAuthorizer(facility, OperationsType.RF, username);
     }
 
+    RFAuthorization previousAuth = findCurrent(facility);
+
     RFAuthorization authorization = new RFAuthorization();
     authorization.setFacility(facility);
     authorization.setComments(comments);
@@ -189,10 +192,16 @@ public class RFAuthorizationFacade extends AbstractFacade<RFAuthorization> {
       } else { // High Power = OFF
         // We force expiration to empty
         da.setExpirationDate(null);
+        da.setComments(null);
       }
 
       da.setRFAuthorization(authorization);
       da.getSegmentAuthorizationPK().setRFAuthorizationId(authorization.getRfAuthorizationId());
+
+      boolean changed = isChanged(da, previousAuth);
+
+      da.setChanged(changed);
+
       em.persist(da);
     }
 
@@ -201,6 +210,55 @@ public class RFAuthorizationFacade extends AbstractFacade<RFAuthorization> {
     notificationManager.asyncNotifyRFAuthorizerSave(authorization);
 
     return authorization.getRfAuthorizationId();
+  }
+
+  private boolean isChanged(RFSegmentAuthorization newSegAuth, RFAuthorization previousAuth) {
+    boolean changed = true;
+
+    // System.err.println("RF Authorization changed?: " + newSegAuth);
+
+    if (previousAuth != null) {
+      List<RFSegmentAuthorization> segList = previousAuth.getRFSegmentAuthorizationList();
+
+      // System.err.println("segList: " + segList == null ? "null" : segList.size());
+
+      for (RFSegmentAuthorization oldSegAuth : segList) {
+        if (oldSegAuth
+            .getSegmentAuthorizationPK()
+            .getRFSegmentId()
+            .equals(newSegAuth.getSegmentAuthorizationPK().getRFSegmentId())) {
+          /*System.err.println("Found matching segment \"" + oldSegAuth.getSegment() + "\"");
+          System.err.println(
+              "RF Change \"" + (oldSegAuth.isHighPowerRf() != newSegAuth.isHighPowerRf()) + "\"");
+          System.err.println(
+              "Date Change \""
+                  + !EqualityHelper.nullableDateEqual(
+                      oldSegAuth.getExpirationDate(), newSegAuth.getExpirationDate())
+                  + "\" - \""
+                  + oldSegAuth.getExpirationDate()
+                  + "\" vs \""
+                  + newSegAuth.getExpirationDate()
+                  + "\"");
+          System.err.println(
+              "Comment Change \""
+                  + !EqualityHelper.nullableStringEqual(
+                      oldSegAuth.getComments(), newSegAuth.getComments())
+                  + "\"");*/
+
+          // Check if change
+          changed =
+              (oldSegAuth.isHighPowerRf() != newSegAuth.isHighPowerRf())
+                  || !EqualityHelper.nullableDateEqual(
+                      oldSegAuth.getExpirationDate(), newSegAuth.getExpirationDate())
+                  || !EqualityHelper.nullableStringEqual(
+                      oldSegAuth.getComments(), newSegAuth.getComments());
+
+          break;
+        }
+      }
+    }
+
+    return changed;
   }
 
   @PermitAll

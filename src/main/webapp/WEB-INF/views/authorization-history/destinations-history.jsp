@@ -15,6 +15,12 @@
                 box-shadow: 8px 8px 8px #979797;
                 border-radius: 0 0 8px 8px;
             }
+            .changed {
+                background-color: #fafab4;
+            }
+            .message-box {
+                text-align: center;
+            }
         </style>
     </jsp:attribute>
     <jsp:attribute name="scripts">
@@ -36,8 +42,8 @@
         <section>
             <c:choose>
                 <c:when test="${beamAuthorization ne null}">
-                    <c:if test="${beamAuthorization.modifiedBy ne beamAuthorization.authorizedBy}">
-                        <div class="message-box">This is an automated authorization reduction</div>
+                    <c:if test="${beamAuthorization.isAutomatedReduction()}">
+                        <div class="message-box"><sup>†</sup>This is an automated authorization reduction</div>
                     </c:if>
                     <t:beam-operations-panel beamList="${beamList}" isHistory="${true}"/>
                 </c:when>

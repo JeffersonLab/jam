@@ -15,6 +15,12 @@
                 box-shadow: 8px 8px 8px #979797;
                 border-radius: 0 0 8px 8px;
             }
+            .changed {
+                background-color: #fafab4;
+            }
+            .message-box {
+                text-align: center;
+            }
         </style>
     </jsp:attribute>
     <jsp:attribute name="scripts">
@@ -36,8 +42,8 @@
         <section>
             <c:choose>
                 <c:when test="${rfAuthorization ne null}">
-                    <c:if test="${rfAuthorization.modifiedBy ne rfAuthorization.authorizedBy}">
-                        <div class="message-box">This is an automated authorization reduction</div>
+                    <c:if test="${rfAuthorization.isAutomatedReduction()}">
+                        <div class="message-box"><sup>†</sup>This is an automated authorization reduction</div>
                     </c:if>
                     <t:rf-operations-panel rfList="${rfList}" isHistory="${true}"/>
                 </c:when>

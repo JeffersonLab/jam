@@ -16,10 +16,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import org.jlab.jam.persistence.entity.BeamAuthorization;
-import org.jlab.jam.persistence.entity.BeamDestination;
-import org.jlab.jam.persistence.entity.BeamDestinationAuthorization;
-import org.jlab.jam.persistence.entity.Facility;
+import org.jlab.jam.business.util.EqualityHelper;
+import org.jlab.jam.persistence.entity.*;
 import org.jlab.jam.persistence.enumeration.OperationsType;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
 
@@ -145,6 +143,8 @@ public class BeamAuthorizationFacade extends AbstractFacade<BeamAuthorization> {
       authorizerFacade.isAuthorizer(facility, OperationsType.BEAM, username);
     }
 
+    BeamAuthorization previousAuth = findCurrent(facility);
+
     BeamAuthorization beamAuthorization = new BeamAuthorization();
     beamAuthorization.setFacility(facility);
     beamAuthorization.setComments(comments);
@@ -198,11 +198,18 @@ public class BeamAuthorizationFacade extends AbstractFacade<BeamAuthorization> {
       } else { // mode = NONE (OFF)
         // We force expiration to empty
         da.setExpirationDate(null);
+        da.setCwLimit(null);
+        da.setComments(null);
       }
 
       da.setAuthorization(beamAuthorization);
       da.getDestinationAuthorizationPK()
           .setAuthorizationId(beamAuthorization.getBeamAuthorizationId());
+
+      boolean changed = isChanged(da, previousAuth);
+
+      da.setChanged(changed);
+
       em.persist(da);
     }
 
@@ -211,6 +218,67 @@ public class BeamAuthorizationFacade extends AbstractFacade<BeamAuthorization> {
     notificationManager.asyncNotifyBeamAuthorizerSave(beamAuthorization);
 
     return beamAuthorization.getBeamAuthorizationId();
+  }
+
+  private boolean isChanged(
+      BeamDestinationAuthorization newDestAuth, BeamAuthorization previousAuth) {
+    boolean changed = true;
+
+    // System.err.println("Beam Authorization changed?: " + newDestAuth);
+
+    if (previousAuth != null) {
+      List<BeamDestinationAuthorization> destList = previousAuth.getDestinationAuthorizationList();
+
+      // System.err.println("destList: " + destList == null ? "null" : destList.size());
+
+      for (BeamDestinationAuthorization oldDestAuth : destList) {
+        if (oldDestAuth
+            .getDestinationAuthorizationPK()
+            .getBeamDestinationId()
+            .equals(newDestAuth.getDestinationAuthorizationPK().getBeamDestinationId())) {
+          /*System.err.println("Found matching destination \"" + oldDestAuth.getDestination() + "\"");
+          System.err.println(
+              "Beam Mode Change \""
+                  + !EqualityHelper.nullableStringEqual(
+                      oldDestAuth.getBeamMode(), newDestAuth.getBeamMode())
+                  + "\"");
+          System.err.println(
+              "Current Limit Change \""
+                  + !EqualityHelper.nullableObjEqual(
+                      oldDestAuth.getCwLimit(), newDestAuth.getCwLimit())
+                  + "\"");
+          System.err.println(
+              "Date Change \""
+                  + !EqualityHelper.nullableDateEqual(
+                      oldDestAuth.getExpirationDate(), newDestAuth.getExpirationDate())
+                  + "\" - \""
+                  + oldDestAuth.getExpirationDate()
+                  + "\" vs \""
+                  + newDestAuth.getExpirationDate()
+                  + "\"");
+          System.err.println(
+              "Comment Change \""
+                  + !EqualityHelper.nullableStringEqual(
+                      oldDestAuth.getComments(), newDestAuth.getComments())
+                  + "\"");*/
+
+          // Check if change
+          changed =
+              (!EqualityHelper.nullableStringEqual(
+                      oldDestAuth.getBeamMode(), newDestAuth.getBeamMode()))
+                  || (!EqualityHelper.nullableObjEqual(
+                      oldDestAuth.getCwLimit(), newDestAuth.getCwLimit()))
+                  || !EqualityHelper.nullableDateEqual(
+                      oldDestAuth.getExpirationDate(), newDestAuth.getExpirationDate())
+                  || !EqualityHelper.nullableStringEqual(
+                      oldDestAuth.getComments(), newDestAuth.getComments());
+
+          break;
+        }
+      }
+    }
+
+    return changed;
   }
 
   @PermitAll

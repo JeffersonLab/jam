@@ -60,6 +60,11 @@ public class RFSegmentAuthorization implements Serializable {
   @ManyToOne(optional = false, fetch = FetchType.LAZY)
   private RFAuthorization rfAuthorization;
 
+  @Basic
+  @Column(name = "CHANGED_YN", nullable = false, length = 1)
+  @Convert(converter = YnStringToBoolean.class)
+  private boolean changed;
+
   public RFSegmentAuthorization() {}
 
   public RFSegmentAuthorization(SegmentAuthorizationPK segmentAuthorizationPK) {
@@ -120,6 +125,14 @@ public class RFSegmentAuthorization implements Serializable {
 
   public void setRFAuthorization(RFAuthorization rfAuthorization) {
     this.rfAuthorization = rfAuthorization;
+  }
+
+  public boolean isChanged() {
+    return changed;
+  }
+
+  public void setChanged(boolean changed) {
+    this.changed = changed;
   }
 
   @Override

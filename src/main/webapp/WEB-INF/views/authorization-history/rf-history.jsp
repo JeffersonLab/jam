@@ -11,6 +11,9 @@
             .auth-notes-span {
                 white-space: pre-line;
             }
+            td:nth-child(2) {
+                width: 130px;
+            }
         </style>
     </jsp:attribute>
     <jsp:attribute name="scripts">
@@ -33,6 +36,7 @@
                         <div class="message-box">None</div>
                     </c:when>
                     <c:otherwise>
+                        <div class="top-right-box"><sup>†</sup>Automated Auth Reduction</div>
                         <div class="message-box"><c:out value="${selectionMessage}"/></div>
                         <table id="rfAuthorization-table" class="data-table stripped-table">
                             <thead>
@@ -41,17 +45,42 @@
                                     <th>Modified By</th>
                                     <th>Authorization Date</th>
                                     <th>Authorized By</th>
-                                    <th>Notes</th>
+                                    <th>Change Notes</th>
                                     <th>Segment Authorizations</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <c:forEach items="${historyList}" var="history">
+                                    <c:set var="automated" value="${history.modifiedBy ne history.authorizedBy}"/>
                                     <tr>
                                         <td><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}" value="${history.modifiedDate}"/></td>
-                                        <td><c:out value="${s:formatUsername(history.modifiedBy)}"/></td>
-                                        <td><fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}" value="${history.authorizationDate}"/></td>
-                                        <td><c:out value="${s:formatUsername(history.authorizedBy)}"/></td>
+                                        <td>
+                                            <span><c:out value="${s:formatUsername(history.modifiedBy)}"/>
+                                            <c:if test="${automated}">
+                                                <sup>†</sup>
+                                            </c:if>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${automated}">
+
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <fmt:formatDate pattern="${s:getFriendlyDateTimePattern()}" value="${history.authorizationDate}"/>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${automated}">
+
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <c:out value="${s:formatUsername(history.authorizedBy)}"/>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
                                         <td><span class="auth-notes-span"><c:out value="${history.comments}"/></span></td>
                                         <td><a href="${pageContext.request.contextPath}/authorizations${facility.path}/rf-history/segments?rfAuthorizationId=${history.rfAuthorizationId}">Segment Details</a></td>
                                     </tr>

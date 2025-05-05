@@ -52,6 +52,7 @@ public class ReducedBeamAuthorizationBuilder {
             operationAuth.setBeamMode("None");
             operationAuth.setCwLimit(null);
             operationAuth.setExpirationDate(null);
+            operationAuth.setChanged(true);
             operationAuth.setComments(
                 "Permission automatically revoked due to credited control "
                     + verification.getCreditedControl().getName()
@@ -66,12 +67,9 @@ public class ReducedBeamAuthorizationBuilder {
     }
 
     if (atLeastOne) {
-      String comments = clone.getComments();
-      if (comments == null) {
-        comments = "";
-      }
+      String comments = ""; // We replace Change Notes completely with changes
       String csv = IOUtil.toCsv(revokedDestinationList.toArray());
-      comments = comments + "\nCHANGE: Destination control verification revoked: " + csv;
+      comments = comments + "\nDestination control verification revoked: " + csv;
       clone.setComments(comments);
     }
 
@@ -107,6 +105,7 @@ public class ReducedBeamAuthorizationBuilder {
           operationAuth.setBeamMode("None");
           operationAuth.setCwLimit(null);
           operationAuth.setExpirationDate(null);
+          operationAuth.setChanged(true);
           operationAuth.setComments(
               "Permission automatically revoked due to director's authorization expiration");
           atLeastOne = true;
@@ -116,12 +115,9 @@ public class ReducedBeamAuthorizationBuilder {
     }
 
     if (atLeastOne) {
-      String comments = clone.getComments();
-      if (comments == null) {
-        comments = "";
-      }
+      String comments = ""; // We replace Change Notes completely with changes
       String csv = IOUtil.toCsv(revokedDestinationList.toArray());
-      comments = comments + "\nCHANGE: Destination authorization revoked: " + csv;
+      comments = comments + "\nDestination authorization revoked: " + csv;
       clone.setComments(comments);
     }
 

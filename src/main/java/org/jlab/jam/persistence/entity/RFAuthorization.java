@@ -64,6 +64,10 @@ public class RFAuthorization implements Serializable {
   @Column(name = "LOGENTRY_URL", length = 2048)
   private String logentryUrl;
 
+  public boolean isAutomatedReduction() {
+    return !modifiedBy.equals(authorizedBy);
+  }
+
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "rfAuthorization", fetch = FetchType.EAGER)
   private List<RFSegmentAuthorization> rfSegmentAuthorizationList;
 

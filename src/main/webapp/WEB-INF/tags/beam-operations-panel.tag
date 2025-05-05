@@ -30,7 +30,7 @@
         <c:forEach items="${beamList}" var="destination">
             <c:set var="beamDestinationAuthorization" value="${destinationAuthorizationMap[destination.beamDestinationId]}"/>
             <c:set var="units" value="${unitsMap[destination.beamDestinationId] ne null ? unitsMap[destination.beamDestinationId] : 'uA'}"/>
-            <tr>
+            <tr class="${isHistory and beamDestinationAuthorization.changed ? 'changed' : ''}">
                 <td><a class="dialog-opener" href="${pageContext.request.contextPath}/verifications/destination?destinationId=${destination.beamDestinationId}&notEditable=Y"><c:out value="${destination.name}"/></a></td>
                     <c:if test="${not isHistory}">
                     <td class="icon-cell">
@@ -122,12 +122,12 @@
         </c:forEach> 
     </tbody>
 </table>
-<h3>Notes</h3>
+<h3>Change Notes</h3>
 <div class="notes-field">
 <span class="auth-notes-span readonly-field"><c:out value="${fn:length(beamAuthorization.comments) == 0 ? 'None' : beamAuthorization.comments}"/></span>
     <span class="editable-field">
-                <textarea id="beam-comments" name="comments"><c:out value="${beamAuthorization.comments}"/></textarea>
-            </span>
+        <textarea id="beam-comments" name="comments"></textarea>
+    </span>
 </div>
 <h3 class="readonly-field">Digital Signature</h3>
 <div class="footer-panel">
@@ -135,6 +135,11 @@
         <c:choose>
             <c:when test="${beamAuthorization ne null}">
                 <div class="readonly-field">Authorized by ${s:formatUsername(beamAuthorization.authorizedBy)} on <fmt:formatDate value="${beamAuthorization.authorizationDate}" pattern="${s:getFriendlyDateTimePattern()}"/></div>
+                <c:if test="${beamAuthorization.isAutomatedReduction()}">
+                    <div class="reduction-note readonly-field">
+                        <sup>†</sup> Automatically reduced on <fmt:formatDate value="${beamAuthorization.modifiedDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
+                    </div>
+                </c:if>
             </c:when>
             <c:otherwise>
                 <div class="readonly-field">None</div>
