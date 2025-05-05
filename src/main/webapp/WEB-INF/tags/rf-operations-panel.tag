@@ -49,7 +49,7 @@
                     <c:set var="selectedHighPowerRf" value="${segmentAuthorization.highPowerRf ? 'Yes' : 'No'}"/>
                     <div class="readonly-field"><c:out value="${selectedHighPowerRf}"/></div>
                     <div class="editable-field">
-                        <select name="mode[]" class="mode-select">
+                        <select name="mode[]" class="rf-mode-select">
                             <option${'No' eq selectedHighPowerRf ? ' selected="selected"' : ''}>No</option>
                             <option${'Yes' eq selectedHighPowerRf ? ' selected="selected"' : ''}>Yes</option>
                         </select>

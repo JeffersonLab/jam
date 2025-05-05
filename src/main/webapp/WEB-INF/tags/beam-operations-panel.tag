@@ -48,7 +48,7 @@
                     <c:set var="selectedBeamMode" value="${beamDestinationAuthorization.beamMode eq null ? 'None' : beamDestinationAuthorization.beamMode}"/>
                     <div class="readonly-field"><c:out value="${selectedBeamMode}"/></div>
                     <div class="editable-field">
-                        <select name="mode[]" class="mode-select">
+                        <select name="mode[]" class="beam-mode-select">
                             <c:forEach items="${jam:beamModeList(facility.name, destination.name)}" var="beamMode">
                                 <option${beamMode eq selectedBeamMode ? ' selected="selected"' : ''}><c:out value="${beamMode}"/></option>
                             </c:forEach>

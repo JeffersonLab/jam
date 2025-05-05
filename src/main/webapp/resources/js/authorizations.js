@@ -124,7 +124,23 @@ jlab.beamSave = function () {
         }
     });
 };
-$(document).on("change", ".mode-select", function(){
+$(document).on("change", ".rf-mode-select", function(){
+    var $select = $(this),
+        $tr = $select.closest("tr"),
+        $comments = $tr.find(".comment-input"),
+        $expiration = $tr.find(".expiration-input");
+
+    if($select.val() === 'No') {
+        $comments.val('');
+        $expiration.val('');
+        $comments.attr('readonly', 'readonly');
+        $expiration.attr('readonly', 'readonly');
+    } else {
+        $comments.removeAttr('readonly');
+        $expiration.removeAttr('readonly');
+    }
+});
+$(document).on("change", ".beam-mode-select", function(){
     var $select = $(this),
         $tr = $select.closest("tr"),
         $limit = $tr.find(".limit-input"),
