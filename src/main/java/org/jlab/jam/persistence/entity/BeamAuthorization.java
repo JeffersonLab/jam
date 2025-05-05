@@ -67,6 +67,10 @@ public class BeamAuthorization implements Serializable {
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "beamAuthorization", fetch = FetchType.EAGER)
   private List<BeamDestinationAuthorization> beamDestinationAuthorizationList;
 
+  public boolean isAutomatedReduction() {
+    return !modifiedBy.equals(authorizedBy);
+  }
+
   public BeamAuthorization() {}
 
   public BigInteger getBeamAuthorizationId() {

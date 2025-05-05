@@ -5,6 +5,9 @@ h3 {
 .signature-field {
     margin-top: 0.25em;
 }
+.signature-panel {
+    margin-top: 0.5em;
+}
 .auth-notes-span {
     white-space: pre-line;
 }
@@ -83,4 +86,9 @@ textarea[readonly] {
 .logentry-panel {
     flex: 2;
     text-align: right;
+    margin-top: auto;
+}
+.reduction-note {
+    font-style: italic;
+    margin-top: 0.25em;
 }

@@ -100,19 +100,26 @@
         </c:forEach> 
     </tbody>
 </table>
-<h3>Notes</h3>
+<h3>Change Notes</h3>
 <div class="notes-field">
 <span class="auth-notes-span readonly-field"><c:out value="${fn:length(rfAuthorization.comments) == 0 ? 'None' : rfAuthorization.comments}"/></span>
     <span class="editable-field">
-                <textarea id="rf-comments" name="comments"><c:out value="${rfAuthorization.comments}"/></textarea>
-            </span>
+        <textarea id="rf-comments" name="comments"></textarea>
+    </span>
 </div>
 <h3 class="readonly-field">Digital Signature</h3>
 <div class="footer-panel">
     <div class="footer-item signature-panel">
         <c:choose>
             <c:when test="${rfAuthorization ne null}">
-                <div class="readonly-field">Authorized by ${s:formatUsername(rfAuthorization.authorizedBy)} on <fmt:formatDate value="${rfAuthorization.authorizationDate}" pattern="${s:getFriendlyDateTimePattern()}"/></div>
+                <div class="readonly-field">
+                    Authorized by ${s:formatUsername(rfAuthorization.authorizedBy)} on <fmt:formatDate value="${rfAuthorization.authorizationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
+                </div>
+                <c:if test="${rfAuthorization.isAutomatedReduction()}">
+                    <div class="reduction-note">
+                        <sup>†</sup> Automatically reduced on <fmt:formatDate value="${rfAuthorization.modifiedDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
+                    </div>
+                </c:if>
             </c:when>
             <c:otherwise>
                 <div class="readonly-field">None</div>

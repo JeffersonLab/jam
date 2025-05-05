@@ -67,12 +67,9 @@ public class ReducedRFAuthorizationBuilder {
     }
 
     if (atLeastOne) {
-      String comments = clone.getComments();
-      if (comments == null) {
-        comments = "";
-      }
+      String comments = ""; // We replace Change Notes completely with changes
       String csv = IOUtil.toCsv(revokedSegmentList.toArray());
-      comments = comments + "\nCHANGE: Segment control verification revoked: " + csv;
+      comments = comments + "\nSegment control verification revoked: " + csv;
       clone.setComments(comments);
     }
 
@@ -115,12 +112,9 @@ public class ReducedRFAuthorizationBuilder {
     }
 
     if (atLeastOne) {
-      String comments = clone.getComments();
-      if (comments == null) {
-        comments = "";
-      }
+      String comments = ""; // We replace Change Notes completely with changes
       String csv = IOUtil.toCsv(revokedSegmentList.toArray());
-      comments = comments + "\nCHANGE: Segment authorization revoked: " + csv;
+      comments = comments + "\nSegment authorization revoked: " + csv;
       clone.setComments(comments);
     }
 

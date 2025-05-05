@@ -67,12 +67,9 @@ public class ReducedBeamAuthorizationBuilder {
     }
 
     if (atLeastOne) {
-      String comments = clone.getComments();
-      if (comments == null) {
-        comments = "";
-      }
+      String comments = ""; // We replace Change Notes completely with changes
       String csv = IOUtil.toCsv(revokedDestinationList.toArray());
-      comments = comments + "\nCHANGE: Destination control verification revoked: " + csv;
+      comments = comments + "\nDestination control verification revoked: " + csv;
       clone.setComments(comments);
     }
 
@@ -118,12 +115,9 @@ public class ReducedBeamAuthorizationBuilder {
     }
 
     if (atLeastOne) {
-      String comments = clone.getComments();
-      if (comments == null) {
-        comments = "";
-      }
+      String comments = ""; // We replace Change Notes completely with changes
       String csv = IOUtil.toCsv(revokedDestinationList.toArray());
-      comments = comments + "\nCHANGE: Destination authorization revoked: " + csv;
+      comments = comments + "\nDestination authorization revoked: " + csv;
       clone.setComments(comments);
     }
 
