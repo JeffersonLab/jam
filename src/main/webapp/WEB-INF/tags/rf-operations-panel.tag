@@ -116,7 +116,7 @@
                     Authorized by ${s:formatUsername(rfAuthorization.authorizedBy)} on <fmt:formatDate value="${rfAuthorization.authorizationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
                 </div>
                 <c:if test="${rfAuthorization.isAutomatedReduction()}">
-                    <div class="reduction-note">
+                    <div class="reduction-note readonly-field">
                         <sup>†</sup> Automatically reduced on <fmt:formatDate value="${rfAuthorization.modifiedDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
                     </div>
                 </c:if>

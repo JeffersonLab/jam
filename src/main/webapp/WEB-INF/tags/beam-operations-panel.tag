@@ -136,7 +136,7 @@
             <c:when test="${beamAuthorization ne null}">
                 <div class="readonly-field">Authorized by ${s:formatUsername(beamAuthorization.authorizedBy)} on <fmt:formatDate value="${beamAuthorization.authorizationDate}" pattern="${s:getFriendlyDateTimePattern()}"/></div>
                 <c:if test="${beamAuthorization.isAutomatedReduction()}">
-                    <div class="reduction-note">
+                    <div class="reduction-note readonly-field">
                         <sup>†</sup> Automatically reduced on <fmt:formatDate value="${beamAuthorization.modifiedDate}" pattern="${s:getFriendlyDateTimePattern()}"/>
                     </div>
                 </c:if>
