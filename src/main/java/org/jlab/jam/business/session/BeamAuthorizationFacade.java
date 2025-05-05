@@ -198,6 +198,8 @@ public class BeamAuthorizationFacade extends AbstractFacade<BeamAuthorization> {
       } else { // mode = NONE (OFF)
         // We force expiration to empty
         da.setExpirationDate(null);
+        da.setCwLimit(null);
+        da.setComments(null);
       }
 
       da.setAuthorization(beamAuthorization);

@@ -192,6 +192,7 @@ public class RFAuthorizationFacade extends AbstractFacade<RFAuthorization> {
       } else { // High Power = OFF
         // We force expiration to empty
         da.setExpirationDate(null);
+        da.setComments(null);
       }
 
       da.setRFAuthorization(authorization);
