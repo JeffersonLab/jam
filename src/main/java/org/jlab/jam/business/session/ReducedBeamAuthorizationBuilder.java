@@ -52,6 +52,7 @@ public class ReducedBeamAuthorizationBuilder {
             operationAuth.setBeamMode("None");
             operationAuth.setCwLimit(null);
             operationAuth.setExpirationDate(null);
+            operationAuth.setChanged(true);
             operationAuth.setComments(
                 "Permission automatically revoked due to credited control "
                     + verification.getCreditedControl().getName()
@@ -107,6 +108,7 @@ public class ReducedBeamAuthorizationBuilder {
           operationAuth.setBeamMode("None");
           operationAuth.setCwLimit(null);
           operationAuth.setExpirationDate(null);
+          operationAuth.setChanged(true);
           operationAuth.setComments(
               "Permission automatically revoked due to director's authorization expiration");
           atLeastOne = true;

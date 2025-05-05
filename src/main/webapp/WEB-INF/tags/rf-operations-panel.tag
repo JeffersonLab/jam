@@ -28,7 +28,7 @@
     <tbody>
         <c:forEach items="${rfList}" var="segment">
             <c:set var="segmentAuthorization" value="${segmentAuthorizationMap[segment.getRFSegmentId()]}"/>
-            <tr>
+            <tr class="${isHistory and segmentAuthorization.changed ? 'changed' : ''}">
                 <td>
                     <a class="dialog-opener" href="${pageContext.request.contextPath}/verifications/segment?segmentId=${segment.getRFSegmentId()}&notEditable=Y"><c:out value="${segment.name}"/></a>
                     <input type="hidden" name="rfSegmentId[]" value="${segment.getRFSegmentId()}"/>

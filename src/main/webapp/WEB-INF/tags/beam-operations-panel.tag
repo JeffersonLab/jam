@@ -30,7 +30,7 @@
         <c:forEach items="${beamList}" var="destination">
             <c:set var="beamDestinationAuthorization" value="${destinationAuthorizationMap[destination.beamDestinationId]}"/>
             <c:set var="units" value="${unitsMap[destination.beamDestinationId] ne null ? unitsMap[destination.beamDestinationId] : 'uA'}"/>
-            <tr>
+            <tr class="${isHistory and beamDestinationAuthorization.changed ? 'changed' : ''}">
                 <td><a class="dialog-opener" href="${pageContext.request.contextPath}/verifications/destination?destinationId=${destination.beamDestinationId}&notEditable=Y"><c:out value="${destination.name}"/></a></td>
                     <c:if test="${not isHistory}">
                     <td class="icon-cell">

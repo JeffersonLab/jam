@@ -4,20 +4,10 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.jlab.smoothness.persistence.util.YnStringToBoolean;
 
 /**
  * @author ryans
@@ -74,6 +64,11 @@ public class BeamDestinationAuthorization implements Serializable {
       updatable = false)
   @ManyToOne(optional = false, fetch = FetchType.LAZY)
   private BeamAuthorization beamAuthorization;
+
+  @Basic
+  @Column(name = "CHANGED_YN", nullable = false, length = 1)
+  @Convert(converter = YnStringToBoolean.class)
+  private boolean changed;
 
   public BeamDestinationAuthorization() {}
 
@@ -150,6 +145,14 @@ public class BeamDestinationAuthorization implements Serializable {
 
   public void setAuthorization(BeamAuthorization beamAuthorization) {
     this.beamAuthorization = beamAuthorization;
+  }
+
+  public boolean isChanged() {
+    return changed;
+  }
+
+  public void setChanged(boolean changed) {
+    this.changed = changed;
   }
 
   @Override

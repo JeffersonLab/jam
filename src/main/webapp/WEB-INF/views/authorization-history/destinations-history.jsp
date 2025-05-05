@@ -15,6 +15,12 @@
                 box-shadow: 8px 8px 8px #979797;
                 border-radius: 0 0 8px 8px;
             }
+            .changed {
+                background-color: #fafab4;
+            }
+            .message-box {
+                text-align: center;
+            }
         </style>
     </jsp:attribute>
     <jsp:attribute name="scripts">
