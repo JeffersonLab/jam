@@ -15,6 +15,9 @@
                 box-shadow: 8px 8px 8px #979797;
                 border-radius: 0 0 8px 8px;
             }
+            .stripped-table tr:nth-child(even).changed {
+                background-color: #fafab4;
+            }
             .changed {
                 background-color: #fafab4;
             }
