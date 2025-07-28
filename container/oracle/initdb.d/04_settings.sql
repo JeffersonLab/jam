@@ -31,7 +31,7 @@ insert into SETTING (KEY, VALUE, TYPE, DESCRIPTION, TAG, WEIGHT) values ('HELP_D
 insert into SETTING (KEY, VALUE, TYPE, DESCRIPTION, TAG, WEIGHT) values ('EMAIL_ENABLED', 'Y', 'BOOLEAN', 'Emails (including Help/Feedback) enabled', 'EMAIL', 1);
 insert into SETTING (KEY, VALUE, TYPE, DESCRIPTION, TAG, WEIGHT) values ('EMAIL_TESTING_ENABLED', 'N', 'BOOLEAN', 'Send all emails to testlead user group', 'EMAIL', 2);
 insert into SETTING (KEY, VALUE, TYPE, DESCRIPTION, TAG, WEIGHT) values ('EMAIL_DOMAIN_NAME', '@jlab.org', 'STRING', 'The email domain to append to usernames, starting with and including the ampersat.', 'EMAIL', 3);
-insert into SETTING (KEY, VALUE, TYPE, DESCRIPTION, TAG, WEIGHT) values ('EMAIL_SENDER_ADDRESS', 'jam@jlab.org', 'STRING', 'Email address to use as sender from emails generated in this app.  Note: this is not the same as "from".', 'EMAIL', 4);
+insert into SETTING (KEY, VALUE, TYPE, DESCRIPTION, TAG, WEIGHT) values ('EMAIL_SENDER_ADDRESS', 'jam-noreply@jlab.org', 'STRING', 'Email address to use as sender from emails generated in this app.  Note: this is not the same as "from".', 'EMAIL', 4);
 
 -- JAM Specific
 insert into SETTING (KEY, VALUE, TYPE, DESCRIPTION, TAG, WEIGHT) values ('USER_QUERY_URL', 'https://ace.jlab.org/srm/ajax/search-user', 'STRING', 'URL to query for users', 'JAM', 1);
