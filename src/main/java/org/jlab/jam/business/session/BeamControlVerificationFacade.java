@@ -10,6 +10,9 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import java.math.BigInteger;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -344,12 +347,22 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
   @PermitAll
   public List<BeamControlVerification> checkForUpcomingVerificationExpirations(
       Facility facility, boolean boundary) {
-    String dateRangeConstraint =
-        "(sysdate) <= a.expirationDate and (sysdate + 7) > a.expirationDate";
+
+    LocalDateTime now = LocalDateTime.now();
+    Period sevenDayPeriod = Period.ofDays(7);
+    Period sixDayPeriod = Period.ofDays(6);
+    LocalDateTime inFutureSevenDays = now.plus(sevenDayPeriod);
+    LocalDateTime inFutureSixDays = now.plus(sixDayPeriod);
+
+    String dateRangeConstraint = ":beginRange <= a.expirationDate and :endRange > a.expirationDate";
+
+    LocalDateTime beginRange = now;
+    LocalDateTime endRange = inFutureSevenDays;
 
     if (boundary) {
-      dateRangeConstraint =
-          "(sysdate + 6) <= a.expirationDate and (sysdate + 7) > a.expirationDate";
+      dateRangeConstraint = ":beginRange <= a.expirationDate and :endRange > a.expirationDate";
+
+      beginRange = inFutureSixDays;
     }
 
     TypedQuery<BeamControlVerification> q =
@@ -360,6 +373,8 @@ public class BeamControlVerificationFacade extends AbstractFacade<BeamControlVer
             BeamControlVerification.class);
 
     q.setParameter("facility", facility);
+    q.setParameter("beginRange", Timestamp.valueOf(beginRange));
+    q.setParameter("endRange", Timestamp.valueOf(endRange));
 
     // sysdate >= (a.expirationDate - 7) and sysdate < (a.expirationDate - 6)
     // (sysdate + 6) <= a.expirationDate and (sysdate + 7) > a.expirationDate
