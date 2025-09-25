@@ -1,15 +1,15 @@
 package org.jlab.jam.business.session;
 
+import jakarta.annotation.security.PermitAll;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.io.*;
 import java.math.BigInteger;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.security.PermitAll;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import org.jlab.jam.persistence.entity.Facility;
 import org.jlab.jam.persistence.entity.VerificationTeam;
 import org.jlab.jam.persistence.enumeration.OperationsType;
