@@ -1,8 +1,8 @@
 package org.jlab.jam.persistence.view;
 
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.*;
 
 /**
  * @author ryans

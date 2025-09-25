@@ -1,18 +1,21 @@
 package org.jlab.jam.business.session;
 
+import jakarta.annotation.security.DeclareRoles;
+import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 import java.math.BigInteger;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.security.DeclareRoles;
-import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
 import org.jlab.jam.persistence.entity.*;
 import org.jlab.jam.persistence.view.RFExpirationEvent;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
@@ -340,12 +343,22 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
   @PermitAll
   public List<RFControlVerification> checkForUpcomingVerificationExpirations(
       Facility facility, boolean boundary) {
-    String dateRangeConstraint =
-        "(sysdate) <= a.expirationDate and (sysdate + 7) > a.expirationDate";
+
+    LocalDateTime now = LocalDateTime.now();
+    Period sevenDayPeriod = Period.ofDays(7);
+    Period sixDayPeriod = Period.ofDays(6);
+    LocalDateTime inFutureSevenDays = now.plus(sevenDayPeriod);
+    LocalDateTime inFutureSixDays = now.plus(sixDayPeriod);
+
+    String dateRangeConstraint = ":beginRange <= a.expirationDate and :endRange > a.expirationDate";
+
+    LocalDateTime beginRange = now;
+    LocalDateTime endRange = inFutureSevenDays;
 
     if (boundary) {
-      dateRangeConstraint =
-          "(sysdate + 6) <= a.expirationDate and (sysdate + 7) > a.expirationDate";
+      dateRangeConstraint = ":beginRange <= a.expirationDate and :endRange > a.expirationDate";
+
+      beginRange = inFutureSixDays;
     }
 
     TypedQuery<RFControlVerification> q =
@@ -356,6 +369,8 @@ public class RFControlVerificationFacade extends AbstractFacade<RFControlVerific
             RFControlVerification.class);
 
     q.setParameter("facility", facility);
+    q.setParameter("beginRange", Timestamp.valueOf(beginRange));
+    q.setParameter("endRange", Timestamp.valueOf(endRange));
 
     List<RFControlVerification> list = q.getResultList();
 

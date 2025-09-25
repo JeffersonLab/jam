@@ -1,7 +1,7 @@
 <%@tag description="The Authorization Page Template Tag" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@taglib prefix="s" uri="http://jlab.org/jsp/smoothness"%>
+<%@taglib prefix="c" uri="jakarta.tags.core"%>
+<%@taglib prefix="fn" uri="jakarta.tags.functions" %>
+<%@taglib prefix="s" uri="jlab.tags.smoothness"%>
 <%@attribute name="title" %>
 <%@attribute name="stylesheets" fragment="true" %>
 <%@attribute name="scripts" fragment="true" %>
@@ -13,7 +13,7 @@
         <jsp:invoke fragment="scripts"/>
     </jsp:attribute>
     <jsp:body>
-        <c:set var="currentPathInfo" scope="request" value="${requestScope['javax.servlet.forward.path_info']}"/>
+        <c:set var="currentPathInfo" scope="request" value="${requestScope['jakarta.servlet.forward.path_info']}"/>
         <div id="two-columns">
             <div id="left-column">
                 <section>

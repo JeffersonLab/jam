@@ -1,6 +1,6 @@
 <%@tag description="The Inventory Page Template" pageEncoding="UTF-8"%>
-<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@taglib prefix="s" uri="http://jlab.org/jsp/smoothness"%>
+<%@taglib prefix="fn" uri="jakarta.tags.functions" %>
+<%@taglib prefix="s" uri="jlab.tags.smoothness"%>
 <%@attribute name="title"%>
 <%@attribute name="stylesheets" fragment="true"%>
 <%@attribute name="scripts" fragment="true"%>

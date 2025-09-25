@@ -1,12 +1,12 @@
 package org.jlab.jam.business.session;
 
+import jakarta.ejb.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
-import javax.ejb.*;
 import org.jlab.jam.persistence.entity.*;
 import org.jlab.jam.persistence.view.BeamExpirationEvent;
 import org.jlab.jam.persistence.view.FacilityExpirationEvent;
