@@ -82,7 +82,7 @@ public class BeamDestinationFacade extends AbstractFacade<BeamDestination> {
     }
 
     if (team != null) {
-      Subquery<BeamControlVerification> subquery = cq.subquery(BeamControlVerification.class);
+      Subquery<BigInteger> subquery = cq.subquery(BigInteger.class);
       Root<BeamControlVerification> subRoot = subquery.from(BeamControlVerification.class);
       Join<BeamControlVerification, BeamDestination> destination = subRoot.join("beamDestination");
       Join<BeamControlVerification, CreditedControl> control = subRoot.join("creditedControl");

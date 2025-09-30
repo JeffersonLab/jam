@@ -80,7 +80,7 @@ public class RFSegmentFacade extends AbstractFacade<RFSegment> {
     }
 
     if (team != null) {
-      Subquery<RFControlVerification> subquery = cq.subquery(RFControlVerification.class);
+      Subquery<BigInteger> subquery = cq.subquery(BigInteger.class);
       Root<RFControlVerification> subRoot = subquery.from(RFControlVerification.class);
       Join<RFControlVerification, RFSegment> segment = subRoot.join("rfSegment");
       Join<RFControlVerification, CreditedControl> control = subRoot.join("creditedControl");
