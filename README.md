@@ -72,7 +72,7 @@ Uses the [Smoothness Environment Variables](https://github.com/JeffersonLab/smoo
 | USER_QUERY_URL                | URL for User search.  Proxied. Example: https://ace.jlab.org/srm/ajax/search-user                                                           |
 
 ### Database
-This application requires an Oracle 18+ database with the following [schema](https://github.com/JeffersonLab/jam/tree/main/container/oracle/initdb.d) installed.   The application server hosting this app must also be configured with a JNDI datasource.
+This application requires an Oracle 19+ database with the following [schema](https://github.com/JeffersonLab/jam/tree/main/container/oracle/initdb.d) installed.   The application server hosting this app must also be configured with a JNDI datasource.
 
 ## Build
 This project is built with [Java 21](https://adoptium.net/) (compiled to Java 17 bytecode), and uses the [Gradle 9](https://gradle.org/) build tool to automatically download dependencies and build the project from source:
