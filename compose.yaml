@@ -3,25 +3,29 @@ services:
     extends:
       file: deps.yaml
       service: oracle
+    container_name: jam-oracle
 
   keycloak:
     extends:
       file: deps.yaml
       service: keycloak
+    container_name: jam-keycloak
 
   puppet:
     extends:
       file: deps.yaml
       service: puppet
+    container_name: jam-puppet
 
   mailhog:
     extends:
       file: deps.yaml
       service: mailhog
+    container_name: jam-mailhog
 
   jam:
     hostname: jam
-    container_name: jam
+    container_name: jam-dev
     ports:
       - "8443:8443"
       - "8080:8080"

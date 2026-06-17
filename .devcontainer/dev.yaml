@@ -1,0 +1,30 @@
+name: jam-devcontainers
+services:
+  oracle:
+    extends:
+      file: ../compose.yaml
+      service: oracle
+    container_name: jam-oracle-devc
+
+  keycloak:
+    extends:
+      file: ../compose.yaml
+      service: keycloak
+    container_name: jam-keycloak-devc
+
+  mailhog:
+    extends:
+      file: ../compose.yaml
+      service: mailhog
+    container_name: jam-mailhog-devc
+
+  puppet:
+    extends:
+      file: ../compose.yaml
+      service: puppet
+    container_name: jam-puppet-devc
+
+  dev:
+    image: jeffersonlab/jam:latest
+    hostname: dev
+    container_name: jam-dev-devc

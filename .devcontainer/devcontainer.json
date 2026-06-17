@@ -1,0 +1,22 @@
+{
+  "dockerComposeFile": "dev.yaml",
+  "service": "dev",
+  "workspaceFolder": "/home/dev/jam",
+  "runServices": [
+    "dev",
+    "oracle",
+    "keycloak",
+    "mailhog",
+    "puppet"
+  ],
+  "remoteUser": "dev",
+  "updateRemoteUserUID": false,
+  "customizations": {
+    "jetbrains": {
+      "backend": "IntelliJ"
+    },
+    "vscode": {
+      "extensions": ["vscjava.vscode-java-pack","redhat.vscode-server-connector"]
+    }
+  }
+}
