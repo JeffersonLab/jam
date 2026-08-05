@@ -118,30 +118,50 @@
                         </div>
                         <h3>Facility Verifications</h3>
                         <c:forEach items="${creditedControl.facilityControlVerificationList}" var="fv">
-                            <h2><c:out value="${fv.getFacilityControlVerificationPK().facility.name}"/></h2>
                             <div class="accordion">
-                                <h3>RF Operations</h3>
+                                <h3><c:out value="${fv.getFacilityControlVerificationPK().facility.name}"/></h3>
                                 <div class="content">
-                                    <c:choose>
-                                        <c:when test="${fn:length(creditedControl.getRFControlVerificationList()) < 1}">
-                                            None
-                                        </c:when>
-                                        <c:otherwise>
-                                            <c:forEach items="${creditedControl.getRFControlVerificationList()}" var="verification">
-                                                <c:out value="${verification.RFSegment.name}"/> <div title="${verification.verificationStatusId eq 1 ? 'Verified' : (verification.verificationStatusId eq 50 ? 'Provisionally Verified' : 'Not Verified')}" class="small-icon baseline-small-icon ${verification.verificationStatusId eq 1 ? 'verified-icon' : (verification.verificationStatusId eq 50 ? 'provisional-icon' : 'not-verified-icon')}"></div>
-                                            </c:forEach>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </div>
-                            </div>
-                            <div class="accordion">
-                                <h3>Beam Operations</h3>
-                                <div class="content">
-                                    <ul>
-                                        <c:forEach items="${creditedControl.getBeamControlVerificationList()}" var="verification">
-                                            <li><c:out value="${verification.beamDestination.name}"/> <div title="${verification.verificationStatusId eq 1 ? 'Verified' : (verification.verificationStatusId eq 50 ? 'Provisionally Verified' : 'Not Verified')}" class="small-icon baseline-small-icon ${verification.verificationStatusId eq 1 ? 'verified-icon' : (verification.verificationStatusId eq 50 ? 'provisional-icon' : 'not-verified-icon')}"></div></li>
-                                        </c:forEach>
-                                    </ul>
+                                    <table class="data-table facility-verification-table">
+                                        <thead>
+                                            <tr>
+                                                <th>RF Segments</th>
+                                                <th>Beam Destinations</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <c:choose>
+                                                        <c:when test="${fn:length(creditedControl.getRFControlVerificationList()) < 1}">
+                                                            None
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <ul>
+                                                            <c:forEach items="${creditedControl.getRFControlVerificationList()}" var="verification">
+                                                                <li><div title="${verification.verificationStatusId eq 1 ? 'Verified' : (verification.verificationStatusId eq 50 ? 'Provisionally Verified' : 'Not Verified')}" class="small-icon baseline-small-icon ${verification.verificationStatusId eq 1 ? 'verified-icon' : (verification.verificationStatusId eq 50 ? 'provisional-icon' : 'not-verified-icon')}"></div> <c:out value="${verification.RFSegment.name}"/></li>
+                                                            </c:forEach>
+                                                            </ul>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </td>
+                                                <td>
+                                                    <c:choose>
+                                                        <c:when test="${fn:length(creditedControl.getBeamControlVerificationList()) < 1}">
+                                                            None
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <ul>
+                                                            <c:forEach items="${creditedControl.getBeamControlVerificationList()}" var="verification">
+                                                                <li><div title="${verification.verificationStatusId eq 1 ? 'Verified' : (verification.verificationStatusId eq 50 ? 'Provisionally Verified' : 'Not Verified')}" class="small-icon baseline-small-icon ${verification.verificationStatusId eq 1 ? 'verified-icon' : (verification.verificationStatusId eq 50 ? 'provisional-icon' : 'not-verified-icon')}"></div> <c:out value="${verification.beamDestination.name}"/></li>
+                                                            </c:forEach>
+                                                            </ul>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
                                 </div>
                             </div>
                         </c:forEach>
