@@ -141,6 +141,9 @@ public class CreditedControlFacade extends AbstractFacade<CreditedControl> {
               }
             });
 
+        Collections.sort(cc.getBeamControlVerificationList());
+        Collections.sort(cc.getRFControlVerificationList());
+
         if (facility != null) {
           for (FacilityControlVerification facilityControlVerification :
               new ArrayList<>(cc.getFacilityControlVerificationList())) {

@@ -99,3 +99,6 @@ ul.jam-cell-list li {
 .facility-verification-table ul li {
     list-style: none;
 }
+.collapsed-accordion {
+    display: none;
+}

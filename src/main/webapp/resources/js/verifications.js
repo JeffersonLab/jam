@@ -13,6 +13,11 @@ $( ".accordion" ).accordion({
     heightStyle: "content",
     active: 0
 });
+$( ".collapsed-accordion" ).accordion({
+    collapsible: true,
+    heightStyle: "content",
+    active: false
+}).show();
 $(function() {
    $("#expiring-dialog").dialog({
        width: 900,
