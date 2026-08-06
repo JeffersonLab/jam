@@ -102,3 +102,13 @@ ul.jam-cell-list li {
 .collapsed-accordion {
     display: none;
 }
+.collapsed-accordion .content {
+    padding: 5px;
+}
+.truncated-operations-label {
+    display: inline-block;
+    width: 175px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

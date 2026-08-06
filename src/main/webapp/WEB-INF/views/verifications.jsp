@@ -99,7 +99,7 @@
                                                                         <c:otherwise>
                                                                             <ul>
                                                                                 <c:forEach items="${cc.getRFControlVerificationList()}" var="verification">
-                                                                                    <li><div title="${verification.verificationStatusId eq 1 ? 'Verified' : (verification.verificationStatusId eq 50 ? 'Provisionally Verified' : 'Not Verified')}" class="small-icon baseline-small-icon ${verification.verificationStatusId eq 1 ? 'verified-icon' : (verification.verificationStatusId eq 50 ? 'provisional-icon' : 'not-verified-icon')}"></div> <c:out value="${verification.RFSegment.name}"/></li>
+                                                                                    <li><div title="${verification.verificationStatusId eq 1 ? 'Verified' : (verification.verificationStatusId eq 50 ? 'Provisionally Verified' : 'Not Verified')}" class="small-icon baseline-small-icon ${verification.verificationStatusId eq 1 ? 'verified-icon' : (verification.verificationStatusId eq 50 ? 'provisional-icon' : 'not-verified-icon')}"></div> <span class="truncated-operations-label"><c:out value="${verification.RFSegment.name}"/></span></li>
                                                                                 </c:forEach>
                                                                             </ul>
                                                                         </c:otherwise>
@@ -113,7 +113,7 @@
                                                                         <c:otherwise>
                                                                             <ul>
                                                                                 <c:forEach items="${cc.getBeamControlVerificationList()}" var="verification">
-                                                                                    <li><div title="${verification.verificationStatusId eq 1 ? 'Verified' : (verification.verificationStatusId eq 50 ? 'Provisionally Verified' : 'Not Verified')}" class="small-icon baseline-small-icon ${verification.verificationStatusId eq 1 ? 'verified-icon' : (verification.verificationStatusId eq 50 ? 'provisional-icon' : 'not-verified-icon')}"></div> <c:out value="${verification.beamDestination.name}"/></li>
+                                                                                    <li><div title="${verification.verificationStatusId eq 1 ? 'Verified' : (verification.verificationStatusId eq 50 ? 'Provisionally Verified' : 'Not Verified')}" class="small-icon baseline-small-icon ${verification.verificationStatusId eq 1 ? 'verified-icon' : (verification.verificationStatusId eq 50 ? 'provisional-icon' : 'not-verified-icon')}"></div> <span class="truncated-operations-label"><c:out value="${verification.beamDestination.name}"/></span></li>
                                                                                 </c:forEach>
                                                                             </ul>
                                                                         </c:otherwise>
