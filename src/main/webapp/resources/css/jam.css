@@ -92,3 +92,23 @@ ul.jam-cell-list li {
 .page-dialog .dialog-only-inline-block {
     display: inline-block;
 }
+.facility-verification-table ul {
+    margin: 0;
+    padding: 0;
+}
+.facility-verification-table ul li {
+    list-style: none;
+}
+.collapsed-accordion {
+    display: none;
+}
+.collapsed-accordion .content {
+    padding: 5px;
+}
+.truncated-operations-label {
+    display: inline-block;
+    width: 175px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

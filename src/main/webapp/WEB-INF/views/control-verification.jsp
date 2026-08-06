@@ -89,31 +89,6 @@
             <c:choose>
                 <c:when test="${creditedControl ne null}">
                     <div>
-                        <h3>Facility Verifications</h3>
-                        <ul id="facility-control-verification-list">
-                            <c:forEach items="${creditedControl.facilityControlVerificationList}" var="fv">
-                                <li>
-                                    <c:choose>
-                                        <c:when test="${fv.verificationStatusId eq 1}">
-                                            <span title="Verified" class="small-icon baseline-small-icon verified-icon"></span>
-                                        </c:when>
-                                        <c:when test="${fv.verificationStatusId eq 50}">
-                                            <span title="Verified" class="small-icon baseline-small-icon provisional-icon"></span>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <span title="Not Verified" class="small-icon baseline-small-icon not-verified-icon"></span>
-                                        </c:otherwise>
-                                    </c:choose>
-                                    <c:out value="${fv.getFacilityControlVerificationPK().facility.name}"/>
-                                    <c:if test="${fv.verificationStatusId ne 100}">
-                                        <span class="title-expiration" title="Earliest Control Expiration">
-                                            {Expires: <fmt:formatDate value="${fv.expirationDate}" pattern="${s:getFriendlyDateTimePattern()}"/>}
-                                        </span>
-                                        <span class="expiring-soon" style="<c:out value="${jam:isExpiringSoon(fv.expirationDate) ? 'display: inline-block;' : 'display: none;'}"/>">(Expiring Soon)</span>
-                                    </c:if>
-                                </li>
-                            </c:forEach>
-                        </ul>
                         <h3>Operations Verifications</h3>
                         <div class="accordion">
                             <h3>RF Operations</h3>

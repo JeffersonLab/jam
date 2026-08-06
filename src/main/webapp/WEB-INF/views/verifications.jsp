@@ -68,7 +68,7 @@
                         <table id="credited-control-verifications-table" class="data-table">
                             <thead>
                                 <tr>
-                                    <th colspan="3">Facility Control Status with Expiration</th>
+                                    <th colspan="2">Facility Control Status</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -78,43 +78,64 @@
                                     <td>
                                         <ul>
                                             <c:forEach items="${cc.facilityControlVerificationList}" var="fv">
-                                                <li>
-                                                    <c:choose>
-                                                        <c:when test="${fv.verificationStatusId eq 1}">
-                                                            <span title="Verified"
-                                                                  class="small-icon baseline-small-icon verified-icon"></span>
-                                                        </c:when>
-                                                        <c:when test="${fv.verificationStatusId eq 50}">
-                                                            <span title="Verified"
-                                                                  class="small-icon baseline-small-icon provisional-icon"></span>
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            <span title="Not Verified"
-                                                                  class="small-icon baseline-small-icon not-verified-icon"></span>
-                                                        </c:otherwise>
-                                                    </c:choose>
-                                                    <c:out value="${fv.getFacilityControlVerificationPK().facility.name}"/>
-                                                    <c:if test="${fv.verificationStatusId ne 100}">
-                                                        <span title="Earliest Control Expiration">
-                                                            <fmt:formatDate value="${fv.expirationDate}"
-                                                                            pattern="${s:getFriendlyDateTimePattern()}"/>
-                                                        </span>
-                                                        <span class="expiring-soon"
-                                                              style="<c:out value="${jam:isExpiringSoon(fv.expirationDate) ? 'display: inline-block;' : 'display: none;'}"/>">(Expiring Soon)</span>
-                                                    </c:if>
-                                                </li>
+                                                <div class="collapsed-accordion">
+                                                    <h3><c:out value="${fv.getFacilityControlVerificationPK().facility.name}"/></h3>
+                                                    <div class="content">
+                                                        <table class="data-table facility-verification-table">
+                                                            <thead>
+                                                            <tr>
+                                                                <th>RF Segments</th>
+                                                                <th>Beam Destinations</th>
+                                                                <th></th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            <tr>
+                                                                <td>
+                                                                    <c:choose>
+                                                                        <c:when test="${fn:length(cc.getRFControlVerificationList()) < 1}">
+                                                                            None
+                                                                        </c:when>
+                                                                        <c:otherwise>
+                                                                            <ul>
+                                                                                <c:forEach items="${cc.getRFControlVerificationList()}" var="verification">
+                                                                                    <li><div title="${verification.verificationStatusId eq 1 ? 'Verified' : (verification.verificationStatusId eq 50 ? 'Provisionally Verified' : 'Not Verified')}" class="small-icon baseline-small-icon ${verification.verificationStatusId eq 1 ? 'verified-icon' : (verification.verificationStatusId eq 50 ? 'provisional-icon' : 'not-verified-icon')}"></div> <span class="truncated-operations-label"><c:out value="${verification.RFSegment.name}"/></span></li>
+                                                                                </c:forEach>
+                                                                            </ul>
+                                                                        </c:otherwise>
+                                                                    </c:choose>
+                                                                </td>
+                                                                <td>
+                                                                    <c:choose>
+                                                                        <c:when test="${fn:length(cc.getBeamControlVerificationList()) < 1}">
+                                                                            None
+                                                                        </c:when>
+                                                                        <c:otherwise>
+                                                                            <ul>
+                                                                                <c:forEach items="${cc.getBeamControlVerificationList()}" var="verification">
+                                                                                    <li><div title="${verification.verificationStatusId eq 1 ? 'Verified' : (verification.verificationStatusId eq 50 ? 'Provisionally Verified' : 'Not Verified')}" class="small-icon baseline-small-icon ${verification.verificationStatusId eq 1 ? 'verified-icon' : (verification.verificationStatusId eq 50 ? 'provisional-icon' : 'not-verified-icon')}"></div> <span class="truncated-operations-label"><c:out value="${verification.beamDestination.name}"/></span></li>
+                                                                                </c:forEach>
+                                                                            </ul>
+                                                                        </c:otherwise>
+                                                                    </c:choose>
+                                                                </td>
+                                                                <td>
+                                                                    <form method="get"
+                                                                          action="${pageContext.request.contextPath}/verifications/control">
+                                                                        <input type="hidden" name="creditedControlId"
+                                                                               value="${cc.creditedControlId}"/>
+                                                                        <input type="hidden" name="facilityId"
+                                                                               value="${fn:escapeXml(fv.getFacilityControlVerificationPK().facility.facilityId)}"/>
+                                                                        <button class="single-char-button" type="submit">&rarr;</button>
+                                                                    </form>
+                                                                </td>
+                                                            </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
                                             </c:forEach>
                                         </ul>
-                                    </td>
-                                    <td>
-                                        <form method="get"
-                                              action="${pageContext.request.contextPath}/verifications/control">
-                                            <input type="hidden" name="creditedControlId"
-                                                   value="${cc.creditedControlId}"/>
-                                            <input type="hidden" name="facilityId"
-                                                   value="${fn:escapeXml(param.facilityId)}"/>
-                                            <button class="single-char-button" type="submit">&rarr;</button>
-                                        </form>
                                     </td>
                                 </tr>
                             </c:forEach>
