@@ -92,13 +92,14 @@
                                                             <tbody>
                                                             <tr>
                                                                 <td>
+                                                                    <c:set var="facilitySegmentList" value="${cc.getRfControlVerificationListByFacility(fv.getFacilityControlVerificationPK().facility)}"/>
                                                                     <c:choose>
-                                                                        <c:when test="${fn:length(cc.getRFControlVerificationList()) < 1}">
+                                                                        <c:when test="${fn:length(facilitySegmentList) < 1}">
                                                                             None
                                                                         </c:when>
                                                                         <c:otherwise>
                                                                             <ul>
-                                                                                <c:forEach items="${cc.getRFControlVerificationList()}" var="verification">
+                                                                                <c:forEach items="${facilitySegmentList}" var="verification">
                                                                                     <li><div title="${verification.verificationStatusId eq 1 ? 'Verified' : (verification.verificationStatusId eq 50 ? 'Provisionally Verified' : 'Not Verified')}" class="small-icon baseline-small-icon ${verification.verificationStatusId eq 1 ? 'verified-icon' : (verification.verificationStatusId eq 50 ? 'provisional-icon' : 'not-verified-icon')}"></div> <span class="truncated-operations-label"><c:out value="${verification.RFSegment.name}"/></span></li>
                                                                                 </c:forEach>
                                                                             </ul>
@@ -106,13 +107,14 @@
                                                                     </c:choose>
                                                                 </td>
                                                                 <td>
+                                                                    <c:set var="facilityDestinationList" value="${cc.getBeamControlVerificationListByFacility(fv.getFacilityControlVerificationPK().facility)}"/>
                                                                     <c:choose>
-                                                                        <c:when test="${fn:length(cc.getBeamControlVerificationList()) < 1}">
+                                                                        <c:when test="${fn:length(facilityDestinationList) < 1}">
                                                                             None
                                                                         </c:when>
                                                                         <c:otherwise>
                                                                             <ul>
-                                                                                <c:forEach items="${cc.getBeamControlVerificationList()}" var="verification">
+                                                                                <c:forEach items="${facilityDestinationList}" var="verification">
                                                                                     <li><div title="${verification.verificationStatusId eq 1 ? 'Verified' : (verification.verificationStatusId eq 50 ? 'Provisionally Verified' : 'Not Verified')}" class="small-icon baseline-small-icon ${verification.verificationStatusId eq 1 ? 'verified-icon' : (verification.verificationStatusId eq 50 ? 'provisional-icon' : 'not-verified-icon')}"></div> <span class="truncated-operations-label"><c:out value="${verification.beamDestination.name}"/></span></li>
                                                                                 </c:forEach>
                                                                             </ul>

@@ -172,6 +172,30 @@ public class CreditedControl implements Serializable, Comparable<CreditedControl
     return facilityControlVerificationList;
   }
 
+  public List<RFControlVerification> getRfControlVerificationListByFacility(Facility facility) {
+    List<RFControlVerification> list = new ArrayList<>();
+
+    for (RFControlVerification rfControlVerification : rfControlVerificationList) {
+      if (rfControlVerification.getRFSegment().getFacility().equals(facility)) {
+        list.add(rfControlVerification);
+      }
+    }
+
+    return list;
+  }
+
+  public List<BeamControlVerification> getBeamControlVerificationListByFacility(Facility facility) {
+    List<BeamControlVerification> list = new ArrayList<>();
+
+    for (BeamControlVerification beamControlVerification : beamControlVerificationList) {
+      if (beamControlVerification.getBeamDestination().getFacility().equals(facility)) {
+        list.add(beamControlVerification);
+      }
+    }
+
+    return list;
+  }
+
   public boolean hasRFSegment(RFSegment segment) {
     boolean hasSegment = false;
     if (beamControlVerificationList != null) {
