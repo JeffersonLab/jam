@@ -112,3 +112,7 @@ ul.jam-cell-list li {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+.ui-accordion-header,
+.collapsed-accordion .ui-accordion-header {
+    font-weight: bold;
+}
