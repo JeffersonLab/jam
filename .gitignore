@@ -2,3 +2,8 @@
 /.gradle/
 /.idea/
 /run
+# The user guide's website (zensical.toml) and its tools' caches
+/site
+/pages
+/.venv
+/.cache
