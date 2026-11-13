@@ -5,6 +5,7 @@ A [Jakarta EE 10](https://en.wikipedia.org/wiki/Jakarta_EE) web application for 
 
 ---
  - [Overview](https://github.com/JeffersonLab/jam#overview)
+ - [User Guide](https://jeffersonlab.github.io/jam/latest/)
  - [Quick Start with Compose](https://github.com/JeffersonLab/jam#quick-start-with-compose) 
  - [Install](https://github.com/JeffersonLab/jam#install)
  - [Configure](https://github.com/JeffersonLab/jam#configure)
@@ -17,6 +18,8 @@ A [Jakarta EE 10](https://en.wikipedia.org/wiki/Jakarta_EE) web application for 
 
 ## Overview
 The authorization application allows the Director of Operations (or a delegate) to clearly communicate and document authorization for various facilities at JLab to either generate beam or engage in RF operations. For beam generation the maximum current and beam mode ("permissions") that are authorized are provided for a given beam destination.  This information is stored in a database and presented via the web for easy access.   There are three beam generating facilities, each with their own set of beam destinations and beam modes: CEBAF, LERF, UITF.  There are seven facilities which generate RF: CEBAF Injector, CEBAF North Linac, CEBAF South Linac, LERF, CMTF, and VTA.  In addition to director authorization, the app also tracks Credited Controls and their verification.  Each beam destination is assigned a set of controls and each control is assigned to a particular responsible verification team.  A beam desintation is ready for beam only if all the controls assigned are verified by their responsible verification team.  Both team verifications and director permissions have expirations.   Emails and Jefferson Lab logbook entires are created to aid communication of new director permissions, responsible team verifications (upgrades and downgrades), and verification and permissions expirations.
+
+See the [User Guide](https://jeffersonlab.github.io/jam/latest/) for how to use it.
 
 ### Roles
  - **Authorizer / Operations Director** - Responsible for authorizing beam
@@ -88,6 +91,13 @@ gradlew build
 
 **See**: [Docker Development Quick Reference](https://gist.github.com/slominskir/a7da801e8259f5974c978f9c3091d52c#development-quick-reference)
 
+### User Guide website
+The [user guide](https://github.com/JeffersonLab/jam/tree/main/docs/user-guide) is Markdown, readable on GitHub, and also built into a website with [Zensical](https://zensical.org) ([zensical.toml](zensical.toml)). With [uv](https://docs.astral.sh/uv/getting-started/installation/) installed:
+```
+uv run --locked zensical build --strict
+```
+builds it into `site/`, as CI does; `--strict` fails on a link to a missing page or heading. `uv run --locked zensical serve` previews it at http://localhost:8000.
+
 ## Develop
 In order to iterate rapidly when making changes it's often useful to run the app directly on the local workstation, perhaps leveraging an IDE.  In this scenario run the service dependencies with:
 ```
@@ -108,6 +118,7 @@ The [server](https://github.com/JeffersonLab/wildfly/blob/main/scripts/server-se
     - The [Create release](https://github.com/JeffersonLab/java-workflows/blob/main/.github/workflows/gh-release.yaml) GitHub Action to tag the source and create release notes summarizing any pull requests.   Edit the release notes to add any missing details.  A war file artifact is attached to the release.
     - The [Publish docker image](https://github.com/JeffersonLab/container-workflows/blob/main/.github/workflows/docker-publish.yaml) GitHub Action to create a new demo Docker image.
     - The [Deploy to JLab](https://github.com/JeffersonLab/general-workflows/blob/main/.github/workflows/jlab-deploy-app.yaml) GitHub Action to deploy to the JLab test environment.
+    - A job that publishes the [User Guide](https://jeffersonlab.github.io/jam/) to GitHub Pages, in a folder for the release and in `latest/`.
 
 ## Deploy
 The deploy to JLab's acctest is handled automatically via the release workflow.
