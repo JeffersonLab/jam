@@ -3,13 +3,13 @@
 [User Guide](README.md) › Inventory
 
 The **Inventory** tab lists what JAM authorizes and verifies, and who is involved. Anyone can read
-it. Administrators can change the controls, participation, authorizers and watchers here; the
-rest is changed in the database (see [Administration](administration.md#what-is-changed-in-the-database)).
+it. Administrators can change the controls, facility managers and logbooks, participation,
+authorizers and watchers here; the rest is changed in the database (see [Administration](administration.md#what-is-changed-in-the-database)).
 
 | Page | Lists | Administrators can |
 |---|---|---|
 | [Controls](#controls) | The credited controls. | Add, edit and remove controls. |
-| **Facilities** | Each facility, its manager and its logbooks. | — |
+| [Facilities](#facilities) | Each facility, its manager and its logbooks. | Change a facility's manager and logbooks. |
 | **Segments** | The active RF segments and their facilities. | — |
 | **Destinations** | The active beam destinations and their facilities. | — |
 | [Participation](#participation) | Which controls apply to which segments and destinations. | Add or remove a control from a segment or destination. |
@@ -36,6 +36,17 @@ To change the list, select a row and **Edit** or **Remove**, or select **Add**:
 > facility.
 
 A new control applies nowhere until it is added on the Participation page.
+
+## Facilities
+
+**Inventory › Facilities** lists each facility's name, manager and logbooks. The manager gets the
+facility's change and expiration emails, and each authorization change is logged in its logbooks.
+
+To change them, administrators select a facility's row and **Edit**:
+
+- **Manager**: the manager's username. Required.
+- **Logbooks**: the logbook names, separated by commas, such as `TLOG,ELOG`. Leave it empty to
+  make no log entries for the facility.
 
 ## Participation
 

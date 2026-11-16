@@ -56,7 +56,8 @@ upcoming expiration notices again.
 
 JAM has no pages to change these; a developer with database access changes them:
 
-- **Facilities**: name, URL path, manager, logbooks and order.
+- **Facilities**: name, URL path and order. The manager and logbooks are changed on
+  [Inventory › Facilities](inventory.md#facilities).
 - **RF segments** and **beam destinations**: name, facility, current units (beam), whether active,
   and order. An inactive segment or destination is hidden everywhere and is no longer checked
   for expiration; its history is kept.
