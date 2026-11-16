@@ -35,3 +35,14 @@ jobs:
       env: acctest
       ver: ${{ needs.release.outputs.semver }}
     secrets: inherit
+
+  # Publishes the user guide's website (zensical.toml) to GitHub Pages from the gh-pages branch:
+  # this release's in its own folder (v1.2.3/), the same in latest/, and a front page listing them.
+  user_guide_publish:
+    permissions:
+      contents: write
+    needs:
+      - release
+    uses: jeffersonlab/general-workflows/.github/workflows/user-guide-publish.yaml@v2
+    with:
+      semvertag: ${{ needs.release.outputs.semvertag }}
